@@ -159,7 +159,7 @@ parser.add_option('--predRate', type='string', action='store',
 
 
 parser.add_option('--massModMistagFile', type='string', action='store',
-                  default='QCD_Pt-15TTo7000_TuneZ2star-Flat_13TeV_pythia6_RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1_pthi_predicted.root',
+                  default=None,
                   dest='massModMistagFile',
                   help='Name of file for mass-modified mistag approach')
 
@@ -186,10 +186,11 @@ import random
 if options.makeMistag == False : 
     fpreddist = ROOT.TFile(options.predRate)
     hpred = fpreddist.Get('rLoMod' )
-    fmassMod = ROOT.TFile(options.massModMistagFile)
-    hmassMod = fmassMod.Get("h2_mAK8").Clone()
-    hmassMod.SetName('hmassMod')
-    ROOT.SetOwnership( hmassMod, False )
+    if options.massModMistagFile != None : 
+        fmassMod = ROOT.TFile(options.massModMistagFile)
+        hmassMod = fmassMod.Get("h2_mAK8").Clone()
+        hmassMod.SetName('hmassMod')
+        ROOT.SetOwnership( hmassMod, False )
 
 
 #@ Labels and Handles
@@ -1171,7 +1172,7 @@ for ifile in files : #{ Loop over root files
             vHad0Mod = copy.copy ( vHad0 )
             vHad1Mod = copy.copy ( vHad1 )
 
-            if options.makeMistag == False : 
+            if options.massModMistagFile != None : 
                 randM0 = hmassMod.GetRandom()
                 randM1 = hmassMod.GetRandom()
 
