@@ -163,9 +163,15 @@ parser.add_option('--massModMistagFile', type='string', action='store',
                   dest='massModMistagFile',
                   help='Name of file for mass-modified mistag approach')
 
+parser.add_option('--applyFilters', action='store_true',
+                  default=False,
+                  dest='applyFilters',
+                  help='Apply MET filters')
 
-
-
+parser.add_option('--applyTriggers', action='store_true',
+                  default=False,
+                  dest='applyTriggers',
+                  help='Apply triggers')
 
 (options, args) = parser.parse_args()
 argv = []
@@ -186,10 +192,18 @@ import random
 if options.makeMistag == False : 
     fpreddist = ROOT.TFile(options.predRate)
     hpred = fpreddist.Get('rLoMod' )
-    if options.massModMistagFile != None : 
+    if options.massModMistagFile != None :
+        # Get the mass-modified "prior" from QCD MC.
+        # Here, we select a deviate from the QCD MC jet mass distribution
+        # after the cuts are made. This is then used in the MVV calculation.        
         fmassMod = ROOT.TFile(options.massModMistagFile)
-        hmassMod = fmassMod.Get("h2_mAK8").Clone()
+        hmassMod = fmassMod.Get("h2_msoftdropAK8").Clone()
         hmassMod.SetName('hmassMod')
+        bin1 = hmassMod.GetXaxis().FindBin( 0.0 )
+        bin2 = hmassMod.GetXaxis().FindBin( options.sdmassCutLo )
+        for ibin in range ( bin1, bin2 ) :
+            hmassMod.SetBinContent(ibin, 0.0 )
+        hmassMod.Scale( 1.0 / hmassMod.Integral() )
         ROOT.SetOwnership( hmassMod, False )
 
 
@@ -398,6 +412,24 @@ l_subjetsAK8Mass = ("subjetsAK8", "subjetAK8Mass")
 h_subjetsAK8BDisc = Handle( "std::vector<float>")
 l_subjetsAK8BDisc = ("subjetsAK8", "subjetAK8CSV")
 
+
+# MET and HCAL Filter handles
+h_filterNameStrings = Handle( "std::vector<std::string>")
+l_filterNameStrings = ("METUserData", "triggerNameTree")
+h_filterBits = Handle( "std::vector<float>")
+l_filterBits = ("METUserData", "triggerBitTree")
+h_filterPrescales = Handle( "std::vector<int>")
+l_filterPrescales = ("METUserData", "triggerPrescaleTree")
+h_HBHEfilter = Handle("bool")
+l_HBHEfilter = ("HBHENoiseFilterResultProducer", "HBHENoiseFilterResultRun1")
+
+# Triggers
+h_triggerNameStrings = Handle( "std::vector<std::string>")
+l_triggerNameStrings = ("TriggerUserData", "triggerNameTree")
+h_triggerBits = Handle( "std::vector<float>")
+l_triggerBits = ("TriggerUserData", "triggerBitTree")
+h_triggerPrescales = Handle( "std::vector<int>")
+l_triggerPrescales = ("TriggerUserData", "triggerPrescaleTree")
 
 f = ROOT.TFile(options.outname, "RECREATE")
 f.cd()
@@ -625,6 +657,69 @@ for ifile in files : #{ Loop over root files
 
         evWeight = 1.0
 
+        if options.applyFilters :
+            cscFilt = False
+            vertexFilt = False
+            hbheFilt = False
+
+            
+            event.getByLabel( l_filterNameStrings, h_filterNameStrings )
+            event.getByLabel( l_filterBits, h_filterBits )
+            event.getByLabel( l_filterPrescales, h_filterPrescales )
+            event.getByLabel( l_HBHEfilter, h_HBHEfilter )
+
+            filterNameStrings = h_filterNameStrings.product()
+            filterBits = h_filterBits.product()
+            
+            for itrig in xrange(0, len(filterNameStrings) ) :
+                if "CSC" in filterNameStrings[itrig] :
+                    if filterBits[itrig] == 1 :
+                        cscFilt = True
+                if "goodVer" in filterNameStrings[itrig] :
+                    if filterBits[itrig] == 1 :
+                        vertexFilt = True
+                #if "HBHE" in filterNameStrings[itrig] :
+                #    if filterBits[itrig] == 1 :
+                #        hbheFilt = True
+
+
+            if cscFilt == False or vertexFilt == False :
+                continue
+
+        if options.applyTriggers :
+
+            passTrig = False
+            prescale = 1.0
+            unprescaled = False
+            
+            event.getByLabel( l_triggerNameStrings, h_triggerNameStrings )
+            event.getByLabel( l_triggerBits, h_triggerBits )
+            event.getByLabel( l_triggerPrescales, h_triggerPrescales )
+
+            triggerNameStrings = h_triggerNameStrings.product()
+            triggerBits = h_triggerBits.product()
+            triggerPrescales = h_triggerPrescales.product()
+            
+            for itrig in xrange(0, len(triggerNameStrings) ) :
+                #print triggerNameStrings[itrig]
+                if "HLT_AK4PFJet" in triggerNameStrings[itrig] \
+                  or "HLT_PFHT" in triggerNameStrings[itrig] \
+                  or "HLT_HT" in triggerNameStrings[itrig] :
+                    if triggerBits[itrig] == 1 :
+                        passTrig = True
+                        if triggerPrescales[itrig] == 1.0 :
+                            unprescaled = True
+                        prescale = prescale * triggerPrescales[itrig]
+                        
+
+
+            if unprescaled :
+                prescale = 1.0
+
+            evWeight = evWeight * prescale
+            if passTrig == False :
+                continue
+
         if options.deweightFlat : 
             #@ Event weights
             gotGenerator = event.getByLabel( l_generator, h_generator )
@@ -633,7 +728,7 @@ for ifile in files : #{ Loop over root files
                 pthat = 0.0
                 if h_generator.product().hasBinningValues() :
                     pthat = h_generator.product().binningValues()[0]
-                    evWeight = 1/pow(pthat/15.,4.5)
+                    evWeight = evWeight * 1/pow(pthat/15.,4.5)
                 if options.verbose :
                     print 'Event weight = ' + str( evWeight )
                     print 'pthat = ' + str(pthat)
