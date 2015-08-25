@@ -188,6 +188,19 @@ import copy
 import random
 
 
+def trigHelper( ht, trigs ) :
+    htcuts = [0., 200., 250., 300., 350., 400., 475., 600., 650., 800.]
+    nhtcuts = len( htcuts )
+    iht = 0
+    while ht < htcuts[iht] and iht < nhtcuts :
+        iht += 1
+    if iht >= nhtcuts - 1 :
+        iht = nhtcuts - 1
+    ipass = trigs[iht]
+    return ipass
+    
+    
+              
 #@ Predicted distribution
 if options.makeMistag == False : 
     fpreddist = ROOT.TFile(options.predRate)
@@ -634,6 +647,12 @@ for ifile in files : #{ Loop over root files
 
     # loop over events in this file
     i = 0
+
+    # Make sure the handles we want are in the files so we can
+    # avoid leaking memory
+    readFilters = True
+    readTriggers = True
+
     
     for event in events: #{ Loop over events in root files
         if options.maxevents > 0 and nevents > options.maxevents :
@@ -657,21 +676,37 @@ for ifile in files : #{ Loop over root files
 
         evWeight = 1.0
 
-        if options.applyFilters :
+        
+        lastRun = 1
+        currRun = 1
+        trigMap = {}
+
+        if options.applyFilters and readFilters :
             cscFilt = False
             vertexFilt = False
             hbheFilt = False
 
             
-            event.getByLabel( l_filterNameStrings, h_filterNameStrings )
-            event.getByLabel( l_filterBits, h_filterBits )
-            event.getByLabel( l_filterPrescales, h_filterPrescales )
-            event.getByLabel( l_HBHEfilter, h_HBHEfilter )
+            gotit1 = event.getByLabel( l_filterNameStrings, h_filterNameStrings )
+            gotit2 = event.getByLabel( l_filterBits, h_filterBits )
+            #gotit3 = event.getByLabel( l_filterPrescales, h_filterPrescales )
+            #gotit4 = event.getByLabel( l_HBHEfilter, h_HBHEfilter )
+
+
+            if options.verbose :
+                print 'Filter string names?  ' + str(gotit1)
+                print 'Filter bits?          ' + str(gotit2)
+
+            if gotit1 == False or gotit2 == False  :
+                readFilters = False
 
             filterNameStrings = h_filterNameStrings.product()
             filterBits = h_filterBits.product()
             
             for itrig in xrange(0, len(filterNameStrings) ) :
+                if options.verbose :
+                    print 'Filter name = ' + filterNameStrings[itrig]
+                    print 'Filter bit  = ' + str(filterBits[itrig])
                 if "CSC" in filterNameStrings[itrig] :
                     if filterBits[itrig] == 1 :
                         cscFilt = True
@@ -684,21 +719,41 @@ for ifile in files : #{ Loop over root files
 
 
             if cscFilt == False or vertexFilt == False :
+                if options.verbose :
+                    print 'Found filters, but they failed'
                 continue
 
-        if options.applyTriggers :
+        if not readFilters :
+            if options.verbose :
+                print 'Did not find filters'
+            continue
+
+        if options.applyTriggers and readTriggers :
 
             passTrig = False
             prescale = 1.0
             unprescaled = False
             
-            event.getByLabel( l_triggerNameStrings, h_triggerNameStrings )
-            event.getByLabel( l_triggerBits, h_triggerBits )
-            event.getByLabel( l_triggerPrescales, h_triggerPrescales )
+            gotit1 = event.getByLabel( l_triggerNameStrings, h_triggerNameStrings )
+            gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
+            gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )
+
+
+            if currRun != lastRun :
+                lastRun = currRun
+                fixTrigMap( trigMap, h_filterNameStrings )
+            
+            
+            if options.verbose :
+                print 'Trigger string names? ' + str(gotit1)
+                print 'Trigger bits?         ' + str(gotit2)
+            
+            if gotit1 == False or gotit2 == False or gotit3 == False :
+                readTriggers = False            
 
             triggerNameStrings = h_triggerNameStrings.product()
             triggerBits = h_triggerBits.product()
-            triggerPrescales = h_triggerPrescales.product()
+            triggerPrescales = h_triggerPrescales.product()            
             
             for itrig in xrange(0, len(triggerNameStrings) ) :
                 #print triggerNameStrings[itrig]
@@ -706,16 +761,27 @@ for ifile in files : #{ Loop over root files
                   or "HLT_PFHT" in triggerNameStrings[itrig] \
                   or "HLT_HT" in triggerNameStrings[itrig] :
                     if triggerBits[itrig] == 1 :
-                        passTrig = True
+                        if options.verbose : 
+                            print 'Passed trigger : ' + triggerNameStrings[itrig]
                         if triggerPrescales[itrig] == 1.0 :
                             unprescaled = True
                         prescale = prescale * triggerPrescales[itrig]
-                        
+                    else :
+                        if options.verbose :
+                            print '    (found trigger name but failed) : ' + triggerNameStrings[itrig]
 
+            if not readTriggers :
+                if options.verbose :
+                    print 'Did not find triggers'
+                continue
+
+            passTrig = trigHelper( ht, trigMap )
 
             if unprescaled :
                 prescale = 1.0
-
+            if options.verbose :
+                print 'Prescale = ' + str(prescale)
+                
             evWeight = evWeight * prescale
             if passTrig == False :
                 continue
