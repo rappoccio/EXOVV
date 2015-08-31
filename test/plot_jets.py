@@ -30,11 +30,13 @@ import sys
 ROOT.gROOT.Macro("rootlogon.C")
 
 
+#### Data
+
 f = ROOT.TFile(options.file)
 trigs = [
 #    'HLT_PFJet60',
 #    'HLT_PFJet80',
-#    'HLT_PFJet140',
+    'HLT_PFJet140',
     'HLT_PFJet200',
     'HLT_PFJet260',
     'HLT_PFJet320',
@@ -44,19 +46,49 @@ trigs = [
     ]
 
 scales = [
-    #2000,
-    66, 12, 4, 1, 1, 1
+    2000, 66, 12, 4, 1, 1, 1
     ]
-colors = [ #ROOT.kRed + 1,
-            ROOT.kWhite, ROOT.kRed - 10, ROOT.kRed - 9, ROOT.kRed - 7, ROOT.kRed - 4, ROOT.kRed     ]
 
-logy = [ True, True, False, True, True, True, True, True, True, False, False ]
-palette = [0, 2]
+#### MC
+fmcNames = [
+    'qcd_pt170to300',
+    'qcd_pt300to470',
+    'qcd_pt470to600',
+    'qcd_pt600to800',
+    'qcd_pt800to1000',
+    'qcd_pt1000to1400',
+    'qcd_pt1400to1800',
+    'qcd_pt1800to2400',
+    'qcd_pt2400to3200',
+    'qcd_pt3200toInf',
+]
 
 
-hists = ['pt0', 'ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8']
+lumi = 40.03 # pb-1
+
+mcscales = [
+    #xs / nevents * lumi
+     117276. / 3468514. * lumi,
+     7823 / 2936644. * lumi,
+     648.2 / 1971800. * lumi,
+     186.9 / 1981608. * lumi,
+     32.293 / 1990208. * lumi,
+     9.4183 / 1487712. * lumi,
+     0.84265 / 197959. * lumi,
+     0.114943 / 194924. * lumi,
+     0.00682981 / 198383. * lumi,
+     0.000165445 / 194528. * lumi
+    ]
+
+fmc = []
+for imc,mcname in enumerate(fmcNames) :
+    fmc.append( ROOT.TFile(mcname + '.root') )
+    
+
+logy = [ True, False, True, True, True, True, True, True, False, False ]
+
+hists = ['ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8']
 titles = [
-    'Leading AK4 p_{T};p_{T} (GeV)',
     'AK8 p_{T};p_{T} (GeV)',
     'AK8 Rapidity;y',
     'AK8 ungroomed mass;Mass (GeV)',
@@ -69,6 +101,7 @@ titles = [
     'AK8 Jet Fragmentation z = min(p_{T}^{i}, p_{T}^{j})/(p_{T}^{i} + p_{T}^{j});z'
     ]
 stacks = []
+mcstacks = []
 canvs = []
 legs = []
 
@@ -76,26 +109,35 @@ ROOT.gStyle.SetPadRightMargin(0.15)
 
 for ihist,histname in enumerate(hists):
     stack = ROOT.THStack(histname + '_stack', titles[ihist])
+    mcstack = ROOT.THStack(histname + '_mcstack', titles[ihist])
     canv = ROOT.TCanvas(histname + '_canv', histname +'_canv')
     leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
     leg.SetFillColor(0)
-    leg.SetBorderSize(0)    
+    leg.SetBorderSize(0)
+    for imc,mc in enumerate(fmc) :
+        hist = mc.Get( histname )
+        hist.Scale( mcscales[imc] )
+        mcstack.Add( hist)
+        
     for itrig,trigname in enumerate(trigs) :
         s = trigname + '_' + histname
         print 'Getting ' + s
         hist = f.Get( s )
-        hist.SetFillColor( colors[itrig] )
+        hist.SetMarkerStyle(20)
         hist.Scale( scales[itrig] )
         stack.Add( hist )
         leg.AddEntry( hist, trigname, 'f')
-    stack.Draw('hist')
+    mcstack.GetStack().Last().Draw('hist')
+    stack.GetStack().Last().Draw('e same')
+    
     if logy[ihist] : 
         canv.SetLogy()
         stack.SetMinimum(0.1)
-    leg.Draw()
+    #leg.Draw()
     canv.Update()
     canvs.append(canv)
     stacks.append(stack)
+    mcstacks.append( mcstack )
     legs.append(leg)
     canv.Print( 'jetplots_' + histname + '.png', 'png')
     canv.Print( 'jetplots_' + histname + '.pdf', 'pdf')
