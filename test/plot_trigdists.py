@@ -110,5 +110,5 @@ for ihist,histname in enumerate(hists):
     canvs.append(canv)
     stacks.append(stack)
     legs.append(leg)
-    canv.Print( 'jetplots_' + histname + '.png', 'png')
-    canv.Print( 'jetplots_' + histname + '.pdf', 'pdf')
+    canv.Print( 'trigplots_' + histname + '.png', 'png')
+    canv.Print( 'trigplots_' + histname + '.pdf', 'pdf')
