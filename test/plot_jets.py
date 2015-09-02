@@ -12,6 +12,10 @@ parser.add_option('--file', type='string', action='store',
                   default = 'jetht.root',
                   help='Input file')
 
+parser.add_option('--mcname', type='string', action='store',
+                  dest='mcname',
+                  default = '',
+                  help='String to append to MC names')
 
 parser.add_option('--outname', type='string', action='store',
                   dest='outname',
@@ -82,12 +86,12 @@ mcscales = [
 
 fmc = []
 for imc,mcname in enumerate(fmcNames) :
-    fmc.append( ROOT.TFile(mcname + '.root') )
+    fmc.append( ROOT.TFile(mcname + options.mcname + '.root') )
     
 
-logy = [ True, False, True, True, True, True, True, True, False, False ]
+logy = [ True, False, True, True, True, True, True, True, False, False, False]#,False,False,False,False,False, ]
 
-hists = ['ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8']
+hists = ['ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8']#, 'nhfAK8', 'chfAK8', 'nefAK8', 'cefAK8', 'ncAK8', 'nchAK8']
 titles = [
     'AK8 p_{T};p_{T} (GeV)',
     'AK8 Rapidity;y',
@@ -98,7 +102,14 @@ titles = [
     'AK8 filtered mass;Mass (GeV)',
     'AK8 #tau_{21} = #tau_{2} / #tau_{1};#tau_{21}',
     'AK8 #Delta R between subjets;#Delta R',
-    'AK8 Jet Fragmentation z = min(p_{T}^{i}, p_{T}^{j})/(p_{T}^{i} + p_{T}^{j});z'
+    'AK8 Jet Fragmentation z = min(p_{T}^{i}, p_{T}^{j})/(p_{T}^{i} + p_{T}^{j});z',
+    'AK8 Neutral Hadron Energy Fraction;Fraction',
+    'AK8 Charged Hadron Energy Fraction;Fraction',
+    'AK8 Neutral E+M Energy Fraction;Fraction',
+    'AK8 Charged E+M Energy Fraction;Fraction',
+    'AK8 N constituents;Fraction',
+    'AK8 N charged hadrons;Fraction',
+    
     ]
 stacks = []
 mcstacks = []
@@ -139,5 +150,5 @@ for ihist,histname in enumerate(hists):
     stacks.append(stack)
     mcstacks.append( mcstack )
     legs.append(leg)
-    canv.Print( 'jetplots_' + histname + '.png', 'png')
-    canv.Print( 'jetplots_' + histname + '.pdf', 'pdf')
+    canv.Print( 'jetplots_' + histname + options.outname + '.png', 'png')
+    canv.Print( 'jetplots_' + histname + options.outname + '.pdf', 'pdf')
