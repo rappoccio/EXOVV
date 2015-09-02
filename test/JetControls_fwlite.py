@@ -556,6 +556,31 @@ for ifile in files : #{ Loop over root files
             if jetPtAK8[0] < options.speedyPtMin :
                 continue
 
+
+            
+        
+        #@ VERTEX SETS
+        event.getByLabel( l_NPV, h_NPV )
+        NPV = h_NPV.product()[0]
+        if len(h_NPV.product()) == 0 :
+            if options.verbose :
+                print "Event has no good primary vertex."
+            continue
+
+            
+        #@ RHO VALUE        
+        gotrho = event.getByLabel( l_rho, h_rho )
+        if gotrho == False : 
+            print "Event has no rho values."
+            continue
+        if len(h_rho.product()) == 0 :
+            print "Event has no rho values."
+            continue
+        else:
+            rho = h_rho.product()[0]
+            if options.verbose :
+                print 'rho = {0:6.2f}'.format( rho )
+
                 
         if options.applyFilters and readFilters :
             cscFilt = False
@@ -618,16 +643,52 @@ for ifile in files : #{ Loop over root files
             gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
             gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )
             gotit4 = event.getByLabel ( l_jetsAK4Pt, h_jetsAK4Pt )
-            
+            gotit5 = event.getByLabel ( l_jetsAK4Eta, h_jetsAK4Eta )
+            gotit6 = event.getByLabel ( l_jetsAK4Phi, h_jetsAK4Phi )
+            gotit7 = event.getByLabel ( l_jetsAK4Mass, h_jetsAK4Mass )
+            gotit8 = event.getByLabel ( l_jetsAK4JEC, h_jetsAK4JEC )
+            gotit9 = event.getByLabel ( l_jetsAK4Area, h_jetsAK4Area )
+                    
 
             jetPtAK4 = h_jetsAK4Pt.product()
+            jetEtaAK4 = h_jetsAK4Eta.product()
+            jetPhiAK4 = h_jetsAK4Phi.product()
+            jetMassAK4 = h_jetsAK4Mass.product()
+            jetAreaAK4 = h_jetsAK4Area.product()
+            jetJECAK4 = h_jetsAK4JEC.product()
+            jetCorrPtAK4 = []
+
+            for i in range(0,len(jetPtAK4) ):#{ Loop over AK4 Jets
+
+                if options.verbose :
+                    print 'AK4 jet ' + str(i)
+
+
+                AK4JECFromB2GAnaFW = jetJECAK4[i]   
+                AK4P4Raw = ROOT.TLorentzVector()
+                AK4P4Raw.SetPtEtaPhiM( jetPtAK4[i] , jetEtaAK4[i], jetPhiAK4[i], jetMassAK4[i])
+                # Remove the old JEC's to get raw energy
+                AK4P4Raw *= AK4JECFromB2GAnaFW            
+
+                #@ JEC Scaling for AK4 Jets
+                ak8JetCorrector.setJetEta( AK4P4Raw.Eta() )
+                ak8JetCorrector.setJetPt ( AK4P4Raw.Perp() )
+                ak8JetCorrector.setJetE  ( AK4P4Raw.E() )
+                ak8JetCorrector.setJetA  ( jetAreaAK4[i] )
+                ak8JetCorrector.setRho   ( rho )
+                ak8JetCorrector.setNPV   ( NPV )
+                newJEC = ak8JetCorrector.getCorrection()
+                AK4P4Corr = AK4P4Raw*newJEC
+                jetCorrPtAK4.append( AK4P4Corr )
+                        
+            
             ht = 0.0
-            for iak4,ak4pt in enumerate(jetPtAK4):
-                ht += ak4pt
+            for iak4,ak4 in enumerate(jetCorrPtAK4):
+                ht += ak4.Perp()
                 
-            if len(jetPtAK4) < 1 :
+            if len(jetCorrPtAK4) < 1 :
                 continue
-            pt0 = jetPtAK4[0]
+            pt0 = jetCorrPtAK4[0].Perp()
 
 
             
@@ -708,30 +769,6 @@ for ifile in files : #{ Loop over root files
                 if options.verbose :
                     print 'Event weight = ' + str( evWeight )
                     print 'pthat = ' + str(pthat)
-
-            
-        
-        #@ VERTEX SETS
-        event.getByLabel( l_NPV, h_NPV )
-        NPV = h_NPV.product()[0]
-        if len(h_NPV.product()) == 0 :
-            if options.verbose :
-                print "Event has no good primary vertex."
-            continue
-
-            
-        #@ RHO VALUE        
-        gotrho = event.getByLabel( l_rho, h_rho )
-        if gotrho == False : 
-            print "Event has no rho values."
-            continue
-        if len(h_rho.product()) == 0 :
-            print "Event has no rho values."
-            continue
-        else:
-            rho = h_rho.product()[0]
-            if options.verbose :
-                print 'rho = {0:6.2f}'.format( rho )
 
 
         #Get MET HERE
