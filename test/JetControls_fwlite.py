@@ -39,6 +39,11 @@ parser.add_option('--maxevents', type='int', action='store',
                   dest='maxevents',
                   help='Number of events to run. -1 is all events')
 
+parser.add_option('--maxjets', type='int', action='store',
+                  default=None,
+                  dest='maxjets',
+                  help='Max jets to plot')
+
 parser.add_option('--deweightFlat', action='store_true',
                   default=False,
                   dest='deweightFlat',
@@ -53,6 +58,23 @@ parser.add_option('--applyTriggers', action='store_true',
                   default=False,
                   dest='applyTriggers',
                   help='Apply triggers')
+
+
+parser.add_option('--minAK8JetPt', type='float', action='store',
+                  default=200.,
+                  dest='minAK8JetPt',
+                  help='Minimum AK8 Jet Pt')
+
+parser.add_option('--speedyPtMin', type='float', action='store',
+                  default=None,
+                  dest='speedyPtMin',
+                  help='Minimum AK8 Jet Pt for whatever is in the ntuple to make it faster')
+
+
+parser.add_option('--maxTau21', type='float', action='store',
+                  default=0.6,
+                  dest='maxTau21',
+                  help='Maximum Tau21 cut')
 
 (options, args) = parser.parse_args()
 argv = []
@@ -345,6 +367,12 @@ h_jetrhoAK8 = ROOT.TH1F("jetrhoAK8", "AK8 Jet #rho=#frac{m}{p_{T} R};Jet #rho", 
 h_jetareaAK8 = ROOT.TH1F("jetareaAK8", "AK8 Jet Area;Jet Area", 100, 0, 6.28)
 h_subjetDRAK8 = ROOT.TH1F("subjetDRAK8", "#Delta R between subjets;#Delta R", 100, 0, 6.28)
 h_jetzAK8 = ROOT.TH1F("jetzAK8", "Jet z;z", 100, 0.0, 1.0)
+h_nhfAK8 = ROOT.TH1F("h_nhfAK8", "AK8 Neutral hadron fraction;NHF", 100, 0, 1.0) 
+h_chfAK8 = ROOT.TH1F("h_chfAK8", "AK8 Charged hadron fraction;CHF", 100, 0, 1.0) 
+h_nefAK8 = ROOT.TH1F("h_nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) 
+h_cefAK8 = ROOT.TH1F("h_cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) 
+h_ncAK8 = ROOT.TH1F("h_ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) 
+h_nchAK8 = ROOT.TH1F("h_nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) 
 
 ha_ht = []
 ha_pt0 = []
@@ -362,7 +390,12 @@ ha_jetrhoAK8 = []
 ha_jetareaAK8 = []
 ha_subjetDRAK8 = []
 ha_jetzAK8 = []
-
+ha_nhfAK8 = []
+ha_chfAK8 = []
+ha_nefAK8 = []
+ha_cefAK8 = []
+ha_ncAK8 = []
+ha_nchAK8 = []
 
 for itrig,trig in enumerate( trigsToGet ) :
     ha_ht.append ( ROOT.TH1F( trig + "_ht", "H_{T}, " + trig + ";H_{T} (GeV))", 150, 0, 1500))
@@ -381,6 +414,12 @@ for itrig,trig in enumerate( trigsToGet ) :
     ha_jetareaAK8.append ( ROOT.TH1F( trig + "_jetareaAK8", "AK8 Jet Area, " + trig + ";Jet Area", 100, 0, 6.28))
     ha_subjetDRAK8.append ( ROOT.TH1F( trig + "_subjetDRAK8", "#Delta R between subjets, " + trig + ";#Delta R", 100, 0, 6.28))
     ha_jetzAK8.append ( ROOT.TH1F( trig + "_jetzAK8", "Jet z, " + trig + ";z", 100, 0.0, 1.0))
+    ha_nhfAK8.append( ROOT.TH1F( trig + "_nhfAK8", "AK8 Neutral hadron fraction;NHF", 100, 0, 1.0) )
+    ha_chfAK8.append( ROOT.TH1F( trig + "_chfAK8", "AK8 Charged hadron fraction;CHF", 100, 0, 1.0) )
+    ha_nefAK8.append( ROOT.TH1F( trig + "_nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) )
+    ha_cefAK8.append( ROOT.TH1F( trig + "_cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) )
+    ha_ncAK8.append( ROOT.TH1F( trig + "_ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) )
+    ha_nchAK8.append( ROOT.TH1F( trig + "_nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) )    
 
 #@ JET CORRECTIONS
 
@@ -505,6 +544,19 @@ for ifile in files : #{ Loop over root files
         trigMap = {}
         ipt0 = None
 
+        # Speed up processing by preselecting an AK8 jet with high pt
+        gotAK8 = event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
+
+        if gotAK8 == False :
+            continue
+        jetPtAK8 = h_jetsAK8Pt.product()
+        if len( jetPtAK8) < 1 :
+            continue
+        if options.speedyPtMin != None : 
+            if jetPtAK8[0] < options.speedyPtMin :
+                continue
+
+                
         if options.applyFilters and readFilters :
             cscFilt = False
             vertexFilt = False
@@ -566,16 +618,19 @@ for ifile in files : #{ Loop over root files
             gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
             gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )
             gotit4 = event.getByLabel ( l_jetsAK4Pt, h_jetsAK4Pt )
+            
 
             jetPtAK4 = h_jetsAK4Pt.product()
             ht = 0.0
             for iak4,ak4pt in enumerate(jetPtAK4):
                 ht += ak4pt
-
+                
             if len(jetPtAK4) < 1 :
                 continue
             pt0 = jetPtAK4[0]
 
+
+            
             ## if currRun != lastRun :
             ##     lastRun = currRun
             ##     fixTrigMap( trigMap, h_filterNameStrings )
@@ -606,13 +661,13 @@ for ifile in files : #{ Loop over root files
                     if triggerBits[itrig] == 1 :
                         
                         if options.verbose : 
-                            print 'Passed trigger : ' + triggerNameStrings[itrig]
+                            print '    Passed trigger                : ' + triggerNameStrings[itrig]
                         if triggerPrescales[itrig] == 1.0 :
                             unprescaled = True
                         prescale = prescale * triggerPrescales[itrig]
                     else :
                         if options.verbose :
-                            print '    (found trigger name but failed) : ' + triggerNameStrings[itrig]
+                            print '    found trigger name but failed : ' + triggerNameStrings[itrig]
 
             if not readTriggers :
                 if options.verbose :
@@ -697,9 +752,9 @@ for ifile in files : #{ Loop over root files
         ###################################################################
 
         #EVENT AK8 HANDLES
-
+        # event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt ) got this above to speed things up
+        
         event.getByLabel ( l_jetsAK8Eta, h_jetsAK8Eta )
-        event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
         event.getByLabel ( l_jetsAK8Phi, h_jetsAK8Phi )
         event.getByLabel ( l_jetsAK8Mass, h_jetsAK8Mass )
         event.getByLabel ( l_jetsAK8Energy, h_jetsAK8Energy )
@@ -782,11 +837,17 @@ for ifile in files : #{ Loop over root files
             AK8SubJetsEta = h_subjetsAK8Eta.product()
             AK8SubJetsPhi = h_subjetsAK8Phi.product()
             AK8SubJetsMass = h_subjetsAK8Mass.product()            
-        
-        for i in range(0,len(h_jetsAK8Pt.product())):#{ Loop over AK8 Jets
+
+        if options.maxjets == None :
+            maxjets = len(h_jetsAK8Pt.product())
+        else :
+            maxjets = options.maxjets
+                          
+        for i in range(0,maxjets):#{ Loop over AK8 Jets
 
             if options.verbose :
                 print 'AK8 jet ' + str(i)
+
 
             AK8JECFromB2GAnaFW = AK8JEC[i]   
             AK8P4Raw = ROOT.TLorentzVector()
@@ -849,6 +910,11 @@ for ifile in files : #{ Loop over root files
                 sp4_1.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )
 
 
+            if  AK8P4Corr.Perp() < options.minAK8JetPt :
+                continue
+
+
+                        
             h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
             h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
             h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )
@@ -859,6 +925,12 @@ for ifile in files : #{ Loop over root files
             h_mtrimmedAK8.Fill( AK8TrimmedM[i], evWeight  )
             h_jetareaAK8.Fill( AK8Area[i], evWeight )
             h_tau21AK8.Fill( tau21, evWeight )
+            h_nhfAK8.Fill( nhf, evWeight )
+            h_chfAK8.Fill( chf, evWeight )
+            h_nefAK8.Fill( nef, evWeight )
+            h_cefAK8.Fill( cef, evWeight )
+            h_ncAK8.Fill( nconstituents, evWeight )
+            h_nchAK8.Fill( nch, evWeight )
 
 
             if ipt0 != None and ipt0 >= 0 : 
@@ -871,7 +943,13 @@ for ifile in files : #{ Loop over root files
                 ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i], evWeight  )
                 ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i], evWeight  )
                 ha_jetareaAK8[ipt0].Fill( AK8Area[i], evWeight )
-                ha_tau21AK8[ipt0].Fill( tau21, evWeight )            
+                ha_tau21AK8[ipt0].Fill( tau21, evWeight )
+                ha_nhfAK8[ipt0].Fill( nhf, evWeight )
+                ha_chfAK8[ipt0].Fill( chf, evWeight )
+                ha_nefAK8[ipt0].Fill( nef, evWeight )
+                ha_cefAK8[ipt0].Fill( cef, evWeight )
+                ha_ncAK8[ipt0].Fill( nconstituents, evWeight )
+                ha_nchAK8[ipt0].Fill( nch, evWeight )                
                 
             if sp4_0 == None or sp4_1 == None :
                 AK8Rho.append(-1.0)
