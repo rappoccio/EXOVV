@@ -23,6 +23,19 @@ parser.add_option('--outname', type='string', action='store',
                   help='Output string for output file')
 
 
+parser.add_option('--dir', type='string', action='store',
+                  dest='dir',
+                  default = "hists",
+                  help='Directory containing root histograms')
+
+
+parser.add_option('--rebin', type='int', action='store',
+                  dest='rebin',
+                  default = None,
+                  help='Rebin if desired')
+
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -36,7 +49,7 @@ ROOT.gROOT.Macro("rootlogon.C")
 
 #### Data
 
-f = ROOT.TFile(options.file)
+f = ROOT.TFile(options.dir + '/' + options.file)
 trigs = [
 #    'HLT_PFJet60',
 #    'HLT_PFJet80',
@@ -86,12 +99,12 @@ mcscales = [
 
 fmc = []
 for imc,mcname in enumerate(fmcNames) :
-    fmc.append( ROOT.TFile(mcname + options.mcname + '.root') )
+    fmc.append( ROOT.TFile(options.dir + '/' + mcname + options.mcname + '.root') )
     
 
-logy = [ True, False, True, True, True, True, True, True, False, False, False]#,False,False,False,False,False, ]
+logy = [ True, False, True, True, True, True, True, True, False, False, False,False,False,False,False,False, ]
 
-hists = ['ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8']#, 'nhfAK8', 'chfAK8', 'nefAK8', 'cefAK8', 'ncAK8', 'nchAK8']
+hists = ['ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8', 'nhfAK8', 'chfAK8', 'nefAK8', 'cefAK8', 'ncAK8', 'nchAK8']
 titles = [
     'AK8 p_{T};p_{T} (GeV)',
     'AK8 Rapidity;y',
@@ -126,7 +139,14 @@ for ihist,histname in enumerate(hists):
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     for imc,mc in enumerate(fmc) :
-        hist = mc.Get( histname )
+        # I'm an idiot and named the trigger histograms differently from the MC ones
+        if 'nhfAK8' in histname or 'chfAK8' in histname or 'nefAK8' in histname or 'cefAK8' in histname or 'ncAK8' in histname or 'nchAK8' in histname :            
+            hist = mc.Get( 'h_' + histname )
+        else :
+            hist = mc.Get( histname )
+        print 'Getting MC : ' + histname
+        if options.rebin != None :
+            hist.Rebin( options.rebin )
         hist.Scale( mcscales[imc] )
         mcstack.Add( hist)
         
@@ -136,10 +156,15 @@ for ihist,histname in enumerate(hists):
         hist = f.Get( s )
         hist.SetMarkerStyle(20)
         hist.Scale( scales[itrig] )
+        if options.rebin != None :
+            hist.Rebin( options.rebin )
         stack.Add( hist )
         leg.AddEntry( hist, trigname, 'f')
-    mcstack.GetStack().Last().Draw('hist')
+
+    stack.GetStack().Last().Draw('e')
+    mcstack.GetStack().Last().Draw('hist same')
     stack.GetStack().Last().Draw('e same')
+
     
     if logy[ihist] : 
         canv.SetLogy()
