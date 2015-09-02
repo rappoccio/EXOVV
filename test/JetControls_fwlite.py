@@ -367,12 +367,12 @@ h_jetrhoAK8 = ROOT.TH1F("jetrhoAK8", "AK8 Jet #rho=#frac{m}{p_{T} R};Jet #rho", 
 h_jetareaAK8 = ROOT.TH1F("jetareaAK8", "AK8 Jet Area;Jet Area", 100, 0, 6.28)
 h_subjetDRAK8 = ROOT.TH1F("subjetDRAK8", "#Delta R between subjets;#Delta R", 100, 0, 6.28)
 h_jetzAK8 = ROOT.TH1F("jetzAK8", "Jet z;z", 100, 0.0, 1.0)
-h_nhfAK8 = ROOT.TH1F("h_nhfAK8", "AK8 Neutral hadron fraction;NHF", 100, 0, 1.0) 
-h_chfAK8 = ROOT.TH1F("h_chfAK8", "AK8 Charged hadron fraction;CHF", 100, 0, 1.0) 
-h_nefAK8 = ROOT.TH1F("h_nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) 
-h_cefAK8 = ROOT.TH1F("h_cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) 
-h_ncAK8 = ROOT.TH1F("h_ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) 
-h_nchAK8 = ROOT.TH1F("h_nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) 
+h_nhfAK8 = ROOT.TH1F("nhfAK8", "AK8 Neutral hadron fraction;NHF", 100, 0, 1.0) 
+h_chfAK8 = ROOT.TH1F("chfAK8", "AK8 Charged hadron fraction;CHF", 100, 0, 1.0) 
+h_nefAK8 = ROOT.TH1F("nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) 
+h_cefAK8 = ROOT.TH1F("cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) 
+h_ncAK8 = ROOT.TH1F("ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) 
+h_nchAK8 = ROOT.TH1F("nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) 
 
 ha_ht = []
 ha_pt0 = []
