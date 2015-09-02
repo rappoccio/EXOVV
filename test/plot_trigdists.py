@@ -34,7 +34,7 @@ f = ROOT.TFile(options.file)
 trigs = [
 #    'HLT_PFJet60',
 #    'HLT_PFJet80',
-#    'HLT_PFJet140',
+    'HLT_PFJet140',
     'HLT_PFJet200',
     'HLT_PFJet260',
     'HLT_PFJet320',
@@ -44,11 +44,10 @@ trigs = [
     ]
 
 scales = [
-    #2000,
-    66, 12, 4, 1, 1, 1
+    2000,66, 12, 4, 1, 1, 1
     ]
 colors = [ #ROOT.kRed + 1,
-            ROOT.kWhite, ROOT.kRed - 10, ROOT.kRed - 9, ROOT.kRed - 7, ROOT.kRed - 4, ROOT.kRed     ]
+            ROOT.kWhite, ROOT.kRed - 10, ROOT.kRed - 9, ROOT.kRed - 7, ROOT.kRed - 4, ROOT.kRed, ROOT.kRed + 1,    ]
 
 logy = [ True, True, False, True, True, True, True, True, True, False, False ]
 palette = [0, 2]
@@ -97,5 +96,5 @@ for ihist,histname in enumerate(hists):
     canvs.append(canv)
     stacks.append(stack)
     legs.append(leg)
-    canv.Print( histname + '.png', 'png')
-    canv.Print( histname + '.pdf', 'pdf')
+    canv.Print( 'jetplots_' + histname + '.png', 'png')
+    canv.Print( 'jetplots_' + histname + '.pdf', 'pdf')
