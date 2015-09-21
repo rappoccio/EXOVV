@@ -18,6 +18,18 @@ parser.add_option('--outname', type='string', action='store',
                   default = "jetht",
                   help='Output string for output file')
 
+parser.add_option('--dir', type='string', action='store',
+                  dest='dir',
+                  default = "hists",
+                  help='Directory containing root histograms')
+
+
+
+parser.add_option('--rebin', type='int', action='store',
+                  dest='rebin',
+                  default = None,
+                  help='Rebin if desired')
+
 
 (options, args) = parser.parse_args()
 argv = []
@@ -30,7 +42,7 @@ import sys
 ROOT.gROOT.Macro("rootlogon.C")
 
 
-f = ROOT.TFile(options.file)
+f = ROOT.TFile(options.dir + '/' + options.file)
 trigs = [
 #    'HLT_PFJet60',
 #    'HLT_PFJet80',
@@ -84,6 +96,8 @@ for ihist,histname in enumerate(hists):
         print 'Getting ' + s
         hist = f.Get( s )
         hist.SetFillColor( colors[itrig] )
+        if options.rebin != None :
+            hist.Rebin( options.rebin )
         hist.Scale( scales[itrig] )
         stack.Add( hist )
         leg.AddEntry( hist, trigname, 'f')
@@ -96,5 +110,5 @@ for ihist,histname in enumerate(hists):
     canvs.append(canv)
     stacks.append(stack)
     legs.append(leg)
-    canv.Print( 'jetplots_' + histname + '.png', 'png')
-    canv.Print( 'jetplots_' + histname + '.pdf', 'pdf')
+    canv.Print( 'trigplots_' + histname + '.png', 'png')
+    canv.Print( 'trigplots_' + histname + '.pdf', 'pdf')

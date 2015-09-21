@@ -18,6 +18,18 @@ parser.add_option('--outname', type='string', action='store',
                   help='Output string for output file')
 
 
+parser.add_option('--dir', type='string', action='store',
+                  dest='dir',
+                  default = "hists",
+                  help='Directory containing root histograms')
+
+
+parser.add_option('--rebin', type='int', action='store',
+                  dest='rebin',
+                  default = None,
+                  help='Rebin if desired')
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -61,7 +73,7 @@ mcscales = [
 
 fmc = []
 for imc,mcname in enumerate(fmcNames) :
-    fmc.append( ROOT.TFile(mcname + options.mcname + '.root') )
+    fmc.append( ROOT.TFile(options.dir + '/' + mcname + options.mcname + '.root') )
     
 
 
@@ -100,6 +112,8 @@ for ihist,histname in enumerate(hists):
     leg.SetBorderSize(0)
     for imc,mc in enumerate(fmc) :
         hist = mc.Get( histname )
+        if options.rebin != None :
+            hist.Rebin( options.rebin ) 
         hist.Scale( mcscales[imc] )
         hist.SetFillColor( colors[imc] )
         mcstack.Add( hist)
@@ -113,5 +127,5 @@ for ihist,histname in enumerate(hists):
     canvs.append(canv)
     stacks.append(mcstack)
     legs.append(leg)
-    canv.Print( 'mcplots_' + histname + '.png', 'png')
-    canv.Print( 'mcplots_' + histname + '.pdf', 'pdf')
+    canv.Print( 'mcplots_' + histname + options.mcname + '.png', 'png')
+    canv.Print( 'mcplots_' + histname + options.mcname + '.pdf', 'pdf')
