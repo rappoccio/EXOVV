@@ -225,14 +225,15 @@ ptTrigsToGet = [
     'HLT_PFJet500' 
     ]
     
-htcuts = [200., 250., 300., 350., 400., 475., 600., 650., 800.]
+htcuts = [#200., 250., 300.,
+          480., 540., 680., 750., 900.]
 htcutsa = array.array('d', htcuts)
 htcutsa.append( 7000. )
 htTrigsToGet = [
-    'HLT_PFHT200',
-    'HLT_PFHT250',
-    'HLT_PFHT300',
-    'HLT_PFHT350',
+    #'HLT_PFHT200',
+    #'HLT_PFHT250',
+    #'HLT_PFHT300',
+    #'HLT_PFHT350',
     'HLT_PFHT400',
     'HLT_PFHT475',
     'HLT_PFHT600',
