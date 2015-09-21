@@ -29,6 +29,11 @@ parser.add_option('--verbose', action='store_true',
                   dest='verbose',
                   help='Print debugging info')
 
+parser.add_option('--isData', action='store_true',
+                  default=False,
+                  dest='isData',
+                  help='Run on Data?')
+
 
 parser.add_option('--deweightFlat', action='store_true',
                   default=False,
@@ -173,6 +178,24 @@ parser.add_option('--applyTriggers', action='store_true',
                   dest='applyTriggers',
                   help='Apply triggers')
 
+
+
+parser.add_option('--signalTriggers', action='store_true',
+                  default=False,
+                  dest='signalTriggers',
+                  help='Apply only "signal" triggers with prescale = 1')
+
+parser.add_option('--speedyHtMin', type='float', action='store',
+                  default=None,
+                  dest='speedyHtMin',
+                  help='Minimum AK8 Jet HT from whatever is in the ntuple to make it faster')
+
+parser.add_option('--htMin', type='float', action='store',
+                  default=None,
+                  dest='htMin',
+                  help='Minimum AK8 Jet HT with right jet corrections')
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -188,16 +211,59 @@ import copy
 import random
 
 
-def trigHelper( ht, trigs ) :
-    htcuts = [0., 200., 250., 300., 350., 400., 475., 600., 650., 800.]
+
+pt0cuts = [150., 200., 300., 400., 500., 600., 700., 800. ]
+ptTrigsToGet = [
+#    'HLT_PFJet60',
+    'HLT_PFJet80',
+    'HLT_PFJet140',
+    'HLT_PFJet200',
+    'HLT_PFJet260',
+    'HLT_PFJet320',
+    'HLT_PFJet400',
+    'HLT_PFJet450',
+    'HLT_PFJet500' 
+    ]
+    
+htcuts = [200., 250., 300., 350., 400., 475., 600., 650., 800.]
+htTrigsToGet = [
+    'HLT_PFHT200',
+    'HLT_PFHT250',
+    'HLT_PFHT300',
+    'HLT_PFHT350',
+    'HLT_PFHT400',
+    'HLT_PFHT475',
+    'HLT_PFHT600',
+    'HLT_PFHT650',
+    'HLT_PFHT800'
+    ]
+
+
+trigsToGet = htTrigsToGet
+
+
+    
+def trigHelperPt( pt0, trigs ) :
+
+    if pt0 < pt0cuts[0] :
+        return False, None
+    
+    npt0cuts = len( pt0cuts )
+    ipt0 = 0
+    for ipt0 in xrange( npt0cuts-1, 0, -1) :
+        if pt0 > pt0cuts[ipt0] :
+            break
+    ipass = trigs[ipt0]
+    return ipass, ipt0
+
+def trigHelperHT( ht, trigs ) :    
     nhtcuts = len( htcuts )
     iht = 0
-    while ht < htcuts[iht] and iht < nhtcuts :
-        iht += 1
-    if iht >= nhtcuts - 1 :
-        iht = nhtcuts - 1
+    for iht in xrange( nhtcuts-1,0,-1) :
+        if ht > htcuts[iht] :
+            break
     ipass = trigs[iht]
-    return ipass
+    return ipass, iht
     
     
               
@@ -560,43 +626,79 @@ ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 #jecParStrAK8 = ROOT.std.string('JECs/PHYS14_25_V2_AK8PFchs.txt')
 #jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
-print 'Getting L3 for AK4'
-L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L3Absolute_AK4PFchs.txt");
-print 'Getting L2 for AK4'
-L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L2Relative_AK4PFchs.txt");
-print 'Getting L1 for AK4'
-L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L1FastJet_AK4PFchs.txt");
-# for data only :
-#ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L2L3Residual_AK4PFchs.txt");
-
-print 'Getting L3 for AK8'
-L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L3Absolute_AK8PFchs.txt");
-print 'Getting L2 for AK8'
-L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L2Relative_AK8PFchs.txt");
-print 'Getting L1 for AK8'
-L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L1FastJet_AK8PFchs.txt");
-# for data only :
-#ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/PHYS14_25_V2_L2L3Residual_AK8PFchs.txt"); 
 
 
-#  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
-vParJecAK4 = ROOT.vector('JetCorrectorParameters')()
-vParJecAK4.push_back(L1JetParAK4)
-vParJecAK4.push_back(L2JetParAK4)
-vParJecAK4.push_back(L3JetParAK4)
-# for data only :
-#vParJecAK4.push_back(ResJetPar)
+if options.isData :
+    print 'Getting L3 for AK4'
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK4PFchs.txt");
+    print 'Getting L2 for AK4'
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK4PFchs.txt");
+    print 'Getting L1 for AK4'
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK4PFchs.txt");
+    # for data only :
+    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK4PFchs.txt");
 
-ak4JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK4)
+    print 'Getting L3 for AK8'
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK8PFchs.txt");
+    print 'Getting L2 for AK8'
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK8PFchs.txt");
+    print 'Getting L1 for AK8'
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK8PFchs.txt");
+    # for data only :
+    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK8PFchs.txt"); 
 
-vParJecAK8 = ROOT.vector('JetCorrectorParameters')()
-vParJecAK8.push_back(L1JetParAK8)
-vParJecAK8.push_back(L2JetParAK8)
-vParJecAK8.push_back(L3JetParAK8)
-# for data only :
-#vParJecAK8.push_back(ResJetPar)
+    #  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+    vParJecAK4 = ROOT.vector('JetCorrectorParameters')()
+    vParJecAK4.push_back(L1JetParAK4)
+    vParJecAK4.push_back(L2JetParAK4)
+    vParJecAK4.push_back(L3JetParAK4)
+    vParJecAK4.push_back(ResJetParAK4)
 
-ak8JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK8)
+    ak4JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK4)
+
+    vParJecAK8 = ROOT.vector('JetCorrectorParameters')()
+    vParJecAK8.push_back(L1JetParAK8)
+    vParJecAK8.push_back(L2JetParAK8)
+    vParJecAK8.push_back(L3JetParAK8)
+    vParJecAK8.push_back(ResJetParAK8)
+
+    ak8JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK8)
+
+else : 
+    print 'Getting L3 for AK4'
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK4PFchs.txt");
+    print 'Getting L2 for AK4'
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK4PFchs.txt");
+    print 'Getting L1 for AK4'
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK4PFchs.txt");
+    # for data only :
+    #ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2L3Residual_AK4PFchs.txt");
+
+    print 'Getting L3 for AK8'
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK8PFchs.txt");
+    print 'Getting L2 for AK8'
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK8PFchs.txt");
+    print 'Getting L1 for AK8'
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK8PFchs.txt");
+    # for data only :
+    #ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2L3Residual_AK8PFchs.txt"); 
+
+    #  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
+    vParJecAK4 = ROOT.vector('JetCorrectorParameters')()
+    vParJecAK4.push_back(L1JetParAK4)
+    vParJecAK4.push_back(L2JetParAK4)
+    vParJecAK4.push_back(L3JetParAK4)
+
+
+    ak4JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK4)
+
+    vParJecAK8 = ROOT.vector('JetCorrectorParameters')()
+    vParJecAK8.push_back(L1JetParAK8)
+    vParJecAK8.push_back(L2JetParAK8)
+    vParJecAK8.push_back(L3JetParAK8)
+
+
+    ak8JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK8)
 
 
 #@ EVENT LOOP
@@ -661,6 +763,17 @@ for ifile in files : #{ Loop over root files
         nevents += 1
         cutflow[0] += 1
 
+
+        # Speedy cuts. Make things go faster.
+        event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
+        AK8Pt = h_jetsAK8Pt.product()
+        ht = 0.
+        for ipt,pt in enumerate(AK8Pt) :
+            ht += pt
+        if options.speedyHtMin != None :
+            if ht < options.speedyHtMin :
+                continue
+            
 
         ###################################################################
         # Event quantities.
@@ -738,10 +851,6 @@ for ifile in files : #{ Loop over root files
             gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
             gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )
 
-
-            if currRun != lastRun :
-                lastRun = currRun
-                fixTrigMap( trigMap, h_filterNameStrings )
             
             
             if options.verbose :
@@ -754,33 +863,52 @@ for ifile in files : #{ Loop over root files
             triggerNameStrings = h_triggerNameStrings.product()
             triggerBits = h_triggerBits.product()
             triggerPrescales = h_triggerPrescales.product()            
-            
+
+            nSelectedTriggersPassed = 0
             for itrig in xrange(0, len(triggerNameStrings) ) :
-                #print triggerNameStrings[itrig]
-                if "HLT_AK4PFJet" in triggerNameStrings[itrig] \
-                  or "HLT_PFHT" in triggerNameStrings[itrig] \
-                  or "HLT_HT" in triggerNameStrings[itrig] :
+                # Our triggers are named "PFHT", but there are other "PFHT" triggers that have Jet requirements.
+                # We don't want those, so we veto them. 
+                if "HLT_PFHT" in triggerNameStrings[itrig] and 'Jet' not in triggerNameStrings[itrig] :  
+                    for itrigToGet, trigToGet in enumerate(trigsToGet) : 
+                        if trigToGet in triggerNameStrings[itrig] :
+                            trigIndex = itrigToGet
+                            trigMap[ itrigToGet ] = int(triggerBits[itrig])
+                            if triggerBits[itrig] == 1 :
+                                nSelectedTriggersPassed += 1
+
                     if triggerBits[itrig] == 1 :
+                        
                         if options.verbose : 
-                            print 'Passed trigger : ' + triggerNameStrings[itrig]
+                            print '    Passed trigger                : ' + triggerNameStrings[itrig]
                         if triggerPrescales[itrig] == 1.0 :
                             unprescaled = True
                         prescale = prescale * triggerPrescales[itrig]
                     else :
                         if options.verbose :
-                            print '    (found trigger name but failed) : ' + triggerNameStrings[itrig]
-
+                            print '    found trigger name but failed : ' + triggerNameStrings[itrig]
+                            
             if not readTriggers :
                 if options.verbose :
                     print 'Did not find triggers'
                 continue
 
-            passTrig = trigHelper( ht, trigMap )
+            if nSelectedTriggersPassed == 0 :
+                if options.verbose :
+                    print 'No selected triggers passed'
+                continue
+
+            passTrig,iht = trigHelperHT( ht, trigMap )
+            if options.verbose : 
+                print 'Check : ht = ' + str(ht) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
 
             if unprescaled :
                 prescale = 1.0
             if options.verbose :
                 print 'Prescale = ' + str(prescale)
+
+            if options.signalTriggers != None and options.signalTriggers == True :
+                if not unprescaled :
+                    continue
                 
             evWeight = evWeight * prescale
             if passTrig == False :
@@ -993,7 +1121,7 @@ for ifile in files : #{ Loop over root files
         #EVENT AK8 HANDLES
 
         event.getByLabel ( l_jetsAK8Eta, h_jetsAK8Eta )
-        event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
+        #event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )   # Got this above. Don't get it twice. 
         event.getByLabel ( l_jetsAK8Phi, h_jetsAK8Phi )
         event.getByLabel ( l_jetsAK8Mass, h_jetsAK8Mass )
         event.getByLabel ( l_jetsAK8Energy, h_jetsAK8Energy )
@@ -1040,7 +1168,7 @@ for ifile in files : #{ Loop over root files
         AK8Rho = []
 
         if len( h_jetsAK8Pt.product()) > 0 : 
-            AK8Pt = h_jetsAK8Pt.product()
+            #AK8Pt = h_jetsAK8Pt.product()   # Got this earlier, don't get it twice. 
             AK8Eta = h_jetsAK8Eta.product()
             AK8Phi = h_jetsAK8Phi.product()
             AK8Mass = h_jetsAK8Mass.product()
@@ -1078,7 +1206,8 @@ for ifile in files : #{ Loop over root files
             AK8SubJetsPhi = h_subjetsAK8Phi.product()
             AK8SubJetsMass = h_subjetsAK8Mass.product()
 
-            
+
+        htCorr = 0.
         for i in range(0,len(h_jetsAK8Pt.product())):#{ Loop over AK8 Jets
 
             if options.verbose :
@@ -1160,6 +1289,7 @@ for ifile in files : #{ Loop over root files
                     AK8P4Raw.Perp(), AK8P4Raw.Rapidity(), AK8P4Raw.Phi(), AK8P4Raw.M()
                     )
 
+            htCorr += AK8P4Corr.Perp()
 
 
                 
@@ -1207,6 +1337,8 @@ for ifile in files : #{ Loop over root files
                 )
 
 
+        if options.htMin != None and htCorr < options.htMin :
+            continue
         ###################################################################
         # Leptonic boson selection
         ###################################################################
