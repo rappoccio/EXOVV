@@ -209,7 +209,7 @@ ROOT.gROOT.Macro("rootlogon.C")
 ROOT.gSystem.Load("libAnalysisPredictedDistribution")
 import copy
 import random
-
+import array
 
 
 pt0cuts = [150., 200., 300., 400., 500., 600., 700., 800. ]
@@ -226,6 +226,8 @@ ptTrigsToGet = [
     ]
     
 htcuts = [200., 250., 300., 350., 400., 475., 600., 650., 800.]
+htcutsa = array.array('d', htcuts)
+htcutsa.append( 7000. )
 htTrigsToGet = [
     'HLT_PFHT200',
     'HLT_PFHT250',
@@ -528,12 +530,15 @@ h_met = [ ROOT.TH1F("h0_met", "Missing p_{T}, Dilepton Channel;p_{T} (GeV)", 100
           ROOT.TH1F("h2_met", "Missing p_{T}, Hadronic Channel;p_{T} (GeV)", 100, 0, 1000),
           ]
 
-
 h_vPt = [ ROOT.TH1F("h0_vPt", "Boson p_{T}, Dilepton Channel;p_{T} (GeV)", 100, 0, 1000),
           ROOT.TH1F("h1_vPt", "Boson p_{T}, Leptonic Channel;p_{T} (GeV)", 100, 0, 1000),
           ROOT.TH1F("h2_vPt", "Boson p_{T}, Hadronic Channel;p_{T} (GeV)", 100, 0, 1000),
           ]
-    
+
+
+
+h_htAK4 = ROOT.TH1D("h2_htAK4", "H_{T}, AK4 jets, Hadronic Channel;H_{T} (GeV)", 100, 0, 1000)
+        
 h_ptAK8 = [ ROOT.TH1F("h0_ptAK8", "AK8 Jet p_{T}, Dilepton Channel;p_{T} (GeV)", 300, 0, 3000),
             ROOT.TH1F("h1_ptAK8", "AK8 Jet p_{T}, Leptonic Channel;p_{T} (GeV)", 300, 0, 3000),
             ROOT.TH1F("h2_ptAK8", "AK8 Jet p_{T}, Hadronic Channel;p_{T} (GeV)", 300, 0, 3000),
@@ -601,6 +606,20 @@ h_rhostar_tau21cut      =[
     ROOT.TH1D("h2_rhostar_tau21cut",      "Hadronic Channel;Jet #rho", 50, 0.0, 0.01),
     ]    
 
+    
+ha_ptAK8 = []
+ha_yAK8 = []
+ha_mAK8 = []
+ha_msoftdropAK8 = []
+ha_rho_all = []
+ha_htAK4 = []
+for itrig,trig in enumerate(htTrigsToGet) :
+    ha_htAK4.append( ROOT.TH1D("h2_htAK4_" + trig, "H_{T}, AK4 jets, Hadronic Channel, " + trig + ";H_{T} (GeV)", 100, 0, 1000))
+    ha_ptAK8.append( ROOT.TH1F("h2_ptAK8_" + trig, "AK8 Jet p_{T}, Hadronic Channel, " + trig + ";p_{T} (GeV)", 300, 0, 3000) )
+    ha_yAK8.append( ROOT.TH1F("h2_yAK8_" + trig, "AK8 Jet Rapidity, Hadronic Channel, " + trig + ";y", 120, -6, 6) )
+    ha_mAK8.append( ROOT.TH1F("h2_mAK8_" + trig, "AK8 Jet Mass, Hadronic Channel, " + trig + ";Mass (GeV)", 100, 0, 1000) )
+    ha_msoftdropAK8.append( ROOT.TH1F("h2_msoftdropAK8_" + trig, "AK8 Softdrop Jet Mass, Hadronic Channel, " + trig + ";Mass (GeV)", 100, 0, 1000) )
+    ha_rho_all.append( ROOT.TH1F("h2_rho_all_" + trig, "AK8 Jet #rho = (m/p_{T}R)^{2}, Hadronic Channel, " + trig + ";#rho", 100, 0, 1.0) )
 
 
 if options.makeMistag == False : 
@@ -875,6 +894,7 @@ for ifile in files : #{ Loop over root files
                             trigMap[ itrigToGet ] = int(triggerBits[itrig])
                             if triggerBits[itrig] == 1 :
                                 nSelectedTriggersPassed += 1
+                                ha_htAK4[itrigToGet].Fill( ht )
 
                     if triggerBits[itrig] == 1 :
                         
@@ -901,6 +921,11 @@ for ifile in files : #{ Loop over root files
             if options.verbose : 
                 print 'Check : ht = ' + str(ht) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
 
+
+            h_htAK4.Fill( ht, prescale )
+            
+
+                
             if unprescaled :
                 prescale = 1.0
             if options.verbose :
@@ -1499,6 +1524,13 @@ for ifile in files : #{ Loop over root files
                     h_rho_all[selection].Fill( sdrho0, evWeight )
                     h_rhostar_all[selection].Fill( sdrhostar0, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho0, tau21_0, evWeight )
+                    
+                    ha_ptAK8[iht].Fill( vHad0.Perp(), evWeight  )
+                    ha_yAK8[iht].Fill( vHad0.Rapidity(), evWeight  )
+                    ha_mAK8[iht].Fill( vHad0.M(), evWeight  )
+                    ha_msoftdropAK8[iht].Fill( sdm0, evWeight  )
+                    ha_rho_all[iht].Fill( sdrho0, evWeight )
+                    
                     printString += 'taggable 0'
                     if options.makeMistag == False : 
                         predJetRho.Accumulate( sdrho1, sdrho0, tagged0, evWeight )
@@ -1526,6 +1558,13 @@ for ifile in files : #{ Loop over root files
                     h_rho_all[selection].Fill( sdrho1, evWeight )
                     h_rhostar_all[selection].Fill( sdrhostar1, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho1, tau21_1, evWeight )
+
+                    ha_ptAK8[iht].Fill( vHad1.Perp(), evWeight  )
+                    ha_yAK8[iht].Fill( vHad1.Rapidity(), evWeight  )
+                    ha_mAK8[iht].Fill( vHad1.M(), evWeight  )
+                    ha_msoftdropAK8[iht].Fill( sdm1, evWeight  )
+                    ha_rho_all[iht].Fill( sdrho1, evWeight )
+                                        
                     printString += 'taggable 1'
                     if options.makeMistag == False : 
                         predJetRho.Accumulate( sdrho0, sdrho1, tagged1, evWeight )
