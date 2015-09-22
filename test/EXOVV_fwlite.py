@@ -185,6 +185,12 @@ parser.add_option('--signalTriggers', action='store_true',
                   dest='signalTriggers',
                   help='Apply only "signal" triggers with prescale = 1')
 
+parser.add_option('--useJetPtTrigs', action='store_true',
+                  default=False,
+                  dest='useJetPtTrigs',
+                  help='Use single jet triggers instead of HT')
+
+
 parser.add_option('--speedyHtMin', type='float', action='store',
                   default=None,
                   dest='speedyHtMin',
@@ -212,17 +218,20 @@ import random
 import array
 
 
-pt0cuts = [150., 200., 300., 400., 500., 600., 700., 800. ]
+# Old cuts : 
+#pt0cuts = [150., 200., 300., 400., 500., 600., 700., 800. ]
+# Updated cuts :
+pt0cuts = [150., 200., 240., 320., 380., 480., 540., 600. ]
 ptTrigsToGet = [
 #    'HLT_PFJet60',
-    'HLT_PFJet80',
-    'HLT_PFJet140',
-    'HLT_PFJet200',
-    'HLT_PFJet260',
-    'HLT_PFJet320',
-    'HLT_PFJet400',
-    'HLT_PFJet450',
-    'HLT_PFJet500' 
+    'HLT_PFJet80', # 150
+    'HLT_PFJet140',# 200
+    'HLT_PFJet200',# 240
+    'HLT_PFJet260',# 320
+    'HLT_PFJet320',# 380
+    'HLT_PFJet400',# 500
+    'HLT_PFJet450',# 540
+    'HLT_PFJet500' # 600
     ]
     
 htcuts = [#200., 250., 300.,
@@ -242,7 +251,10 @@ htTrigsToGet = [
     ]
 
 
-trigsToGet = htTrigsToGet
+if not options.useJetPtTrigs :
+    trigsToGet = htTrigsToGet
+else :
+    trigsToGet = ptTrigsToGet
 
 
     
@@ -613,9 +625,11 @@ ha_yAK8 = []
 ha_mAK8 = []
 ha_msoftdropAK8 = []
 ha_rho_all = []
-ha_htAK4 = []
-for itrig,trig in enumerate(htTrigsToGet) :
-    ha_htAK4.append( ROOT.TH1D("h2_htAK4_" + trig, "H_{T}, AK4 jets, Hadronic Channel, " + trig + ";H_{T} (GeV)", 100, 0, 1000))
+ha_htAK8 = []
+ha_pt0 = []
+for itrig,trig in enumerate(trigsToGet) :
+    ha_htAK8.append( ROOT.TH1D("h2_htAK8_" + trig, "H_{T}, AK4 jets, Hadronic Channel, " + trig + ";H_{T} (GeV)", 100, 0, 1000))
+    ha_pt0.append( ROOT.TH1F("h2_pt0_" + trig, "Leading AK8 Jet p_{T}, Hadronic Channel, " + trig + ";p_{T} (GeV)", 300, 0, 3000) )
     ha_ptAK8.append( ROOT.TH1F("h2_ptAK8_" + trig, "AK8 Jet p_{T}, Hadronic Channel, " + trig + ";p_{T} (GeV)", 300, 0, 3000) )
     ha_yAK8.append( ROOT.TH1F("h2_yAK8_" + trig, "AK8 Jet Rapidity, Hadronic Channel, " + trig + ";y", 120, -6, 6) )
     ha_mAK8.append( ROOT.TH1F("h2_mAK8_" + trig, "AK8 Jet Mass, Hadronic Channel, " + trig + ";Mass (GeV)", 100, 0, 1000) )
@@ -783,16 +797,83 @@ for ifile in files : #{ Loop over root files
         nevents += 1
         cutflow[0] += 1
 
+            
+        
+        #@ VERTEX SETS
+        event.getByLabel( l_NPV, h_NPV )
+        NPV = h_NPV.product()[0]
+        if len(h_NPV.product()) == 0 :
+            if options.verbose :
+                print "Event has no good primary vertex."
+            continue
+        cutflow[1] += 1
+            
+        #@ RHO VALUE        
+        gotrho = event.getByLabel( l_rho, h_rho )
+        if gotrho == False : 
+            print "Event has no rho values."
+            continue
+        if len(h_rho.product()) == 0 :
+            print "Event has no rho values."
+            continue
+        else:
+            rho = h_rho.product()[0]
+            if options.verbose :
+                print 'rho = {0:6.2f}'.format( rho )
+
+
+                
 
         # Speedy cuts. Make things go faster.
         event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
+        event.getByLabel ( l_jetsAK8Eta, h_jetsAK8Eta )
+        event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
+        event.getByLabel ( l_jetsAK8Phi, h_jetsAK8Phi )
+        event.getByLabel ( l_jetsAK8Mass, h_jetsAK8Mass )
+        event.getByLabel ( l_jetsAK8Energy, h_jetsAK8Energy )
+        event.getByLabel ( l_jetsAK8JEC, h_jetsAK8JEC )
+        event.getByLabel ( l_jetsAK8Area, h_jetsAK8Area )
         AK8Pt = h_jetsAK8Pt.product()
+        AK8Eta = h_jetsAK8Eta.product()
+        AK8Phi = h_jetsAK8Phi.product()
+        AK8Mass = h_jetsAK8Mass.product()
+        AK8Energy = h_jetsAK8Energy.product()
+        AK8JEC = h_jetsAK8JEC.product()
+        AK8Area = h_jetsAK8Area.product()
+
+        ak8JetsP4Corr = []
+        ak8JetsP4Raw = []
+        
         ht = 0.
+        # Need to uncorrect and re-correct the jets with latest/greatest
+        # JEC's. This almost always has to be done so might as well just always do it. 
         for ipt,pt in enumerate(AK8Pt) :
+
+            AK8JECFromB2GAnaFW = AK8JEC[ipt]   
+            AK8P4Raw = ROOT.TLorentzVector()
+            AK8P4Raw.SetPtEtaPhiM( AK8Pt[ipt] , AK8Eta[ipt], AK8Phi[ipt], AK8Mass[ipt])
+            # Remove the old JEC's to get raw energy
+            AK8P4Raw *= AK8JECFromB2GAnaFW            
+            ak8JetsP4Raw.append( AK8P4Raw )
+
+
+            #@ JEC Scaling for AK8 Jets
+            ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
+            ak8JetCorrector.setJetPt ( AK8P4Raw.Perp() )
+            ak8JetCorrector.setJetE  ( AK8P4Raw.E() )
+            ak8JetCorrector.setJetA  ( AK8Area[ipt] )
+            ak8JetCorrector.setRho   ( rho )
+            ak8JetCorrector.setNPV   ( NPV )
+            newJEC = ak8JetCorrector.getCorrection()
+            AK8P4Corr = AK8P4Raw*newJEC
+            ak8JetsP4Corr.append( AK8P4Corr )                        
             ht += pt
+            
         if options.speedyHtMin != None :
             if ht < options.speedyHtMin :
                 continue
+
+        pt0 = ak8JetsP4Corr[0].Perp()
             
 
         ###################################################################
@@ -886,28 +967,54 @@ for ifile in files : #{ Loop over root files
 
             nSelectedTriggersPassed = 0
             for itrig in xrange(0, len(triggerNameStrings) ) :
-                # Our triggers are named "PFHT", but there are other "PFHT" triggers that have Jet requirements.
-                # We don't want those, so we veto them. 
-                if "HLT_PFHT" in triggerNameStrings[itrig] and 'Jet' not in triggerNameStrings[itrig] :  
-                    for itrigToGet, trigToGet in enumerate(trigsToGet) : 
-                        if trigToGet in triggerNameStrings[itrig] :
-                            trigIndex = itrigToGet
-                            trigMap[ itrigToGet ] = int(triggerBits[itrig])
-                            if triggerBits[itrig] == 1 :
-                                nSelectedTriggersPassed += 1
-                                ha_htAK4[itrigToGet].Fill( ht )
 
-                    if triggerBits[itrig] == 1 :
-                        
-                        if options.verbose : 
-                            print '    Passed trigger                : ' + triggerNameStrings[itrig]
-                        if triggerPrescales[itrig] == 1.0 :
-                            unprescaled = True
-                        prescale = prescale * triggerPrescales[itrig]
-                    else :
-                        if options.verbose :
-                            print '    found trigger name but failed : ' + triggerNameStrings[itrig]
-                            
+                if not options.useJetPtTrigs : 
+                    # Our triggers are named "PFHT", but there are other "PFHT" triggers that have Jet requirements.
+                    # We don't want those, so we veto them. 
+                    if "HLT_PFHT" in triggerNameStrings[itrig] and 'Jet' not in triggerNameStrings[itrig] :  
+                        for itrigToGet, trigToGet in enumerate(trigsToGet) : 
+                            if trigToGet in triggerNameStrings[itrig] :
+                                trigIndex = itrigToGet
+                                trigMap[ itrigToGet ] = int(triggerBits[itrig])
+                                if triggerBits[itrig] == 1 :
+                                    nSelectedTriggersPassed += 1
+                                    ha_htAK8[itrigToGet].Fill( ht )
+
+
+                        if triggerBits[itrig] == 1 :
+
+                            if options.verbose : 
+                                print '    Passed trigger                : ' + triggerNameStrings[itrig]
+                            if triggerPrescales[itrig] == 1.0 :
+                                unprescaled = True
+                            prescale = prescale * triggerPrescales[itrig]
+                        else :
+                            if options.verbose :
+                                print '    found trigger name but failed : ' + triggerNameStrings[itrig]
+
+                else :
+                    if "HLT_PFJet" in triggerNameStrings[itrig] :  
+                        for itrigToGet, trigToGet in enumerate(trigsToGet) : 
+                            if trigToGet in triggerNameStrings[itrig] :
+                                trigIndex = itrigToGet
+                                trigMap[ itrigToGet ] = int(triggerBits[itrig])
+                                if triggerBits[itrig] == 1 :
+                                    nSelectedTriggersPassed += 1
+                                    ha_pt0[itrigToGet].Fill( pt0 )
+
+
+                        if triggerBits[itrig] == 1 :
+
+                            if options.verbose : 
+                                print '    Passed trigger                : ' + triggerNameStrings[itrig]
+                            if triggerPrescales[itrig] == 1.0 :
+                                unprescaled = True
+                            prescale = prescale * triggerPrescales[itrig]
+                        else :
+                            if options.verbose :
+                                print '    found trigger name but failed : ' + triggerNameStrings[itrig]
+
+                                                            
             if not readTriggers :
                 if options.verbose :
                     print 'Did not find triggers'
@@ -918,15 +1025,21 @@ for ifile in files : #{ Loop over root files
                     print 'No selected triggers passed'
                 continue
 
-            passTrig,iht = trigHelperHT( ht, trigMap )
-            if options.verbose : 
-                print 'Check : ht = ' + str(ht) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
+            if not options.useJetPtTrigs :
+                passTrig,iht = trigHelperHT( ht, trigMap )
+                if options.verbose : 
+                    print 'Check : ht = ' + str(ht) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
+            else :
+                passTrig,iht = trigHelperPt( pt0, trigMap )
+                if options.verbose : 
+                    print 'Check : pt0 = ' + str(pt0) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
 
 
-            h_htAK4.Fill( ht, prescale )
-            
+            if not passTrig :
+                continue
 
-                
+                        
+
             if unprescaled :
                 prescale = 1.0
             if options.verbose :
@@ -952,31 +1065,6 @@ for ifile in files : #{ Loop over root files
                 if options.verbose :
                     print 'Event weight = ' + str( evWeight )
                     print 'pthat = ' + str(pthat)
-
-            
-        
-        #@ VERTEX SETS
-        event.getByLabel( l_NPV, h_NPV )
-        NPV = h_NPV.product()[0]
-        if len(h_NPV.product()) == 0 :
-            if options.verbose :
-                print "Event has no good primary vertex."
-            continue
-        cutflow[1] += 1
-            
-        #@ RHO VALUE        
-        gotrho = event.getByLabel( l_rho, h_rho )
-        if gotrho == False : 
-            print "Event has no rho values."
-            continue
-        if len(h_rho.product()) == 0 :
-            print "Event has no rho values."
-            continue
-        else:
-            rho = h_rho.product()[0]
-            if options.verbose :
-                print 'rho = {0:6.2f}'.format( rho )
-
 
 
 
@@ -1146,14 +1234,14 @@ for ifile in files : #{ Loop over root files
 
         #EVENT AK8 HANDLES
 
-        event.getByLabel ( l_jetsAK8Eta, h_jetsAK8Eta )
+        #event.getByLabel ( l_jetsAK8Eta, h_jetsAK8Eta )
         #event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )   # Got this above. Don't get it twice. 
-        event.getByLabel ( l_jetsAK8Phi, h_jetsAK8Phi )
-        event.getByLabel ( l_jetsAK8Mass, h_jetsAK8Mass )
-        event.getByLabel ( l_jetsAK8Energy, h_jetsAK8Energy )
-        event.getByLabel ( l_jetsAK8JEC, h_jetsAK8JEC )
+        #event.getByLabel ( l_jetsAK8Phi, h_jetsAK8Phi )
+        #event.getByLabel ( l_jetsAK8Mass, h_jetsAK8Mass )
+        #event.getByLabel ( l_jetsAK8Energy, h_jetsAK8Energy )
+        #event.getByLabel ( l_jetsAK8JEC, h_jetsAK8JEC )
         event.getByLabel ( l_jetsAK8Y, h_jetsAK8Y )
-        event.getByLabel ( l_jetsAK8Area, h_jetsAK8Area )
+        #event.getByLabel ( l_jetsAK8Area, h_jetsAK8Area )
         event.getByLabel ( l_jetsAK8nHadEnergy, h_jetsAK8nHadEnergy)
         event.getByLabel ( l_jetsAK8nEMEnergy, h_jetsAK8nEMEnergy )
         event.getByLabel ( l_jetsAK8cHadEnergy, h_jetsAK8cHadEnergy )
@@ -1186,7 +1274,7 @@ for ifile in files : #{ Loop over root files
 
 
 
-        ak8JetsP4Corr = []
+        
         ak8JetsPassID = []
         ak8JetsPassKin = []
         ak8JetsPassTag = []
@@ -1195,14 +1283,14 @@ for ifile in files : #{ Loop over root files
 
         if len( h_jetsAK8Pt.product()) > 0 : 
             #AK8Pt = h_jetsAK8Pt.product()   # Got this earlier, don't get it twice. 
-            AK8Eta = h_jetsAK8Eta.product()
-            AK8Phi = h_jetsAK8Phi.product()
-            AK8Mass = h_jetsAK8Mass.product()
-            AK8Energy = h_jetsAK8Energy.product()
+            #AK8Eta = h_jetsAK8Eta.product()
+            #AK8Phi = h_jetsAK8Phi.product()
+            #AK8Mass = h_jetsAK8Mass.product()
+            #AK8Energy = h_jetsAK8Energy.product()
             AK8Y = h_jetsAK8Y.product()
 
-            AK8JEC = h_jetsAK8JEC.product()
-            AK8Area = h_jetsAK8Area.product()
+            #AK8JEC = h_jetsAK8JEC.product()
+            #AK8Area = h_jetsAK8Area.product()
             AK8SoftDropM = h_jetsAK8SoftDropMass.product()
             AK8TrimmedM = h_jetsAK8TrimMass.product()
             AK8TrimmedM = h_jetsAK8TrimMass.product()
@@ -1234,20 +1322,15 @@ for ifile in files : #{ Loop over root files
 
 
         htCorr = 0.
-        for i in range(0,len(h_jetsAK8Pt.product())):#{ Loop over AK8 Jets
+        for i,AK8P4Corr in enumerate(ak8JetsP4Corr):#{ Loop over AK8 Jets, corrected above
 
             if options.verbose :
                 print 'AK8 jet ' + str(i)
-
-            AK8JECFromB2GAnaFW = AK8JEC[i]   
-            AK8P4Raw = ROOT.TLorentzVector()
-            AK8P4Raw.SetPtEtaPhiM( AK8Pt[i] , AK8Eta[i], AK8Phi[i], AK8Mass[i])
-            # Remove the old JEC's to get raw energy
-            AK8P4Raw *= AK8JECFromB2GAnaFW            
-
+                
+            AK8P4Raw = ak8JetsP4Raw[i]
+            
+                
             ##### To do : Type 1 MET corrections, JER propagation
-
-
 
             #$ Get Jet Rho
             sp4_0 = None
@@ -1272,14 +1355,12 @@ for ifile in files : #{ Loop over root files
 
             if sp4_0 == None or sp4_1 == None :
                 AK8Rho.append(-1.0)
-                continue 
-            softdrop_p4 = sp4_0 + sp4_1
-            jetR = 0.8
-            jetrho = softdrop_p4.M() / (softdrop_p4.Perp() * jetR)
-            jetrho *= jetrho
-
-
-            AK8Rho.append( jetrho )
+            else : 
+                softdrop_p4 = sp4_0 + sp4_1
+                jetR = 0.8
+                jetrho = softdrop_p4.M() / (softdrop_p4.Perp() * jetR)
+                jetrho *= jetrho
+                AK8Rho.append( jetrho )
 
             
             #$ Jet ID for AK8 jets
@@ -1297,28 +1378,11 @@ for ifile in files : #{ Loop over root files
               nconstituents > 1 and \
               nch > 0
 
-
-            #@ JEC Scaling for AK8 Jets
-            ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
-            ak8JetCorrector.setJetPt ( AK8P4Raw.Perp() )
-            ak8JetCorrector.setJetE  ( AK8P4Raw.E() )
-            ak8JetCorrector.setJetA  ( AK8Area[i] )
-            ak8JetCorrector.setRho   ( rho )
-            ak8JetCorrector.setNPV   ( NPV )
-            newJEC = ak8JetCorrector.getCorrection()
-            AK8P4Corr = AK8P4Raw*newJEC
-
-            ak8JetsP4Corr.append( AK8P4Corr )
-                
             if options.verbose :
                 print '   raw jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}'.format (
                     AK8P4Raw.Perp(), AK8P4Raw.Rapidity(), AK8P4Raw.Phi(), AK8P4Raw.M()
                     )
 
-            htCorr += AK8P4Corr.Perp()
-
-
-                
             tau21 = None
             if AK8Tau1[i] > 0.0 :
                 tau21 = AK8Tau2[i] / AK8Tau1[i]
@@ -1333,6 +1397,7 @@ for ifile in files : #{ Loop over root files
                 
             else :
                 ak8JetsPassID.append(True)
+                htCorr += AK8P4Corr.Perp()
                                 
             passTaggable = False
             # Separately test whether the jet passes kinematics and if the jet passes substructure cuts
@@ -1361,7 +1426,6 @@ for ifile in files : #{ Loop over root files
                 print '  tgb  jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}, tag = {7:3.0f}'.format (
                     AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho, passTagged
                 )
-
 
         if options.htMin != None and htCorr < options.htMin :
             continue
@@ -1484,6 +1548,13 @@ for ifile in files : #{ Loop over root files
            
 
         elif selection == 2 and vHad0 != None and vHad1 != None :
+
+
+
+
+
+
+            
             # Get the "mass modified" four-vectors
             # taking the three-vector from the original
             # jet, and setting the mass from a distribution
@@ -1526,11 +1597,11 @@ for ifile in files : #{ Loop over root files
                     h_rhostar_all[selection].Fill( sdrhostar0, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho0, tau21_0, evWeight )
                     
-                    ha_ptAK8[iht].Fill( vHad0.Perp(), evWeight  )
-                    ha_yAK8[iht].Fill( vHad0.Rapidity(), evWeight  )
-                    ha_mAK8[iht].Fill( vHad0.M(), evWeight  )
-                    ha_msoftdropAK8[iht].Fill( sdm0, evWeight  )
-                    ha_rho_all[iht].Fill( sdrho0, evWeight )
+                    ha_ptAK8[iht].Fill( vHad0.Perp()  )
+                    ha_yAK8[iht].Fill( vHad0.Rapidity()  )
+                    ha_mAK8[iht].Fill( vHad0.M()  )
+                    ha_msoftdropAK8[iht].Fill( sdm0  )
+                    ha_rho_all[iht].Fill( sdrho0 )
                     
                     printString += 'taggable 0'
                     if options.makeMistag == False : 
@@ -1560,11 +1631,11 @@ for ifile in files : #{ Loop over root files
                     h_rhostar_all[selection].Fill( sdrhostar1, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho1, tau21_1, evWeight )
 
-                    ha_ptAK8[iht].Fill( vHad1.Perp(), evWeight  )
-                    ha_yAK8[iht].Fill( vHad1.Rapidity(), evWeight  )
-                    ha_mAK8[iht].Fill( vHad1.M(), evWeight  )
-                    ha_msoftdropAK8[iht].Fill( sdm1, evWeight  )
-                    ha_rho_all[iht].Fill( sdrho1, evWeight )
+                    ha_ptAK8[iht].Fill( vHad1.Perp() )
+                    ha_yAK8[iht].Fill( vHad1.Rapidity() )
+                    ha_mAK8[iht].Fill( vHad1.M() )
+                    ha_msoftdropAK8[iht].Fill( sdm1 )
+                    ha_rho_all[iht].Fill( sdrho1 )
                                         
                     printString += 'taggable 1'
                     if options.makeMistag == False : 
