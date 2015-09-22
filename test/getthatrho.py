@@ -143,7 +143,7 @@ h1Lo_Sel.Scale( 1.0 / nAll_Lo )
 h1Lo_All.SetMarkerStyle(20)
 h1Lo_Sel.SetMarkerStyle(24)
 
-h1Lo_All.SetTitle("200 < p_{T} < 300 GeV, #tau_{21} < 0.6;Jet #rho;Fraction")
+h1Lo_All.SetTitle("200 < p_{T} < 350 GeV, #tau_{21} < 0.6;Jet #rho;Fraction")
 h1Lo_All.GetYaxis().SetTitleOffset(1.0)
 
 c1Lo.SetLogx()
@@ -175,7 +175,7 @@ h1LoMod_Sel.Scale( 1.0 / nAll_LoMod )
 h1LoMod_All.SetMarkerStyle(22)
 h1LoMod_Sel.SetMarkerStyle(26)
 
-h1LoMod_All.SetTitle("200 < p_{T} < 300 GeV, #tau_{21} < 0.7;Jet #rho;Fraction")
+h1LoMod_All.SetTitle("200 < p_{T} < 350 GeV, #tau_{21} < 0.7;Jet #rho;Fraction")
 h1LoMod_All.GetYaxis().SetTitleOffset(1.0)
 
 c1LoMod.SetLogx()
@@ -204,7 +204,7 @@ h1Hi_Sel.Scale( 1.0 / nAll_Hi )
 h1Hi_All.SetMarkerStyle(21)
 h1Hi_Sel.SetMarkerStyle(25)
 
-h1Hi_All.SetTitle("p_{T} > 300 GeV, #tau_{21} < 0.6;Jet #rho;Fraction")
+h1Hi_All.SetTitle("p_{T} > 350 GeV, #tau_{21} < 0.6;Jet #rho;Fraction")
 h1Hi_All.GetYaxis().SetTitleOffset(1.0)
 
 c1Hi.SetLogx()
