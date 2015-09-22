@@ -27,6 +27,15 @@ parser.add_option('--rebin', type='int', action='store',
                   help='Rebin if desired')
 
 
+
+
+parser.add_option('--signalTrigs', action='store_true',
+                  dest='signalTrigs',
+                  default = False,
+                  help='Use only signal triggers')
+
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -39,29 +48,39 @@ ROOT.gROOT.Macro("rootlogon.C")
 
 
 f = ROOT.TFile(options.dir + '/' + options.file)
-trigs = [
-    ##'HLT_PFHT200',
-    ##'HLT_PFHT250',
-    ##'HLT_PFHT300',
-    ##'HLT_PFHT350',
-    'HLT_PFHT400',
-    'HLT_PFHT475',
-    'HLT_PFHT600',
-    'HLT_PFHT650',
-    'HLT_PFHT800'
-    ]
 
-scales = [
-    ##6300,
-    ##4200,
-    ##2100,
-    ##350,
-    700,
-    75,
-    125,
-    100,
-    1 
-    ]
+if not options.signalTrigs : 
+    trigs = [
+        ##'HLT_PFHT200',
+        ##'HLT_PFHT250',
+        ##'HLT_PFHT300',
+        ##'HLT_PFHT350',
+        'HLT_PFHT400',
+        'HLT_PFHT475',
+        'HLT_PFHT600',
+        'HLT_PFHT650',
+        'HLT_PFHT800'
+        ]
+
+    scales = [
+        ##6300,
+        ##4200,
+        ##2100,
+        ##350,
+        700,
+        75,
+        125,
+        100,
+        1 
+        ]
+else :
+    trigs = [
+        'HLT_PFHT800'
+        ]
+
+    scales = [
+        1 
+        ]
 colors1 = [ ROOT.kBlack, ROOT.kRed, ROOT.kGreen, ROOT.kBlue, ROOT.kCyan, ROOT.kMagenta, ROOT.kOrange    ]
 #colors = [ ROOT.kWhite, ROOT.kRed, ROOT.kGreen, ROOT.kBlue, ROOT.kCyan ]
 
