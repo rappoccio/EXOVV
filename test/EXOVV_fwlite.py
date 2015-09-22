@@ -889,6 +889,8 @@ for ifile in files : #{ Loop over root files
             if ht < options.speedyHtMin :
                 continue
 
+        if len(ak8JetsP4Corr) < 1 :
+            continue
         pt0 = ak8JetsP4Corr[0].Perp()
             
 
@@ -1649,11 +1651,12 @@ for ifile in files : #{ Loop over root files
                     h_rhostar_all[selection].Fill( sdrhostar0, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho0, tau21_0, evWeight )
                     
-                    ha_ptAK8[iht].Fill( vHad0.Perp()  )
-                    ha_yAK8[iht].Fill( vHad0.Rapidity()  )
-                    ha_mAK8[iht].Fill( vHad0.M()  )
-                    ha_msoftdropAK8[iht].Fill( sdm0  )
-                    ha_rho_all[iht].Fill( sdrho0 )
+                    if options.applyHadronicTriggers :
+                        ha_ptAK8[iht].Fill( vHad0.Perp()  )
+                        ha_yAK8[iht].Fill( vHad0.Rapidity()  )
+                        ha_mAK8[iht].Fill( vHad0.M()  )
+                        ha_msoftdropAK8[iht].Fill( sdm0  )
+                        ha_rho_all[iht].Fill( sdrho0 )
                     
                     printString += 'taggable 0'
                     if options.makeMistag == False : 
@@ -1683,11 +1686,12 @@ for ifile in files : #{ Loop over root files
                     h_rhostar_all[selection].Fill( sdrhostar1, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho1, tau21_1, evWeight )
 
-                    ha_ptAK8[iht].Fill( vHad1.Perp() )
-                    ha_yAK8[iht].Fill( vHad1.Rapidity() )
-                    ha_mAK8[iht].Fill( vHad1.M() )
-                    ha_msoftdropAK8[iht].Fill( sdm1 )
-                    ha_rho_all[iht].Fill( sdrho1 )
+                    if options.applyHadronicTriggers : 
+                        ha_ptAK8[iht].Fill( vHad1.Perp() )
+                        ha_yAK8[iht].Fill( vHad1.Rapidity() )
+                        ha_mAK8[iht].Fill( vHad1.M() )
+                        ha_msoftdropAK8[iht].Fill( sdm1 )
+                        ha_rho_all[iht].Fill( sdrho1 )
                                         
                     printString += 'taggable 1'
                     if options.makeMistag == False : 
