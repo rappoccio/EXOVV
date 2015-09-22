@@ -173,12 +173,28 @@ parser.add_option('--applyFilters', action='store_true',
                   dest='applyFilters',
                   help='Apply MET filters')
 
-parser.add_option('--applyTriggers', action='store_true',
+parser.add_option('--applyHadronicTriggers', action='store_true',
                   default=False,
-                  dest='applyTriggers',
+                  dest='applyHadronicTriggers',
                   help='Apply triggers')
 
 
+parser.add_option('--applyWEleTriggers', action='store_true',
+                  default=False,
+                  dest='applyWEleTriggers',
+                  help='Apply W electron triggers')
+
+
+parser.add_option('--applyWMuoTriggers', action='store_true',
+                  default=False,
+                  dest='applyWMuoTriggers',
+                  help='Apply W muon triggers')
+
+
+parser.add_option('--applyZTriggers', action='store_true',
+                  default=False,
+                  dest='applyZTriggers',
+                  help='Apply Z triggers')
 
 parser.add_option('--signalTriggers', action='store_true',
                   default=False,
@@ -942,7 +958,43 @@ for ifile in files : #{ Loop over root files
                 print 'Did not find filters'
             continue
 
-        if options.applyTriggers and readTriggers :
+
+
+        if (options.applyWEleTriggers or options.applyWMuoTriggers ) and readTriggers :
+
+            passTrig = False
+            prescale = 1.0
+            unprescaled = False
+            gotit1 = event.getByLabel( l_triggerNameStrings, h_triggerNameStrings )
+            gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
+            gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )                        
+            if options.verbose :
+                print 'Trigger string names? ' + str(gotit1)
+                print 'Trigger bits?         ' + str(gotit2)
+            
+            if gotit1 == False or gotit2 == False or gotit3 == False :
+                readTriggers = False            
+
+            triggerNameStrings = h_triggerNameStrings.product()
+            triggerBits = h_triggerBits.product()
+            triggerPrescales = h_triggerPrescales.product()            
+
+            nSelectedTriggersPassed = 0
+            for itrig in xrange(0, len(triggerNameStrings) ) :
+
+                if options.applyWEleTriggers and \
+                  ("HLT_Ele23_WPLoose_Gsf" in triggerNameStrings[itrig] or
+                   "HLT_Ele32_eta2p1_WPLoose_Gsf" in triggerNameStrings[itrig] ) :
+                    if triggerBits[itrig] == 1 :
+                        nSelectedTriggersPassed += 1
+                        passTrig = True
+
+                if options.applyWMuoTriggers and "HLT_IsoMu24_eta2p1" in triggerNameStrings[itrig]  :  
+                    if triggerBits[itrig] == 1 :
+                        nSelectedTriggersPassed += 1
+                        passTrig = True
+        
+        if options.applyHadronicTriggers and readTriggers :
 
             passTrig = False
             prescale = 1.0
@@ -1278,7 +1330,6 @@ for ifile in files : #{ Loop over root files
         ak8JetsPassID = []
         ak8JetsPassKin = []
         ak8JetsPassTag = []
-        AK8SoftDropM = []
         AK8Rho = []
 
         if len( h_jetsAK8Pt.product()) > 0 : 
@@ -1354,6 +1405,7 @@ for ifile in files : #{ Loop over root files
 
 
             if sp4_0 == None or sp4_1 == None :
+                jetrho = -1.0
                 AK8Rho.append(-1.0)
             else : 
                 softdrop_p4 = sp4_0 + sp4_1
