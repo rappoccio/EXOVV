@@ -260,9 +260,9 @@ cRate.SetLogx()
 
 leg = ROOT.TLegend(0.54, 0.15, 0.84, 0.4)
 leg.SetBorderSize(0)
-leg.AddEntry( rHi, "p_{T} > 300 GeV, #tau < 0.6", 'p')
-leg.AddEntry( rLo, "200 < p_{T} < 300 GeV, #tau < 0.6", 'p')
-leg.AddEntry( rLoMod, "200 < p_{T} < 300 GeV, #tau < 0.7", 'p')
+leg.AddEntry( rHi, "p_{T} > 350 GeV, #tau < 0.6", 'p')
+leg.AddEntry( rLo, "200 < p_{T} < 350 GeV, #tau < 0.6", 'p')
+leg.AddEntry( rLoMod, "200 < p_{T} < 350 GeV, #tau < 0.7", 'p')
 leg.Draw()
 
 cRate.Print("scaled_mistagrate" + options.outname + ".pdf", "pdf")
