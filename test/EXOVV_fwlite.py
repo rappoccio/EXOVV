@@ -311,7 +311,10 @@ if options.makeMistag == False :
         hmassMod.SetName('hmassMod')
         bin1 = hmassMod.GetXaxis().FindBin( 0.0 )
         bin2 = hmassMod.GetXaxis().FindBin( options.sdmassCutLo )
+        bin3 = hmassMod.GetXaxis().FindBin( options.sdmassCutHi )
         for ibin in range ( bin1, bin2 ) :
+            hmassMod.SetBinContent(ibin, 0.0 )
+        for ibin in range ( bin3, hmassMod.GetNbinsX() ) :
             hmassMod.SetBinContent(ibin, 0.0 )
         hmassMod.Scale( 1.0 / hmassMod.Integral() )
         ROOT.SetOwnership( hmassMod, False )
@@ -1606,6 +1609,8 @@ for ifile in files : #{ Loop over root files
 
 
 
+            if vHad0.DeltaPhi(vHad1) < 2.1 :
+                continue
 
 
             
@@ -1620,12 +1625,13 @@ for ifile in files : #{ Loop over root files
                 randM0 = hmassMod.GetRandom()
                 randM1 = hmassMod.GetRandom()
 
-                vHad0Mod.SetPtEtaPhiM( vHad0Mod.Perp(), vHad0Mod.Eta(), vHad0Mod.Phi(), randM0 )
-                vHad1Mod.SetPtEtaPhiM( vHad1Mod.Perp(), vHad1Mod.Eta(), vHad1Mod.Phi(), randM1 )
+                if vHad0Mod.M() < options.sdmassCutLo or vHad0Mod.M() > options.sdmassCutHi : 
+                    vHad0Mod.SetPtEtaPhiM( vHad0Mod.Perp(), vHad0Mod.Eta(), vHad0Mod.Phi(), randM0 )
+                if vHad1Mod.M() < options.sdmassCutLo or vHad1Mod.M() > options.sdmassCutHi : 
+                    vHad1Mod.SetPtEtaPhiM( vHad1Mod.Perp(), vHad1Mod.Eta(), vHad1Mod.Phi(), randM1 )
 
-            
-            
             vvCand = vHad0 + vHad1
+
             
             printString = 'V had + V had'
             cutflow[9] += 1
