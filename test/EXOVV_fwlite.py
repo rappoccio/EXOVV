@@ -1576,11 +1576,11 @@ for ifile in files : #{ Loop over root files
         if selection < 2 and vLep != None and vHad0 != None :
             cutflow[6] += 1
             vvCand = vLep + vHad0
-            printString = 'V lep + V had'
             h_vPt[selection].Fill( vLep.Perp(), evWeight )
-            h_jetrho_vs_tau21AK8[selection].Fill( sdrho0, tau21_0, evWeight )
+            printString = 'V lep + V had'
             if taggable0 :
-                cutflow[7] += 1
+                cutflow[7] += 1                
+                h_jetrho_vs_tau21AK8[selection].Fill( sdrho0, tau21_0, evWeight )                
                 h_ptAK8[selection].Fill( vHad0.Perp(), evWeight  )
                 h_yAK8[selection].Fill( vHad0.Rapidity(), evWeight  )
                 h_phiAK8[selection].Fill( vHad0.Phi(), evWeight  )

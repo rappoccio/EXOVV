@@ -1,0 +1,465 @@
+To use this, I'm assuming you have fastjet 3.1.1 installed under "~/fastjet/fastjet_install". If you want to change that, you have to update the "fastjet.xml" in the recipe below to point to the right file. My example will only work for fastjet >= 3.0.0 (it uses the new cluster sequence magic under 3.x). 
+
+cmsrel CMSSW_4_2_8
+cd CMSSW_4_2_8/src
+cmsenv
+mkdir CMSOpenData
+cd CMSOpenData/
+git init
+git remote add origin https://github.com/rappoccio/OpenAnalysis.git
+git pull origin master
+cd ..
+cp CMSOpenData/OpenAnalysis/test/setup/fastjet.xml ../config/toolbox/slc5_amd64_gcc434/tools/selected/
+scram setup fastjet
+scram b 
+cd CMSOpenData/OpenAnalysis/test
+cmsRun patTuple_forjets_cfg.py
+../../../../test/slc5_amd64_gcc434/ana
+
+
+
+
+
+
+python plotquick_pyroot.py --algo=AK4PFchs --sample=qcd --infile=/data/JME/740pre9/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK4PUPPI --sample=qcd --infile=/data/JME/740pre9/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK4SK    --sample=qcd --infile=/data/JME/740pre9/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK8PFchs --sample=qcd --infile=/data/JME/740pre9/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK8PUPPI --sample=qcd --infile=/data/JME/740pre9/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK8SK    --sample=qcd --infile=/data/JME/740pre9/QCD15to3000/test_\*.root
+
+
+python plotquick_pyroot.py --algo=AK4PFchs --sample=qcd733 --infile=/data/JME/733/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK4PUPPI --sample=qcd733 --infile=/data/JME/733/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK4SK    --sample=qcd733 --infile=/data/JME/733/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK8PFchs --sample=qcd733 --infile=/data/JME/733/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK8PUPPI --sample=qcd733 --infile=/data/JME/733/QCD15to3000/test_\*.root
+python plotquick_pyroot.py --algo=AK8SK    --sample=qcd733 --infile=/data/JME/733/QCD15to3000/test_\*.root
+
+
+
+
+
+python plotquick_pyroot.py --algo=AK8PFchs --sample=rskkgluon --infile=/data/JME/740pre9/RSKKGluonM3TeV/test_\*.root
+python plotquick_pyroot.py --algo=AK8PUPPI --sample=rskkgluon --infile=/data/JME/740pre9/RSKKGluonM3TeV/test_\*.root
+python plotquick_pyroot.py --algo=AK8SK    --sample=rskkgluon --infile=/data/JME/740pre9/RSKKGluonM3TeV/test_\*.root
+
+python plotquick_pyroot.py --algo=AK8PFchs --sample=rskkgluon733 --infile=/data/JME/733/RSKKGluonM3TeV/test_\*.root
+python plotquick_pyroot.py --algo=AK8PUPPI --sample=rskkgluon733 --infile=/data/JME/733/RSKKGluonM3TeV/test_\*.root
+python plotquick_pyroot.py --algo=AK8SK    --sample=rskkgluon733 --infile=/data/JME/733/RSKKGluonM3TeV/test_\*.root
+
+
+
+740pre9 : 
+QCD : /eos/uscms/store/user/rappocc/RelValQCD_FlatPt_15_3000HS_13/crab_qcd15_3000/150330_143736/0000/test*.root
+RSKKGluon : /eos/uscms/store/user/rappocc/RelValRSKKGluon_m3000GeV_13/crab_rskkgluon/150331_155954/0000/test*.root
+
+733:
+QCD: /eos/uscms/store/user/rappocc/RelValQCD_FlatPt_15_3000HS_13/crab_qcd15_3000/150401_151059/0000/test*root
+RSKKGluon : /eos/uscms/store/user/rappocc/RelValRSKKGluon_m3000GeV_13/crab_rskkgluon/150401_151121/0000/test*.root
+
+
+
+
+
+On CMSLPC : 
+
+git clone git@github.com:cms-sw/genproductions.git genproductions
+cd genproductions/bin/MadGraph5_aMCatNLO/
+./gridpack_generation.sh <name of process card without _proc_card.dat> <folder containing cards relative to current location> <queue>
+
+
+./gridpack_generation.sh WJetsToQQ_HT-600toInf cards/production/13TeV/WJets_HT_LO_MLM/WJetsToQQ_HT-600toInf 1nd
+
+
+curl https://raw2.github.com/cms-sw/genproductions/master/python/ThirteenTeV/{your_fragment.py} --create-dirs -o Configuration/GenProduction/python/ThirteenTeV/{your_fragment}.py
+
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files0.txt --outname jetht_v74x_v43_files0_ptlo_taucut7_mcut33.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files0_ptlo_taucut6_mcut33.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files0.txt --outname jetht_v74x_v43_files0_ptlo_taucut6_mcut50.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files0_ptlo_taucut7_mcut50.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files0.txt --outname jetht_v74x_v43_files0_pthi_taucut6_mcut50.root --selection 2 --minAK8Pt 300. --maxAK8Pt 30000. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files0_pthi_taucut7_mcut50.txt &
+
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files1.txt --outname jetht_v74x_v43_files1_ptlo_taucut7_mcut33.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files1_ptlo_taucut6_mcut33.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files1.txt --outname jetht_v74x_v43_files1_ptlo_taucut6_mcut50.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files1_ptlo_taucut7_mcut50.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files1.txt --outname jetht_v74x_v43_files1_pthi_taucut6_mcut50.root --selection 2 --minAK8Pt 300. --maxAK8Pt 30000. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files1_pthi_taucut7_mcut50.txt &
+
+
+
+
+
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files2.txt --outname jetht_v74x_v43_files2_ptlo_taucut7_mcut33.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files2_ptlo_taucut6_mcut33.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files2.txt --outname jetht_v74x_v43_files2_ptlo_taucut6_mcut50.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files2_ptlo_taucut7_mcut50.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files2.txt --outname jetht_v74x_v43_files2_pthi_taucut6_mcut50.root --selection 2 --minAK8Pt 300. --maxAK8Pt 30000. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files2_pthi_taucut7_mcut50.txt &
+
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files3.txt --outname jetht_v74x_v43_files3_ptlo_taucut7_mcut33.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files3_ptlo_taucut6_mcut33.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files3.txt --outname jetht_v74x_v43_files3_ptlo_taucut6_mcut50.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files3_ptlo_taucut7_mcut50.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files3.txt --outname jetht_v74x_v43_files3_pthi_taucut6_mcut50.root --selection 2 --minAK8Pt 300. --maxAK8Pt 30000. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files3_pthi_taucut7_mcut50.txt &
+
+
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files4.txt --outname jetht_v74x_v43_files4_ptlo_taucut7_mcut33.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files4_ptlo_taucut6_mcut33.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files4.txt --outname jetht_v74x_v43_files4_ptlo_taucut6_mcut50.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files4_ptlo_taucut7_mcut50.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files4.txt --outname jetht_v74x_v43_files4_pthi_taucut6_mcut50.root --selection 2 --minAK8Pt 300. --maxAK8Pt 30000. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files4_pthi_taucut7_mcut50.txt &
+
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files5.txt --outname jetht_v74x_v43_files5_ptlo_taucut7_mcut33.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files5_ptlo_taucut6_mcut33.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files5.txt --outname jetht_v74x_v43_files5_ptlo_taucut6_mcut50.root --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files5_ptlo_taucut7_mcut50.txt &
+
+python EXOVV_fwlite.py --files jetht_v74x_v43_files5.txt --outname jetht_v74x_v43_files5_pthi_taucut6_mcut50.root --selection 2 --minAK8Pt 300. --maxAK8Pt 30000. --sdmassCutLo 50.0 --tau21Cut 0.6 --makeMistag --applyFilters --applyHadronicTriggers >& jetht_v74x_v43_files5_pthi_taucut7_mcut50.txt &
+
+
+
+
+
+
+python NtupleReader_fwlite.py  --files TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1_B2GAnaFW_V4_local.txt --outname ttjets_b2ganafw_v4_sel1.root --selection 1 --isMC --quickSelect >& ttjets_b2ganafw_v4_output.txt &
+
+python NtupleReader_fwlite.py  --files WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_RunIISpring15DR74-Asympt50ns_MCRUN2_74_V9A-v1_B2GAnaFW_V4_local.txt --outname wjets_b2ganafw_v4_sel1.root --selection 1 --isMC --quickSelect  >& wjets_b2ganafw_v4_output.txt &
+
+python NtupleReader_fwlite.py  --files DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_B2GAnaFW_V4_local.txt  --outname zjets_b2ganafw_v4_sel1.root --selection 1 --isMC --quickSelect  >& zjets_b2ganafw_v4_sel1_output.txt &
+
+python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tchan_local.txt  --outname singletop_v74x_v4.3_tchan_local_sel1.root --selection 1 --isMC  --quickSelect  >& singletop_v74x_v4.3_tchan_local_sel1_output.txt &
+python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tWtop_local.txt  --outname singletop_v74x_v4.3_tWtop_local_sel1.root --selection 1 --isMC  --quickSelect  >& singletop_v74x_v4.3_tWtop_local_sel1_output.txt &
+python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tWantitop_local.txt  --outname singletop_v74x_v4.3_tWantitop_local_sel1.root --selection 1 --isMC  --quickSelect  >& singletop_v74x_v4.3_tWantitop_local_sel1_output.txt &
+
+
+python NtupleReader_fwlite.py  --files singlemu_v74x_v4.3_dataset1_local.txt --outname singlemu_v74x_v4.3_dataset1_sel1.root --selection 1 --applyFilters >& singlemu_v74x_v4.3_dataset1_sel1_output.txt &
+python NtupleReader_fwlite.py  --files singlemu_v74x_v4.3_dataset2_local.txt --outname singlemu_v74x_v4.3_dataset2_sel1.root --selection 1 --applyFilters >& singlemu_v74x_v4.3_dataset2_sel1_output.txt &
+
+python NtupleReader_fwlite.py  --files singleel_v74x_v4.3_dataset1_local.txt --outname singleel_v74x_v4.3_dataset1_sel1.root --selection 1 --applyFilters >& singleel_v74x_v4.3_dataset1_sel1_output.txt &
+python NtupleReader_fwlite.py  --files singleel_v74x_v4.3_dataset2_local.txt --outname singleel_v74x_v4.3_dataset2_sel1.root --selection 1 --applyFilters >& singleel_v74x_v4.3_dataset2_sel1_output.txt &
+
+
+
+
+python NtupleReader_fwlite.py  --files ttjets_b2ganafw_v5.txt --outname ttjets_b2ganafw_v5_sel1_synced.root --selection 1 --stMin 400.0  --isMC --quickSelect --applyFilters --applyTrigger >&ttjets_b2ganafw_v5_output.txt &
+python NtupleReader_fwlite.py  --files wjets_b2ganafw_v5.txt --outname wjets_b2ganafw_v5_sel1_synced.root --selection 1 --stMin 400.0  --isMC --quickSelect --applyFilters --applyTrigger >& wjets_b2ganafw_v5_output.txt &
+python NtupleReader_fwlite.py  --files singlemu_v74x_v5_dataset1.txt --outname singlemu_v74x_v5_dataset1_sel1_synced.root --selection 1 --stMin 400.0  --applyFilters --applyHadronicTriggers --showEvents 0 >& singlemu_v74x_v5_dataset1_sel1_synced_output.txt &
+python NtupleReader_fwlite.py  --files singlemu_v74x_v5_dataset2.txt --outname singlemu_v74x_v5_dataset2_sel1_synced.root --selection 1 --stMin 400.0  --applyFilters --applyHadronicTriggers --showEvents 0 >& singlemu_v74x_v5_dataset2_sel1_synced_output.txt &
+python NtupleReader_fwlite.py  --files singleel_v74x_v5_dataset1.txt --outname singleel_v74x_v5_dataset1_sel1_synced.root --selection 1 --stMin 400.0  --applyFilters --applyHadronicTriggers --showEvents 0 >& singleel_v74x_v5_dataset1_sel1_synced_output.txt &
+python NtupleReader_fwlite.py  --files singleel_v74x_v5_dataset2.txt --outname singleel_v74x_v5_dataset2_sel1_synced.root --selection 1 --stMin 400.0  --applyFilters --applyHadronicTriggers --showEvents 0 >& singleel_v74x_v5_dataset2_sel1_synced_output.txt &
+python NtupleReader_fwlite.py  --files DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_B2GAnaFW_V4_local.txt  --outname zjets_b2ganafw_v4_sel1_synced.root --selection 1 --stMin 400.0  --isMC --quickSelect  >& zjets_b2ganafw_v4_sel1_synced_output.txt &
+python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tchan_local.txt  --outname singletop_v74x_v4.3_tchan_local_sel1_synced.root --selection 1 --stMin 400.0  --isMC  --quickSelect  >& singletop_v74x_v4.3_tchan_local_sel1_synced_output.txt &
+python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tWtop_local.txt  --outname singletop_v74x_v4.3_tWtop_local_sel1_synced.root --selection 1 --stMin 400.0  --isMC  --quickSelect  >& singletop_v74x_v4.3_tWtop_local_sel1_synced_output.txt &
+python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tWantitop_local.txt  --outname singletop_v74x_v4.3_tWantitop_local_sel1_synced.root --selection 1 --stMin 400.0  --isMC  --quickSelect  >& singletop_v74x_v4.3_tWantitop_local_sel1_synced_output.txt &
+
+
+
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt170to300.txt --outname qcd_pt170to300_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt170to300_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt300to470.txt --outname qcd_pt300to470_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt300to470_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt470to600.txt --outname qcd_pt470to600_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt470to600_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt600to800.txt --outname qcd_pt600to800_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt600to800_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt800to1000.txt --outname qcd_pt800to1000_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt800to1000_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname qcd_pt1000to1400_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt1000to1400_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname qcd_pt1400to1800_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt1400to1800_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt1800to2400_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt2400to3200_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt3200toInf.txt --outname qcd_pt3200toInf_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt3200toInf_output_lowpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt --outname jetht_dataset1_allpt.root --applyFilters --minAK8JetPt 200. --applyHadronicTriggers >& jetht_dataset1_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt --outname jetht_dataset2_allpt.root --applyFilters --minAK8JetPt 200. --applyHadronicTriggers >& jetht_dataset2_output_allpt.txt &
+
+
+
+
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname qcd_pt170to300_highpt.root   --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt170to300_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname qcd_pt300to470_highpt.root   --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt300to470_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname qcd_pt470to600_highpt.root   --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt470to600_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname qcd_pt600to800_highpt.root   --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt600to800_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname qcd_pt800to1000_highpt.root  --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt800to1000_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname qcd_pt1000to1400_highpt.root --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt1000to1400_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname qcd_pt1400to1800_highpt.root --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt1400to1800_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_highpt.root --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt1800to2400_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_highpt.root --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt2400to3200_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname qcd_pt3200toInf_highpt.root  --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt3200toInf_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt   --outname jetht_dataset1_highpt.root   --applyFilters --minAK8JetPt 1000. --speedyPtMin 800. --applyHadronicTriggers >& jetht_dataset1_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt   --outname jetht_dataset2_highpt.root   --applyFilters --minAK8JetPt 1000. --speedyPtMin 800. --applyHadronicTriggers >& jetht_dataset2_output_highpt.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800 --signalTriggers >& exovv_jetht_dataset1_output.txt &
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800 --signalTriggers >& exovv_jetht_dataset2_output.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300.root   --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt170to300.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470.root   --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt300to470.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600.root   --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt470to600.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800.root   --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt600to800.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000.root  --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt800to1000.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400.root --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt1000to1400.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800.root --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt1400to1800.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400.root --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt1800to2400.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200.root --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt2400to3200.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf.root  --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt3200toInf.txt & 
+
+
+
+To make trigger plots to get the trigger thresholds : 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_alltrigs.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset1_alltrigs_output.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_alltrigs.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset2_alltrigs_output.txt & 
+
+
+
+After applying different triggers, get different rho plots for different regions :
+
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_alltrigs_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset1_alltrigs_ptlo_taucut7_mcut33.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_alltrigs_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag  --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset2_alltrigs_ptlo_taucut7_mcut33.txt & 
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_alltrigs_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset1_alltrigs_ptlo_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_alltrigs_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag  --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset2_alltrigs_ptlo_taucut6_mcut50.txt & 
+
+
+
+
+
+
+hadd -f exovv_jetht_alltrigs_pthi_taucut6_mcut50.root exovv_jetht_dataset1_alltrigs_pthi_taucut6_mcut50.root exovv_jetht_dataset2_alltrigs_pthi_taucut6_mcut50.root
+
+hadd -f exovv_jetht_jettrigs_ptlo_taucut6_mcut50.root exovv_jetht_dataset1_jettrigs_ptlo_taucut6_mcut50.root exovv_jetht_dataset2_jettrigs_ptlo_taucut6_mcut50.root
+hadd -f exovv_jetht_jettrigs_ptlo_taucut7_mcut33.root exovv_jetht_dataset1_jettrigs_ptlo_taucut7_mcut33.root exovv_jetht_dataset2_jettrigs_ptlo_taucut7_mcut33.root
+
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_jettrigs_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --useJetPtTrigs >& exovv_jetht_dataset1_jettrigs_ptlo_taucut7_mcut33.txt &
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_jettrigs_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --useJetPtTrigs >& exovv_jetht_dataset2_jettrigs_ptlo_taucut7_mcut33.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_jettrigs_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.8 --makeMistag --useJetPtTrigs >& exovv_jetht_dataset1_jettrigs_ptlo_taucut6_mcut50.txt &
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_jettrigs_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.8 --makeMistag --useJetPtTrigs >& exovv_jetht_dataset2_jettrigs_ptlo_taucut6_mcut50.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_alltrigs_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset1_alltrigs_pthi_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_alltrigs_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag  --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset2_alltrigs_pthi_taucut6_mcut50.txt & 
+
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/singlemu_v74x_v4.3_dataset1_local.txt --outname exovv_singlemu_dataset1_ptlo_taucut7_mcut33.root --applyFilters --applyWMuoTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_singlemu_dataset1_ptlo_taucut7_mcut33l_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/singlemu_v74x_v4.3_dataset2_local.txt --outname exovv_singlemu_dataset2_ptlo_taucut7_mcut33.root --applyFilters --applyWMuoTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_singlemu_dataset2_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/singleel_v74x_v4.3_dataset1_local.txt --outname exovv_singleel_dataset1_ptlo_taucut7_mcut33.root --applyFilters --applyWEleTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_singleel_dataset1_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/singleel_v74x_v4.3_dataset2_local.txt --outname exovv_singleel_dataset2_ptlo_taucut7_mcut33.root --applyFilters --applyWEleTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >&  exovv_singleel_dataset2_ptlo_taucut7_mcut33_output.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/singlemu_v74x_v4.3_dataset1_local.txt --outname exovv_singlemu_dataset1_ptlo_taucut6_mcut50.root --applyFilters --applyWMuoTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_singlemu_dataset1_ptlo_taucut6_mcut50l_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/singlemu_v74x_v4.3_dataset2_local.txt --outname exovv_singlemu_dataset2_ptlo_taucut6_mcut50.root --applyFilters --applyWMuoTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_singlemu_dataset2_ptlo_taucut6_mcut50_output.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/singleel_v74x_v4.3_dataset1_local.txt --outname exovv_singleel_dataset1_ptlo_taucut6_mcut50.root --applyFilters --applyWEleTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_singleel_dataset1_ptlo_taucut6_mcut50_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/singleel_v74x_v4.3_dataset2_local.txt --outname exovv_singleel_dataset2_ptlo_taucut6_mcut50.root --applyFilters --applyWEleTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >&  exovv_singleel_dataset2_ptlo_taucut6_mcut50_output.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/singlemu_v74x_v4.3_dataset1_local.txt --outname exovv_singlemu_dataset1_pthi_taucut6_mcut50.root --applyFilters --applyWMuoTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_singlemu_dataset1_pthi_taucut6_mcut50l_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/singlemu_v74x_v4.3_dataset2_local.txt --outname exovv_singlemu_dataset2_pthi_taucut6_mcut50.root --applyFilters --applyWMuoTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_singlemu_dataset2_pthi_taucut6_mcut50_output.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/singleel_v74x_v4.3_dataset1_local.txt --outname exovv_singleel_dataset1_pthi_taucut6_mcut50.root --applyFilters --applyWEleTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_singleel_dataset1_pthi_taucut6_mcut50_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/singleel_v74x_v4.3_dataset2_local.txt --outname exovv_singleel_dataset2_pthi_taucut6_mcut50.root --applyFilters --applyWEleTriggers --isData --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >&  exovv_singleel_dataset2_pthi_taucut6_mcut50_output.txt &
+
+
+
+
+
+hadd -f exovv_singleel_pthi_taucut6_mcut50.root exovv_singleel_dataset1_pthi_taucut6_mcut50.root exovv_singleel_dataset2_pthi_taucut6_mcut50.root
+hadd -f exovv_singleel_ptlo_taucut6_mcut50.root exovv_singleel_dataset1_ptlo_taucut6_mcut50.root exovv_singleel_dataset2_ptlo_taucut6_mcut50.root
+hadd -f exovv_singleel_ptlo_taucut7_mcut33.root exovv_singleel_dataset1_ptlo_taucut7_mcut33.root exovv_singleel_dataset2_ptlo_taucut7_mcut33.root
+
+hadd -f exovv_singlemu_pthi_taucut6_mcut50.root exovv_singlemu_dataset1_pthi_taucut6_mcut50.root exovv_singlemu_dataset2_pthi_taucut6_mcut50.root
+hadd -f exovv_singlemu_ptlo_taucut6_mcut50.root exovv_singlemu_dataset1_ptlo_taucut6_mcut50.root exovv_singlemu_dataset2_ptlo_taucut6_mcut50.root
+hadd -f exovv_singlemu_ptlo_taucut7_mcut33.root exovv_singlemu_dataset1_ptlo_taucut7_mcut33.root exovv_singlemu_dataset2_ptlo_taucut7_mcut33.root
+
+
+python -i getthatrho.py --fileLo exovvhists/exovv_singleel_ptlo_taucut6_mcut50.root --fileLoMod exovvhists/exovv_singleel_ptlo_taucut7_mcut33.root --fileHi exovvhists/exovv_singleel_pthi_taucut6_mcut50.root --selection 1 --outname wel_jets
+
+python -i getthatrho.py --fileLo exovvhists/exovv_singlemu_ptlo_taucut6_mcut50.root --fileLoMod exovvhists/exovv_singlemu_ptlo_taucut7_mcut33.root --fileHi exovvhists/exovv_singlemu_pthi_taucut6_mcut50.root --selection 1 --outname wmu_jets
+
+
+
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_b2ganafw_v5.txt --outname exovv_wjets_ptlo_taucut6_mcut50.root --applyFilters   --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ptlo_taucut6_mcut50l_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_b2ganafw_v5.txt --outname exovv_wjets_ptlo_taucut7_mcut33.root --applyFilters   --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_b2ganafw_v5.txt --outname exovv_wjets_pthi_taucut6_mcut50.root --applyFilters   --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_pthi_taucut6_mcut50l_output.txt &
+
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcdpythia6flat.txt --outname exovv_qcdpythia6flat_ptlo_taucut6_mcut50.root  --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcdpythia6flat_ptlo_taucut6_mcut50l_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/qcdpythia6flat.txt --outname exovv_qcdpythia6flat_ptlo_taucut7_mcut33.root  --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_qcdpythia6flat_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/qcdpythia6flat.txt --outname exovv_qcdpythia6flat_pthi_taucut6_mcut50.root  --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcdpythia6flat_pthi_taucut6_mcut50l_output.txt &
+
+
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_ptlo_taucut6_mcut50.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht600toInf_ptlo_taucut6_mcut50_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_ptlo_taucut7_mcut33.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht600toInf_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_pthi_taucut6_mcut50.root --applyFilters --speedyHtMin 350.  --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht600toInf_pthi_taucut6_mcut50_output.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_ptlo_taucut6_mcut50.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht400to600_ptlo_taucut6_mcut50_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_ptlo_taucut7_mcut33.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht400to600_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_pthi_taucut6_mcut50.root --applyFilters --speedyHtMin 350.  --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht400to600_pthi_taucut6_mcut50_output.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut6_mcut50.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut6_mcut50_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut7_mcut33.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_pthi_taucut6_mcut50.root --applyFilters --speedyHtMin 350.  --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht200to400_pthi_taucut6_mcut50_output.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcdpythia6flat.txt --outname exovv_qcdpythia6flat_pthi_taucut6_mcut50_withpred_mod.root  --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --predRate mistagRate_mod_qcdflat.root --massModMistagFile exovv_qcdpythia6flat_pthi_taucut6_mcut50.root >& exovv_qcdpythia6flat_pthi_taucut6_mcut50_withpred_output_mod.txt &
+
+
+
+
+python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_pthi_taucut6_mcut50_labels.txt --outfile wjets_pthi_taucut6_mcut50.root --lum 40.03
+python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_ptlo_taucut6_mcut50_labels.txt --outfile wjets_ptlo_taucut6_mcut50.root --lum 40.03
+python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_ptlo_taucut7_mcut33_labels.txt --outfile wjets_ptlo_taucut7_mcut33.root --lum 40.03
+
+
+
+251562:617:537930224
+251562:456:403017738
+251562:19:17186332
+251562:144:131606150
+251562:144:131087057
+251562:145:132006443
+251252:271:164175743
+251252:317:191882553
+251562:244:219873257
+251562:398:353367204
+251562:338:302709373
+251562:344:307337275
+251252:340:205286695
+251252:341:205822783
+251562:560:490878886
+251562:163:148578739
+251562:132:120422540
+251562:631:549617422
+251562:67:61715697
+251562:209:189396961
+251252:391:236201407
+251252:35:21595981
+251244:413:248729618
+251244:211:121737259
+251244:212:122045523
+251244:246:143869508
+251244:246:143784430
+251252:365:220364040
+251562:490:432165567
+251562:490:431820779
+251562:336:300653407
+251562:649:564997191
+251562:331:296551397
+251562:131:119649952
+251562:131:119843960
+251244:328:195444244
+251244:282:166773405
+251244:322:191796705
+251252:504:305470403
+251562:166:151370216
+251562:327:293080350
+251562:100:92251738
+251562:173:157611625
+251562:315:282171507
+251562:245:221043123
+251244:97:50202940
+251244:108:57215192
+251244:127:69128598
+251244:189:107729619
+251244:202:116148629
+251562:517:454592454
+251562:537:471544179
+251562:522:459444642
+251562:546:479040232
+251562:607:530414639
+251562:627:546911035
+251562:497:438142753
+251562:10:8506343
+251562:32:29471145
+251562:224:202613511
+251562:224:202727653
+251244:233:135453294
+251244:377:226151075
+251244:231:134541417
+251562:264:237516126
+251562:485:427908682
+251562:253:228191984
+251562:254:229188662
+251562:59:53834257
+251562:59:54102204
+251562:632:550452809
+251562:75:68868677
+251562:424:375555128
+251562:8:6776414
+251562:201:182031823
+251562:377:336096730
+251562:380:338275842
+251562:392:348378060
+251562:392:348224693
+251562:137:125523665
+251562:260:234060980
+251562:322:288776495
+251562:353:315005375
+251562:369:328880834
+251562:359:320262459
+251561:2:1289105
+251561:41:36101797
+251561:45:40229192
+251561:42:36952241
+251561:60:54323437
+251561:77:69734253
+251251:153:93571663
+251252:11:6579595
+251252:68:41351309
+251252:518:313071638
+251252:301:182177565
+251561:14:10269774
+251561:17:13160995
+251561:65:59173701
+251561:72:65704455
+251561:20:16074249
