@@ -332,6 +332,10 @@ python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --out
 
 python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_ptlo_taucut7_mcut33.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht600toInf_ptlo_taucut7_mcut33_output.txt &
 
+python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_ptlo_taucut7_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht600toInf_ptlo_taucut7_mcut28_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_ptlo_taucut6_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht600toInf_ptlo_taucut6_mcut28_output.txt &
+
 python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_pthi_taucut6_mcut50.root --applyFilters --speedyHtMin 350.  --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht600toInf_pthi_taucut6_mcut50_output.txt &
 
 
@@ -340,12 +344,21 @@ python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --out
 
 python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_ptlo_taucut7_mcut33.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht400to600_ptlo_taucut7_mcut33_output.txt &
 
+python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_ptlo_taucut7_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht400to600_ptlo_taucut7_mcut28_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_ptlo_taucut6_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht400to600_ptlo_taucut6_mcut28_output.txt &
+
 python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_pthi_taucut6_mcut50.root --applyFilters --speedyHtMin 350.  --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht400to600_pthi_taucut6_mcut50_output.txt &
+
 
 
 python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut6_mcut50.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut6_mcut50_output.txt &
 
 python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut7_mcut33.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut7_mcut33_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut7_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.7 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut7_mcut28_output.txt &
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut6_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut6_mcut28_output.txt &
 
 python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_pthi_taucut6_mcut50.root --applyFilters --speedyHtMin 350.  --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht200to400_pthi_taucut6_mcut50_output.txt &
 
@@ -356,9 +369,32 @@ python EXOVV_fwlite.py --files inputfiles/qcdpythia6flat.txt --outname exovv_qcd
 
 
 
-python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_pthi_taucut6_mcut50_labels.txt --outfile wjets_pthi_taucut6_mcut50.root --lum 40.03
-python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_ptlo_taucut6_mcut50_labels.txt --outfile wjets_ptlo_taucut6_mcut50.root --lum 40.03
-python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_ptlo_taucut7_mcut33_labels.txt --outfile wjets_ptlo_taucut7_mcut33.root --lum 40.03
+python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_pthi_taucut6_mcut50_labels.txt --outfile exovvhists/wjets_pthi_taucut6_mcut50.root --lum 40.03
+python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_ptlo_taucut6_mcut50_labels.txt --outfile exovvhists/wjets_ptlo_taucut6_mcut50.root --lum 40.03
+python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_ptlo_taucut7_mcut33_labels.txt --outfile exovvhists/wjets_ptlo_taucut7_mcut33.root --lum 40.03
+python stitch.py --config wjets_stitch_config.txt --fileLabels wjets_ptlo_taucut7_mcut28_labels.txt --outfile exovvhists/wjets_ptlo_taucut7_mcut28.root --lum 40.03
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_ptlo_taucut6_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht600toInf_ptlo_taucut6_mcut28_output.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht400to200_b2ganafw_v5.txt --outname exovv_wjets_ht400to200_ptlo_taucut6_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht400to200_ptlo_taucut6_mcut28_output.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut6_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.6 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut6_mcut28_output.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_ptlo_taucut6p5_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.65 --makeMistag >& exovv_wjets_ht600toInf_ptlo_taucut6p5_mcut28_output.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --outname exovv_wjets_ht400to600_ptlo_taucut6p5_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.65 --makeMistag >& exovv_wjets_ht400to600_ptlo_taucut6p5_mcut28_output.txt &
+
+
+python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --outname exovv_wjets_ht200to400_ptlo_taucut6p5_mcut28.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.65 --makeMistag >& exovv_wjets_ht200to400_ptlo_taucut6p5_mcut28_output.txt &
+
 
 
 
