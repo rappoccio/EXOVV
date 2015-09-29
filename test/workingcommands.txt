@@ -158,6 +158,30 @@ python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tWtop_local.txt  --ou
 python NtupleReader_fwlite.py  --files singletop_v74x_v4.3_tWantitop_local.txt  --outname singletop_v74x_v4.3_tWantitop_local_sel1_synced.root --selection 1 --stMin 400.0  --isMC  --quickSelect  >& singletop_v74x_v4.3_tWantitop_local_sel1_synced_output.txt &
 
 
+python JetControls_fwlite.py --files inputfiles/qcd_pt170to300.txt --outname qcd_pt170to300_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt170to300_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt300to470.txt --outname qcd_pt300to470_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt300to470_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt470to600.txt --outname qcd_pt470to600_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt470to600_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt600to800.txt --outname qcd_pt600to800_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt600to800_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt800to1000.txt --outname qcd_pt800to1000_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt800to1000_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname qcd_pt1000to1400_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt1000to1400_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname qcd_pt1400to1800_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt1400to1800_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt1800to2400_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt2400to3200_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt3200toInf.txt --outname qcd_pt3200toInf_allpt.root --isMC --applyFilters --minAK8JetPt 230.  >& qcd_pt3200toInf_output_lowpt.txt &
+
+
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1.txt --outname jetht_dataset4_1_allpt.root --applyFilters --minAK8JetPt 230. --applyTriggers >& jetht_dataset4_1_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_2.txt --outname jetht_dataset4_2_allpt.root --applyFilters --minAK8JetPt 230. --applyTriggers >& jetht_dataset4_2_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_3.txt --outname jetht_dataset4_3_allpt.root --applyFilters --minAK8JetPt 230. --applyTriggers >& jetht_dataset4_3_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_4.txt --outname jetht_dataset4_4_allpt.root --applyFilters --minAK8JetPt 230. --applyTriggers >& jetht_dataset4_4_output_allpt.txt &
+
+
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1.txt --outname jetht_dataset4_1_highpt.root --applyFilters --minAK8JetPt 800. --speedyPtMin 600. --applyTriggers >& jetht_dataset4_1_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_2.txt --outname jetht_dataset4_2_highpt.root --applyFilters --minAK8JetPt 800. --speedyPtMin 600. --applyTriggers >& jetht_dataset4_2_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_3.txt --outname jetht_dataset4_3_highpt.root --applyFilters --minAK8JetPt 800. --speedyPtMin 600. --applyTriggers >& jetht_dataset4_3_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_4.txt --outname jetht_dataset4_4_highpt.root --applyFilters --minAK8JetPt 800. --speedyPtMin 600. --applyTriggers >& jetht_dataset4_4_output_highpt.txt &
+
+
 
 
 python JetControls_fwlite.py --files inputfiles/qcd_pt170to300.txt --outname qcd_pt170to300_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt170to300_output_allpt.txt &
@@ -170,12 +194,28 @@ python JetControls_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname q
 python JetControls_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt1800to2400_output_allpt.txt &
 python JetControls_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt2400to3200_output_allpt.txt &
 python JetControls_fwlite.py --files inputfiles/qcd_pt3200toInf.txt --outname qcd_pt3200toInf_allpt.root --isMC --applyFilters --minAK8JetPt 200.  >& qcd_pt3200toInf_output_lowpt.txt &
-python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt --outname jetht_dataset1_allpt.root --applyFilters --minAK8JetPt 200. --applyHadronicTriggers >& jetht_dataset1_output_allpt.txt &
-python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt --outname jetht_dataset2_allpt.root --applyFilters --minAK8JetPt 200. --applyHadronicTriggers >& jetht_dataset2_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt --outname jetht_dataset1_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers >& jetht_dataset1_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt --outname jetht_dataset2_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers >& jetht_dataset2_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4.txt --outname jetht_dataset4_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers >& jetht_dataset4_output_allpt.txt &
 
 
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1.txt --outname jetht_dataset4_1_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers >& jetht_dataset4_1_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_2.txt --outname jetht_dataset4_2_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers >& jetht_dataset4_2_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_3.txt --outname jetht_dataset4_3_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers >& jetht_dataset4_3_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_4.txt --outname jetht_dataset4_4_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers >& jetht_dataset4_4_output_allpt.txt &
 
 
+python JetControls_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname qcd_pt170to300_highpt.root   --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt170to300_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname qcd_pt300to470_highpt.root   --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt300to470_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname qcd_pt470to600_highpt.root   --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt470to600_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname qcd_pt600to800_highpt.root   --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt600to800_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname qcd_pt800to1000_highpt.root  --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt800to1000_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname qcd_pt1000to1400_highpt.root --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt1000to1400_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname qcd_pt1400to1800_highpt.root --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt1400to1800_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_highpt.root --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt1800to2400_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_highpt.root --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt2400to3200_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname qcd_pt3200toInf_highpt.root  --isMC --applyFilters --minAK8JetPt 800. --speedyPtMin 600.  >& qcd_pt3200toInf_output_highpt.txt &
 
 python JetControls_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname qcd_pt170to300_highpt.root   --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt170to300_output_highpt.txt &
 python JetControls_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname qcd_pt300to470_highpt.root   --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt300to470_output_highpt.txt &
@@ -187,13 +227,14 @@ python JetControls_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname q
 python JetControls_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_highpt.root --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt1800to2400_output_highpt.txt &
 python JetControls_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_highpt.root --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt2400to3200_output_highpt.txt &
 python JetControls_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname qcd_pt3200toInf_highpt.root  --isMC --applyFilters --minAK8JetPt 1000. --speedyPtMin 800.  >& qcd_pt3200toInf_output_highpt.txt &
-python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt   --outname jetht_dataset1_highpt.root   --applyFilters --minAK8JetPt 1000. --speedyPtMin 800. --applyHadronicTriggers >& jetht_dataset1_output_highpt.txt &
-python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt   --outname jetht_dataset2_highpt.root   --applyFilters --minAK8JetPt 1000. --speedyPtMin 800. --applyHadronicTriggers >& jetht_dataset2_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt   --outname jetht_dataset1_highpt.root   --applyFilters --minAK8JetPt 1000. --speedyPtMin 800. --applyTriggers >& jetht_dataset1_output_highpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt   --outname jetht_dataset2_highpt.root   --applyFilters --minAK8JetPt 1000. --speedyPtMin 800. --applyTriggers >& jetht_dataset2_output_highpt.txt &
 
 
 
 python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800 --signalTriggers >& exovv_jetht_dataset1_output.txt &
 python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800 --signalTriggers >& exovv_jetht_dataset2_output.txt &
+
 python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300.root   --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt170to300.txt &  
 python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470.root   --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt300to470.txt &  
 python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600.root   --applyFilters --selection 2 --minAK8Pt 200. --speedyHtMin 700 --htMin 800>& exovv_qcd_pt470to600.txt &  
@@ -408,6 +449,96 @@ python EXOVV_fwlite.py --files inputfiles/wjets_ht400to600_b2ganafw_v5.txt --out
 
 
 python EXOVV_fwlite.py --files inputfiles/wjets_ht600toInf_b2ganafw_v5.txt --outname exovv_wjets_ht600toInf_pthi_taucut6_mcut50_withpred_mod.root  --selection 1 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --predRate mistagRate_mod_wjets_taucut6p5.root >& exovv_wjets_ht600toInf_pthi_taucut6_mcut50_withpred_mod.txt &
+
+
+
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcdpythia6flat.txt --outname exovv_qcdpythia6flat_ptlo_taucut7_mcut28.root  --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571 --tau21Cut 0.7 --makeMistag >& exovv_qcdpythia6flat_ptlo_taucut7_mcut28_output.txt &
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_ptlo_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt170to300_ptlo_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_ptlo_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt300to470_ptlo_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_ptlo_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt470to600_ptlo_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800_ptlo_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt600to800_ptlo_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000_ptlo_taucut6_mcut50.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt800to1000_ptlo_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400_ptlo_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1000to1400_ptlo_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800_ptlo_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1400to1800_ptlo_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400_ptlo_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1800to2400_ptlo_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200_ptlo_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt2400to3200_ptlo_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf_ptlo_taucut6_mcut50.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt3200toInf_ptlo_taucut6_mcut50.txt & 
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_ptlo_taucut7_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt170to300_ptlo_taucut7_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_ptlo_taucut7_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt300to470_ptlo_taucut7_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_ptlo_taucut7_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt470to600_ptlo_taucut7_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800_ptlo_taucut7_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt600to800_ptlo_taucut7_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000_ptlo_taucut7_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt800to1000_ptlo_taucut7_mcut28.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400_ptlo_taucut7_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt1000to1400_ptlo_taucut7_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800_ptlo_taucut7_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt1400to1800_ptlo_taucut7_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400_ptlo_taucut7_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt1800to2400_ptlo_taucut7_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200_ptlo_taucut7_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt2400to3200_ptlo_taucut7_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf_ptlo_taucut7_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.7 --makeMistag >& exovv_qcd_pt3200toInf_ptlo_taucut7_mcut28.txt & 
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_ptlo_taucut6p5_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt170to300_ptlo_taucut6p5_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_ptlo_taucut6p5_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt300to470_ptlo_taucut6p5_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_ptlo_taucut6p5_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt470to600_ptlo_taucut6p5_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800_ptlo_taucut6p5_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt600to800_ptlo_taucut6p5_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000_ptlo_taucut6p5_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt800to1000_ptlo_taucut6p5_mcut28.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400_ptlo_taucut6p5_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt1000to1400_ptlo_taucut6p5_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800_ptlo_taucut6p5_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt1400to1800_ptlo_taucut6p5_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400_ptlo_taucut6p5_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt1800to2400_ptlo_taucut6p5_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200_ptlo_taucut6p5_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt2400to3200_ptlo_taucut6p5_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf_ptlo_taucut6p5_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.65 --makeMistag >& exovv_qcd_pt3200toInf_ptlo_taucut6p5_mcut28.txt & 
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_pthi_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt170to300_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_pthi_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt300to470_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_pthi_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt470to600_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800_pthi_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt600to800_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000_pthi_taucut6_mcut50.root  --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt800to1000_pthi_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400_pthi_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1000to1400_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800_pthi_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1400to1800_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400_pthi_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1800to2400_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200_pthi_taucut6_mcut50.root --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt2400to3200_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf_pthi_taucut6_mcut50.root  --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt3200toInf_pthi_taucut6_mcut50.txt & 
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_ptlo_taucut6p3_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt170to300_ptlo_taucut6p3_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_ptlo_taucut6p3_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt300to470_ptlo_taucut6p3_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_ptlo_taucut6p3_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt470to600_ptlo_taucut6p3_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800_ptlo_taucut6p3_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt600to800_ptlo_taucut6p3_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000_ptlo_taucut6p3_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt800to1000_ptlo_taucut6p3_mcut28.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400_ptlo_taucut6p3_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt1000to1400_ptlo_taucut6p3_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800_ptlo_taucut6p3_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt1400to1800_ptlo_taucut6p3_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400_ptlo_taucut6p3_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt1800to2400_ptlo_taucut6p3_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200_ptlo_taucut6p3_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt2400to3200_ptlo_taucut6p3_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf_ptlo_taucut6p3_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.63 --makeMistag >& exovv_qcd_pt3200toInf_ptlo_taucut6p3_mcut28.txt & 
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_ptlo_taucut6p8_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt170to300_ptlo_taucut6p8_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_ptlo_taucut6p8_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt300to470_ptlo_taucut6p8_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_ptlo_taucut6p8_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt470to600_ptlo_taucut6p8_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800_ptlo_taucut6p8_mcut28.root   --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt600to800_ptlo_taucut6p8_mcut28.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000_ptlo_taucut6p8_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt800to1000_ptlo_taucut6p8_mcut28.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400_ptlo_taucut6p8_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt1000to1400_ptlo_taucut6p8_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800_ptlo_taucut6p8_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt1400to1800_ptlo_taucut6p8_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400_ptlo_taucut6p8_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt1800to2400_ptlo_taucut6p8_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200_ptlo_taucut6p8_mcut28.root --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt2400to3200_ptlo_taucut6p8_mcut28.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf_ptlo_taucut6p8_mcut28.root  --applyFilters --selection 2 --minAK8Pt 200. --maxAK8Pt 350. --sdmassCutLo 28.571  --tau21Cut 0.68 --makeMistag >& exovv_qcd_pt3200toInf_ptlo_taucut6p8_mcut28.txt & 
 
 
 

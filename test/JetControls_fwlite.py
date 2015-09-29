@@ -351,7 +351,8 @@ f = ROOT.TFile(options.outname, "RECREATE")
 f.cd()
 
 #^ Plot initialization
-h_trig = ROOT.TH1F("h_trig", "Trigger Fired", len(pt0cuts), 0, len(pt0cuts) )
+h_trig = ROOT.TH1F("h_trig", "Trigger Fired With Weight", len(pt0cuts), 0, len(pt0cuts) )
+h_trig_raw = ROOT.TH1F("h_trigraw", "Trigger Fired", len(pt0cuts), 0, len(pt0cuts) )
 h_ht = ROOT.TH1F("ht", "H_{T};H_{T} (GeV)", 150, 0, 1500)
 h_met = ROOT.TH1F("met", "Missing p_{T};p_{T} (GeV)", 100, 0, 1000)
 h_ptAK8 = ROOT.TH1F("ptAK8", "AK8 Jet p_{T};p_{T} (GeV)", 300, 0, 3000)
@@ -747,14 +748,15 @@ for ifile in files : #{ Loop over root files
             if options.verbose :
                 print 'Prescale = ' + str(prescale)
                 
-            #evWeight = evWeight * prescale            
+            evWeight = evWeight * prescale            
             if passTrig == False :
                 continue
             
             if ipt0 != None and ipt0 >= 0 :
-                h_trig.Fill( ipt0 )
-                ha_ht[ipt0].Fill( ht, evWeight )
-                ha_pt0[ipt0].Fill( pt0, evWeight )
+                h_trig.Fill( ipt0, evWeight )
+                h_trig_raw.Fill( ipt0 )
+                ha_ht[ipt0].Fill( ht )
+                ha_pt0[ipt0].Fill( pt0 )
                 
 
         if options.deweightFlat : 
@@ -971,22 +973,22 @@ for ifile in files : #{ Loop over root files
 
 
             if ipt0 != None and ipt0 >= 0 : 
-                ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp(), evWeight  )
-                ha_yAK8[ipt0].Fill( AK8P4Corr.Rapidity(), evWeight  )
-                ha_phiAK8[ipt0].Fill( AK8P4Corr.Phi(), evWeight  )
-                ha_mAK8[ipt0].Fill( AK8P4Corr.M(), evWeight  )
-                ha_msoftdropAK8[ipt0].Fill( AK8SoftDropM[i], evWeight  )
-                ha_mprunedAK8[ipt0].Fill( AK8PrunedM[i], evWeight  )
-                ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i], evWeight  )
-                ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i], evWeight  )
-                ha_jetareaAK8[ipt0].Fill( AK8Area[i], evWeight )
-                ha_tau21AK8[ipt0].Fill( tau21, evWeight )
-                ha_nhfAK8[ipt0].Fill( nhf, evWeight )
-                ha_chfAK8[ipt0].Fill( chf, evWeight )
-                ha_nefAK8[ipt0].Fill( nef, evWeight )
-                ha_cefAK8[ipt0].Fill( cef, evWeight )
-                ha_ncAK8[ipt0].Fill( nconstituents, evWeight )
-                ha_nchAK8[ipt0].Fill( nch, evWeight )                
+                ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp()  )
+                ha_yAK8[ipt0].Fill( AK8P4Corr.Rapidity()  )
+                ha_phiAK8[ipt0].Fill( AK8P4Corr.Phi()  )
+                ha_mAK8[ipt0].Fill( AK8P4Corr.M()  )
+                ha_msoftdropAK8[ipt0].Fill( AK8SoftDropM[i]  )
+                ha_mprunedAK8[ipt0].Fill( AK8PrunedM[i]  )
+                ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i]  )
+                ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i]  )
+                ha_jetareaAK8[ipt0].Fill( AK8Area[i] )
+                ha_tau21AK8[ipt0].Fill( tau21 )
+                ha_nhfAK8[ipt0].Fill( nhf )
+                ha_chfAK8[ipt0].Fill( chf )
+                ha_nefAK8[ipt0].Fill( nef )
+                ha_cefAK8[ipt0].Fill( cef )
+                ha_ncAK8[ipt0].Fill( nconstituents )
+                ha_nchAK8[ipt0].Fill( nch )                
                 
             if sp4_0 == None or sp4_1 == None :
                 AK8Rho.append(-1.0)
@@ -1000,8 +1002,8 @@ for ifile in files : #{ Loop over root files
             h_subjetDRAK8.Fill( sp4_0.DeltaR( sp4_1 ), evWeight )
 
             if ipt0 != None and ipt0 >= 0 : 
-                ha_jetrhoAK8[ipt0].Fill( jetrho, evWeight )
-                ha_subjetDRAK8[ipt0].Fill( sp4_0.DeltaR( sp4_1 ), evWeight )            
+                ha_jetrhoAK8[ipt0].Fill( jetrho )
+                ha_subjetDRAK8[ipt0].Fill( sp4_0.DeltaR( sp4_1 ) )
 
             jetz = 0.0
             if sp4_0.Perp() > sp4_1.Perp() :
@@ -1012,7 +1014,7 @@ for ifile in files : #{ Loop over root files
             h_jetzAK8.Fill( jetz , evWeight )
 
             if ipt0 != None and ipt0 >= 0 : 
-                ha_jetzAK8[ipt0].Fill( jetz , evWeight )
+                ha_jetzAK8[ipt0].Fill( jetz )
 
 
                 
