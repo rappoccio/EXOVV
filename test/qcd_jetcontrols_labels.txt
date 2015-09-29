@@ -1,0 +1,10 @@
+170to300   exovvhists/qcd_pt170to300_allpt.root
+300to470   exovvhists/qcd_pt300to470_allpt.root
+470to600   exovvhists/qcd_pt470to600_allpt.root
+600to800   exovvhists/qcd_pt600to800_allpt.root
+800to1000  exovvhists/qcd_pt800to1000_allpt.root
+1000to1400 exovvhists/qcd_pt1000to1400_allpt.root
+1400to1800 exovvhists/qcd_pt1400to1800_allpt.root
+1800to2400 exovvhists/qcd_pt1800to2400_allpt.root
+2400to3200 exovvhists/qcd_pt2400to3200_allpt.root
+3200toInf  exovvhists/qcd_pt3200toInf_allpt.root

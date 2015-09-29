@@ -12,21 +12,15 @@ parser.add_option('--file', type='string', action='store',
                   default = 'jetht.root',
                   help='Input file')
 
-parser.add_option('--mcname', type='string', action='store',
-                  dest='mcname',
+parser.add_option('--mcfile', type='string', action='store',
+                  dest='mcfile',
                   default = '',
-                  help='String to append to MC names')
+                  help='MC file')
 
 parser.add_option('--outname', type='string', action='store',
                   dest='outname',
                   default = "jetht",
                   help='Output string for output file')
-
-
-parser.add_option('--dir', type='string', action='store',
-                  dest='dir',
-                  default = "hists",
-                  help='Directory containing root histograms')
 
 
 parser.add_option('--rebin', type='int', action='store',
@@ -49,62 +43,43 @@ ROOT.gROOT.Macro("rootlogon.C")
 
 #### Data
 
-f = ROOT.TFile(options.dir + '/' + options.file)
+f = ROOT.TFile(options.file)
 trigs = [
-#    'HLT_PFJet60',
+#####    'HLT_PFJet60',
 #    'HLT_PFJet80',
-    'HLT_PFJet140',
-    'HLT_PFJet200',
-    'HLT_PFJet260',
-    'HLT_PFJet320',
-    'HLT_PFJet400',
-    'HLT_PFJet450',
+#    'HLT_PFJet140',
+#    'HLT_PFJet200',
+#    'HLT_PFJet260',
+#    'HLT_PFJet320',
+#    'HLT_PFJet400',
+#    'HLT_PFJet450',
     'HLT_PFJet500' 
     ]
 
-scales = [
-    2000, 66, 12, 4, 1, 1, 1
+# Get these from WBM pages, weighted by luminosity to
+# get an effective L1 prescale. 
+l1scales = [
+#    2.81,
+#    115.71,
+#    9.15,
+#    4.40,
+#    2.00,
+#    1.00,
+    1.00    
+    ]
+# These are derived from the trigger weights. 
+hltscales = [
+#    5.66, 1979.87, 369.02, 24.49, 1.04, 1.0, 1.0
+1.0
     ]
 
-#### MC
-fmcNames = [
-    'qcd_pt170to300',
-    'qcd_pt300to470',
-    'qcd_pt470to600',
-    'qcd_pt600to800',
-    'qcd_pt800to1000',
-    'qcd_pt1000to1400',
-    'qcd_pt1400to1800',
-    'qcd_pt1800to2400',
-    'qcd_pt2400to3200',
-    'qcd_pt3200toInf',
-]
+#Assuming MC File is already stitched together
+fmc = ROOT.TFile( options.mcfile )
 
-
-lumi = 40.03 # pb-1
-
-mcscales = [
-    #xs / nevents * lumi
-     117276. / 3468514. * lumi,
-     7823 / 2936644. * lumi,
-     648.2 / 1971800. * lumi,
-     186.9 / 1981608. * lumi,
-     32.293 / 1990208. * lumi,
-     9.4183 / 1487712. * lumi,
-     0.84265 / 197959. * lumi,
-     0.114943 / 194924. * lumi,
-     0.00682981 / 198383. * lumi,
-     0.000165445 / 194528. * lumi
-    ]
-
-fmc = []
-for imc,mcname in enumerate(fmcNames) :
-    fmc.append( ROOT.TFile(options.dir + '/' + mcname + options.mcname + '.root') )
-    
 
 logy = [ True, False, True, True, True, True, True, True, False, False, False,False,False,False,False,False, ]
 
-hists = ['ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8', 'nhfAK8', 'chfAK8', 'nefAK8', 'cefAK8', 'ncAK8', 'nchAK8']
+hists = ['ptAK8', 'yAK8', 'mAK8', 'msoftdropAK8', 'mprunedAK8', 'mtrimmedAK8', 'mfilteredAK8', 'tau21AK8', 'subjetDRAK8', 'jetzAK8'] #, 'nhfAK8', 'chfAK8', 'nefAK8', 'cefAK8', 'ncAK8', 'nchAK8']
 titles = [
     'AK8 p_{T};p_{T} (GeV)',
     'AK8 Rapidity;y',
@@ -125,9 +100,11 @@ titles = [
     
     ]
 stacks = []
-mcstacks = []
+mchists = []
+ratios = []
 canvs = []
 legs = []
+pads = []
 
 ROOT.gStyle.SetPadRightMargin(0.15)
 
@@ -135,34 +112,37 @@ for ihist,histname in enumerate(hists):
     stack = ROOT.THStack(histname + '_stack', titles[ihist])
     mcstack = ROOT.THStack(histname + '_mcstack', titles[ihist])
     canv = ROOT.TCanvas(histname + '_canv', histname +'_canv')
+    canv.SetBottomMargin(0.0)
+    pad0 = ROOT.TPad( histname + '_pad0', 'pad0', 0.0, 0.2, 1.0, 1.0 )
+    pad1 = ROOT.TPad( histname + '_pad1', 'pad1', 0.0, 0.0, 1.0, 0.2 )
+    pads.append( [pad0,pad1] )
+    pad0.Draw()
+    pad1.Draw()
+    
+    pad0.cd()
     leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
-    for imc,mc in enumerate(fmc) :
-        # I'm an idiot and named the trigger histograms differently from the MC ones
-        if 'nhfAK8' in histname or 'chfAK8' in histname or 'nefAK8' in histname or 'cefAK8' in histname or 'ncAK8' in histname or 'nchAK8' in histname :            
-            hist = mc.Get( 'h_' + histname )
-        else :
-            hist = mc.Get( histname )
-        print 'Getting MC : ' + histname
-        if options.rebin != None :
-            hist.Rebin( options.rebin )
-        hist.Scale( mcscales[imc] )
-        mcstack.Add( hist)
+    mchist = fmc.Get( histname )
+    mchist.Sumw2()
+    if options.rebin != None :
+        mchist.Rebin( options.rebin )
+    mchists.append( mchist )
         
     for itrig,trigname in enumerate(trigs) :
         s = trigname + '_' + histname
         print 'Getting ' + s
         hist = f.Get( s )
+        hist.Sumw2()
         hist.SetMarkerStyle(20)
-        hist.Scale( scales[itrig] )
+        hist.Scale( l1scales[itrig] * hltscales[itrig] )
         if options.rebin != None :
             hist.Rebin( options.rebin )
         stack.Add( hist )
         leg.AddEntry( hist, trigname, 'f')
 
     stack.GetStack().Last().Draw('e')
-    mcstack.GetStack().Last().Draw('hist same')
+    mchist.Draw('hist same')
     stack.GetStack().Last().Draw('e same')
 
     
@@ -173,7 +153,18 @@ for ihist,histname in enumerate(hists):
     canv.Update()
     canvs.append(canv)
     stacks.append(stack)
-    mcstacks.append( mcstack )
     legs.append(leg)
+
+    
+    pad1.cd()
+    iratio = mchist.Clone()
+    iratio.SetName( 'iratio_' + histname )
+    iratio.Divide( stack.GetStack().Last() )
+    iratio.Draw('e')
+    iratio.SetMinimum(0.0)
+    iratio.SetMaximum(2.0)
+    ratios.append(iratio)
+    canv.cd()
+    canv.Update()
     canv.Print( 'jetplots_' + histname + options.outname + '.png', 'png')
     canv.Print( 'jetplots_' + histname + options.outname + '.pdf', 'pdf')
