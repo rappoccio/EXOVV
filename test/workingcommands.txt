@@ -266,14 +266,27 @@ python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jet
 
 
 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_alltrigs_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset1_alltrigs_ptlo_taucut7_mcut33.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_alltrigs_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag  --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset2_alltrigs_ptlo_taucut7_mcut33.txt & 
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_alltrigs_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset1_alltrigs_ptlo_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_alltrigs_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag  --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset2_alltrigs_ptlo_taucut6_mcut50.txt & 
+
+
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset4_1.txt --outname exovv_jetht_dataset4_1_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset4_1_ptlo_taucut7_mcut33.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_ptlo_taucut7_mcut33.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 33.33 --tau21Cut 0.7 --makeMistag  --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset2_ptlo_taucut7_mcut33.txt & 
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset4_1.txt --outname exovv_jetht_dataset4_1_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset4_1_ptlo_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_ptlo_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 200. --maxAK8Pt 300. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag  --speedyHtMin 380 --htMin 480 >& exovv_jetht_dataset2_ptlo_taucut6_mcut50.txt & 
+
+
 
 
 hadd -f exovv_jetht_alltrigs_pthi_taucut6_mcut50.root exovv_jetht_dataset1_alltrigs_pthi_taucut6_mcut50.root exovv_jetht_dataset2_alltrigs_pthi_taucut6_mcut50.root
 
 hadd -f exovv_jetht_jettrigs_ptlo_taucut6_mcut50.root exovv_jetht_dataset1_jettrigs_ptlo_taucut6_mcut50.root exovv_jetht_dataset2_jettrigs_ptlo_taucut6_mcut50.root
 hadd -f exovv_jetht_jettrigs_ptlo_taucut7_mcut33.root exovv_jetht_dataset1_jettrigs_ptlo_taucut7_mcut33.root exovv_jetht_dataset2_jettrigs_ptlo_taucut7_mcut33.root
-
-
 
 
 
@@ -502,6 +515,12 @@ python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_q
 
 
 
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset1.txt --outname exovv_jetht_dataset1_alltrigs_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset1_alltrigs_pthi_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset2.txt --outname exovv_jetht_dataset2_alltrigs_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag  --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset2_alltrigs_pthi_taucut6_mcut50.txt & 
+
+
+
 python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_pthi_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt170to300_pthi_taucut6_mcut50.txt &  
 python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_pthi_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt300to470_pthi_taucut6_mcut50.txt &  
 python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_pthi_taucut6_mcut50.root   --applyFilters --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt470to600_pthi_taucut6_mcut50.txt &  
@@ -543,104 +562,26 @@ python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_q
 
 
 
-251562:617:537930224
-251562:456:403017738
-251562:19:17186332
-251562:144:131606150
-251562:144:131087057
-251562:145:132006443
-251252:271:164175743
-251252:317:191882553
-251562:244:219873257
-251562:398:353367204
-251562:338:302709373
-251562:344:307337275
-251252:340:205286695
-251252:341:205822783
-251562:560:490878886
-251562:163:148578739
-251562:132:120422540
-251562:631:549617422
-251562:67:61715697
-251562:209:189396961
-251252:391:236201407
-251252:35:21595981
-251244:413:248729618
-251244:211:121737259
-251244:212:122045523
-251244:246:143869508
-251244:246:143784430
-251252:365:220364040
-251562:490:432165567
-251562:490:431820779
-251562:336:300653407
-251562:649:564997191
-251562:331:296551397
-251562:131:119649952
-251562:131:119843960
-251244:328:195444244
-251244:282:166773405
-251244:322:191796705
-251252:504:305470403
-251562:166:151370216
-251562:327:293080350
-251562:100:92251738
-251562:173:157611625
-251562:315:282171507
-251562:245:221043123
-251244:97:50202940
-251244:108:57215192
-251244:127:69128598
-251244:189:107729619
-251244:202:116148629
-251562:517:454592454
-251562:537:471544179
-251562:522:459444642
-251562:546:479040232
-251562:607:530414639
-251562:627:546911035
-251562:497:438142753
-251562:10:8506343
-251562:32:29471145
-251562:224:202613511
-251562:224:202727653
-251244:233:135453294
-251244:377:226151075
-251244:231:134541417
-251562:264:237516126
-251562:485:427908682
-251562:253:228191984
-251562:254:229188662
-251562:59:53834257
-251562:59:54102204
-251562:632:550452809
-251562:75:68868677
-251562:424:375555128
-251562:8:6776414
-251562:201:182031823
-251562:377:336096730
-251562:380:338275842
-251562:392:348378060
-251562:392:348224693
-251562:137:125523665
-251562:260:234060980
-251562:322:288776495
-251562:353:315005375
-251562:369:328880834
-251562:359:320262459
-251561:2:1289105
-251561:41:36101797
-251561:45:40229192
-251561:42:36952241
-251561:60:54323437
-251561:77:69734253
-251251:153:93571663
-251252:11:6579595
-251252:68:41351309
-251252:518:313071638
-251252:301:182177565
-251561:14:10269774
-251561:17:13160995
-251561:65:59173701
-251561:72:65704455
-251561:20:16074249
+
+
+
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset4_1.txt --outname exovv_jetht_dataset4_1_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset4_1_pthi_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset4_2.txt --outname exovv_jetht_dataset4_2_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset4_2_pthi_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset4_3.txt --outname exovv_jetht_dataset4_3_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset4_3_pthi_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/jetht_dataset4_4.txt --outname exovv_jetht_dataset4_4_pthi_taucut6_mcut50.root --applyFilters --applyHadronicTriggers --isData --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag --speedyHtMin 380 --htMin 900 --signalTriggers >& exovv_jetht_dataset4_4_pthi_taucut6_mcut50.txt & 
+
+
+
+
+
+python EXOVV_fwlite.py --files inputfiles/qcd_pt170to300.txt   --outname exovv_qcd_pt170to300_pthi_taucut6_mcut50.root   --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt170to300_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt300to470.txt   --outname exovv_qcd_pt300to470_pthi_taucut6_mcut50.root   --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt300to470_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt470to600.txt   --outname exovv_qcd_pt470to600_pthi_taucut6_mcut50.root   --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt470to600_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt600to800.txt   --outname exovv_qcd_pt600to800_pthi_taucut6_mcut50.root   --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt600to800_pthi_taucut6_mcut50.txt &  
+python EXOVV_fwlite.py --files inputfiles/qcd_pt800to1000.txt  --outname exovv_qcd_pt800to1000_pthi_taucut6_mcut50.root  --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt800to1000_pthi_taucut6_mcut50.txt & 
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname exovv_qcd_pt1000to1400_pthi_taucut6_mcut50.root --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1000to1400_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname exovv_qcd_pt1400to1800_pthi_taucut6_mcut50.root --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1400to1800_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname exovv_qcd_pt1800to2400_pthi_taucut6_mcut50.root --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt1800to2400_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname exovv_qcd_pt2400to3200_pthi_taucut6_mcut50.root --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt2400to3200_pthi_taucut6_mcut50.txt &
+python EXOVV_fwlite.py --files inputfiles/qcd_pt3200toInf.txt  --outname exovv_qcd_pt3200toInf_pthi_taucut6_mcut50.root  --applyFilters --htMin 900 --speedyHtMin 380 --selection 2 --minAK8Pt 350. --maxAK8Pt 30000. --sdmassCutLo 50. --tau21Cut 0.6 --makeMistag >& exovv_qcd_pt3200toInf_pthi_taucut6_mcut50.txt & 
+

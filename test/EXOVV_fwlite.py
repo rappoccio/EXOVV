@@ -217,6 +217,11 @@ parser.add_option('--htMin', type='float', action='store',
                   dest='htMin',
                   help='Minimum AK8 Jet HT with right jet corrections')
 
+parser.add_option('--puFile', type='string', action='store',
+                  default=None,
+                  dest='puFile',
+                  help='Name of Pileup File, try "pileup_reweight.root" ')
+
 
 (options, args) = parser.parse_args()
 argv = []
@@ -414,6 +419,19 @@ l_jetsAK4NumDaughters = ( "jetsAK4" , "jetAK4numberOfDaughters" )
 h_jetsAK4Area = Handle("std::vector<float>")
 l_jetsAK4Area = ( "jetsAK4" , "jetAK4jetArea" )
 
+
+h_pv_chi = Handle("std::vector<float>")
+l_pv_chi = ( "vertexInfo", "chi" )
+h_pv_rho = Handle("std::vector<float>")
+l_pv_rho = ( "vertexInfo", "rho" )
+h_pv_z = Handle("std::vector<float>")
+l_pv_z = ( "vertexInfo", "z" )
+h_pv_ndof = Handle("std::vector<std::int>")
+l_pv_ndof = ( "vertexInfo", "ndof" )
+
+h_puNtrueInt = Handle("std::int")
+l_puNtrueInt = ( "eventUserData" , "puNtrueInt" )
+
 h_NPV = Handle("std::int")
 l_NPV = ( "eventUserData" , "npv" )
 
@@ -544,10 +562,22 @@ l_triggerBits = ("TriggerUserData", "triggerBitTree")
 h_triggerPrescales = Handle( "std::vector<int>")
 l_triggerPrescales = ("TriggerUserData", "triggerPrescaleTree")
 
+
+#@ Pileup reweighting
+if not options.isData and options.puFile != None :
+    fPU = ROOT.TFile(options.puFile)
+    hPU = fPU.Get("h_NPVert")
+
+
 f = ROOT.TFile(options.outname, "RECREATE")
 f.cd()
 
 #^ Plot initialization
+
+
+h_NPVert         = ROOT.TH1D("h_NPVert"        , "", 200,0,200 )
+h_NtrueIntPU     = ROOT.TH1D("h_NtrueIntPU"    , "", 200,0,200 )
+
 
 h_ptLep = [ ROOT.TH1F("h0_ptLep", "Lepton p_{T}, Dilepton Channel;p_{T} (GeV)", 100, 0, 1000),
             ROOT.TH1F("h1_ptLep", "Lepton p_{T}, Leptonic Channel;p_{T} (GeV)", 100, 0, 1000),
@@ -707,7 +737,14 @@ if options.isData :
     vParJecAK4.push_back(L3JetParAK4)
     vParJecAK4.push_back(ResJetParAK4)
 
+    vParJecAK4ForMass = ROOT.vector('JetCorrectorParameters')()
+    vParJecAK4ForMass.push_back(L2JetParAK4)
+    vParJecAK4ForMass.push_back(L3JetParAK4)
+    vParJecAK4ForMass.push_back(ResJetParAK4)
+    
+
     ak4JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK4)
+    ak4JetCorrectorForMass = ROOT.FactorizedJetCorrector(vParJecAK4ForMass)
 
     vParJecAK8 = ROOT.vector('JetCorrectorParameters')()
     vParJecAK8.push_back(L1JetParAK8)
@@ -742,8 +779,12 @@ else :
     vParJecAK4.push_back(L2JetParAK4)
     vParJecAK4.push_back(L3JetParAK4)
 
-
+    vParJecAK4ForMass = ROOT.vector('JetCorrectorParameters')()
+    vParJecAK4ForMass.push_back(L2JetParAK4)
+    vParJecAK4ForMass.push_back(L3JetParAK4)
+    
     ak4JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK4)
+    ak4JetCorrectorForMass = ROOT.FactorizedJetCorrector(vParJecAK4ForMass)
 
     vParJecAK8 = ROOT.vector('JetCorrectorParameters')()
     vParJecAK8.push_back(L1JetParAK8)
@@ -815,15 +856,28 @@ for ifile in files : #{ Loop over root files
         i += 1
         nevents += 1
         cutflow[0] += 1
-
+        
+        evWeight = 1.0
             
         
         #@ VERTEX SETS
-        event.getByLabel( l_NPV, h_NPV )
-        NPV = h_NPV.product()[0]
-        if len(h_NPV.product()) == 0 :
+        event.getByLabel( l_pv_chi, h_pv_chi )
+        event.getByLabel( l_pv_rho, h_pv_rho )
+        event.getByLabel( l_pv_z, h_pv_z )
+        event.getByLabel( l_pv_ndof, h_pv_ndof )
+
+        pv_chi = h_pv_chi.product()
+        pv_rho = h_pv_rho.product()
+        pv_z = h_pv_z.product()
+        pv_ndof = h_pv_ndof.product()
+        NPV = 0
+
+        for ivtx in xrange( len(pv_chi) ) :
+            if abs(pv_z[ivtx]) < 24. and pv_ndof[ivtx] > 4 and abs(pv_rho[ivtx]) < 2.0 :
+                NPV += 1
+        if NPV < 1 :
             if options.verbose :
-                print "Event has no good primary vertex."
+                print 'Event has no primary vertex'
             continue
         cutflow[1] += 1
             
@@ -841,6 +895,18 @@ for ifile in files : #{ Loop over root files
                 print 'rho = {0:6.2f}'.format( rho )
 
 
+        pvWeight = 1.0
+        if not options.isData : 
+            #@ PU interactions
+            event.getByLabel(l_puNtrueInt, h_puNtrueInt)
+            puNTrueInt = h_puNtrueInt.product()[0]
+            h_NtrueIntPU.Fill( puNTrueInt )
+
+            if options.puFile != None : 
+                pvWeight = hPU.GetBinContent( hPU.GetXaxis().FindBin( NPV) )
+                evWeight *= pvWeight
+            
+        h_NPVert.Fill( NPV, evWeight )
                 
 
         # Speedy cuts. Make things go faster.
@@ -909,7 +975,7 @@ for ifile in files : #{ Loop over root files
             print '    ---> Event ' + str(nevents)
 
 
-        evWeight = 1.0
+
 
         
         lastRun = 1
@@ -945,15 +1011,15 @@ for ifile in files : #{ Loop over root files
                 if "CSC" in filterNameStrings[itrig] :
                     if filterBits[itrig] == 1 :
                         cscFilt = True
-                if "goodVer" in filterNameStrings[itrig] :
-                    if filterBits[itrig] == 1 :
-                        vertexFilt = True
+                #if "goodVer" in filterNameStrings[itrig] :
+                #    if filterBits[itrig] == 1 :
+                #        vertexFilt = True
                 #if "HBHE" in filterNameStrings[itrig] :
                 #    if filterBits[itrig] == 1 :
                 #        hbheFilt = True
 
 
-            if cscFilt == False or vertexFilt == False :
+            if cscFilt == False :
                 if options.verbose :
                     print 'Found filters, but they failed'
                 continue
@@ -1035,7 +1101,7 @@ for ifile in files : #{ Loop over root files
                                 trigMap[ itrigToGet ] = int(triggerBits[itrig])
                                 if triggerBits[itrig] == 1 :
                                     nSelectedTriggersPassed += 1
-                                    ha_htAK8[itrigToGet].Fill( ht )
+                                    ha_htAK8[itrigToGet].Fill( ht, pvWeight )
 
 
                         if triggerBits[itrig] == 1 :
@@ -1057,7 +1123,7 @@ for ifile in files : #{ Loop over root files
                                 trigMap[ itrigToGet ] = int(triggerBits[itrig])
                                 if triggerBits[itrig] == 1 :
                                     nSelectedTriggersPassed += 1
-                                    ha_pt0[itrigToGet].Fill( pt0 )
+                                    ha_pt0[itrigToGet].Fill( pt0, pvWeight )
 
 
                         if triggerBits[itrig] == 1 :
@@ -1336,6 +1402,7 @@ for ifile in files : #{ Loop over root files
         ak8JetsPassKin = []
         ak8JetsPassTag = []
         AK8Rho = []
+        AK8SoftDropM = []
 
         if len( h_jetsAK8Pt.product()) > 0 : 
             #AK8Pt = h_jetsAK8Pt.product()   # Got this earlier, don't get it twice. 
@@ -1347,7 +1414,7 @@ for ifile in files : #{ Loop over root files
 
             #AK8JEC = h_jetsAK8JEC.product()
             #AK8Area = h_jetsAK8Area.product()
-            AK8SoftDropM = h_jetsAK8SoftDropMass.product()
+            #AK8SoftDropM = h_jetsAK8SoftDropMass.product()
             AK8TrimmedM = h_jetsAK8TrimMass.product()
             AK8TrimmedM = h_jetsAK8TrimMass.product()
             AK8PrunedM = h_jetsAK8PrunMass.product()
@@ -1388,7 +1455,7 @@ for ifile in files : #{ Loop over root files
                 
             ##### To do : Type 1 MET corrections, JER propagation
 
-            #$ Get Jet Rho
+            #$ Get Jet Rho and softdrop mass
             sp4_0 = None
             sp4_1 = None
             ival = int(AK8vSubjetIndex0[i])            
@@ -1397,26 +1464,45 @@ for ifile in files : #{ Loop over root files
                 seta0   = AK8SubJetsEta[ival]
                 sphi0   = AK8SubJetsPhi[ival]
                 sm0   = AK8SubJetsMass[ival]
-                sp4_0 = ROOT.TLorentzVector()
-                sp4_0.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
+                sp4_0Raw = ROOT.TLorentzVector()
+                sp4_0Raw.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
+
+                ak4JetCorrectorForMass.setJetEta( sp4_0Raw.Eta() )
+                ak4JetCorrectorForMass.setJetPt ( sp4_0Raw.Perp() )
+                ak4JetCorrectorForMass.setJetE  ( sp4_0Raw.E() )
+                ak4JetCorrectorForMass.setRho   ( rho )
+                ak4JetCorrectorForMass.setNPV   ( NPV )
+                subjetJEC = ak4JetCorrectorForMass.getCorrection()
+                sp4_0 = sp4_0Raw * subjetJEC
+                
             ival = int(AK8vSubjetIndex1[i])
             if ival > -1 :
                 spt1    = AK8SubJetsPt[ival]
                 seta1   = AK8SubJetsEta[ival]
                 sphi1   = AK8SubJetsPhi[ival]
                 sm1   = AK8SubJetsMass[ival]
-                sp4_1 = ROOT.TLorentzVector()
-                sp4_1.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )
+                sp4_1Raw = ROOT.TLorentzVector()
+                sp4_1Raw.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )
+
+                ak4JetCorrectorForMass.setJetEta( sp4_1Raw.Eta() )
+                ak4JetCorrectorForMass.setJetPt ( sp4_1Raw.Perp() )
+                ak4JetCorrectorForMass.setJetE  ( sp4_1Raw.E() )
+                ak4JetCorrectorForMass.setRho   ( rho )
+                ak4JetCorrectorForMass.setNPV   ( NPV )
+                subjetJEC = ak4JetCorrectorForMass.getCorrection()
+                sp4_1 = sp4_1Raw * subjetJEC
 
 
             if sp4_0 == None or sp4_1 == None :
                 jetrho = -1.0
+                AK8SoftDropM.append( -1.0 )
                 AK8Rho.append(-1.0)
             else : 
                 softdrop_p4 = sp4_0 + sp4_1
                 jetR = 0.8
                 jetrho = softdrop_p4.M() / (softdrop_p4.Perp() * jetR)
                 jetrho *= jetrho
+                AK8SoftDropM.append( softdrop_p4.M() )
                 AK8Rho.append( jetrho )
 
             
@@ -1529,6 +1615,8 @@ for ifile in files : #{ Loop over root files
             h_ptLep[selection].Fill( lepton.Perp(), evWeight )
             h_etaLep[selection].Fill( lepton.Eta(), evWeight )
             h_met[selection].Fill( metPt, evWeight )
+
+            
 
         # boson and diboson plots
         vLep = None
@@ -1658,11 +1746,11 @@ for ifile in files : #{ Loop over root files
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho0, tau21_0, evWeight )
                     
                     if options.applyHadronicTriggers :
-                        ha_ptAK8[iht].Fill( vHad0.Perp()  )
-                        ha_yAK8[iht].Fill( vHad0.Rapidity()  )
-                        ha_mAK8[iht].Fill( vHad0.M()  )
-                        ha_msoftdropAK8[iht].Fill( sdm0  )
-                        ha_rho_all[iht].Fill( sdrho0 )
+                        ha_ptAK8[iht].Fill( vHad0.Perp(), pvWeight  )
+                        ha_yAK8[iht].Fill( vHad0.Rapidity(), pvWeight  )
+                        ha_mAK8[iht].Fill( vHad0.M(), pvWeight  )
+                        ha_msoftdropAK8[iht].Fill( sdm0, pvWeight  )
+                        ha_rho_all[iht].Fill( sdrho0, pvWeight )
                     
                     printString += 'taggable 0'
                     if options.makeMistag == False : 
@@ -1693,11 +1781,11 @@ for ifile in files : #{ Loop over root files
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho1, tau21_1, evWeight )
 
                     if options.applyHadronicTriggers : 
-                        ha_ptAK8[iht].Fill( vHad1.Perp() )
-                        ha_yAK8[iht].Fill( vHad1.Rapidity() )
-                        ha_mAK8[iht].Fill( vHad1.M() )
-                        ha_msoftdropAK8[iht].Fill( sdm1 )
-                        ha_rho_all[iht].Fill( sdrho1 )
+                        ha_ptAK8[iht].Fill( vHad1.Perp(), pvWeight )
+                        ha_yAK8[iht].Fill( vHad1.Rapidity(), pvWeight )
+                        ha_mAK8[iht].Fill( vHad1.M(), pvWeight )
+                        ha_msoftdropAK8[iht].Fill( sdm1, pvWeight )
+                        ha_rho_all[iht].Fill( sdrho1, pvWeight )
                                         
                     printString += 'taggable 1'
                     if options.makeMistag == False : 
