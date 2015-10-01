@@ -218,9 +218,9 @@ parser.add_option('--htMin', type='float', action='store',
                   help='Minimum AK8 Jet HT with right jet corrections')
 
 parser.add_option('--puFile', type='string', action='store',
-                  default=None,
+                  default="pileup_reweight.root",
                   dest='puFile',
-                  help='Name of Pileup File, try "pileup_reweight.root" ')
+                  help='Name of Pileup File')
 
 
 (options, args) = parser.parse_args()
