@@ -59,6 +59,10 @@ parser.add_option('--applyTriggers', action='store_true',
                   dest='applyTriggers',
                   help='Apply triggers')
 
+parser.add_option('--makeResponseMatrix', action='store_true',
+                  default=False,
+                  dest='makeResponseMatrix',
+                  help='Make response matrix')
 
 parser.add_option('--minAK8JetPt', type='float', action='store',
                   default=200.,
@@ -87,6 +91,7 @@ import sys
 from DataFormats.FWLite import Events, Handle
 ROOT.gROOT.Macro("rootlogon.C")
 ROOT.gSystem.Load("libAnalysisPredictedDistribution")
+ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 import copy
 import random
 
@@ -104,6 +109,23 @@ trigsToGet = [
     'HLT_PFJet500' 
     ]
 
+def getMatched( p4, coll, dRMax = 0.8) :
+    if coll != None : 
+        for c in coll:
+            if p4.DeltaR(c) < dRMax :
+                return i
+    return None
+    
+
+def binFinder( pt0 ) :
+    if pt0 < pt0cuts[0] :
+        return None
+    npt0cuts = len( pt0cuts )
+    ipt0 = 0
+    for ipt0 in xrange( npt0cuts-1, 0, -1) :
+        if pt0 > pt0cuts[ipt0] :
+            break
+    return ipt0
 
 def trigHelper( pt0, trigs ) :
 
@@ -117,8 +139,13 @@ def trigHelper( pt0, trigs ) :
             break
     ipass = trigs[ipt0]
     return ipass, ipt0
-    
 
+responses = []
+if options.makeResponseMatrix :
+    for ipt,pt in enumerate(pt0cuts) :
+        response = ROOT.RooUnfoldResponse( 100, 0, 1000)
+        response.SetName("m_response_" + str( int(pt)))
+        responses.append(response)
 
 #@ Labels and Handles
 
@@ -261,7 +288,7 @@ l_jetsAK8Phi = ("jetsAK8" , "jetAK8Phi")
 h_jetsAK8Mass = Handle("std::vector<float>")
 l_jetsAK8Mass = ("jetsAK8" , "jetAK8Mass")
 h_jetsAK8Energy = Handle("std::vector<float>")
-l_jetsAK8Energy = ("jetsAK8" , "jetAK8E") #check! is this energy?
+l_jetsAK8Energy = ("jetsAK8" , "jetAK8E")
 h_jetsAK8JEC = Handle("std::vector<float>")
 l_jetsAK8JEC = ("jetsAK8" , "jetAK8jecFactor0")
 h_jetsAK8Y = Handle("std::vector<float>")
@@ -325,6 +352,16 @@ l_subjetsAK8Mass = ("subjetsAK8", "subjetAK8Mass")
 h_subjetsAK8BDisc = Handle( "std::vector<float>")
 l_subjetsAK8BDisc = ("subjetsAK8", "subjetAK8CSV")
 
+
+
+h_genJetsAK8Pt = Handle("std::vector<float>")
+l_genJetsAK8Pt = ("genJetsAK8" , "genJetsAK8Pt") #
+h_genJetsAK8Eta = Handle("std::vector<float>")
+l_genJetsAK8Eta = ("genJetsAK8" , "genJetsAK8Eta")
+h_genJetsAK8Phi = Handle("std::vector<float>")
+l_genJetsAK8Phi = ("genJetsAK8" , "genJetsAK8Phi")
+h_genJetsAK8Mass = Handle("std::vector<float>")
+l_genJetsAK8Mass = ("genJetsAK8" , "genJetsAK8Mass")
 
 # MET and HCAL Filter handles
 h_filterNameStrings = Handle( "std::vector<std::string>")
@@ -672,13 +709,13 @@ for ifile in files : #{ Loop over root files
                 AK4P4Raw *= AK4JECFromB2GAnaFW            
 
                 #@ JEC Scaling for AK4 Jets
-                ak8JetCorrector.setJetEta( AK4P4Raw.Eta() )
-                ak8JetCorrector.setJetPt ( AK4P4Raw.Perp() )
-                ak8JetCorrector.setJetE  ( AK4P4Raw.E() )
-                ak8JetCorrector.setJetA  ( jetAreaAK4[i] )
-                ak8JetCorrector.setRho   ( rho )
-                ak8JetCorrector.setNPV   ( NPV )
-                newJEC = ak8JetCorrector.getCorrection()
+                ak4JetCorrector.setJetEta( AK4P4Raw.Eta() )
+                ak4JetCorrector.setJetPt ( AK4P4Raw.Perp() )
+                ak4JetCorrector.setJetE  ( AK4P4Raw.E() )
+                ak4JetCorrector.setJetA  ( jetAreaAK4[i] )
+                ak4JetCorrector.setRho   ( rho )
+                ak4JetCorrector.setNPV   ( NPV )
+                newJEC = ak4JetCorrector.getCorrection()
                 AK4P4Corr = AK4P4Raw*newJEC
                 jetCorrPtAK4.append( AK4P4Corr )
                         
@@ -791,8 +828,12 @@ for ifile in files : #{ Loop over root files
         ###################################################################
 
         #EVENT AK8 HANDLES
-        # event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt ) got this above to speed things up
+        event.getByLabel ( l_genJetsAK8Pt, h_genJetsAK8Pt )
+        event.getByLabel ( l_genJetsAK8Eta, h_genJetsAK8Eta )
+        event.getByLabel ( l_genJetsAK8Phi, h_genJetsAK8Phi )
+        event.getByLabel ( l_genJetsAK8Mass, h_genJetsAK8Mass )
         
+        # event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt ) got this above to speed things up
         event.getByLabel ( l_jetsAK8Eta, h_jetsAK8Eta )
         event.getByLabel ( l_jetsAK8Phi, h_jetsAK8Phi )
         event.getByLabel ( l_jetsAK8Mass, h_jetsAK8Mass )
@@ -833,11 +874,13 @@ for ifile in files : #{ Loop over root files
 
 
         ak8JetsP4Corr = []
+        ak8JetsP4SoftDropCorr = []
         ak8JetsPassID = []
-        ak8JetsPassKin = []
-        ak8JetsPassTag = []
         AK8SoftDropM = []
-        AK8Rho = []
+        AK8Tau21 = []
+        AK8JetRho = []
+        AK8JetZ = []
+
 
         if len( h_jetsAK8Pt.product()) > 0 : 
             AK8Pt = h_jetsAK8Pt.product()
@@ -847,7 +890,7 @@ for ifile in files : #{ Loop over root files
             AK8Energy = h_jetsAK8Energy.product()
             AK8Y = h_jetsAK8Y.product()
 
-            AK8JEC = h_jetsAK8JEC.product()
+            AK8OldJEC = h_jetsAK8JEC.product()
             AK8Area = h_jetsAK8Area.product()
             AK8SoftDropM = h_jetsAK8SoftDropMass.product()
             AK8TrimmedM = h_jetsAK8TrimMass.product()
@@ -877,6 +920,18 @@ for ifile in files : #{ Loop over root files
             AK8SubJetsPhi = h_subjetsAK8Phi.product()
             AK8SubJetsMass = h_subjetsAK8Mass.product()            
 
+
+
+
+        if len( h_genJetsAK8Pt.product()) > 0 :
+            GenAK8Pt = h_genJetsAK8Pt.product()
+            GenAK8Eta = h_genJetsAK8Eta.product()
+            GenAK8Phi = h_genJetsAK8Phi.product()
+            GenAK8Mass = h_genJetsAK8Mass.product()
+
+        
+
+            
         if options.maxjets == None :
             maxjets = len(h_jetsAK8Pt.product())
         else :
@@ -888,7 +943,7 @@ for ifile in files : #{ Loop over root files
                 print 'AK8 jet ' + str(i)
 
 
-            AK8JECFromB2GAnaFW = AK8JEC[i]   
+            AK8JECFromB2GAnaFW = AK8OldJEC[i]   
             AK8P4Raw = ROOT.TLorentzVector()
             AK8P4Raw.SetPtEtaPhiM( AK8Pt[i] , AK8Eta[i], AK8Phi[i], AK8Mass[i])
             # Remove the old JEC's to get raw energy
@@ -909,6 +964,8 @@ for ifile in files : #{ Loop over root files
               nconstituents > 1 and \
               nch > 0
 
+            ak8JetsPassID.append( goodJet )
+
 
             #@ JEC Scaling for AK8 Jets
             ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
@@ -920,12 +977,12 @@ for ifile in files : #{ Loop over root files
             newJEC = ak8JetCorrector.getCorrection()
             AK8P4Corr = AK8P4Raw*newJEC
 
-            tau21 = None
+            ak8JetsP4Corr.append( AK8P4Corr )
+
+            tau21 = -1.0
             if AK8Tau1[i] > 0.0 :
                 tau21 = AK8Tau2[i] / AK8Tau1[i]
-
-            if not goodJet :
-                continue
+            AK8Tau21.append( tau21 )
 
 
             #$ Get Jet Rho
@@ -946,87 +1003,120 @@ for ifile in files : #{ Loop over root files
                 sphi1   = AK8SubJetsPhi[ival]
                 sm1   = AK8SubJetsMass[ival]
                 sp4_1 = ROOT.TLorentzVector()
-                sp4_1.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )
-
-
-            if  AK8P4Corr.Perp() < options.minAK8JetPt :
-                continue
-
-
-                        
-            h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
-            h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
-            h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )
-            h_mAK8.Fill( AK8P4Corr.M(), evWeight  )
-            h_msoftdropAK8.Fill( AK8SoftDropM[i], evWeight  )
-            h_mprunedAK8.Fill( AK8PrunedM[i], evWeight  )
-            h_mfilteredAK8.Fill( AK8FilteredM[i], evWeight  )
-            h_mtrimmedAK8.Fill( AK8TrimmedM[i], evWeight  )
-            h_jetareaAK8.Fill( AK8Area[i], evWeight )
-            h_tau21AK8.Fill( tau21, evWeight )
-            h_nhfAK8.Fill( nhf, evWeight )
-            h_chfAK8.Fill( chf, evWeight )
-            h_nefAK8.Fill( nef, evWeight )
-            h_cefAK8.Fill( cef, evWeight )
-            h_ncAK8.Fill( nconstituents, evWeight )
-            h_nchAK8.Fill( nch, evWeight )
-
-
-            if ipt0 != None and ipt0 >= 0 : 
-                ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp()  )
-                ha_yAK8[ipt0].Fill( AK8P4Corr.Rapidity()  )
-                ha_phiAK8[ipt0].Fill( AK8P4Corr.Phi()  )
-                ha_mAK8[ipt0].Fill( AK8P4Corr.M()  )
-                ha_msoftdropAK8[ipt0].Fill( AK8SoftDropM[i]  )
-                ha_mprunedAK8[ipt0].Fill( AK8PrunedM[i]  )
-                ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i]  )
-                ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i]  )
-                ha_jetareaAK8[ipt0].Fill( AK8Area[i] )
-                ha_tau21AK8[ipt0].Fill( tau21 )
-                ha_nhfAK8[ipt0].Fill( nhf )
-                ha_chfAK8[ipt0].Fill( chf )
-                ha_nefAK8[ipt0].Fill( nef )
-                ha_cefAK8[ipt0].Fill( cef )
-                ha_ncAK8[ipt0].Fill( nconstituents )
-                ha_nchAK8[ipt0].Fill( nch )                
+                sp4_1.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )              
                 
             if sp4_0 == None or sp4_1 == None :
-                AK8Rho.append(-1.0)
-                continue 
-            softdrop_p4 = sp4_0 + sp4_1
-            jetR = 0.8
-            jetrho = softdrop_p4.M() / (softdrop_p4.Perp() * jetR)
-            jetrho *= jetrho            
-            
-            h_jetrhoAK8.Fill( jetrho, evWeight )
-            h_subjetDRAK8.Fill( sp4_0.DeltaR( sp4_1 ), evWeight )
+                ak8JetsP4SoftDropCorr.append( None )
+                AK8JetRho.append( None )
+                AK8JetZ.append( None )
+            else : 
+                softdrop_p4 = sp4_0 + sp4_1
+                ak8JetsP4SoftDropCorr.append( softdrop_p4 )
+                jetR = 0.8
+                jetrho = softdrop_p4.M() / (softdrop_p4.Perp() * jetR)
+                jetrho *= jetrho
+                jetz = 0.0                
+                if sp4_0.Perp() > sp4_1.Perp() :
+                    jetz = (sp4_1.Perp()) / ( sp4_0 + sp4_1).Perp()
+                else :
+                    jetz = (sp4_0.Perp()) / ( sp4_0 + sp4_1).Perp()
 
-            if ipt0 != None and ipt0 >= 0 : 
-                ha_jetrhoAK8[ipt0].Fill( jetrho )
-                ha_subjetDRAK8[ipt0].Fill( sp4_0.DeltaR( sp4_1 ) )
-
-            jetz = 0.0
-            if sp4_0.Perp() > sp4_1.Perp() :
-                jetz = (sp4_1.Perp()) / ( sp4_0 + sp4_1).Perp()
-            else :
-                jetz = (sp4_0.Perp()) / ( sp4_0 + sp4_1).Perp()
-                
-            h_jetzAK8.Fill( jetz , evWeight )
-
-            if ipt0 != None and ipt0 >= 0 : 
-                ha_jetzAK8[ipt0].Fill( jetz )
+                AK8JetRho.append( jetrho )
+                AK8JetZ.append( jetz )
 
 
-                
-            if options.verbose : 
-                print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
-                    AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho
-                )
+                if goodJet and  AK8P4Corr > options.minAK8JetPt : 
+                    h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
+                    h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
+                    h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )
+                    h_mAK8.Fill( AK8P4Corr.M(), evWeight  )
+                    h_msoftdropAK8.Fill( AK8SoftDropM[i], evWeight  )
+                    h_mprunedAK8.Fill( AK8PrunedM[i], evWeight  )
+                    h_mfilteredAK8.Fill( AK8FilteredM[i], evWeight  )
+                    h_mtrimmedAK8.Fill( AK8TrimmedM[i], evWeight  )
+                    h_jetareaAK8.Fill( AK8Area[i], evWeight )
+                    h_tau21AK8.Fill( tau21, evWeight )
+                    h_nhfAK8.Fill( nhf, evWeight )
+                    h_chfAK8.Fill( chf, evWeight )
+                    h_nefAK8.Fill( nef, evWeight )
+                    h_cefAK8.Fill( cef, evWeight )
+                    h_ncAK8.Fill( nconstituents, evWeight )
+                    h_nchAK8.Fill( nch, evWeight )
+                    h_jetrhoAK8.Fill( jetrho, evWeight )
+                    h_subjetDRAK8.Fill( sp4_0.DeltaR( sp4_1 ), evWeight )                
+                    h_jetzAK8.Fill( jetz , evWeight )
 
+                    if ipt0 != None and ipt0 >= 0 : 
+                        ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp()  )
+                        ha_yAK8[ipt0].Fill( AK8P4Corr.Rapidity()  )
+                        ha_phiAK8[ipt0].Fill( AK8P4Corr.Phi()  )
+                        ha_mAK8[ipt0].Fill( AK8P4Corr.M()  )
+                        ha_msoftdropAK8[ipt0].Fill( AK8SoftDropM[i]  )
+                        ha_mprunedAK8[ipt0].Fill( AK8PrunedM[i]  )
+                        ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i]  )
+                        ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i]  )
+                        ha_jetareaAK8[ipt0].Fill( AK8Area[i] )
+                        ha_tau21AK8[ipt0].Fill( tau21 )
+                        ha_nhfAK8[ipt0].Fill( nhf )
+                        ha_chfAK8[ipt0].Fill( chf )
+                        ha_nefAK8[ipt0].Fill( nef )
+                        ha_cefAK8[ipt0].Fill( cef )
+                        ha_ncAK8[ipt0].Fill( nconstituents )
+                        ha_nchAK8[ipt0].Fill( nch ) 
+                        ha_jetrhoAK8[ipt0].Fill( jetrho )
+                        ha_subjetDRAK8[ipt0].Fill( sp4_0.DeltaR( sp4_1 ) )
+                        ha_jetzAK8[ipt0].Fill( jetz )
+
+                    if options.verbose : 
+                        print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
+                            AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho
+                        )
+
+
+        if options.makeResponseMatrix : 
+            # Make response matrix
+            ak8GenJetsP4Corr = []
+
+            if len( h_genJetsAK8Pt.product()) > 0 :
+                for igen in range(0, len( GenAK8Pt ) ):
+
+                    genpt = GenAK8Pt[igen]
+                    geneta = GenAK8Eta[igen]
+                    genphi = GenAK8Phi[igen]
+                    genmass = GenAK8Mass[igen]
+
+                    genp4 = ROOT.TLorentzVector()
+                    genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
+                    ak8GenJetsP4Corr.append( genp4 )
+
+                    genPtBin = binFinder( genpt )
+
+                    if genPtBin == None :
+                        continue
+
+                    if ak8JetsP4Corr != None : 
+                        ireco = getMatched( genp4, ak8JetsP4Corr )
+
+                        # Here is a "Miss"
+                        if ireco == None :
+                            responses[genPtBin].Miss( genp4.M() )
+                        # Here is a "Fill"
+                        else :
+                            responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M() )
+
+            # Also need to fill the "Fakes"
+            for ireco in range(0, maxjets) :
+                igen = getMatched( ak8JetsP4Corr[ireco], ak8GenJetsP4Corr )
+                if igen == None or igen > 1 :
+                    recoPtBin = binFinder( ak8JetsP4Corr[ireco].Perp() )
+                    responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M() )
             
             
 
 f.cd()
 f.Write()
+
+for response in responses :
+    response.Write()
 
 f.Close()
