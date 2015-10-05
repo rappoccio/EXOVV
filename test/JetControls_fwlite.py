@@ -80,6 +80,12 @@ parser.add_option('--maxTau21', type='float', action='store',
                   dest='maxTau21',
                   help='Maximum Tau21 cut')
 
+parser.add_option('--weightQCDSample', type='float', action='store',
+                  default=False,
+                  dest='weightQCDSample',
+                  help='Weight the QCD samples')
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -794,20 +800,27 @@ for ifile in files : #{ Loop over root files
                 h_trig_raw.Fill( ipt0 )
                 ha_ht[ipt0].Fill( ht )
                 ha_pt0[ipt0].Fill( pt0 )
-                
 
-        if options.deweightFlat : 
+
+
+        if options.deweightFlat  : 
             #@ Event weights
             gotGenerator = event.getByLabel( l_generator, h_generator )
             if gotGenerator :
-                #evWeight = evWeight * h_generator.product().weight()
-                pthat = 0.0
-                if h_generator.product().hasBinningValues() :
-                    pthat = h_generator.product().binningValues()[0]
-                    evWeight = evWeight * 1/pow(pthat/15.,4.5)
-                if options.verbose :
-                    print 'Event weight = ' + str( evWeight )
-                    print 'pthat = ' + str(pthat)
+
+                if options.deweightFlat : 
+                    #evWeight = evWeight * h_generator.product().weight()
+                    pthat = 0.0
+                    if h_generator.product().hasBinningValues() :
+                        pthat = h_generator.product().binningValues()[0]
+                        evWeight = evWeight * 1/pow(pthat/15.,4.5)
+                    if options.verbose :
+                        print 'Event weight = ' + str( evWeight )
+                        print 'pthat = ' + str(pthat)
+        if options.weightQCDSample != None :
+            evWeight = evWeight * options.weightQCDSample
+            if options.verbose :
+                print 'Event weight = ' + str( evWeight )
 
 
         #Get MET HERE
@@ -1099,17 +1112,17 @@ for ifile in files : #{ Loop over root files
 
                         # Here is a "Miss"
                         if ireco == None :
-                            responses[genPtBin].Miss( genp4.M() )
+                            responses[genPtBin].Miss( genp4.M(), evWeight )
                         # Here is a "Fill"
                         else :
-                            responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M() )
+                            responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M(), evWeight )
 
             # Also need to fill the "Fakes"
             for ireco in range(0, maxjets) :
                 igen = getMatched( ak8JetsP4Corr[ireco], ak8GenJetsP4Corr )
                 if igen == None or igen > 1 :
                     recoPtBin = binFinder( ak8JetsP4Corr[ireco].Perp() )
-                    responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M() )
+                    responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M(), evWeight )
             
             
 
