@@ -30,6 +30,11 @@ parser.add_option('--lum', type='float', action='store',
                   default = 40.03,
                   help='Luminosity in pb')
 
+parser.add_option('--withRooUnfold', action='store_true',
+                  dest='withRooUnfold',
+                  default = False,
+                  help='load RooUnfold lib')
+
 
 (options, args) = parser.parse_args()
 argv = []
@@ -40,6 +45,9 @@ import math
 import ROOT
 import sys
 
+
+if options.withRooUnfold :
+    ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
 hists = {}
 files = {}
