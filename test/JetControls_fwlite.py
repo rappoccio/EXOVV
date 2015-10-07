@@ -677,7 +677,62 @@ for ifile in files : #{ Loop over root files
                 print 'Did not find filters'
             continue
 
-        if options.applyTriggers and readTriggers :
+
+
+
+        gotit4 = event.getByLabel ( l_jetsAK4Pt, h_jetsAK4Pt )
+        gotit5 = event.getByLabel ( l_jetsAK4Eta, h_jetsAK4Eta )
+        gotit6 = event.getByLabel ( l_jetsAK4Phi, h_jetsAK4Phi )
+        gotit7 = event.getByLabel ( l_jetsAK4Mass, h_jetsAK4Mass )
+        gotit8 = event.getByLabel ( l_jetsAK4JEC, h_jetsAK4JEC )
+        gotit9 = event.getByLabel ( l_jetsAK4Area, h_jetsAK4Area )
+
+
+        jetPtAK4 = h_jetsAK4Pt.product()
+        jetEtaAK4 = h_jetsAK4Eta.product()
+        jetPhiAK4 = h_jetsAK4Phi.product()
+        jetMassAK4 = h_jetsAK4Mass.product()
+        jetAreaAK4 = h_jetsAK4Area.product()
+        jetJECAK4 = h_jetsAK4JEC.product()
+        jetCorrPtAK4 = []
+
+        for i in range(0,len(jetPtAK4) ):#{ Loop over AK4 Jets
+
+            if options.verbose :
+                print 'AK4 jet ' + str(i)
+
+
+            AK4JECFromB2GAnaFW = jetJECAK4[i]   
+            AK4P4Raw = ROOT.TLorentzVector()
+            AK4P4Raw.SetPtEtaPhiM( jetPtAK4[i] , jetEtaAK4[i], jetPhiAK4[i], jetMassAK4[i])
+            # Remove the old JEC's to get raw energy
+            AK4P4Raw *= AK4JECFromB2GAnaFW            
+
+            #@ JEC Scaling for AK4 Jets
+            ak4JetCorrector.setJetEta( AK4P4Raw.Eta() )
+            ak4JetCorrector.setJetPt ( AK4P4Raw.Perp() )
+            ak4JetCorrector.setJetE  ( AK4P4Raw.E() )
+            ak4JetCorrector.setJetA  ( jetAreaAK4[i] )
+            ak4JetCorrector.setRho   ( rho )
+            ak4JetCorrector.setNPV   ( NPV )
+            newJEC = ak4JetCorrector.getCorrection()
+            AK4P4Corr = AK4P4Raw*newJEC
+            jetCorrPtAK4.append( AK4P4Corr )
+
+
+        ht = 0.0
+        for iak4,ak4 in enumerate(jetCorrPtAK4):
+            ht += ak4.Perp()
+
+        if len(jetCorrPtAK4) < 1 :
+            continue
+        pt0 = jetCorrPtAK4[0].Perp()
+
+
+        
+        if options.isMC :
+             ipt0 = binFinder( pt0  )
+        elif options.applyTriggers and readTriggers :
 
             passTrig = False
             prescale = 1.0
@@ -686,54 +741,6 @@ for ifile in files : #{ Loop over root files
             gotit1 = event.getByLabel( l_triggerNameStrings, h_triggerNameStrings )
             gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
             gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )
-            gotit4 = event.getByLabel ( l_jetsAK4Pt, h_jetsAK4Pt )
-            gotit5 = event.getByLabel ( l_jetsAK4Eta, h_jetsAK4Eta )
-            gotit6 = event.getByLabel ( l_jetsAK4Phi, h_jetsAK4Phi )
-            gotit7 = event.getByLabel ( l_jetsAK4Mass, h_jetsAK4Mass )
-            gotit8 = event.getByLabel ( l_jetsAK4JEC, h_jetsAK4JEC )
-            gotit9 = event.getByLabel ( l_jetsAK4Area, h_jetsAK4Area )
-                    
-
-            jetPtAK4 = h_jetsAK4Pt.product()
-            jetEtaAK4 = h_jetsAK4Eta.product()
-            jetPhiAK4 = h_jetsAK4Phi.product()
-            jetMassAK4 = h_jetsAK4Mass.product()
-            jetAreaAK4 = h_jetsAK4Area.product()
-            jetJECAK4 = h_jetsAK4JEC.product()
-            jetCorrPtAK4 = []
-
-            for i in range(0,len(jetPtAK4) ):#{ Loop over AK4 Jets
-
-                if options.verbose :
-                    print 'AK4 jet ' + str(i)
-
-
-                AK4JECFromB2GAnaFW = jetJECAK4[i]   
-                AK4P4Raw = ROOT.TLorentzVector()
-                AK4P4Raw.SetPtEtaPhiM( jetPtAK4[i] , jetEtaAK4[i], jetPhiAK4[i], jetMassAK4[i])
-                # Remove the old JEC's to get raw energy
-                AK4P4Raw *= AK4JECFromB2GAnaFW            
-
-                #@ JEC Scaling for AK4 Jets
-                ak4JetCorrector.setJetEta( AK4P4Raw.Eta() )
-                ak4JetCorrector.setJetPt ( AK4P4Raw.Perp() )
-                ak4JetCorrector.setJetE  ( AK4P4Raw.E() )
-                ak4JetCorrector.setJetA  ( jetAreaAK4[i] )
-                ak4JetCorrector.setRho   ( rho )
-                ak4JetCorrector.setNPV   ( NPV )
-                newJEC = ak4JetCorrector.getCorrection()
-                AK4P4Corr = AK4P4Raw*newJEC
-                jetCorrPtAK4.append( AK4P4Corr )
-                        
-            
-            ht = 0.0
-            for iak4,ak4 in enumerate(jetCorrPtAK4):
-                ht += ak4.Perp()
-                
-            if len(jetCorrPtAK4) < 1 :
-                continue
-            pt0 = jetCorrPtAK4[0].Perp()
-
 
             
             ## if currRun != lastRun :
@@ -794,12 +801,14 @@ for ifile in files : #{ Loop over root files
             evWeight = evWeight * prescale            
             if passTrig == False :
                 continue
-            
-            if ipt0 != None and ipt0 >= 0 :
-                h_trig.Fill( ipt0, evWeight )
-                h_trig_raw.Fill( ipt0 )
-                ha_ht[ipt0].Fill( ht )
-                ha_pt0[ipt0].Fill( pt0 )
+
+        if options.verbose :
+            print 'ipt0 = ' + str(ipt0) + ', pt0 = ' + str(pt0)
+        if ipt0 != None and ipt0 >= 0 :
+            h_trig.Fill( ipt0, evWeight )
+            h_trig_raw.Fill( ipt0 )
+            ha_ht[ipt0].Fill( ht )
+            ha_pt0[ipt0].Fill( pt0 )
 
 
 
@@ -979,6 +988,8 @@ for ifile in files : #{ Loop over root files
 
             ak8JetsPassID.append( goodJet )
 
+            if options.verbose :
+                print 'Good jet? ' + str(goodJet)
 
             #@ JEC Scaling for AK8 Jets
             ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
@@ -997,11 +1008,16 @@ for ifile in files : #{ Loop over root files
                 tau21 = AK8Tau2[i] / AK8Tau1[i]
             AK8Tau21.append( tau21 )
 
+            if options.verbose :
+                print 'tau21 = ' + str(tau21)
 
             #$ Get Jet Rho
             sp4_0 = None
             sp4_1 = None
-            ival = int(AK8vSubjetIndex0[i])            
+            ival = int(AK8vSubjetIndex0[i])
+            if options.verbose :
+                print 'subjet index 0 = ' + str(ival)
+            
             if ival > -1 :
                 spt0    = AK8SubJetsPt[ival]
                 seta0   = AK8SubJetsEta[ival]
@@ -1010,6 +1026,8 @@ for ifile in files : #{ Loop over root files
                 sp4_0 = ROOT.TLorentzVector()
                 sp4_0.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
             ival = int(AK8vSubjetIndex1[i])
+            if options.verbose :
+                print 'subjet index 1 = ' + str(ival)
             if ival > -1 :
                 spt1    = AK8SubJetsPt[ival]
                 seta1   = AK8SubJetsEta[ival]
@@ -1017,12 +1035,15 @@ for ifile in files : #{ Loop over root files
                 sm1   = AK8SubJetsMass[ival]
                 sp4_1 = ROOT.TLorentzVector()
                 sp4_1.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )              
-                
+                                
             if sp4_0 == None or sp4_1 == None :
+                if options.verbose :
+                    print 'Did not find subjets'
                 ak8JetsP4SoftDropCorr.append( None )
                 AK8JetRho.append( None )
                 AK8JetZ.append( None )
-            else : 
+            else :
+
                 softdrop_p4 = sp4_0 + sp4_1
                 ak8JetsP4SoftDropCorr.append( softdrop_p4 )
                 jetR = 0.8
@@ -1038,7 +1059,11 @@ for ifile in files : #{ Loop over root files
                 AK8JetZ.append( jetz )
 
 
-                if goodJet and  AK8P4Corr > options.minAK8JetPt : 
+                if options.verbose :
+                    print "Corrected pt = " + str(AK8P4Corr.Perp())
+                if goodJet == True and  AK8P4Corr.Perp() > options.minAK8JetPt :
+                    if options.verbose :
+                        print 'Passed cuts'
                     h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
                     h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
                     h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )

@@ -542,7 +542,8 @@ h_subjetsAK8Mass = Handle( "std::vector<float>")
 l_subjetsAK8Mass = ("subjetsAK8", "subjetAK8Mass")
 h_subjetsAK8BDisc = Handle( "std::vector<float>")
 l_subjetsAK8BDisc = ("subjetsAK8", "subjetAK8CSV")
-
+h_subjetsAK8jecFactor0 = Handle( "std::vector<float>")
+l_subjetsAK8jecFactor0 = ("subjetsAK8", "subjetAK8jecFactor0")
 
 # MET and HCAL Filter handles
 h_filterNameStrings = Handle( "std::vector<std::string>")
@@ -1394,7 +1395,7 @@ for ifile in files : #{ Loop over root files
         event.getByLabel ( l_subjetsAK8Eta, h_subjetsAK8Eta)
         event.getByLabel ( l_subjetsAK8Phi, h_subjetsAK8Phi)
         event.getByLabel ( l_subjetsAK8Mass, h_subjetsAK8Mass)
-
+        event.getByLabel ( l_subjetsAK8jecFactor0, h_subjetsAK8jecFactor0)
 
 
         
@@ -1460,12 +1461,14 @@ for ifile in files : #{ Loop over root files
             sp4_1 = None
             ival = int(AK8vSubjetIndex0[i])            
             if ival > -1 :
-                spt0    = AK8SubJetsPt[ival]
+                spt0    = AK8SubJetsPt[ival] * AK8SubJetsjecFactor0[ival]
                 seta0   = AK8SubJetsEta[ival]
                 sphi0   = AK8SubJetsPhi[ival]
-                sm0   = AK8SubJetsMass[ival]
+                sm0   = AK8SubJetsMass[ival]* AK8SubJetsjecFactor0[ival]
                 sp4_0Raw = ROOT.TLorentzVector()
                 sp4_0Raw.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
+
+                print 'error... jet corrections are reapplied on existing corrections, dude... fix me.'
 
                 ak4JetCorrectorForMass.setJetEta( sp4_0Raw.Eta() )
                 ak4JetCorrectorForMass.setJetPt ( sp4_0Raw.Perp() )
@@ -1477,10 +1480,10 @@ for ifile in files : #{ Loop over root files
                 
             ival = int(AK8vSubjetIndex1[i])
             if ival > -1 :
-                spt1    = AK8SubJetsPt[ival]
+                spt1    = AK8SubJetsPt[ival]* AK8SubJetsjecFactor0[ival]
                 seta1   = AK8SubJetsEta[ival]
                 sphi1   = AK8SubJetsPhi[ival]
-                sm1   = AK8SubJetsMass[ival]
+                sm1   = AK8SubJetsMass[ival]* AK8SubJetsjecFactor0[ival]
                 sp4_1Raw = ROOT.TLorentzVector()
                 sp4_1Raw.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )
 
