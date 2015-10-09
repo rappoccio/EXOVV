@@ -115,7 +115,7 @@ trigsToGet = [
     'HLT_PFJet500' 
     ]
 
-def getMatched( p4, coll, dRMax = 0.8) :
+def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None : 
         for c in coll:
             if p4.DeltaR(c) < dRMax :
@@ -416,7 +416,22 @@ h_chfAK8 = ROOT.TH1F("chfAK8", "AK8 Charged hadron fraction;CHF", 100, 0, 1.0)
 h_nefAK8 = ROOT.TH1F("nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) 
 h_cefAK8 = ROOT.TH1F("cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) 
 h_ncAK8 = ROOT.TH1F("ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) 
-h_nchAK8 = ROOT.TH1F("nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) 
+h_nchAK8 = ROOT.TH1F("nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100)
+
+# Gen level truth
+h_ptAK8Gen = ROOT.TH1F("ptAK8Gen", "AK8Gen Jet p_{T};p_{T} (GeV)", 300, 0, 3000)
+h_yAK8Gen = ROOT.TH1F("yAK8Gen", "AK8Gen Jet Rapidity;y", 120, -6, 6)
+h_phiAK8Gen = ROOT.TH1F("phiAK8Gen", "AK8Gen Jet #phi;#phi (radians)",100,-ROOT.Math.Pi(),ROOT.Math.Pi())
+h_mAK8Gen = ROOT.TH1F("mAK8Gen", "AK8Gen Jet Mass;Mass (GeV)", 100, 0, 1000)
+h_msoftdropAK8Gen = ROOT.TH1F("msoftdropAK8Gen", "AK8Gen Softdrop Jet Mass;Mass (GeV)", 100, 0, 1000)
+#h_mprunedAK8Gen = ROOT.TH1F("mprunedAK8Gen", "AK8Gen Pruned Jet Mass;Mass (GeV)", 100, 0, 1000)
+#h_mtrimmedAK8Gen = ROOT.TH1F("mtrimmedAK8Gen", "AK8Gen Trimmed Jet Mass;Mass (GeV)", 100, 0, 1000)
+#h_mfilteredAK8Gen = ROOT.TH1F("mfilteredAK8Gen", "AK8Gen Filtered Jet Mass;Mass (GeV)", 100, 0, 1000)
+h_tau21AK8Gen = ROOT.TH1F("tau21AK8Gen", "AK8Gen Jet #tau_{2} / #tau_{1};#tau_{21}", 100, 0, 1.0)
+h_jetrhoAK8Gen = ROOT.TH1F("jetrhoAK8Gen", "AK8Gen Jet #rho=#frac{m}{p_{T} R};Jet #rho", 100, 0, 1.0)
+h_jetareaAK8Gen = ROOT.TH1F("jetareaAK8Gen", "AK8Gen Jet Area;Jet Area", 100, 0, 6.28)
+h_subjetDRAK8Gen = ROOT.TH1F("subjetDRAK8Gen", "#Delta R between subjets;#Delta R", 100, 0, 6.28)
+h_jetzAK8Gen = ROOT.TH1F("jetzAK8Gen", "Jet z;z", 100, 0.0, 1.0)
 
 ha_ht = []
 ha_pt0 = []
@@ -441,6 +456,11 @@ ha_cefAK8 = []
 ha_ncAK8 = []
 ha_nchAK8 = []
 
+ha_ptAK8Gen = []
+ha_yAK8Gen = []
+ha_phiAK8Gen = []
+ha_mAK8Gen = []
+
 for itrig,trig in enumerate( trigsToGet ) :
     ha_ht.append ( ROOT.TH1F( trig + "_ht", "H_{T}, " + trig + ";H_{T} (GeV))", 150, 0, 1500))
     ha_pt0.append ( ROOT.TH1F( trig + "_pt0", "p_{T} of leading jet, " + trig + ";p_{T} (GeV))", 150, 0, 1500))
@@ -463,7 +483,21 @@ for itrig,trig in enumerate( trigsToGet ) :
     ha_nefAK8.append( ROOT.TH1F( trig + "_nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) )
     ha_cefAK8.append( ROOT.TH1F( trig + "_cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) )
     ha_ncAK8.append( ROOT.TH1F( trig + "_ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) )
-    ha_nchAK8.append( ROOT.TH1F( trig + "_nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) )    
+    ha_nchAK8.append( ROOT.TH1F( trig + "_nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) )
+    
+    ha_ptAK8Gen.append(ROOT.TH1F(trig + "ptAK8Gen", "AK8Gen Jet p_{T};p_{T} (GeV)", 300, 0, 3000))
+    ha_yAK8Gen.append(ROOT.TH1F(trig + "yAK8Gen", "AK8Gen Jet Rapidity;y", 120, -6, 6))
+    ha_phiAK8Gen.append(ROOT.TH1F(trig + "phiAK8Gen", "AK8Gen Jet #phi;#phi (radians)",100,-ROOT.Math.Pi(),ROOT.Math.Pi()))
+    ha_mAK8Gen.append(ROOT.TH1F(trig + "mAK8Gen", "AK8Gen Jet Mass;Mass (GeV)", 100, 0, 1000))
+    #ha_msoftdropAK8Gen.append(ROOT.TH1F("msoftdropAK8Gen", "AK8Gen Softdrop Jet Mass;Mass (GeV)", 100, 0, 1000))
+    #ha_mprunedAK8Gen.append(ROOT.TH1F("mprunedAK8Gen", "AK8Gen Pruned Jet Mass;Mass (GeV)", 100, 0, 1000))
+    #ha_mtrimmedAK8Gen.append(ROOT.TH1F("mtrimmedAK8Gen", "AK8Gen Trimmed Jet Mass;Mass (GeV)", 100, 0, 1000))
+    #ha_mfilteredAK8Gen.append(ROOT.TH1F("mfilteredAK8Gen", "AK8Gen Filtered Jet Mass;Mass (GeV)", 100, 0, 1000))
+    #ha_tau21AK8Gen.append(ROOT.TH1F("tau21AK8Gen", "AK8Gen Jet #tau_{2} / #tau_{1};#tau_{21}", 100, 0, 1.0))
+    #ha_jetrhoAK8Gen.append(ROOT.TH1F("jetrhoAK8Gen", "AK8Gen Jet #rho=#frac{m}{p_{T} R};Jet #rho", 100, 0, 1.0))
+    #ha_jetareaAK8Gen.append(ROOT.TH1F("jetareaAK8Gen", "AK8Gen Jet Area;Jet Area", 100, 0, 6.28))
+    #ha_subjetDRAK8Gen.append(ROOT.TH1F("subjetDRAK8Gen", "#Delta R between subjets;#Delta R", 100, 0, 6.28))
+    #ha_jetzAK8Gen.append(ROOT.TH1F("jetzAK8Gen", "Jet z;z", 100, 0.0, 1.0))
 
 #@ JET CORRECTIONS
 
@@ -945,11 +979,12 @@ for ifile in files : #{ Loop over root files
 
 
 
-        if len( h_genJetsAK8Pt.product()) > 0 :
-            GenAK8Pt = h_genJetsAK8Pt.product()
-            GenAK8Eta = h_genJetsAK8Eta.product()
-            GenAK8Phi = h_genJetsAK8Phi.product()
-            GenAK8Mass = h_genJetsAK8Mass.product()
+        if options.isMC : 
+            if len( h_genJetsAK8Pt.product()) > 0 :
+                GenAK8Pt = h_genJetsAK8Pt.product()
+                GenAK8Eta = h_genJetsAK8Eta.product()
+                GenAK8Phi = h_genJetsAK8Phi.product()
+                GenAK8Mass = h_genJetsAK8Mass.product()
 
         
 
@@ -1111,7 +1146,7 @@ for ifile in files : #{ Loop over root files
                         )
 
 
-        if options.makeResponseMatrix : 
+        if options.makeResponseMatrix or options.isMC : 
             # Make response matrix
             ak8GenJetsP4Corr = []
 
@@ -1131,23 +1166,39 @@ for ifile in files : #{ Loop over root files
 
                     if genPtBin == None :
                         continue
+                        
+                    h_ptAK8Gen.Fill( genp4.Perp()  )
+                    h_yAK8Gen.Fill( genp4.Rapidity()  )
+                    h_phiAK8Gen.Fill( genp4.Phi()  )
+                    h_mAK8Gen.Fill( genp4.M()  )
+                        
+                    ha_ptAK8Gen[genPtBin].Fill( genp4.Perp()  )
+                    ha_yAK8Gen[genPtBin].Fill( genp4.Rapidity()  )
+                    ha_phiAK8Gen[genPtBin].Fill( genp4.Phi()  )
+                    ha_mAK8Gen[genPtBin].Fill( genp4.M()  )
+                    #ha_msoftdropAK8Gen[genPtBin].Fill( AK8GenSoftDropM[i]  )
+                    #ha_mprunedAK8Gen[genPtBin].Fill( AK8GenPrunedM[i]  )
+                    #ha_mfilteredAK8Gen[genPtBin].Fill( AK8GenFilteredM[i]  )
+                    #ha_mtrimmedAK8Gen[genPtBin].Fill( AK8GenTrimmedM[i]  )
 
                     if ak8JetsP4Corr != None : 
                         ireco = getMatched( genp4, ak8JetsP4Corr )
 
-                        # Here is a "Miss"
-                        if ireco == None :
-                            responses[genPtBin].Miss( genp4.M(), evWeight )
-                        # Here is a "Fill"
-                        else :
-                            responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M(), evWeight )
+                        if options.makeResponseMatrix : 
+                            # Here is a "Miss"
+                            if ireco == None :
+                                responses[genPtBin].Miss( genp4.M(), evWeight )
+                            # Here is a "Fill"
+                            else :
+                                responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M(), evWeight )
 
-            # Also need to fill the "Fakes"
-            for ireco in range(0, maxjets) :
-                igen = getMatched( ak8JetsP4Corr[ireco], ak8GenJetsP4Corr )
-                if igen == None or igen > 1 :
-                    recoPtBin = binFinder( ak8JetsP4Corr[ireco].Perp() )
-                    responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M(), evWeight )
+            if options.makeResponseMatrix : 
+                # Also need to fill the "Fakes"
+                for ireco in range(0, maxjets) :
+                    igen = getMatched( ak8JetsP4Corr[ireco], ak8GenJetsP4Corr )
+                    if igen == None or igen > 1 :
+                        recoPtBin = binFinder( ak8JetsP4Corr[ireco].Perp() )
+                        responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M(), evWeight )
             
             
 
