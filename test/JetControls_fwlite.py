@@ -418,6 +418,10 @@ h_cefAK8 = ROOT.TH1F("cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0)
 h_ncAK8 = ROOT.TH1F("ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) 
 h_nchAK8 = ROOT.TH1F("nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) 
 
+# Delta R for finding issues
+
+h_deltaR = ROOT.TH1F('h_deltaR', 'Delta R Between Gen and Reco Jets; Delta R', 100, 0, .9)
+
 ha_ht = []
 ha_pt0 = []
 ha_met = []
@@ -1134,13 +1138,17 @@ for ifile in files : #{ Loop over root files
 
                     if ak8JetsP4Corr != None : 
                         ireco = getMatched( genp4, ak8JetsP4Corr )
-
+                        
+                                                
                         # Here is a "Miss"
                         if ireco == None :
                             responses[genPtBin].Miss( genp4.M(), evWeight )
                         # Here is a "Fill"
                         else :
                             responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M(), evWeight )
+                            
+                            # fill Delta R plot for misassignment
+                            h_deltaR.Fill(genp4.DeltaR(ak8JetsP4Corr[ireco]))
 
             # Also need to fill the "Fakes"
             for ireco in range(0, maxjets) :
