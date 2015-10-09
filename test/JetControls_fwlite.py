@@ -433,6 +433,10 @@ h_jetareaAK8Gen = ROOT.TH1F("jetareaAK8Gen", "AK8Gen Jet Area;Jet Area", 100, 0,
 h_subjetDRAK8Gen = ROOT.TH1F("subjetDRAK8Gen", "#Delta R between subjets;#Delta R", 100, 0, 6.28)
 h_jetzAK8Gen = ROOT.TH1F("jetzAK8Gen", "Jet z;z", 100, 0.0, 1.0)
 
+# Delta R for finding issues
+
+h_deltaR = ROOT.TH1F('h_deltaR', 'Delta R Between Gen and Reco Jets; Delta R', 100, 0, .9)
+
 ha_ht = []
 ha_pt0 = []
 ha_met = []
@@ -1191,6 +1195,7 @@ for ifile in files : #{ Loop over root files
                             # Here is a "Fill"
                             else :
                                 responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M(), evWeight )
+                                h_deltaR.Fill(genp4.DeltaR(ak8JetsP4Corr[ireco]))
 
             if options.makeResponseMatrix : 
                 # Also need to fill the "Fakes"
