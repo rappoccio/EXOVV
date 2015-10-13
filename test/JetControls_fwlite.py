@@ -117,7 +117,7 @@ trigsToGet = [
 
 def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None : 
-        for c in coll:
+        for i,c in enumerate(coll):
             if p4.DeltaR(c) < dRMax :
                 return i
     return None
@@ -1116,6 +1116,25 @@ for ifile in files : #{ Loop over root files
                 if options.verbose :
                     print "Corrected pt = " + str(AK8P4Corr.Perp())
 
+
+        if options.makeResponseMatrix or options.isMC : 
+            # Make response matrix
+            ak8GenJetsP4Corr = []
+
+            if len( GenAK8Pt ) > 0 :
+                for igen in range(0, len( GenAK8Pt ) ):
+
+                    genpt = GenAK8Pt[igen]
+                    geneta = GenAK8Eta[igen]
+                    genphi = GenAK8Phi[igen]
+                    genmass = GenAK8Mass[igen]
+
+                    genp4 = ROOT.TLorentzVector()
+                    genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
+                    ak8GenJetsP4Corr.append( genp4 )
+
+
+                    
         ptAsymmetry = None
         dPhiJJ = None
         njetsPassed = len( ak8JetsP4Corr )
@@ -1179,25 +1198,17 @@ for ifile in files : #{ Loop over root files
                 if options.makeResponseMatrix : 
                     igen = getMatched( AK8P4Corr, ak8GenJetsP4Corr )
                     if igen == None or igen > 1 :
-                        recoPtBin = binFinder( ak8JetsP4Corr[ireco].Perp() )
-                        responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M(), evWeight )
+                        recoPtBin = binFinder( ak8JetsP4Corr[i].Perp() )
+                        responses[recoPtBin].Fake( ak8JetsP4Corr[i].M(), evWeight )
 
 
         if options.makeResponseMatrix or options.isMC : 
-            # Make response matrix
-            ak8GenJetsP4Corr = []
 
-            if len( h_genJetsAK8Pt.product()) > 0 :
+            if len( GenAK8Pt ) > 0 :
                 for igen in range(0, len( GenAK8Pt ) ):
 
+                    genp4 = ak8GenJetsP4Corr[igen]
                     genpt = GenAK8Pt[igen]
-                    geneta = GenAK8Eta[igen]
-                    genphi = GenAK8Phi[igen]
-                    genmass = GenAK8Mass[igen]
-
-                    genp4 = ROOT.TLorentzVector()
-                    genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
-                    ak8GenJetsP4Corr.append( genp4 )
 
                     genPtBin = binFinder( genpt )
 
@@ -1218,8 +1229,10 @@ for ifile in files : #{ Loop over root files
                     #ha_mfilteredAK8Gen[genPtBin].Fill( AK8GenFilteredM[i]  )
                     #ha_mtrimmedAK8Gen[genPtBin].Fill( AK8GenTrimmedM[i]  )
 
-                    if ak8JetsP4Corr != None : 
-                        ireco = getMatched( genp4, ak8JetsP4Corr )
+                    if ak8JetsP4Corr != None :
+                        ireco = None
+                        if len(ak8JetsP4Corr) >= 2 : 
+                            ireco = getMatched( genp4, [ak8JetsP4Corr[0],ak8JetsP4Corr[1]] )
 
                         if options.makeResponseMatrix : 
                             # Here is a "Miss"
