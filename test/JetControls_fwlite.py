@@ -836,7 +836,7 @@ for ifile in files : #{ Loop over root files
             if options.verbose :
                 print 'Prescale = ' + str(prescale)
                 
-            evWeight = evWeight * prescale            
+            #evWeight = evWeight * prescale            
             if passTrig == False :
                 continue
 
@@ -1124,25 +1124,25 @@ for ifile in files : #{ Loop over root files
                     h_jetzAK8.Fill( jetz , evWeight )
 
                     if ipt0 != None and ipt0 >= 0 : 
-                        ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp()  )
-                        ha_yAK8[ipt0].Fill( AK8P4Corr.Rapidity()  )
-                        ha_phiAK8[ipt0].Fill( AK8P4Corr.Phi()  )
-                        ha_mAK8[ipt0].Fill( AK8P4Corr.M()  )
-                        ha_msoftdropAK8[ipt0].Fill( AK8SoftDropM[i]  )
-                        ha_mprunedAK8[ipt0].Fill( AK8PrunedM[i]  )
-                        ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i]  )
-                        ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i]  )
-                        ha_jetareaAK8[ipt0].Fill( AK8Area[i] )
-                        ha_tau21AK8[ipt0].Fill( tau21 )
-                        ha_nhfAK8[ipt0].Fill( nhf )
-                        ha_chfAK8[ipt0].Fill( chf )
-                        ha_nefAK8[ipt0].Fill( nef )
-                        ha_cefAK8[ipt0].Fill( cef )
-                        ha_ncAK8[ipt0].Fill( nconstituents )
+                        ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp()  , evWeight)
+                        ha_yAK8[ipt0].Fill( AK8P4Corr.Rapidity()  , evWeight)
+                        ha_phiAK8[ipt0].Fill( AK8P4Corr.Phi()  , evWeight)
+                        ha_mAK8[ipt0].Fill( AK8P4Corr.M()  , evWeight)
+                        ha_msoftdropAK8[ipt0].Fill( AK8SoftDropM[i]  , evWeight)
+                        ha_mprunedAK8[ipt0].Fill( AK8PrunedM[i]  , evWeight)
+                        ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i]  , evWeight)
+                        ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i]  , evWeight)
+                        ha_jetareaAK8[ipt0].Fill( AK8Area[i] , evWeight)
+                        ha_tau21AK8[ipt0].Fill( tau21 , evWeight)
+                        ha_nhfAK8[ipt0].Fill( nhf , evWeight)
+                        ha_chfAK8[ipt0].Fill( chf , evWeight)
+                        ha_nefAK8[ipt0].Fill( nef , evWeight)
+                        ha_cefAK8[ipt0].Fill( cef , evWeight)
+                        ha_ncAK8[ipt0].Fill( nconstituents , evWeight)
                         ha_nchAK8[ipt0].Fill( nch ) 
-                        ha_jetrhoAK8[ipt0].Fill( jetrho )
-                        ha_subjetDRAK8[ipt0].Fill( sp4_0.DeltaR( sp4_1 ) )
-                        ha_jetzAK8[ipt0].Fill( jetz )
+                        ha_jetrhoAK8[ipt0].Fill( jetrho , evWeight)
+                        ha_subjetDRAK8[ipt0].Fill( sp4_0.DeltaR( sp4_1 ) , evWeight)
+                        ha_jetzAK8[ipt0].Fill( jetz, evWeight )
 
                     if options.verbose : 
                         print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
@@ -1171,15 +1171,15 @@ for ifile in files : #{ Loop over root files
                     if genPtBin == None :
                         continue
                         
-                    h_ptAK8Gen.Fill( genp4.Perp()  )
-                    h_yAK8Gen.Fill( genp4.Rapidity()  )
-                    h_phiAK8Gen.Fill( genp4.Phi()  )
-                    h_mAK8Gen.Fill( genp4.M()  )
+                    h_ptAK8Gen.Fill( genp4.Perp()  , evWeight)
+                    h_yAK8Gen.Fill( genp4.Rapidity()  , evWeight)
+                    h_phiAK8Gen.Fill( genp4.Phi()  , evWeight)
+                    h_mAK8Gen.Fill( genp4.M()  , evWeight)
                         
-                    ha_ptAK8Gen[genPtBin].Fill( genp4.Perp()  )
-                    ha_yAK8Gen[genPtBin].Fill( genp4.Rapidity()  )
-                    ha_phiAK8Gen[genPtBin].Fill( genp4.Phi()  )
-                    ha_mAK8Gen[genPtBin].Fill( genp4.M()  )
+                    ha_ptAK8Gen[genPtBin].Fill( genp4.Perp()  , evWeight)
+                    ha_yAK8Gen[genPtBin].Fill( genp4.Rapidity()  , evWeight)
+                    ha_phiAK8Gen[genPtBin].Fill( genp4.Phi()  , evWeight)
+                    ha_mAK8Gen[genPtBin].Fill( genp4.M(), evWeight )
                     #ha_msoftdropAK8Gen[genPtBin].Fill( AK8GenSoftDropM[i]  )
                     #ha_mprunedAK8Gen[genPtBin].Fill( AK8GenPrunedM[i]  )
                     #ha_mfilteredAK8Gen[genPtBin].Fill( AK8GenFilteredM[i]  )
