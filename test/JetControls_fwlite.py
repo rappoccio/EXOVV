@@ -941,6 +941,13 @@ for ifile in files : #{ Loop over root files
         AK8JetRho = []
         AK8JetZ = []
 
+        AK8nhf = []
+        AK8chf = []
+        AK8nef = []
+        AK8cef = []
+        AK8nconstituents = []
+        AK8nch = []
+        AK8subjetDR = []
 
         if len( h_jetsAK8Pt.product()) > 0 : 
             AK8Pt = h_jetsAK8Pt.product()
@@ -992,11 +999,11 @@ for ifile in files : #{ Loop over root files
 
         
 
-            
+        njets = len(h_jetsAK8Pt.product())
         if options.maxjets == None :
-            maxjets = len(h_jetsAK8Pt.product())
+            maxjets = njets            
         else :
-            maxjets = options.maxjets
+            maxjets = min( njets, options.maxjets)
                           
         for i in range(0,maxjets):#{ Loop over AK8 Jets
 
@@ -1026,6 +1033,13 @@ for ifile in files : #{ Loop over root files
               nch > 0
 
             ak8JetsPassID.append( goodJet )
+            AK8nhf.append( nhf )
+            AK8chf.append( chf )
+            AK8nef.append( nef )
+            AK8cef.append( cef )
+            AK8nconstituents.append( nconstituents)
+            AK8nch.append( nch )
+            
 
             if options.verbose :
                 print 'Good jet? ' + str(goodJet)
@@ -1081,6 +1095,7 @@ for ifile in files : #{ Loop over root files
                 ak8JetsP4SoftDropCorr.append( None )
                 AK8JetRho.append( None )
                 AK8JetZ.append( None )
+                AK8subjetDR.append( None )
             else :
 
                 softdrop_p4 = sp4_0 + sp4_1
@@ -1096,11 +1111,23 @@ for ifile in files : #{ Loop over root files
 
                 AK8JetRho.append( jetrho )
                 AK8JetZ.append( jetz )
-
+                AK8subjetDR.append( sp4_0.DeltaR( sp4_1 ) )
 
                 if options.verbose :
                     print "Corrected pt = " + str(AK8P4Corr.Perp())
-                if goodJet == True and  AK8P4Corr.Perp() > options.minAK8JetPt :
+
+        ptAsymmetry = None
+        dPhiJJ = None
+        njetsPassed = len( ak8JetsP4Corr )
+        if njetsPassed >= 2 :
+            ptAsymmetry = (ak8JetsP4Corr[0].Perp() - ak8JetsP4Corr[1].Perp()) / (ak8JetsP4Corr[0].Perp() + ak8JetsP4Corr[1].Perp())
+            dPhiJJ = ak8JetsP4Corr[0].DeltaPhi( ak8JetsP4Corr[1] )
+
+                    
+        if ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0 : 
+            for i in range(0,2) :
+                AK8P4Corr = ak8JetsP4Corr[i]
+                if ak8JetsPassID[i] == True and  AK8P4Corr.Perp() > options.minAK8JetPt and AK8JetZ[i] != None :
                     if options.verbose :
                         print 'Passed cuts'
                     h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
@@ -1112,16 +1139,16 @@ for ifile in files : #{ Loop over root files
                     h_mfilteredAK8.Fill( AK8FilteredM[i], evWeight  )
                     h_mtrimmedAK8.Fill( AK8TrimmedM[i], evWeight  )
                     h_jetareaAK8.Fill( AK8Area[i], evWeight )
-                    h_tau21AK8.Fill( tau21, evWeight )
-                    h_nhfAK8.Fill( nhf, evWeight )
-                    h_chfAK8.Fill( chf, evWeight )
-                    h_nefAK8.Fill( nef, evWeight )
-                    h_cefAK8.Fill( cef, evWeight )
-                    h_ncAK8.Fill( nconstituents, evWeight )
-                    h_nchAK8.Fill( nch, evWeight )
-                    h_jetrhoAK8.Fill( jetrho, evWeight )
-                    h_subjetDRAK8.Fill( sp4_0.DeltaR( sp4_1 ), evWeight )                
-                    h_jetzAK8.Fill( jetz , evWeight )
+                    h_tau21AK8.Fill( AK8Tau21[i], evWeight )
+                    h_nhfAK8.Fill( AK8nhf[i], evWeight )
+                    h_chfAK8.Fill( AK8chf[i], evWeight )
+                    h_nefAK8.Fill( AK8nef[i], evWeight )
+                    h_cefAK8.Fill( AK8cef[i], evWeight )
+                    h_ncAK8.Fill( AK8nconstituents[i], evWeight )
+                    h_nchAK8.Fill( AK8nch[i], evWeight )
+                    h_jetrhoAK8.Fill( AK8JetRho[i], evWeight )
+                    h_subjetDRAK8.Fill( AK8subjetDR[i], evWeight )                
+                    h_jetzAK8.Fill( AK8JetZ[i] , evWeight )
 
                     if ipt0 != None and ipt0 >= 0 : 
                         ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp()  , evWeight)
@@ -1133,21 +1160,27 @@ for ifile in files : #{ Loop over root files
                         ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i]  , evWeight)
                         ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i]  , evWeight)
                         ha_jetareaAK8[ipt0].Fill( AK8Area[i] , evWeight)
-                        ha_tau21AK8[ipt0].Fill( tau21 , evWeight)
-                        ha_nhfAK8[ipt0].Fill( nhf , evWeight)
-                        ha_chfAK8[ipt0].Fill( chf , evWeight)
-                        ha_nefAK8[ipt0].Fill( nef , evWeight)
-                        ha_cefAK8[ipt0].Fill( cef , evWeight)
-                        ha_ncAK8[ipt0].Fill( nconstituents , evWeight)
-                        ha_nchAK8[ipt0].Fill( nch ) 
-                        ha_jetrhoAK8[ipt0].Fill( jetrho , evWeight)
-                        ha_subjetDRAK8[ipt0].Fill( sp4_0.DeltaR( sp4_1 ) , evWeight)
-                        ha_jetzAK8[ipt0].Fill( jetz, evWeight )
+                        ha_tau21AK8[ipt0].Fill( AK8Tau21[i] , evWeight)
+                        ha_nhfAK8[ipt0].Fill( AK8nhf[i], evWeight )
+                        ha_chfAK8[ipt0].Fill( AK8chf[i], evWeight )
+                        ha_nefAK8[ipt0].Fill( AK8nef[i], evWeight )
+                        ha_cefAK8[ipt0].Fill( AK8cef[i], evWeight )
+                        ha_ncAK8[ipt0].Fill( AK8nconstituents[i], evWeight )
+                        ha_nchAK8[ipt0].Fill( AK8nch[i], evWeight )
+                        ha_jetrhoAK8[ipt0].Fill( AK8JetRho[i], evWeight )
+                        ha_subjetDRAK8[ipt0].Fill( AK8subjetDR[i], evWeight )                
+                        ha_jetzAK8[ipt0].Fill( AK8JetZ[i] , evWeight )
 
                     if options.verbose : 
                         print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
                             AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho
                         )
+                # Also need to fill the "Fakes"
+                if options.makeResponseMatrix : 
+                    igen = getMatched( AK8P4Corr, ak8GenJetsP4Corr )
+                    if igen == None or igen > 1 :
+                        recoPtBin = binFinder( ak8JetsP4Corr[ireco].Perp() )
+                        responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M(), evWeight )
 
 
         if options.makeResponseMatrix or options.isMC : 
@@ -1197,13 +1230,7 @@ for ifile in files : #{ Loop over root files
                                 responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M(), evWeight )
                                 h_deltaR.Fill(genp4.DeltaR(ak8JetsP4Corr[ireco]))
 
-            if options.makeResponseMatrix : 
-                # Also need to fill the "Fakes"
-                for ireco in range(0, maxjets) :
-                    igen = getMatched( ak8JetsP4Corr[ireco], ak8GenJetsP4Corr )
-                    if igen == None or igen > 1 :
-                        recoPtBin = binFinder( ak8JetsP4Corr[ireco].Perp() )
-                        responses[recoPtBin].Fake( ak8JetsP4Corr[ireco].M(), evWeight )
+
             
             
 
