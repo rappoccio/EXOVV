@@ -9,8 +9,8 @@
 # #$ Cuts
 ##################
 
-
 #@ CONFIGURATION
+
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -84,7 +84,10 @@ parser.add_option('--weightQCDSample', type='float', action='store',
                   default=False,
                   dest='weightQCDSample',
                   help='Weight the QCD samples')
-
+parser.add_option('--jecSys', metavar='J', type='float', action='store',
+                  default=None,
+                  dest='jecSys',
+                  help='JEC systematic variation. Options are +1. (up 1 sigma), 0. (nominal), -1. (down 1 sigma). Default is None.')
 
 (options, args) = parser.parse_args()
 argv = []
@@ -472,44 +475,49 @@ for itrig,trig in enumerate( trigsToGet ) :
 #@ JET CORRECTIONS
 
 ROOT.gSystem.Load('libCondFormatsJetMETObjects')
+
+#Left out AK4 for now
+
 #jecParStrAK4 = ROOT.std.string('JECs/PHYS14_25_V2_AK4PFchs.txt')
 #jecUncAK4 = ROOT.JetCorrectionUncertainty( jecParStrAK4 )
-#jecParStrAK8 = ROOT.std.string('JECs/PHYS14_25_V2_AK8PFchs.txt')
-#jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
+
+if options.jecSys != None:
+    jecParStrAK8 = ROOT.std.string('JECs/Summer15_50nsV4_DATA_Uncertainty_AK8PFchs.txt')
+    jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
 if options.isMC : 
     print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK4PFchs.txt");
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_Uncertainty_AK4PFchs.txt");
     print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK4PFchs.txt");
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK4PFchs.txt");
     print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK4PFchs.txt");
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK4PFchs.txt");
 
 
     print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK8PFchs.txt");
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_Uncertainty_AK8PFchs.txt");
     print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK8PFchs.txt");
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK8PFchs.txt");
     print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK8PFchs.txt");
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK8PFchs.txt");
 else :
     print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK4PFchs.txt");
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK4PFchs.txt");
     print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK4PFchs.txt");
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK4PFchs.txt");
     print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK4PFchs.txt");
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK4PFchs.txt");
     # for data only :
-    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK4PFchs.txt");
+    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK4PFchs.txt");
 
     print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK8PFchs.txt");
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK8PFchs.txt");
     print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK8PFchs.txt");
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK8PFchs.txt");
     print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK8PFchs.txt");
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK8PFchs.txt");
     # for data only :
-    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK8PFchs.txt");
+    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK8PFchs.txt");
 
 
     
@@ -994,18 +1002,25 @@ for ifile in files : #{ Loop over root files
 
             if options.verbose :
                 print 'Good jet? ' + str(goodJet)
-
+            jetScale = 1
             #@ JEC Scaling for AK8 Jets
-            ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
-            ak8JetCorrector.setJetPt ( AK8P4Raw.Perp() )
-            ak8JetCorrector.setJetE  ( AK8P4Raw.E() )
-            ak8JetCorrector.setJetA  ( AK8Area[i] )
-            ak8JetCorrector.setRho   ( rho )
-            ak8JetCorrector.setNPV   ( NPV )
-            newJEC = ak8JetCorrector.getCorrection()
-            AK8P4Corr = AK8P4Raw*newJEC
-
-            ak8JetsP4Corr.append( AK8P4Corr )
+            if options.jecSys != None :
+                jecUncAK8.setJetEta( AK8P4Raw.Eta() )
+                jecUncAK8.setJetPt( AK8P4Raw.Perp() )
+                upOrDown = bool(options.jecSys > 0.0)
+                unc = abs(jecUncAK8.getUncertainty(upOrDown))
+                jetScale += unc * options.jecSys
+                ak8JetsP4Corr.append( AK8P4Corr*jetScale)
+            else:
+                ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
+                ak8JetCorrector.setJetPt ( AK8P4Raw.Perp() )
+                ak8JetCorrector.setJetE  ( AK8P4Raw.E() )
+                ak8JetCorrector.setJetA  ( AK8Area[i] )
+                ak8JetCorrector.setRho   ( rho )
+                ak8JetCorrector.setNPV   ( NPV )
+                newJEC = ak8JetCorrector.getCorrection()
+                AK8P4Corr = AK8P4Raw*newJEC
+                ak8JetsP4Corr.append( AK8P4Corr )
 
             tau21 = -1.0
             if AK8Tau1[i] > 0.0 :
