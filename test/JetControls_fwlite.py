@@ -1142,8 +1142,9 @@ for ifile in files : #{ Loop over root files
             ptAsymmetry = (ak8JetsP4Corr[0].Perp() - ak8JetsP4Corr[1].Perp()) / (ak8JetsP4Corr[0].Perp() + ak8JetsP4Corr[1].Perp())
             dPhiJJ = ak8JetsP4Corr[0].DeltaPhi( ak8JetsP4Corr[1] )
 
-                    
-        if ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0 : 
+
+        passKin = ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0
+        if passKin : 
             for i in range(0,2) :
                 AK8P4Corr = ak8JetsP4Corr[i]
                 if ak8JetsPassID[i] == True and  AK8P4Corr.Perp() > options.minAK8JetPt and AK8JetZ[i] != None :
@@ -1236,7 +1237,7 @@ for ifile in files : #{ Loop over root files
 
                         if options.makeResponseMatrix : 
                             # Here is a "Miss"
-                            if ireco == None :
+                            if ireco == None or not passKin :
                                 responses[genPtBin].Miss( genp4.M(), evWeight )
                             # Here is a "Fill"
                             else :
