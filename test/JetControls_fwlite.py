@@ -84,10 +84,16 @@ parser.add_option('--weightQCDSample', type='float', action='store',
                   default=False,
                   dest='weightQCDSample',
                   help='Weight the QCD samples')
+                  
 parser.add_option('--jecSys', metavar='J', type='float', action='store',
                   default=None,
                   dest='jecSys',
                   help='JEC systematic variation. Options are +1. (up 1 sigma), 0. (nominal), -1. (down 1 sigma). Default is None.')
+                  
+parser.add_option('--jerSys', metavar='J', type='float', action='store',
+                  default=None,
+                  dest='jerSys',
+                  help='JER Systematic variation in fraction. Default is None.')
 
 (options, args) = parser.parse_args()
 argv = []
@@ -117,7 +123,34 @@ trigsToGet = [
     'HLT_PFJet450',
     'HLT_PFJet500' 
     ]
+# Jet energy resolution (nominal, up/down) for AK8 jets
+def getJER(jetEta, jerType) :
 
+    jerSF = 1.0
+
+    if ( (jerType==0 or jerType==-1 or jerType==1) == False):
+        print "ERROR: Can't get JER! use type=0 (nom), -1 (down), +1 (up)"
+        return float(jerSF)
+
+    etamin = [0.0,0.5,1.1,1.7,2.3,2.8,3.2]
+    etamax = [0.5,1.1,1.7,2.3,2.8,3.2,5.0]
+    
+    scale_nom = [1.079,1.099,1.121,1.208,1.254,1.395,1.056]
+    scale_dn  = [1.053,1.071,1.092,1.162,1.192,1.332,0.865]
+    scale_up  = [1.105,1.127,1.150,1.254,1.316,1.458,1.247]
+
+    for iSF in range(0,len(scale_nom)) :
+        if abs(jetEta) >= etamin[iSF] and abs(jetEta) < etamax[iSF] :
+            if jerType < 0 :
+                jerSF = scale_dn[iSF]
+            elif jerType > 0 :
+                jerSF = scale_up[iSF]
+            else :
+                jerSF = scale_nom[iSF]
+            break
+
+    return float(jerSF)
+    
 def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None : 
         for i,c in enumerate(coll):
@@ -516,42 +549,42 @@ ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 #jecUncAK4 = ROOT.JetCorrectionUncertainty( jecParStrAK4 )
 
 if options.jecSys != None:
-    jecParStrAK8 = ROOT.std.string('JECs/Summer15_50nsV4_DATA_Uncertainty_AK8PFchs.txt')
+    jecParStrAK8 = ROOT.std.string('JECs/Summer15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
     jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
 if options.isMC : 
     print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_Uncertainty_AK4PFchs.txt");
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L3Absolute_AK4PFchs.txt");
     print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK4PFchs.txt");
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L2Relative_AK4PFchs.txt");## USE 50 NS CORRECTIONS BUT THE UNCERTAINTY IS FOR 25
     print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK4PFchs.txt");
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L1FastJet_AK4PFchs.txt");
 
 
     print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_Uncertainty_AK8PFchs.txt");
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L3Absolute_AK8PFchs.txt");
     print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK8PFchs.txt");
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L2Relative_AK8PFchs.txt");
     print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK8PFchs.txt");
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L1FastJet_AK8PFchs.txt");
 else :
     print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK4PFchs.txt");
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L3Absolute_AK4PFchs.txt");## same deal as above
     print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK4PFchs.txt");
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2Relative_AK4PFchs.txt");
     print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK4PFchs.txt");
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L1FastJet_AK4PFchs.txt");
     # for data only :
-    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK4PFchs.txt");
+    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2L3Residual_AK4PFchs.txt");
 
     print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK8PFchs.txt");
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L3Absolute_AK8PFchs.txt");
     print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK8PFchs.txt");
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2Relative_AK8PFchs.txt");
     print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK8PFchs.txt");
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L1FastJet_AK8PFchs.txt");
     # for data only :
-    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK8PFchs.txt");
+    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2L3Residual_AK8PFchs.txt");
 
 
     
@@ -956,7 +989,7 @@ for ifile in files : #{ Loop over root files
         AK8nconstituents = []
         AK8nch = []
         AK8subjetDR = []
-
+        AK8isFake = []
         if len( h_jetsAK8Pt.product()) > 0 : 
             AK8Pt = h_jetsAK8Pt.product()
             AK8Eta = h_jetsAK8Eta.product()
@@ -1051,25 +1084,74 @@ for ifile in files : #{ Loop over root files
 
             if options.verbose :
                 print 'Good jet? ' + str(goodJet)
+                    
+            ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
+            ak8JetCorrector.setJetPt ( AK8P4Raw.Perp() )
+            ak8JetCorrector.setJetE  ( AK8P4Raw.E() )
+            ak8JetCorrector.setJetA  ( AK8Area[i] )
+            ak8JetCorrector.setRho   ( rho )
+            ak8JetCorrector.setNPV   ( NPV )
+            newJEC = ak8JetCorrector.getCorrection()
+            AK8P4Corr = AK8P4Raw*newJEC
+                                                    
+            # Gen Jets
+            if options.makeResponseMatrix or options.isMC : 
+            # Make response matrix
+                ak8GenJetsP4Corr = []
+
+            if len( GenAK8Pt ) > 0 :
+                for igen in range(0, len( GenAK8Pt ) ):
+
+                    genpt = GenAK8Pt[igen]
+                    geneta = GenAK8Eta[igen]
+                    genphi = GenAK8Phi[igen]
+                    genmass = GenAK8Mass[igen]
+
+                    genp4 = ROOT.TLorentzVector()
+                    genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
+                    ak8GenJetsP4Corr.append( genp4 )           
+            
+            
+            #@ Smear Jets
+
             jetScale = 1
+            if options.jerSys != None :
+                igenJet = getMatched( AK8P4Corr , ak8GenJetsP4Corr  )
+                if igenJet == None :
+                    AK8isFake.append(True)
+                else :
+                    AK8isFake.append(False)
+                    scale = options.jerSys  #JER nominal=0.1, up=0.2, down=0.0
+                    my_jerSys = 0
+                    if options.jerSys > 0 :
+                        my_jerSys = 1
+                    elif options.jerSys == 0.0 :
+                        my_jerSys = 0
+                    else :
+                        my_jerSys = -1
+                    scale = getJER(AK8Eta[i], my_jerSys) #JER nominal=0, up=+1, down=-1
+                    recopt = AK8P4Corr.Perp()
+                    genpt = ak8GenJetsP4Corr[igenJet].Perp()
+                    deltapt = (recopt-genpt)*(scale-1.0)
+                    ptscale = max(0.0, (recopt+deltapt)/recopt)
+                    jetScale *= ptscale
+                
             #@ JEC Scaling for AK8 Jets
+
             if options.jecSys != None :
-                jecUncAK8.setJetEta( AK8P4Raw.Eta() )
-                jecUncAK8.setJetPt( AK8P4Raw.Perp() )
+                if options.verbose :
+                    print 'AK8 Jets Pre-Corrected' + str(AK8P4Corr.Perp())
+                jecUncAK8.setJetEta( AK8P4Corr.Eta() )
+                jecUncAK8.setJetPt( AK8P4Corr.Perp() )
                 upOrDown = bool(options.jecSys > 0.0)
                 unc = abs(jecUncAK8.getUncertainty(upOrDown))
                 jetScale += unc * options.jecSys
                 ak8JetsP4Corr.append( AK8P4Corr*jetScale)
-            else:
-                ak8JetCorrector.setJetEta( AK8P4Raw.Eta() )
-                ak8JetCorrector.setJetPt ( AK8P4Raw.Perp() )
-                ak8JetCorrector.setJetE  ( AK8P4Raw.E() )
-                ak8JetCorrector.setJetA  ( AK8Area[i] )
-                ak8JetCorrector.setRho   ( rho )
-                ak8JetCorrector.setNPV   ( NPV )
-                newJEC = ak8JetCorrector.getCorrection()
-                AK8P4Corr = AK8P4Raw*newJEC
+                if options.verbose:
+                    print 'AK8 Post-Correction' + str(AK8P4Corr.Perp()*jetScale)
+            else :
                 ak8JetsP4Corr.append( AK8P4Corr )
+
 
             tau21 = -1.0
             if AK8Tau1[i] > 0.0 :
@@ -1132,21 +1214,7 @@ for ifile in files : #{ Loop over root files
                     print "Corrected pt = " + str(AK8P4Corr.Perp())
 
 
-        if options.makeResponseMatrix or options.isMC : 
-            # Make response matrix
-            ak8GenJetsP4Corr = []
 
-            if len( GenAK8Pt ) > 0 :
-                for igen in range(0, len( GenAK8Pt ) ):
-
-                    genpt = GenAK8Pt[igen]
-                    geneta = GenAK8Eta[igen]
-                    genphi = GenAK8Phi[igen]
-                    genmass = GenAK8Mass[igen]
-
-                    genp4 = ROOT.TLorentzVector()
-                    genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
-                    ak8GenJetsP4Corr.append( genp4 )
 
 
                     
@@ -1212,7 +1280,11 @@ for ifile in files : #{ Loop over root files
                 # Also need to fill the "Fakes"
                 if options.makeResponseMatrix : 
                     igen = getMatched( AK8P4Corr, ak8GenJetsP4Corr )
-                    if igen == None or igen > 1 :
+                    isFake = False
+                    
+                    if len(AK8isFake) > 0 :
+                        isFake = AK8isFake[i]
+                    if igen == None or igen > 1 or isFake :
                         recoPtBin = binFinder( ak8JetsP4Corr[i].Perp() )
                         responses[recoPtBin].Fake( ak8JetsP4Corr[i].M(), evWeight )
 
