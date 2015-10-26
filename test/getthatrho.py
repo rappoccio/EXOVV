@@ -33,6 +33,15 @@ parser.add_option('--outname', type='string', action='store',
                   default = "",
                   help='Output string for output file')
 
+parser.add_option('--simulation', action='store_true',
+                  dest='simulation',
+                  default = None,
+                  help='Is this simulation?')
+
+parser.add_option('--lumi', type='float', action='store',
+                  dest='lumi',
+                  default = 1263,
+                  help='Is this simulation?')
 
 (options, args) = parser.parse_args()
 argv = []
@@ -43,7 +52,16 @@ import math
 import ROOT
 import sys
 ROOT.gROOT.Macro("rootlogon.C")
+ROOT.gStyle.SetOptStat(000000)
 
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(42)
+tlx.SetTextSize(0.057)
+tlxmini = ROOT.TLatex()
+tlxmini.SetNDC()
+tlxmini.SetTextFont(42)
+tlxmini.SetTextSize(0.037)
 
 fLo = ROOT.TFile(options.fileLo)
 fLoMod = ROOT.TFile(options.fileLoMod)
@@ -69,11 +87,12 @@ hLoMod.Scale(1.0 / hLoMod.Integral() )
 hHi.Scale(1.0 / hHi.Integral() )
 
 cLo = ROOT.TCanvas("cLo", "cLo")
-cLo.SetTopMargin(0.18)
+#cLo.SetTopMargin(0.18)
 cLo.SetRightMargin(0.15)
 hLo.GetYaxis().SetTitleOffset(1.0)
 cLo.SetLogx()
 cLo.SetLogz()
+hLo.SetTitle("")
 hLo.Draw("colz")
 hLo.SetMaximum(0.2)
 hLo.SetMinimum(1e-5)
@@ -82,17 +101,26 @@ profLo = hLo.ProfileX()
 profLo.SetMarkerStyle(20)
 profLo.Draw("same")
 
+if options.simulation :
+    tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(options.lumi) + " pb^{-1}")
+    
+tlxmini.DrawLatex(0.66, 0.86,  "200 < p_{T} < 350 GeV")
+tlxmini.DrawLatex(0.66, 0.81, "m > 50 GeV")
+tlxmini.DrawLatex(0.66, 0.76, "#tau_{21} < 0.6")
 cLo.Update()
 
 cLo.Print("tau_vs_rho_ptlo_taucut6" + options.outname + ".pdf", "pdf")
 cLo.Print("tau_vs_rho_ptlo_taucut6" + options.outname + ".png", "png")
 
 cLoMod = ROOT.TCanvas("cLoMod", "cLoMod")
-cLoMod.SetTopMargin(0.18)
+#cLoMod.SetTopMargin(0.18)
 cLoMod.SetRightMargin(0.15)
 hLoMod.GetYaxis().SetTitleOffset(1.0)
 cLoMod.SetLogx()
 cLoMod.SetLogz()
+hLoMod.SetTitle("")
 hLoMod.Draw("colz")
 hLoMod.SetMaximum(0.2)
 hLoMod.SetMinimum(1e-5)
@@ -100,18 +128,25 @@ hLoMod.SetMinimum(1e-5)
 profLoMod = hLoMod.ProfileX()
 profLoMod.SetMarkerStyle(20)
 profLoMod.Draw("same")
-
+if options.simulation :
+    tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(options.lumi) + " pb^{-1}")
+tlxmini.DrawLatex(0.66, 0.86,  "200 < p_{T} < 350 GeV")
+tlxmini.DrawLatex(0.66, 0.81, "m > 28.7 GeV")
+tlxmini.DrawLatex(0.66, 0.76, "#tau_{21} < 0.65")
 cLoMod.Update()
 
 cLoMod.Print("tau_vs_rho_ptlo_taucut7" + options.outname + ".pdf", "pdf")
 cLoMod.Print("tau_vs_rho_ptlo_taucut7" + options.outname + ".png", "png")
 
 cHi = ROOT.TCanvas("cHi", "cHi")
-cHi.SetTopMargin(0.18)
+#cHi.SetTopMargin(0.18)
 cHi.SetRightMargin(0.15)
 hHi.GetYaxis().SetTitleOffset(1.0)
 cHi.SetLogx()
 cHi.SetLogz()
+hHi.SetTitle("")
 hHi.Draw("colz")
 hHi.SetMaximum(0.2)
 hHi.SetMinimum(1e-5)
@@ -119,7 +154,13 @@ hHi.SetMinimum(1e-5)
 profHi = hHi.ProfileX()
 profHi.SetMarkerStyle(20)
 profHi.Draw("same")
-
+if options.simulation :
+    tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(options.lumi) + " pb^{-1}")
+tlxmini.DrawLatex(0.66, 0.86,  "p_{T} > 350 GeV")
+tlxmini.DrawLatex(0.66, 0.81, "m > 50 GeV")
+tlxmini.DrawLatex(0.66, 0.76, "#tau_{21} < 0.6")
 cHi.Update()
 
 cHi.Print("tau_vs_rho_pthi_taucut6" + options.outname + ".pdf", "pdf")
@@ -143,7 +184,9 @@ h1Lo_Sel.Scale( 1.0 / nAll_Lo )
 h1Lo_All.SetMarkerStyle(20)
 h1Lo_Sel.SetMarkerStyle(24)
 
-h1Lo_All.SetTitle("200 < p_{T} < 350 GeV, #tau_{21} < 0.6;Jet #rho;Fraction")
+
+tlxmini.DrawLatex(0.6, 0.905, "200 < p_{T} < 350 GeV, #tau_{21} < 0.6")
+h1Lo_All.SetTitle(";Jet #rho;Fraction")
 h1Lo_All.GetYaxis().SetTitleOffset(1.0)
 
 c1Lo.SetLogx()
@@ -151,6 +194,11 @@ c1Lo.SetLogy()
 h1Lo_All.Draw()
 h1Lo_Sel.Draw("same")
 h1Lo_All.SetMaximum(0.2)
+if options.simulation :
+    tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(options.lumi) + " pb^{-1}")
+tlxmini.DrawLatex(0.6, 0.905, "200 < p_{T} < 350 GeV, #tau_{21} < 0.6")
 c1Lo.Update()
 
 c1Lo.Print("shape_ptlo_taucut6" + options.outname + ".pdf", "pdf")
@@ -174,8 +222,8 @@ h1LoMod_Sel.Scale( 1.0 / nAll_LoMod )
 
 h1LoMod_All.SetMarkerStyle(22)
 h1LoMod_Sel.SetMarkerStyle(26)
-
-h1LoMod_All.SetTitle("200 < p_{T} < 350 GeV, #tau_{21} < 0.7;Jet #rho;Fraction")
+tlxmini.DrawLatex(0.6, 0.905, "200 < p_{T} < 350 GeV, #tau_{21} < 0.65")
+h1LoMod_All.SetTitle(";Jet #rho;Fraction")
 h1LoMod_All.GetYaxis().SetTitleOffset(1.0)
 
 c1LoMod.SetLogx()
@@ -183,6 +231,11 @@ c1LoMod.SetLogy()
 h1LoMod_All.Draw()
 h1LoMod_Sel.Draw("same")
 h1LoMod_All.SetMaximum(0.2)
+if options.simulation :
+    tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(options.lumi) + " pb^{-1}")
+tlxmini.DrawLatex(0.6, 0.905, "200 < p_{T} < 350 GeV, #tau_{21} < 0.65")
 c1LoMod.Update()
 
 c1LoMod.Print("shape_ptlo_taucut7" + options.outname + ".pdf", "pdf")
@@ -204,7 +257,7 @@ h1Hi_Sel.Scale( 1.0 / nAll_Hi )
 h1Hi_All.SetMarkerStyle(21)
 h1Hi_Sel.SetMarkerStyle(25)
 
-h1Hi_All.SetTitle("p_{T} > 350 GeV, #tau_{21} < 0.6;Jet #rho;Fraction")
+h1Hi_All.SetTitle(";Jet #rho;Fraction")
 h1Hi_All.GetYaxis().SetTitleOffset(1.0)
 
 c1Hi.SetLogx()
@@ -212,6 +265,11 @@ c1Hi.SetLogy()
 h1Hi_All.Draw()
 h1Hi_Sel.Draw("same")
 h1Hi_All.SetMaximum(0.2)
+if options.simulation :
+    tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(options.lumi) + " pb^{-1}")
+tlxmini.DrawLatex(0.6, 0.905, "p_{T} > 350 GeV, #tau_{21} < 0.6")
 c1Hi.Update()
 
 c1Hi.Print("shape_pthi_taucut6" + options.outname + ".pdf", "pdf")
@@ -237,7 +295,8 @@ for ibin in xrange(0, rLoMod.GetXaxis().GetNbins() ) :
     rHiVal = rHi.GetBinContent(ibin)
     diff = abs( rVal - rHiVal )
     err = rLoMod.GetBinError(ibin)
-    err = math.sqrt( err*err + diff*diff )
+    err = math.sqrt( err*err+ 0.10*0.10*rVal*rVal)
+    #err = math.sqrt( err*err + diff*diff )
     rLoMod.SetBinError( ibin, err)
 
 rHi.SetMarkerStyle(20)
@@ -249,12 +308,13 @@ rLoMod.SetMarkerColor(2)
 rLoMod.SetFillColor(2)
 rLoMod.SetFillStyle(3003)
 
-ROOT.gStyle.SetOptStat(000000)
+
 rHi.Draw()
 rLo.Draw("same")
 rLoMod.Draw("same e3")
 
-rHi.SetTitle("Mistag Rate;Jet #rho;Rate")
+
+rHi.SetTitle(";Jet #rho;Rate")
 rHi.GetYaxis().SetTitleOffset(1.0)
 cRate.SetLogx()
 
@@ -262,8 +322,12 @@ leg = ROOT.TLegend(0.54, 0.15, 0.84, 0.4)
 leg.SetBorderSize(0)
 leg.AddEntry( rHi, "p_{T} > 350 GeV, #tau < 0.6", 'p')
 leg.AddEntry( rLo, "200 < p_{T} < 350 GeV, #tau < 0.6", 'p')
-leg.AddEntry( rLoMod, "200 < p_{T} < 350 GeV, #tau < 0.7", 'p')
+leg.AddEntry( rLoMod, "200 < p_{T} < 350 GeV, #tau < 0.65", 'p')
 leg.Draw()
+if options.simulation :
+    tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(options.lumi) + " pb^{-1}")
 
 cRate.Print("scaled_mistagrate" + options.outname + ".pdf", "pdf")
 cRate.Print("scaled_mistagrate" + options.outname + ".png", "png")

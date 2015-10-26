@@ -23,7 +23,11 @@ import math
 import ROOT
 import sys
 ROOT.gROOT.Macro("rootlogon.C")
-
+ROOT.gStyle.SetOptStat(000000)
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(42)
+tlx.SetTextSize(0.057)
 
 f = ROOT.TFile(options.file + '.root')
 
@@ -50,6 +54,9 @@ leg.AddEntry( hpred, 'Predicted', 'p')
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
 leg.Draw()
+ROOT.gPad.SetLogy()
+
+tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
 
 ROOT.gPad.Print(options.file + '_obspred.pdf', 'pdf')
 ROOT.gPad.Print(options.file + '_obspred.png', 'png')
