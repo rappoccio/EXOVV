@@ -295,7 +295,7 @@ for ibin in xrange(0, rLoMod.GetXaxis().GetNbins() ) :
     rHiVal = rHi.GetBinContent(ibin)
     diff = abs( rVal - rHiVal )
     err = rLoMod.GetBinError(ibin)
-    err = math.sqrt( err*err+ 0.10*0.10*rVal*rVal)
+    err = math.sqrt( err*err+ 0.03*0.03*rVal*rVal)
     #err = math.sqrt( err*err + diff*diff )
     rLoMod.SetBinError( ibin, err)
 
