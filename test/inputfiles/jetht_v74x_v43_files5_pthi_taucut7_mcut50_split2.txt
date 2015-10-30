@@ -1,0 +1,299 @@
+[?1034hTDR Style initialized
+Getting L3 for AK4 for data
+Getting L2 for AK4 for data
+Getting L1 for AK4 for data
+Getting L3 for AK8 for data
+Getting L2 for AK8 for data
+Getting L1 for AK8 for data
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_2.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_20.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_200.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_201.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_202.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_203.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_204.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_205.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_206.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_207.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_208.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_209.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_21.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_210.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_211.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_212.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_213.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_214.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_215.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_216.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_217.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_218.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_219.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_22.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_220.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_221.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_222.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_223.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_224.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_225.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_226.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_227.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_228.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_229.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_23.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_230.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_231.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_232.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_233.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_234.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_235.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_236.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_237.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_238.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_239.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_24.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_240.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_241.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_242.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_243.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_244.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_245.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_246.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_247.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_248.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_249.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_25.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_250.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_251.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_253.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_255.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_256.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_257.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_258.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_259.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_26.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_261.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_262.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_263.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_264.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_265.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_266.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_267.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_268.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_269.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_27.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_270.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_271.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_273.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_274.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_275.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_276.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_277.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_278.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_279.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_28.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_280.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_281.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_282.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_283.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_284.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_285.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_286.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_287.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_288.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_289.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_29.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_290.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_291.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_292.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_293.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_294.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_295.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_297.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_298.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_299.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_3.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_30.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_300.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_301.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_302.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_303.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_304.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_305.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_306.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_307.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_308.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_309.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_31.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_310.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_311.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_312.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_313.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_314.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_315.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_316.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_317.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_318.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_319.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_32.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_320.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_321.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_322.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_323.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_324.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_325.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_326.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_327.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_328.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_329.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_330.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_331.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_332.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_333.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_334.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_335.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_336.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_337.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_338.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_339.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_34.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_340.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_341.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_342.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_343.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_344.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_345.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_346.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_347.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_348.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_349.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_35.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_350.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_351.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_352.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_354.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_355.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_356.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_357.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_358.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_359.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_36.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_360.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_361.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_363.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_364.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_365.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_366.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_367.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_368.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_369.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_37.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_370.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_371.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_372.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_373.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_374.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_375.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_376.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_377.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_378.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_379.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_38.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_380.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_381.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_382.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_383.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_384.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_385.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_386.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_387.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_388.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_389.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_39.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_390.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_391.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_392.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_393.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_394.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_395.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_396.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_397.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_398.root
+Added /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_399.root
+Processing file /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_2.root
+    ---> Event 2000
+    ---> Event 3000
+    ---> Event 5000
+    ---> Event 7000
+    ---> Event 8000
+    ---> Event 9000
+    ---> Event 11000
+    ---> Event 15000
+    ---> Event 16000
+    ---> Event 20000
+Processing file /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_20.root
+    ---> Event 21000
+    ---> Event 22000
+    ---> Event 24000
+    ---> Event 26000
+    ---> Event 27000
+    ---> Event 28000
+    ---> Event 29000
+    ---> Event 30000
+    ---> Event 32000
+    ---> Event 33000
+    ---> Event 34000
+    ---> Event 35000
+    ---> Event 36000
+    ---> Event 37000
+    ---> Event 38000
+    ---> Event 39000
+    ---> Event 40000
+    ---> Event 41000
+    ---> Event 42000
+Processing file /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_200.root
+    ---> Event 44000
+    ---> Event 45000
+    ---> Event 46000
+    ---> Event 47000
+    ---> Event 48000
+    ---> Event 49000
+    ---> Event 53000
+    ---> Event 54000
+    ---> Event 55000
+    ---> Event 56000
+    ---> Event 57000
+    ---> Event 58000
+    ---> Event 59000
+    ---> Event 61000
+    ---> Event 62000
+    ---> Event 63000
+    ---> Event 64000
+    ---> Event 66000
+    ---> Event 69000
+    ---> Event 70000
+    ---> Event 71000
+    ---> Event 73000
+    ---> Event 74000
+    ---> Event 76000
+    ---> Event 77000
+    ---> Event 78000
+    ---> Event 79000
+Processing file /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GAnaFW_v74x_V7_25ns/151022_200759/0000/B2GEDMNtuple_201.root
+    ---> Event 82000
+    ---> Event 86000
+    ---> Event 93000
+    ---> Event 96000
+    ---> Event 97000
+    ---> Event 98000
+    ---> Event 99000
+    ---> Event 100000
+    ---> Event 101000
+    ---> Event 102000
+    ---> Event 105000
+    ---> Event 106000
+    ---> Event 108000
+    ---> Event 109000
+    ---> Event 110000
+    ---> Event 111000
+    ---> Event 113000
+Processing file /eos/uscms/store/user/jdolen/B2GAnaFW/JetHT/Run2015D-PromptReco-v3/JetHT/B2GA

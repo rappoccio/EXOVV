@@ -68,7 +68,7 @@ parser.add_option('--bDiscMin', type='float', action='store',
                   help='Minimum b discriminator')
 
 parser.add_option('--minMuonPt', type='float', action='store',
-                  default=20.,
+                  default=55.,
                   dest='minMuonPt',
                   help='Minimum PT for muons')
 
@@ -78,7 +78,7 @@ parser.add_option('--maxMuonEta', type='float', action='store',
                   help='Maximum muon pseudorapidity')
 
 parser.add_option('--minElectronPt', type='float', action='store',
-                  default=20.,
+                  default=120.,
                   dest='minElectronPt',
                   help='Minimum PT for electrons')
 
@@ -713,23 +713,23 @@ ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 
 
 if options.isData :
-    print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK4PFchs.txt");
-    print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK4PFchs.txt");
-    print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK4PFchs.txt");
+    print 'Getting L3 for AK4 for data'
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK4PFchs.txt");
+    print 'Getting L2 for AK4 for data'
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK4PFchs.txt");
+    print 'Getting L1 for AK4 for data'
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK4PFchs.txt");
     # for data only :
-    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK4PFchs.txt");
+    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK4PFchs.txt");
 
-    print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK8PFchs.txt");
-    print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK8PFchs.txt");
-    print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK8PFchs.txt");
+    print 'Getting L3 for AK8 for data'
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK8PFchs.txt");
+    print 'Getting L2 for AK8 for data'
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK8PFchs.txt");
+    print 'Getting L1 for AK8 for data'
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK8PFchs.txt");
     # for data only :
-    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK8PFchs.txt"); 
+    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK8PFchs.txt"); 
 
     #  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
     vParJecAK4 = ROOT.vector('JetCorrectorParameters')()
@@ -756,23 +756,23 @@ if options.isData :
     ak8JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK8)
 
 else : 
-    print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK4PFchs.txt");
-    print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK4PFchs.txt");
-    print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK4PFchs.txt");
+    print 'Getting L3 for AK4 for MC'
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L3Absolute_AK4PFchs.txt");
+    print 'Getting L2 for AK4 for MC'
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK4PFchs.txt");
+    print 'Getting L1 for AK4 for MC'
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK4PFchs.txt");
     # for data only :
-    #ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2L3Residual_AK4PFchs.txt");
+    #ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2L3Residual_AK4PFchs.txt");
 
-    print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK8PFchs.txt");
-    print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK8PFchs.txt");
-    print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK8PFchs.txt");
+    print 'Getting L3 for AK8 for MC'
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L3Absolute_AK8PFchs.txt");
+    print 'Getting L2 for AK8 for MC'
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK8PFchs.txt");
+    print 'Getting L1 for AK8 for MC'
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK8PFchs.txt");
     # for data only :
-    #ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2L3Residual_AK8PFchs.txt"); 
+    #ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2L3Residual_AK8PFchs.txt"); 
 
     #  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
     vParJecAK4 = ROOT.vector('JetCorrectorParameters')()
@@ -1173,7 +1173,7 @@ for ifile in files : #{ Loop over root files
                 if not unprescaled :
                     continue
                 
-            evWeight = evWeight * prescale
+            #evWeight = evWeight * prescale
             if passTrig == False :
                 continue
 
@@ -1437,13 +1437,13 @@ for ifile in files : #{ Loop over root files
             AK8numDaughters = h_jetsAK8numDaughters.product()
             AK8cMultip =  h_jetsAK8cMultip.product()            
         
-        if len( h_subjetsAK8BDisc.product() ) > 0 : 
+
             AK8SubJetsBDisc = h_subjetsAK8BDisc.product()
             AK8SubJetsPt = h_subjetsAK8Pt.product()
             AK8SubJetsEta = h_subjetsAK8Eta.product()
             AK8SubJetsPhi = h_subjetsAK8Phi.product()
             AK8SubJetsMass = h_subjetsAK8Mass.product()
-
+            AK8SubJetsjecFactor0 = h_subjetsAK8jecFactor0.product()
 
         htCorr = 0.
         for i,AK8P4Corr in enumerate(ak8JetsP4Corr):#{ Loop over AK8 Jets, corrected above
@@ -1468,7 +1468,7 @@ for ifile in files : #{ Loop over root files
                 sp4_0Raw = ROOT.TLorentzVector()
                 sp4_0Raw.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
 
-                print 'error... jet corrections are reapplied on existing corrections, dude... fix me.'
+                #print 'error... jet corrections are reapplied on existing corrections, dude... fix me.'
 
                 ak4JetCorrectorForMass.setJetEta( sp4_0Raw.Eta() )
                 ak4JetCorrectorForMass.setJetPt ( sp4_0Raw.Perp() )
