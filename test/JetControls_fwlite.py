@@ -111,7 +111,7 @@ import copy
 import random
 
 #pt0cuts = [100., 150., 200., 300., 400., 500., 600., 700., 800. ]
-pt0cuts = [150., 200., 300., 400., 500., 600., 700., 800. ]
+pt0cuts = [150., 230., 320., 410., 515., 610., 640., 700. ]
 trigsToGet = [
 #    'HLT_PFJet60',
     'HLT_PFJet80',
@@ -759,138 +759,6 @@ for ifile in files : #{ Loop over root files
 
 
 
-        gotit4 = event.getByLabel ( l_jetsAK4Pt, h_jetsAK4Pt )
-        gotit5 = event.getByLabel ( l_jetsAK4Eta, h_jetsAK4Eta )
-        gotit6 = event.getByLabel ( l_jetsAK4Phi, h_jetsAK4Phi )
-        gotit7 = event.getByLabel ( l_jetsAK4Mass, h_jetsAK4Mass )
-        gotit8 = event.getByLabel ( l_jetsAK4JEC, h_jetsAK4JEC )
-        gotit9 = event.getByLabel ( l_jetsAK4Area, h_jetsAK4Area )
-
-
-        jetPtAK4 = h_jetsAK4Pt.product()
-        jetEtaAK4 = h_jetsAK4Eta.product()
-        jetPhiAK4 = h_jetsAK4Phi.product()
-        jetMassAK4 = h_jetsAK4Mass.product()
-        jetAreaAK4 = h_jetsAK4Area.product()
-        jetJECAK4 = h_jetsAK4JEC.product()
-        jetCorrPtAK4 = []
-
-        for i in range(0,len(jetPtAK4) ):#{ Loop over AK4 Jets
-
-            if options.verbose :
-                print 'AK4 jet ' + str(i)
-
-
-            AK4JECFromB2GAnaFW = jetJECAK4[i]   
-            AK4P4Raw = ROOT.TLorentzVector()
-            AK4P4Raw.SetPtEtaPhiM( jetPtAK4[i] , jetEtaAK4[i], jetPhiAK4[i], jetMassAK4[i])
-            # Remove the old JEC's to get raw energy
-            AK4P4Raw *= AK4JECFromB2GAnaFW            
-
-            #@ JEC Scaling for AK4 Jets
-            ak4JetCorrector.setJetEta( AK4P4Raw.Eta() )
-            ak4JetCorrector.setJetPt ( AK4P4Raw.Perp() )
-            ak4JetCorrector.setJetE  ( AK4P4Raw.E() )
-            ak4JetCorrector.setJetA  ( jetAreaAK4[i] )
-            ak4JetCorrector.setRho   ( rho )
-            ak4JetCorrector.setNPV   ( NPV )
-            newJEC = ak4JetCorrector.getCorrection()
-            AK4P4Corr = AK4P4Raw*newJEC
-            jetCorrPtAK4.append( AK4P4Corr )
-
-
-        ht = 0.0
-        for iak4,ak4 in enumerate(jetCorrPtAK4):
-            ht += ak4.Perp()
-
-        if len(jetCorrPtAK4) < 1 :
-            continue
-        pt0 = jetCorrPtAK4[0].Perp()
-
-
-        
-        if options.isMC :
-             ipt0 = binFinder( pt0  )
-        elif options.applyTriggers and readTriggers :
-
-            passTrig = False
-            prescale = 1.0
-            unprescaled = False
-            
-            gotit1 = event.getByLabel( l_triggerNameStrings, h_triggerNameStrings )
-            gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
-            gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )
-
-            
-            ## if currRun != lastRun :
-            ##     lastRun = currRun
-            ##     fixTrigMap( trigMap, h_filterNameStrings )
-            
-            
-            if options.verbose :
-                print 'Trigger string names? ' + str(gotit1)
-                print 'Trigger bits?         ' + str(gotit2)
-            
-            if gotit1 == False or gotit2 == False or gotit3 == False :
-                readTriggers = False            
-
-            triggerNameStrings = h_triggerNameStrings.product()
-            triggerBits = h_triggerBits.product()
-            triggerPrescales = h_triggerPrescales.product()            
-
-            for itrig in xrange(0, len(triggerNameStrings) ) :
-
-                    
-                if "HLT_PFJet" in triggerNameStrings[itrig] : #\
-                  #or "HLT_PFHT" in triggerNameStrings[itrig] \
-                  #or "HLT_HT" in triggerNameStrings[itrig] :
-                    for itrigToGet, trigToGet in enumerate(trigsToGet) : 
-                        if trigToGet in triggerNameStrings[itrig] :
-                            trigIndex = itrigToGet
-                            trigMap[ itrigToGet ] = int(triggerBits[itrig])
-                                          
-                    if triggerBits[itrig] == 1 :
-                        
-                        if options.verbose : 
-                            print '    Passed trigger                : ' + triggerNameStrings[itrig]
-                        if triggerPrescales[itrig] == 1.0 :
-                            unprescaled = True
-                        prescale = prescale * triggerPrescales[itrig]
-                    else :
-                        if options.verbose :
-                            print '    found trigger name but failed : ' + triggerNameStrings[itrig]
-
-            if not readTriggers :
-                if options.verbose :
-                    print 'Did not find triggers'
-                continue
-
-            if options.verbose : 
-                print trigMap
-            passTrig, ipt0 = trigHelper( pt0 , trigMap )
-            if options.verbose : 
-                print 'Check : pt0 = ' + str(jetPtAK4[0]) + ', ipt0 = ' + str(ipt0) + ', pass = ' + str(passTrig)
-
-
-            if unprescaled :
-                prescale = 1.0
-            if options.verbose :
-                print 'Prescale = ' + str(prescale)
-                
-            #evWeight = evWeight * prescale            
-            if passTrig == False :
-                continue
-
-        if options.verbose :
-            print 'ipt0 = ' + str(ipt0) + ', pt0 = ' + str(pt0)
-        if ipt0 != None and ipt0 >= 0 :
-            h_trig.Fill( ipt0, evWeight )
-            h_trig_raw.Fill( ipt0 )
-            ha_ht[ipt0].Fill( ht )
-            ha_pt0[ipt0].Fill( pt0 )
-
-
-
         if options.deweightFlat  : 
             #@ Event weights
             gotGenerator = event.getByLabel( l_generator, h_generator )
@@ -1108,6 +976,7 @@ for ifile in files : #{ Loop over root files
 
                         genp4 = ROOT.TLorentzVector()
                         genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
+
                         ak8GenJetsP4Corr.append( genp4 )           
             
             
@@ -1215,6 +1084,88 @@ for ifile in files : #{ Loop over root files
 
 
 
+        pt0 = ak8JetsP4Corr[0].Perp()
+        if options.isMC :
+            ipt0 = binFinder( pt0  )
+            if options.verbose :
+                print 'For MC : bin is ' + str(ipt0)
+        elif options.applyTriggers and readTriggers :
+
+            passTrig = False
+            prescale = 1.0
+            unprescaled = False
+            
+            gotit1 = event.getByLabel( l_triggerNameStrings, h_triggerNameStrings )
+            gotit2 = event.getByLabel( l_triggerBits, h_triggerBits )
+            gotit3 = event.getByLabel( l_triggerPrescales, h_triggerPrescales )
+
+            
+            ## if currRun != lastRun :
+            ##     lastRun = currRun
+            ##     fixTrigMap( trigMap, h_filterNameStrings )
+            
+            
+            if options.verbose :
+                print 'Trigger string names? ' + str(gotit1)
+                print 'Trigger bits?         ' + str(gotit2)
+            
+            if gotit1 == False or gotit2 == False or gotit3 == False :
+                readTriggers = False            
+
+            triggerNameStrings = h_triggerNameStrings.product()
+            triggerBits = h_triggerBits.product()
+            triggerPrescales = h_triggerPrescales.product()            
+
+            for itrig in xrange(0, len(triggerNameStrings) ) :
+
+                    
+                if "HLT_PFJet" in triggerNameStrings[itrig] : #\
+                  #or "HLT_PFHT" in triggerNameStrings[itrig] \
+                  #or "HLT_HT" in triggerNameStrings[itrig] :
+                    for itrigToGet, trigToGet in enumerate(trigsToGet) : 
+                        if trigToGet in triggerNameStrings[itrig] :
+                            trigIndex = itrigToGet
+                            trigMap[ itrigToGet ] = int(triggerBits[itrig])
+                                          
+                    if triggerBits[itrig] == 1 :
+                        
+                        if options.verbose : 
+                            print '    Passed trigger                : ' + triggerNameStrings[itrig]
+                        if triggerPrescales[itrig] == 1.0 :
+                            unprescaled = True
+                        prescale = prescale * triggerPrescales[itrig]
+                    else :
+                        if options.verbose :
+                            print '    found trigger name but failed : ' + triggerNameStrings[itrig]
+
+            if not readTriggers :
+                if options.verbose :
+                    print 'Did not find triggers'
+                continue
+
+            if options.verbose : 
+                print trigMap
+            passTrig, ipt0 = trigHelper( pt0 , trigMap )
+            if options.verbose : 
+                print 'Check : pt0 = ' + str(jetPtAK4[0]) + ', ipt0 = ' + str(ipt0) + ', pass = ' + str(passTrig)
+
+
+            if unprescaled :
+                prescale = 1.0
+            if options.verbose :
+                print 'Prescale = ' + str(prescale)
+                
+            #evWeight = evWeight * prescale            
+            if passTrig == False :
+                continue
+
+        if options.verbose :
+            print 'ipt0 = ' + str(ipt0) + ', pt0 = ' + str(pt0)
+        if ipt0 != None and ipt0 >= 0 :
+            h_trig.Fill( ipt0, evWeight )
+            h_trig_raw.Fill( ipt0 )
+            #ha_ht[ipt0].Fill( ht )
+            ha_pt0[ipt0].Fill( pt0 )
 
                     
         ptAsymmetry = None
@@ -1224,13 +1175,17 @@ for ifile in files : #{ Loop over root files
             ptAsymmetry = (ak8JetsP4Corr[0].Perp() - ak8JetsP4Corr[1].Perp()) / (ak8JetsP4Corr[0].Perp() + ak8JetsP4Corr[1].Perp())
             dPhiJJ = ak8JetsP4Corr[0].DeltaPhi( ak8JetsP4Corr[1] )
 
-                    
-        if ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0 : 
-            for i in range(0,2) :
+        passKin = True #ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0
+        if passKin : 
+            for i in range(0,len(ak8JetsP4Corr)) :
                 AK8P4Corr = ak8JetsP4Corr[i]
+                recoBin = binFinder( AK8P4Corr.Perp() )
                 if ak8JetsPassID[i] == True and  AK8P4Corr.Perp() > options.minAK8JetPt and AK8JetZ[i] != None :
-                    if options.verbose :
-                        print 'Passed cuts'
+                    if options.verbose : 
+                        print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
+                            AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho
+                        )
+                    
                     h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
                     h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
                     h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )
@@ -1251,87 +1206,77 @@ for ifile in files : #{ Loop over root files
                     h_subjetDRAK8.Fill( AK8subjetDR[i], evWeight )                
                     h_jetzAK8.Fill( AK8JetZ[i] , evWeight )
 
-                    if ipt0 != None and ipt0 >= 0 : 
-                        ha_ptAK8[ipt0].Fill( AK8P4Corr.Perp()  , evWeight)
-                        ha_yAK8[ipt0].Fill( AK8P4Corr.Rapidity()  , evWeight)
-                        ha_phiAK8[ipt0].Fill( AK8P4Corr.Phi()  , evWeight)
-                        ha_mAK8[ipt0].Fill( AK8P4Corr.M()  , evWeight)
-                        ha_msoftdropAK8[ipt0].Fill( AK8SoftDropM[i]  , evWeight)
-                        ha_mprunedAK8[ipt0].Fill( AK8PrunedM[i]  , evWeight)
-                        ha_mfilteredAK8[ipt0].Fill( AK8FilteredM[i]  , evWeight)
-                        ha_mtrimmedAK8[ipt0].Fill( AK8TrimmedM[i]  , evWeight)
-                        ha_jetareaAK8[ipt0].Fill( AK8Area[i] , evWeight)
-                        ha_tau21AK8[ipt0].Fill( AK8Tau21[i] , evWeight)
-                        ha_nhfAK8[ipt0].Fill( AK8nhf[i], evWeight )
-                        ha_chfAK8[ipt0].Fill( AK8chf[i], evWeight )
-                        ha_nefAK8[ipt0].Fill( AK8nef[i], evWeight )
-                        ha_cefAK8[ipt0].Fill( AK8cef[i], evWeight )
-                        ha_ncAK8[ipt0].Fill( AK8nconstituents[i], evWeight )
-                        ha_nchAK8[ipt0].Fill( AK8nch[i], evWeight )
-                        ha_jetrhoAK8[ipt0].Fill( AK8JetRho[i], evWeight )
-                        ha_subjetDRAK8[ipt0].Fill( AK8subjetDR[i], evWeight )                
-                        ha_jetzAK8[ipt0].Fill( AK8JetZ[i] , evWeight )
-
-                    if options.verbose : 
-                        print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
-                            AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho
-                        )
-                # Also need to fill the "Fakes"
-                if options.makeResponseMatrix : 
-                    igen = getMatched( AK8P4Corr, ak8GenJetsP4Corr )
-                    isFake = False
-                    
-                    if len(AK8isFake) > 0 :
-                        isFake = AK8isFake[i]
-                    if igen == None or igen > 1 or isFake :
-                        recoPtBin = binFinder( ak8JetsP4Corr[i].Perp() )
-                        responses[recoPtBin].Fake( ak8JetsP4Corr[i].M(), evWeight )
+                    if recoBin != None and recoBin >= 0 :
+                        if options.verbose :
+                            print 'In jet loop, filling bin ' + str(recoBin)
+                        ha_ptAK8[recoBin].Fill( AK8P4Corr.Perp()  , evWeight)
+                        ha_yAK8[recoBin].Fill( AK8P4Corr.Rapidity()  , evWeight)
+                        ha_phiAK8[recoBin].Fill( AK8P4Corr.Phi()  , evWeight)
+                        ha_mAK8[recoBin].Fill( AK8P4Corr.M()  , evWeight)
+                        ha_msoftdropAK8[recoBin].Fill( AK8SoftDropM[i]  , evWeight)
+                        ha_mprunedAK8[recoBin].Fill( AK8PrunedM[i]  , evWeight)
+                        ha_mfilteredAK8[recoBin].Fill( AK8FilteredM[i]  , evWeight)
+                        ha_mtrimmedAK8[recoBin].Fill( AK8TrimmedM[i]  , evWeight)
+                        ha_jetareaAK8[recoBin].Fill( AK8Area[i] , evWeight)
+                        ha_tau21AK8[recoBin].Fill( AK8Tau21[i] , evWeight)
+                        ha_nhfAK8[recoBin].Fill( AK8nhf[i], evWeight )
+                        ha_chfAK8[recoBin].Fill( AK8chf[i], evWeight )
+                        ha_nefAK8[recoBin].Fill( AK8nef[i], evWeight )
+                        ha_cefAK8[recoBin].Fill( AK8cef[i], evWeight )
+                        ha_ncAK8[recoBin].Fill( AK8nconstituents[i], evWeight )
+                        ha_nchAK8[recoBin].Fill( AK8nch[i], evWeight )
+                        ha_jetrhoAK8[recoBin].Fill( AK8JetRho[i], evWeight )
+                        ha_subjetDRAK8[recoBin].Fill( AK8subjetDR[i], evWeight )                
+                        ha_jetzAK8[recoBin].Fill( AK8JetZ[i] , evWeight )
 
 
-        if options.makeResponseMatrix or options.isMC : 
-
-            if len( GenAK8Pt ) > 0 :
-                for igen in range(0, len( GenAK8Pt ) ):
-
-                    genp4 = ak8GenJetsP4Corr[igen]
-                    genpt = GenAK8Pt[igen]
-
-                    genPtBin = binFinder( genpt )
-
-                    if genPtBin == None :
-                        continue
                         
-                    h_ptAK8Gen.Fill( genp4.Perp()  , evWeight)
-                    h_yAK8Gen.Fill( genp4.Rapidity()  , evWeight)
-                    h_phiAK8Gen.Fill( genp4.Phi()  , evWeight)
-                    h_mAK8Gen.Fill( genp4.M()  , evWeight)
-                        
-                    ha_ptAK8Gen[genPtBin].Fill( genp4.Perp()  , evWeight)
-                    ha_yAK8Gen[genPtBin].Fill( genp4.Rapidity()  , evWeight)
-                    ha_phiAK8Gen[genPtBin].Fill( genp4.Phi()  , evWeight)
-                    ha_mAK8Gen[genPtBin].Fill( genp4.M(), evWeight )
-                    #ha_msoftdropAK8Gen[genPtBin].Fill( AK8GenSoftDropM[i]  )
-                    #ha_mprunedAK8Gen[genPtBin].Fill( AK8GenPrunedM[i]  )
-                    #ha_mfilteredAK8Gen[genPtBin].Fill( AK8GenFilteredM[i]  )
-                    #ha_mtrimmedAK8Gen[genPtBin].Fill( AK8GenTrimmedM[i]  )
+                        if options.isMC : 
+                            igen = getMatched( AK8P4Corr, ak8GenJetsP4Corr )
 
-                    if ak8JetsP4Corr != None :
-                        ireco = None
-                        if len(ak8JetsP4Corr) >= 2 : 
-                            ireco = getMatched( genp4, [ak8JetsP4Corr[0],ak8JetsP4Corr[1]] )
+                            # Here is the case where we found reco and gen jets, Fill histograms and response matrices
+                            if igen != None and igen >= 0 :
 
-                        if options.makeResponseMatrix : 
-                            # Here is a "Miss"
-                            if ireco == None :
-                                responses[genPtBin].Miss( genp4.M(), evWeight )
-                            # Here is a "Fill"
-                            else :
-                                responses[genPtBin].Fill( ak8JetsP4Corr[ireco].M(), genp4.M(), evWeight )
-                                h_deltaR.Fill(genp4.DeltaR(ak8JetsP4Corr[ireco]))
+                                h_ptAK8Gen.Fill( ak8GenJetsP4Corr[igen].Perp()  , evWeight)
+                                h_yAK8Gen.Fill( ak8GenJetsP4Corr[igen].Rapidity()  , evWeight)
+                                h_phiAK8Gen.Fill( ak8GenJetsP4Corr[igen].Phi()  , evWeight)
+                                h_mAK8Gen.Fill( ak8GenJetsP4Corr[igen].M()  , evWeight)                            
+                                ha_ptAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].Perp()  , evWeight)
+                                ha_yAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].Rapidity()  , evWeight)
+                                ha_phiAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].Phi()  , evWeight)
+                                ha_mAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].M(), evWeight )
+                                
+                                if options.makeResponseMatrix : 
+                                    responses[recoBin].Fill( AK8P4Corr.M(), ak8GenJetsP4Corr[igen].M(), evWeight )
 
 
-            
-            
+                            # Here we have no gen jet but have a reco jet ===> that is a Fake
+                            elif options.makeResponseMatrix :
+                                responses[recoBin].Fake( ak8JetsP4Corr[i].M(), evWeight )
+                                if options.verbose : 
+                                    print 'Response matrix fake : %6.2f, %6.2f, %6.2f, %6.2f' % ( AK8P4Corr.Perp(), AK8P4Corr.Eta(), AK8P4Corr.Phi(), AK8P4Corr.M() )
+                                    print '   Candidates : '
+                                    for genJet in ak8GenJetsP4Corr :
+                                        print '    %3d %6.2f, %6.2f, %6.2f, %6.2f, dR = %6.3f' % ( ak8GenJetsP4Corr.index(genJet), genJet.Perp(), genJet.Eta(), genJet.Phi(), genJet.M(), genJet.DeltaR( AK8P4Corr) )
+
+
+        # Here we have no reco jet but a gen jet ===> that is a Miss. 
+        if options.makeResponseMatrix and len( ak8GenJetsP4Corr ) > 0 :
+            for igen in range(0, len( ak8GenJetsP4Corr ) ):
+                genp4 = ak8GenJetsP4Corr[igen]
+                genpt = genp4.Perp()
+                genPtBin = binFinder( genpt )
+                if genPtBin == None :
+                    continue
+                
+                if ak8JetsP4Corr != None :
+                    ireco = None
+                    ireco = getMatched( genp4, ak8JetsP4Corr )
+                    if ireco == None : 
+                        responses[genPtBin].Miss( genp4.M(), evWeight )
+                else :
+                    responses[genPtBin].Miss( genp4.M(), evWeight )
+
 
 f.cd()
 f.Write()

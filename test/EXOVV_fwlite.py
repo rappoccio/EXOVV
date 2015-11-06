@@ -29,6 +29,11 @@ parser.add_option('--verbose', action='store_true',
                   dest='verbose',
                   help='Print debugging info')
 
+parser.add_option('--writeTree', action='store_true',
+                  default=False,
+                  dest='writeTree',
+                  help='Write TTree?')
+
 parser.add_option('--isData', action='store_true',
                   default=False,
                   dest='isData',
@@ -68,7 +73,7 @@ parser.add_option('--bDiscMin', type='float', action='store',
                   help='Minimum b discriminator')
 
 parser.add_option('--minMuonPt', type='float', action='store',
-                  default=20.,
+                  default=55.,
                   dest='minMuonPt',
                   help='Minimum PT for muons')
 
@@ -78,7 +83,7 @@ parser.add_option('--maxMuonEta', type='float', action='store',
                   help='Maximum muon pseudorapidity')
 
 parser.add_option('--minElectronPt', type='float', action='store',
-                  default=20.,
+                  default=120.,
                   dest='minElectronPt',
                   help='Minimum PT for electrons')
 
@@ -108,7 +113,7 @@ parser.add_option('--maxAK4Rapidity', type='float', action='store',
                   help='Maximum AK4 rapidity')
 
 parser.add_option('--minAK8Pt', type='float', action='store',
-                  default=250.,
+                  default=200.,
                   dest='minAK8Pt',
                   help='Minimum PT for AK8 jets')
 
@@ -123,26 +128,20 @@ parser.add_option('--maxAK8Rapidity', type='float', action='store',
                   dest='maxAK8Rapidity',
                   help='Maximum AK8 rapidity')
 
-
-parser.add_option('--minMassCut', type='float', action='store',
-                  default=50.,
-                  dest='minMassCut',
-                  help='Minimum Mass Pairing Cut for CMS Combined Tagger')
-
 parser.add_option('--mAK8SoftDropCut', type='float', action='store',
-                  default=50.,
+                  default=0.0,
                   dest='mAK8SoftDropCut',
                   help='SoftDrop mass Cut for CMS Combined Tagger')
 
 parser.add_option('--tau21Cut', type='float', action='store',
-                  default=0.6,
+                  default=999.,
                   dest='tau21Cut',
                   help='Tau2 / Tau1 n-subjettiness cut')
 
 
 
 parser.add_option('--sdmassCutLo', type='float', action='store',
-                  default=60.,
+                  default=0.0,
                   dest='sdmassCutLo',
                   help='Lower softdrop mass cut')
 
@@ -236,7 +235,7 @@ ROOT.gROOT.Macro("rootlogon.C")
 ROOT.gSystem.Load("libAnalysisPredictedDistribution")
 import copy
 import random
-import array
+from array import array
 
 
 # Old cuts : 
@@ -257,7 +256,7 @@ ptTrigsToGet = [
     
 htcuts = [#200., 250., 300.,
           480., 540., 680., 750., 900.]
-htcutsa = array.array('d', htcuts)
+htcutsa = array('d', htcuts)
 htcutsa.append( 7000. )
 htTrigsToGet = [
     #'HLT_PFHT200',
@@ -271,7 +270,19 @@ htTrigsToGet = [
     'HLT_PFHT800'
     ]
 
+lepTrigsToRun = [
+    "HLT_IsoMu24_eta2p1",
+    "HLT_Mu45_eta2p1",
+    "HLT_Mu50_",
+    "HLT_Mu40_eta2p1_PFJet200_PFJet50",
+    "HLT_IsoMu24_eta2p1",
+    "HLT_Ele32_eta2p1_WPLoose_Gsf",
+    "HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50",
+    "HLT_Ele105_CaloIdVT_GsfTrkIdT",
+    "HLT_Ele115_CaloIdVT_GsfTrkIdT"
+    ]
 
+    
 if not options.useJetPtTrigs :
     trigsToGet = htTrigsToGet
 else :
@@ -700,7 +711,133 @@ if options.makeMistag == False :
     ROOT.SetOwnership( predJetMVV, False )
     ROOT.SetOwnership( predJetMVVMod, False )
 
+if options.writeTree : 
+    TreeEXOVV = ROOT.TTree("TreeEXOVV", "TreeEXOVV")
+    Trig        = array('i', [0]  )
+    Weight      = array('f', [0.] )
+    MaxBDisc            = array('f', [-1.])
 
+    NFatJet             = array('i', [0] )
+    FatJetPt            = array('f', [-1., -1.])
+    FatJetEta           = array('f', [-1., -1.])
+    FatJetPhi           = array('f', [-1., -1.])
+    FatJetRap           = array('f', [-1., -1.])
+    FatJetPx            = array('f', [-1., -1.])
+    FatJetPy            = array('f', [-1., -1.])
+    FatJetPz            = array('f', [-1., -1.])
+    FatJetEnergy        = array('f', [-1., -1.])
+    FatJetBDisc         = array('f', [-1., -1.])
+    FatJetRhoRatio      = array('f', [-1., -1.])
+    FatJetMass          = array('f', [-1., -1.])
+    FatJetMassSoftDrop  = array('f', [-1., -1.])
+    FatJetMassPruned    = array('f', [-1., -1.])
+    FatJetMassFiltered  = array('f', [-1., -1.])
+    FatJetMassTrimmed   = array('f', [-1., -1.])
+    FatJetTau1          = array('f', [-1., -1.]) 
+    FatJetTau2          = array('f', [-1., -1.]) 
+    FatJetTau3          = array('f', [-1., -1.]) 
+    FatJetTau32         = array('f', [-1., -1.])
+    FatJetTau21         = array('f', [-1., -1.]) 
+    FatJetSDnsubjets    = array('f', [-1., -1.])
+    FatJetSDbdiscW      = array('f', [-1., -1.])
+    FatJetSDbdiscB      = array('f', [-1., -1.])
+    FatJetSDmaxbdisc    = array('f', [-1., -1.])
+    FatJetSDsubjetWpt   = array('f', [-1., -1.])
+    FatJetSDsubjetWmass = array('f', [-1., -1.])
+    FatJetSDsubjetWp4   = array('f', [-1., -1.])
+    FatJetSDsubjetBpt   = array('f', [-1., -1.])
+    FatJetSDsubjetBmass = array('f', [-1., -1.])
+    FatJetSDsubjetBp4   = array('f', [-1., -1.])
+
+
+
+    NLepton             = array('i', [-1])
+    LeptonType          = array('i', [-1])
+    LeptonPt            = array('f', [-1., -1.])
+    LeptonEta           = array('f', [-1., -1.])
+    LeptonPhi           = array('f', [-1., -1.])
+    LeptonPx            = array('f', [-1., -1.])
+    LeptonPy            = array('f', [-1., -1.])
+    LeptonPz            = array('f', [-1., -1.])
+    LeptonEnergy        = array('f', [-1., -1.])
+    LeptonIso           = array('f', [-1., -1.])
+
+    VlepType          = array('i', [-1])
+    VlepPt            = array('f', [-1.])
+    VlepEta           = array('f', [-1.])
+    VlepPhi           = array('f', [-1.])
+    VlepPx            = array('f', [-1.])
+    VlepPy            = array('f', [-1.])
+    VlepPz            = array('f', [-1.])
+    VlepEnergy        = array('f', [-1.])
+    
+    METpx        = array('f', [-1.])
+    METpy        = array('f', [-1.])
+    METpt        = array('f', [-1.])
+    METphi       = array('f', [-1.])
+    Nvtx         = array('f', [-1.])
+
+
+
+    TreeEXOVV.Branch('Trig'                , Trig                ,  'Trig/I'        )
+    TreeEXOVV.Branch('Weight'              , Weight              ,  'Weight/F'      )
+    TreeEXOVV.Branch('MaxBDisc'            , MaxBDisc            ,  'MaxBDisc/F'    )
+    TreeEXOVV.Branch('NFatJet'             , NFatJet             ,  'NFatJet/I'        )
+    TreeEXOVV.Branch('FatJetPt'            , FatJetPt            ,  'FatJetPt/F'            )
+    TreeEXOVV.Branch('FatJetEta'           , FatJetEta           ,  'FatJetEta/F'           )
+    TreeEXOVV.Branch('FatJetPhi'           , FatJetPhi           ,  'FatJetPhi/F'           )
+    TreeEXOVV.Branch('FatJetRap'           , FatJetRap           ,  'FatJetRap/F'           )
+    TreeEXOVV.Branch('FatJetPx'            , FatJetPx            ,  'FatJetPx/F'            )
+    TreeEXOVV.Branch('FatJetPy'            , FatJetPy            ,  'FatJetPy/F'            )
+    TreeEXOVV.Branch('FatJetPz'            , FatJetPz            ,  'FatJetPz/F'            )
+    TreeEXOVV.Branch('FatJetEnergy'        , FatJetEnergy        ,  'FatJetEnergy/F'        )
+    TreeEXOVV.Branch('FatJetBDisc'         , FatJetBDisc         ,  'FatJetBDisc/F'         )
+    TreeEXOVV.Branch('FatJetRhoRatio'      , FatJetRhoRatio      ,  'FatJetRhoRatio/F'      )
+    TreeEXOVV.Branch('FatJetMass'          , FatJetMass          ,  'FatJetMass/F'          )
+    TreeEXOVV.Branch('FatJetMassSoftDrop'  , FatJetMassSoftDrop  ,  'FatJetMassSoftDrop/F'  )
+    TreeEXOVV.Branch('FatJetMassPruned'    , FatJetMassPruned    ,  'FatJetMassPruned/F'    )
+    TreeEXOVV.Branch('FatJetMassFiltered'  , FatJetMassFiltered  ,  'FatJetMassFiltered/F'  )
+    TreeEXOVV.Branch('FatJetMassTrimmed'   , FatJetMassTrimmed   ,  'FatJetMassTrimmed/F'   )
+    TreeEXOVV.Branch('FatJetTau1'          , FatJetTau1          ,  'FatJetTau1/F'          )
+    TreeEXOVV.Branch('FatJetTau2'          , FatJetTau2          ,  'FatJetTau2/F'          )
+    TreeEXOVV.Branch('FatJetTau3'          , FatJetTau3          ,  'FatJetTau3/F'          )
+    TreeEXOVV.Branch('FatJetTau32'         , FatJetTau32         ,  'FatJetTau32/F'         )
+    TreeEXOVV.Branch('FatJetTau21'         , FatJetTau21         ,  'FatJetTau21/F'         )
+    TreeEXOVV.Branch('FatJetSDnsubjets'    , FatJetSDnsubjets    ,  'FatJetSDnsubjets/F'    )
+    TreeEXOVV.Branch('FatJetSDbdiscW'      , FatJetSDbdiscW      ,  'FatJetSDbdiscW/F'      )
+    TreeEXOVV.Branch('FatJetSDbdiscB'      , FatJetSDbdiscB      ,  'FatJetSDbdiscB/F'      )
+    TreeEXOVV.Branch('FatJetSDmaxbdisc'    , FatJetSDmaxbdisc    ,  'FatJetSDmaxbdisc/F'    )
+    TreeEXOVV.Branch('FatJetSDsubjetWpt'   , FatJetSDsubjetWpt   ,  'FatJetSDsubjetWpt/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetWmass' , FatJetSDsubjetWmass ,  'FatJetSDsubjetWmass/F' )
+    TreeEXOVV.Branch('FatJetSDsubjetWp4'   , FatJetSDsubjetWp4   ,  'FatJetSDsubjetWp4/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetBpt'   , FatJetSDsubjetBpt   ,  'FatJetSDsubjetBpt/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetBmass' , FatJetSDsubjetBmass ,  'FatJetSDsubjetBmass/F' )
+    TreeEXOVV.Branch('FatJetSDsubjetBp4'   , FatJetSDsubjetBp4   ,  'FatJetSDsubjetBp4/F'   )
+
+    TreeEXOVV.Branch('NLepton'             , NLepton             ,  'NLepton/I'        )
+    TreeEXOVV.Branch('LeptonType'          , LeptonType          ,  'LeptonType/I'          )
+    TreeEXOVV.Branch('LeptonPt'            , LeptonPt            ,  'LeptonPt/F'            )
+    TreeEXOVV.Branch('LeptonEta'           , LeptonEta           ,  'LeptonEta/F'           )
+    TreeEXOVV.Branch('LeptonPhi'           , LeptonPhi           ,  'LeptonPhi/F'           )
+    TreeEXOVV.Branch('LeptonPx'            , LeptonPx            ,  'LeptonPx/F'            )
+    TreeEXOVV.Branch('LeptonPy'            , LeptonPy            ,  'LeptonPy/F'            )
+    TreeEXOVV.Branch('LeptonPz'            , LeptonPz            ,  'LeptonPz/F'            )
+    TreeEXOVV.Branch('LeptonEnergy'        , LeptonEnergy        ,  'LeptonEnergy/F'        )
+    TreeEXOVV.Branch('LeptonIso'           , LeptonIso           ,  'LeptonIso/F'           )
+    TreeEXOVV.Branch('VlepPt'            , VlepPt            ,  'VlepPt/F'            )
+    TreeEXOVV.Branch('VlepEta'           , VlepEta           ,  'VlepEta/F'           )
+    TreeEXOVV.Branch('VlepPhi'           , VlepPhi           ,  'VlepPhi/F'           )
+    TreeEXOVV.Branch('VlepPx'            , VlepPx            ,  'VlepPx/F'            )
+    TreeEXOVV.Branch('VlepPy'            , VlepPy            ,  'VlepPy/F'            )
+    TreeEXOVV.Branch('VlepPz'            , VlepPz            ,  'VlepPz/F'            )
+    TreeEXOVV.Branch('VlepEnergy'        , VlepEnergy        ,  'VlepEnergy/F'        )
+
+
+    TreeEXOVV.Branch('METpx'        , METpx        ,  'METpx/F'        )
+    TreeEXOVV.Branch('METpy'        , METpy        ,  'METpy/F'        )
+    TreeEXOVV.Branch('METpt'        , METpt        ,  'METpt/F'        )
+    TreeEXOVV.Branch('METphi'       , METphi       ,  'METphi/F'       )
+    TreeEXOVV.Branch('Nvtx'         , Nvtx         ,  'Nvtx/F'         )
 
 #@ JET CORRECTIONS
 
@@ -713,23 +850,23 @@ ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 
 
 if options.isData :
-    print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK4PFchs.txt");
-    print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK4PFchs.txt");
-    print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK4PFchs.txt");
+    print 'Getting L3 for AK4 for data'
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK4PFchs.txt");
+    print 'Getting L2 for AK4 for data'
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK4PFchs.txt");
+    print 'Getting L1 for AK4 for data'
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK4PFchs.txt");
     # for data only :
-    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK4PFchs.txt");
+    ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK4PFchs.txt");
 
-    print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L3Absolute_AK8PFchs.txt");
-    print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2Relative_AK8PFchs.txt");
-    print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L1FastJet_AK8PFchs.txt");
+    print 'Getting L3 for AK8 for data'
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L3Absolute_AK8PFchs.txt");
+    print 'Getting L2 for AK8 for data'
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2Relative_AK8PFchs.txt");
+    print 'Getting L1 for AK8 for data'
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L1FastJet_AK8PFchs.txt");
     # for data only :
-    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_DATA_L2L3Residual_AK8PFchs.txt"); 
+    ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_DATA_L2L3Residual_AK8PFchs.txt"); 
 
     #  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
     vParJecAK4 = ROOT.vector('JetCorrectorParameters')()
@@ -756,23 +893,23 @@ if options.isData :
     ak8JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK8)
 
 else : 
-    print 'Getting L3 for AK4'
-    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK4PFchs.txt");
-    print 'Getting L2 for AK4'
-    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK4PFchs.txt");
-    print 'Getting L1 for AK4'
-    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK4PFchs.txt");
+    print 'Getting L3 for AK4 for MC'
+    L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L3Absolute_AK4PFchs.txt");
+    print 'Getting L2 for AK4 for MC'
+    L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK4PFchs.txt");
+    print 'Getting L1 for AK4 for MC'
+    L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK4PFchs.txt");
     # for data only :
-    #ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2L3Residual_AK4PFchs.txt");
+    #ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2L3Residual_AK4PFchs.txt");
 
-    print 'Getting L3 for AK8'
-    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L3Absolute_AK8PFchs.txt");
-    print 'Getting L2 for AK8'
-    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2Relative_AK8PFchs.txt");
-    print 'Getting L1 for AK8'
-    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L1FastJet_AK8PFchs.txt");
+    print 'Getting L3 for AK8 for MC'
+    L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L3Absolute_AK8PFchs.txt");
+    print 'Getting L2 for AK8 for MC'
+    L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2Relative_AK8PFchs.txt");
+    print 'Getting L1 for AK8 for MC'
+    L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L1FastJet_AK8PFchs.txt");
     # for data only :
-    #ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV4_MC_L2L3Residual_AK8PFchs.txt"); 
+    #ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_25nsV5_MC_L2L3Residual_AK8PFchs.txt"); 
 
     #  Load the JetCorrectorParameter objects into a vector, IMPORTANT: THE ORDER MATTERS HERE !!!! 
     vParJecAK4 = ROOT.vector('JetCorrectorParameters')()
@@ -859,7 +996,8 @@ for ifile in files : #{ Loop over root files
         cutflow[0] += 1
         
         evWeight = 1.0
-            
+        
+        Trig[0] = -1
         
         #@ VERTEX SETS
         event.getByLabel( l_pv_chi, h_pv_chi )
@@ -872,7 +1010,8 @@ for ifile in files : #{ Loop over root files
         pv_z = h_pv_z.product()
         pv_ndof = h_pv_ndof.product()
         NPV = 0
-
+        maxBdisc = -999.
+        
         for ivtx in xrange( len(pv_chi) ) :
             if abs(pv_z[ivtx]) < 24. and pv_ndof[ivtx] > 4 and abs(pv_rho[ivtx]) < 2.0 :
                 NPV += 1
@@ -1030,8 +1169,6 @@ for ifile in files : #{ Loop over root files
                 print 'Did not find filters'
             continue
 
-
-
         if (options.applyWEleTriggers or options.applyWMuoTriggers ) and readTriggers :
 
             passTrig = False
@@ -1052,19 +1189,22 @@ for ifile in files : #{ Loop over root files
             triggerPrescales = h_triggerPrescales.product()            
 
             nSelectedTriggersPassed = 0
-            for itrig in xrange(0, len(triggerNameStrings) ) :
 
-                if options.applyWEleTriggers and \
-                  ("HLT_Ele23_WPLoose_Gsf" in triggerNameStrings[itrig] or
-                   "HLT_Ele32_eta2p1_WPLoose_Gsf" in triggerNameStrings[itrig] ) :
-                    if triggerBits[itrig] == 1 :
-                        nSelectedTriggersPassed += 1
-                        passTrig = True
 
-                if options.applyWMuoTriggers and "HLT_IsoMu24_eta2p1" in triggerNameStrings[itrig]  :  
-                    if triggerBits[itrig] == 1 :
-                        nSelectedTriggersPassed += 1
+            firedTrigs = []
+            for itrig in xrange(0, len(triggerBits) ) :
+                if triggerBits[itrig] == 1 :
+                    firedTrigs.append( itrig )
+
+            for trig in firedTrigs :
+                trigName = triggerNameStrings[trig]
+                for itrigToRun in xrange(0,len(lepTrigsToRun)) :
+                    if lepTrigsToRun[itrigToRun] in trigName :
                         passTrig = True
+                        Trig[0] = itrigToRun
+                        break
+                if passTrig :
+                    break
         
         if options.applyHadronicTriggers and readTriggers :
 
@@ -1173,7 +1313,7 @@ for ifile in files : #{ Loop over root files
                 if not unprescaled :
                     continue
                 
-            evWeight = evWeight * prescale
+            #evWeight = evWeight * prescale
             if passTrig == False :
                 continue
 
@@ -1210,6 +1350,7 @@ for ifile in files : #{ Loop over root files
 
         #@ Muon Selection
         muonsP4 = []
+        muonsIso = []
         goodMuonIndices = []
         if len(h_muPt.product()) > 0:
             muonPt = h_muPt.product()
@@ -1225,12 +1366,13 @@ for ifile in files : #{ Loop over root files
                 imuonP4 = ROOT.TLorentzVector()
                 imuonP4.SetPtEtaPhiM( muonPt[imuon], muonEta[imuon], muonPhi[imuon], 0.00051)
                 muonsP4.append( imuonP4 )
+                muonsIso.append( muIso[imuon] )
                 if options.verbose :
                     print 'muon pt = {0:8.2f}, eta = {1:6.2f}, phi = {2:6.2f}, Dz = {3:6.2f}, tight = {4:6.0f}, iso = {5:6.2f}'.format (
                         imuonP4.Perp(), imuonP4.Eta(), imuonP4.Phi(), muonDz[imuon], muonTight[imuon], muIso[imuon]
                     ),
                 if muonPt[imuon] > options.minMuonPt and abs(muonEta[imuon]) < options.maxMuonEta and \
-                  muonDz[imuon] < 5.0 and muonTight[imuon] and muIso[imuon] < 0.2 : #$ Muon Cuts
+                  muonDz[imuon] < 5.0 and muonTight[imuon] : #$ Muon Cuts
                         goodMuonIndices.append( imuon )
                         if options.verbose : 
                                 print ' <-- good'
@@ -1257,6 +1399,7 @@ for ifile in files : #{ Loop over root files
                 
         #@ Electron Selection
         electronsP4 = []
+        electronsIso = []
         goodElectronIndices = []
         if len(h_elPt.product()) > 0:
             electronPt = h_elPt.product()
@@ -1282,38 +1425,44 @@ for ifile in files : #{ Loop over root files
                 ieEta = electronEta[ielectron]
                 iePhi = electronPhi[ielectron]
                 ieCharge = electronCharge[ielectron]
+                ielectronLoose = electronLoose[ielectron]
                 ielectronP4 = ROOT.TLorentzVector()
                 ielectronP4.SetPtEtaPhiM( iePt, ieEta, iePhi, 0.00051)
                 electronsP4.append( ielectronP4 )
+                electronsIso.append( electronabsiso[ielectron] )
                 goodElectron = False
                 if iePt < iePt and abs(ieEta) < options.maxElectronEta : #$ Electron eta cut (based on options)
                     continue
 
-                if abs(electronscEta[ielectron]) < 1.479 :
-                    goodElectron = \
-                      abs(electrondEtaIn[ielectron]) < 0.006046 and \
-                      abs(electrondPhiIn[ielectron]) < 0.028092 and \
-                      electronfull5x5siee[ielectron] < 0.009947 and \
-                      electronHoE[ielectron] < 0.045772 and \
-                      abs(electronD0[ielectron]) < 0.008790 and \
-                      abs(electronDz[ielectron]) < 0.021226 and \
-                      electronooEmooP[ielectron] < 0.020118 and \
-                      electronmissHits[ielectron] <= 1 and \
-                      electronhasMatchedConVeto[ielectron] == 1
-                      
-                elif abs(electronscEta[ielectron]) < 2.5 :
-                    goodElectron = \
-                      abs(electrondEtaIn[ielectron]) < 0.007057 and \
-                      abs(electrondPhiIn[ielectron]) < 0.030159 and \
-                      electronfull5x5siee[ielectron] < 0.028237 and \
-                      electronHoE[ielectron] < 0.067778 and \
-                      abs(electronD0[ielectron]) < 0.027984 and \
-                      abs(electronDz[ielectron]) < 0.133431 and \
-                      electronooEmooP[ielectron] < 0.098919 and \
-                      electronmissHits[ielectron] <= 1 and \
-                      electronhasMatchedConVeto[ielectron] == 1
+                if ielectronLoose :
+                    goodElectron = True
                 else :
                     goodElectron = False
+                ## if abs(electronscEta[ielectron]) < 1.479 :
+                ##     goodElectron = \
+                ##       abs(electrondEtaIn[ielectron]) < 0.006046 and \
+                ##       abs(electrondPhiIn[ielectron]) < 0.028092 and \
+                ##       electronfull5x5siee[ielectron] < 0.009947 and \
+                ##       electronHoE[ielectron] < 0.045772 and \
+                ##       abs(electronD0[ielectron]) < 0.008790 and \
+                ##       abs(electronDz[ielectron]) < 0.021226 and \
+                ##       electronooEmooP[ielectron] < 0.020118 and \
+                ##       electronmissHits[ielectron] <= 1 and \
+                ##       electronhasMatchedConVeto[ielectron] == 1
+                      
+                ## elif abs(electronscEta[ielectron]) < 2.5 :
+                ##     goodElectron = \
+                ##       abs(electrondEtaIn[ielectron]) < 0.007057 and \
+                ##       abs(electrondPhiIn[ielectron]) < 0.030159 and \
+                ##       electronfull5x5siee[ielectron] < 0.028237 and \
+                ##       electronHoE[ielectron] < 0.067778 and \
+                ##       abs(electronD0[ielectron]) < 0.027984 and \
+                ##       abs(electronDz[ielectron]) < 0.133431 and \
+                ##       electronooEmooP[ielectron] < 0.098919 and \
+                ##       electronmissHits[ielectron] <= 1 and \
+                ##       electronhasMatchedConVeto[ielectron] == 1
+                ## else :
+                ##     goodElectron = False
 
                 if options.verbose :
                     print 'elec pt = {0:8.2f}, eta = {1:6.2f}, phi = {2:6.2f}, sceta={3:6.2f}, dEta={4:6.2f}, dPhi={5:6.2f}'.format (
@@ -1321,7 +1470,7 @@ for ifile in files : #{ Loop over root files
                         electrondEtaIn[ielectron], electrondPhiIn[ielectron]
                     ),
                     
-                if goodElectron == True and electronabsiso[ielectron] < 0.2 :
+                if goodElectron == True  :
                     goodElectronIndices.append( ielectron )
                     if options.verbose :
                         print ' <-- good'
@@ -1397,6 +1546,12 @@ for ifile in files : #{ Loop over root files
         event.getByLabel ( l_subjetsAK8Mass, h_subjetsAK8Mass)
         event.getByLabel ( l_subjetsAK8jecFactor0, h_subjetsAK8jecFactor0)
 
+        event.getByLabel ( l_jetsAK4CSV, h_jetsAK4CSV)
+
+        bdiscs = h_jetsAK4CSV.product()
+        for bdisc in bdiscs
+            if bdisc > maxBdisc :
+                maxBdisc = bdisc
 
         
         ak8JetsPassID = []
@@ -1437,13 +1592,13 @@ for ifile in files : #{ Loop over root files
             AK8numDaughters = h_jetsAK8numDaughters.product()
             AK8cMultip =  h_jetsAK8cMultip.product()            
         
-        if len( h_subjetsAK8BDisc.product() ) > 0 : 
+
             AK8SubJetsBDisc = h_subjetsAK8BDisc.product()
             AK8SubJetsPt = h_subjetsAK8Pt.product()
             AK8SubJetsEta = h_subjetsAK8Eta.product()
             AK8SubJetsPhi = h_subjetsAK8Phi.product()
             AK8SubJetsMass = h_subjetsAK8Mass.product()
-
+            AK8SubJetsjecFactor0 = h_subjetsAK8jecFactor0.product()
 
         htCorr = 0.
         for i,AK8P4Corr in enumerate(ak8JetsP4Corr):#{ Loop over AK8 Jets, corrected above
@@ -1468,7 +1623,7 @@ for ifile in files : #{ Loop over root files
                 sp4_0Raw = ROOT.TLorentzVector()
                 sp4_0Raw.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
 
-                print 'error... jet corrections are reapplied on existing corrections, dude... fix me.'
+                #print 'error... jet corrections are reapplied on existing corrections, dude... fix me.'
 
                 ak4JetCorrectorForMass.setJetEta( sp4_0Raw.Eta() )
                 ak4JetCorrectorForMass.setJetPt ( sp4_0Raw.Perp() )
@@ -1581,21 +1736,33 @@ for ifile in files : #{ Loop over root files
         wLepCand = None
         zLepCand = None
         hLepCand = None
+        leptonType = None
         leptons = []
+        leptonsIso = []
         if len(goodMuonIndices) == 1 :
             leptons.append( muonsP4[goodMuonIndices[0]] )
             wLepCand = muonsP4[goodMuonIndices[0]] + metP4
+            leptonsIso.append( muonsIso[goodMuonIndices[0]] )
+            leptonType = 1
         elif len(goodElectronIndices) == 1 :
             leptons.append( electronsP4[goodElectronIndices[0]] )
             wLepCand = electronsP4[goodElectronIndices[0]] + metP4
+            leptonsIso.append( electronsIso[goodElectronIndices[0]] )
+            leptonType = 0
         elif len( goodMuonIndices) == 2 :
             leptons.append( muonsP4[goodMuonIndices[0]] )
             leptons.append( muonsP4[goodMuonIndices[1]] )
             zLepCand = muonsP4[goodMuonIndices[0]] + muonsP4[goodMuonIndices[1]]
+            leptonsIso.append( muonsIso[goodMuonIndices[0]] )
+            leptonsIso.append( muonsIso[goodMuonIndices[1]] )
+            leptonType = 1
         elif len( goodElectronIndices) == 2 :
             leptons.append( electronsP4[goodElectronIndices[0]] )
             leptons.append( electronsP4[goodElectronIndices[1]] )
             zLepCand = electronsP4[goodElectronIndices[0]] + electronsP4[goodElectronIndices[1]]
+            leptonsIso.append( electronsIso[goodElectronIndices[0]] )
+            leptonsIso.append( electronsIso[goodElectronIndices[1]] )
+            leptonType = 0
 
         # Define selection based on number of boosted leptonic bosons
 
@@ -1692,13 +1859,142 @@ for ifile in files : #{ Loop over root files
                     printString += ', tagged'
             if options.verbose :
                 print printString
-                     
+
+
+            if options.writeTree :
+                NFatJet             [0] = 1
+                Weight              [0] = evWeight
+                MaxBDisc            [0] = maxBdisc
+                FatJetPt            [0] = vHad0.Perp()
+                FatJetEta           [0] = vHad0.Eta()
+                FatJetPhi           [0] = vHad0.Phi()
+                FatJetRap           [0] = vHad0.Rapidity()
+                FatJetPx            [0] = vHad0.Px()
+                FatJetPy            [0] = vHad0.Py()
+                FatJetPz            [0] = vHad0.Pz()
+                FatJetEnergy        [0] = vHad0.Energy()
+                FatJetRhoRatio      [0] = sdrho0
+                FatJetMassSoftDrop  [0] = sdm0
+                FatJetMass          [0] = vHad0.M()
+                FatJetTau1          [0] = AK8Tau1[0]
+                FatJetTau2          [0] = AK8Tau2[0]
+                FatJetTau3          [0] = AK8Tau3[0]
+                FatJetTau21         [0] = tau21_0
+                
+                METpx               [0] = metPx
+                METpy               [0] = metPy
+                METpt               [0] = metPt
+                METphi              [0] = metPhi     
+                Nvtx                [0] = NPV
+                FatJetPt            [1] = -1. 
+                FatJetEta           [1] = -1. 
+                FatJetPhi           [1] = -1. 
+                FatJetRap           [1] = -1. 
+                FatJetPx            [1] = -1. 
+                FatJetPy            [1] = -1. 
+                FatJetPz            [1] = -1. 
+                FatJetEnergy        [1] = -1. 
+                FatJetBDisc         [1] = -1. 
+                FatJetRhoRatio      [1] = -1. 
+                FatJetMassSoftDrop  [1] = -1. 
+                FatJetMass          [1] = -1. 
+                FatJetTau1          [1] = -1. 
+                FatJetTau2          [1] = -1. 
+                FatJetTau3          [1] = -1. 
+                FatJetTau21         [1] = -1.
+                NLepton             [0] = len(leptons)
+                nlep = min( len(leptons), 2)
+                for ilepton in xrange(0, nlep ) : 
+                    LeptonType          [ilepton] = leptonType
+                    LeptonPt            [ilepton] = leptons[ilepton].Perp()  
+                    LeptonEta           [ilepton] = leptons[ilepton].Eta()
+                    LeptonPhi           [ilepton] = leptons[ilepton].Phi()
+                    LeptonPx            [ilepton] = leptons[ilepton].Px() 
+                    LeptonPy            [ilepton] = leptons[ilepton].Py() 
+                    LeptonPz            [ilepton] = leptons[ilepton].Pz()
+                    LeptonEnergy        [ilepton] = leptons[ilepton].E()
+                    LeptonIso           [ilepton] = leptonsIso[ilepton]
+                VlepPt            [0] = vLep.Perp()
+                VlepEta           [0] = vLep.Eta()
+                VlepPhi           [0] = vLep.Phi()
+                VlepRap           [0] = vLep.Rapidity()
+                VlepPx            [0] = vLep.Px()
+                VlepPy            [0] = vLep.Py()
+                VlepPz            [0] = vLep.Pz()
+                VlepEnergy        [0] = vLep.Energy()
+
+                TreeEXOVV.Fill()
+                 
            
 
         elif selection == 2 and vHad0 != None and vHad1 != None :
-
-
-
+            if options.writeTree :
+                NFatJet             [0] = 1
+                Weight              [0] = evWeight
+                MaxBDisc            [0] = maxBdisc
+                FatJetPt            [0] = vHad0.Perp()
+                FatJetEta           [0] = vHad0.Eta()
+                FatJetPhi           [0] = vHad0.Phi()
+                FatJetRap           [0] = vHad0.Rapidity()
+                FatJetPx            [0] = vHad0.Px()
+                FatJetPy            [0] = vHad0.Py()
+                FatJetPz            [0] = vHad0.Pz()
+                FatJetEnergy        [0] = vHad0.Energy()
+                FatJetRhoRatio      [0] = sdrho0
+                FatJetMassSoftDrop  [0] = sdm0
+                FatJetMass          [0] = vHad0.M()
+                FatJetTau1          [0] = AK8Tau1[0]
+                FatJetTau2          [0] = AK8Tau2[0]
+                FatJetTau3          [0] = AK8Tau3[0]
+                FatJetTau21         [0] = tau21_0
+                NLepton             [0] = 0
+                LeptonType          [0] = -1
+                LeptonPt            [0] = -1. 
+                LeptonEta           [0] = -1. 
+                LeptonPhi           [0] = -1. 
+                LeptonPx            [0] = -1. 
+                LeptonPy            [0] = -1. 
+                LeptonPz            [0] = -1. 
+                LeptonEnergy        [0] = -1. 
+                LeptonIso           [0] = -1. 
+                METpx               [0] = metPx
+                METpy               [0] = metPy
+                METpt               [0] = metPt
+                METphi              [0] = metPhi     
+                Nvtx                [0] = NPV
+                FatJetPt            [1] = vHad1.Perp()
+                FatJetEta           [1] = vHad1.Eta()
+                FatJetPhi           [1] = vHad1.Phi()
+                FatJetRap           [1] = vHad1.Rapidity()
+                FatJetPx            [1] = vHad1.Px()
+                FatJetPy            [1] = vHad1.Py()
+                FatJetPz            [1] = vHad1.Pz()
+                FatJetEnergy        [1] = vHad1.Energy()
+                FatJetRhoRatio      [1] = sdrho1
+                FatJetMassSoftDrop  [1] = sdm1
+                FatJetMass          [1] = vHad1.M()
+                FatJetTau1          [1] = AK8Tau1[1]
+                FatJetTau2          [1] = AK8Tau2[1]
+                FatJetTau3          [1] = AK8Tau3[1]
+                FatJetTau21         [1] = tau21_1
+                LeptonType          [1] = -1
+                LeptonPt            [1] = -1. 
+                LeptonEta           [1] = -1. 
+                LeptonPhi           [1] = -1. 
+                LeptonPx            [1] = -1. 
+                LeptonPy            [1] = -1. 
+                LeptonPz            [1] = -1. 
+                LeptonEnergy        [1] = -1. 
+                LeptonIso           [1] = -1.
+                VlepPt            [0] = -1.
+                VlepEta           [0] = -1.
+                VlepPhi           [0] = -1.
+                VlepRap           [0] = -1.
+                VlepPx            [0] = -1.
+                VlepPy            [0] = -1.
+                VlepPz            [0] = -1.
+                VlepEnergy        [0] = -1.
+                TreeEXOVV.Fill()
 
             if vHad0.DeltaPhi(vHad1) < 2.1 :
                 continue
