@@ -1098,18 +1098,17 @@ for ifile in files : #{ Loop over root files
             if options.makeResponseMatrix or options.isMC : 
             # Make response matrix
                 ak8GenJetsP4Corr = []
+                if len( GenAK8Pt ) > 0 :
+                    for igen in range(0, len( GenAK8Pt ) ):
 
-            if len( GenAK8Pt ) > 0 :
-                for igen in range(0, len( GenAK8Pt ) ):
+                        genpt = GenAK8Pt[igen]
+                        geneta = GenAK8Eta[igen]
+                        genphi = GenAK8Phi[igen]
+                        genmass = GenAK8Mass[igen]
 
-                    genpt = GenAK8Pt[igen]
-                    geneta = GenAK8Eta[igen]
-                    genphi = GenAK8Phi[igen]
-                    genmass = GenAK8Mass[igen]
-
-                    genp4 = ROOT.TLorentzVector()
-                    genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
-                    ak8GenJetsP4Corr.append( genp4 )           
+                        genp4 = ROOT.TLorentzVector()
+                        genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
+                        ak8GenJetsP4Corr.append( genp4 )           
             
             
             #@ Smear Jets
