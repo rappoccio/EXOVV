@@ -715,6 +715,7 @@ if options.writeTree :
     TreeEXOVV = ROOT.TTree("TreeEXOVV", "TreeEXOVV")
     Trig        = array('i', [0]  )
     Weight      = array('f', [0.] )
+    MaxBDisc            = array('f', [-1.])
 
     NFatJet             = array('i', [0] )
     FatJetPt            = array('f', [-1., -1.])
@@ -748,6 +749,8 @@ if options.writeTree :
     FatJetSDsubjetBmass = array('f', [-1., -1.])
     FatJetSDsubjetBp4   = array('f', [-1., -1.])
 
+
+
     NLepton             = array('i', [-1])
     LeptonType          = array('i', [-1])
     LeptonPt            = array('f', [-1., -1.])
@@ -759,6 +762,15 @@ if options.writeTree :
     LeptonEnergy        = array('f', [-1., -1.])
     LeptonIso           = array('f', [-1., -1.])
 
+    VlepType          = array('i', [-1])
+    VlepPt            = array('f', [-1.])
+    VlepEta           = array('f', [-1.])
+    VlepPhi           = array('f', [-1.])
+    VlepPx            = array('f', [-1.])
+    VlepPy            = array('f', [-1.])
+    VlepPz            = array('f', [-1.])
+    VlepEnergy        = array('f', [-1.])
+    
     METpx        = array('f', [-1.])
     METpy        = array('f', [-1.])
     METpt        = array('f', [-1.])
@@ -767,9 +779,10 @@ if options.writeTree :
 
 
 
-    
     TreeEXOVV.Branch('Trig'                , Trig                ,  'Trig/I'        )
-    TreeEXOVV.Branch('Weight'              , Weight              ,  'Weight/F'      )    
+    TreeEXOVV.Branch('Weight'              , Weight              ,  'Weight/F'      )
+    TreeEXOVV.Branch('MaxBDisc'            , MaxBDisc            ,  'MaxBDisc/F'    )
+    TreeEXOVV.Branch('NFatJet'             , NFatJet             ,  'NFatJet/I'        )
     TreeEXOVV.Branch('FatJetPt'            , FatJetPt            ,  'FatJetPt/F'            )
     TreeEXOVV.Branch('FatJetEta'           , FatJetEta           ,  'FatJetEta/F'           )
     TreeEXOVV.Branch('FatJetPhi'           , FatJetPhi           ,  'FatJetPhi/F'           )
@@ -801,6 +814,7 @@ if options.writeTree :
     TreeEXOVV.Branch('FatJetSDsubjetBmass' , FatJetSDsubjetBmass ,  'FatJetSDsubjetBmass/F' )
     TreeEXOVV.Branch('FatJetSDsubjetBp4'   , FatJetSDsubjetBp4   ,  'FatJetSDsubjetBp4/F'   )
 
+    TreeEXOVV.Branch('NLepton'             , NLepton             ,  'NLepton/I'        )
     TreeEXOVV.Branch('LeptonType'          , LeptonType          ,  'LeptonType/I'          )
     TreeEXOVV.Branch('LeptonPt'            , LeptonPt            ,  'LeptonPt/F'            )
     TreeEXOVV.Branch('LeptonEta'           , LeptonEta           ,  'LeptonEta/F'           )
@@ -810,6 +824,14 @@ if options.writeTree :
     TreeEXOVV.Branch('LeptonPz'            , LeptonPz            ,  'LeptonPz/F'            )
     TreeEXOVV.Branch('LeptonEnergy'        , LeptonEnergy        ,  'LeptonEnergy/F'        )
     TreeEXOVV.Branch('LeptonIso'           , LeptonIso           ,  'LeptonIso/F'           )
+    TreeEXOVV.Branch('VlepPt'            , VlepPt            ,  'VlepPt/F'            )
+    TreeEXOVV.Branch('VlepEta'           , VlepEta           ,  'VlepEta/F'           )
+    TreeEXOVV.Branch('VlepPhi'           , VlepPhi           ,  'VlepPhi/F'           )
+    TreeEXOVV.Branch('VlepPx'            , VlepPx            ,  'VlepPx/F'            )
+    TreeEXOVV.Branch('VlepPy'            , VlepPy            ,  'VlepPy/F'            )
+    TreeEXOVV.Branch('VlepPz'            , VlepPz            ,  'VlepPz/F'            )
+    TreeEXOVV.Branch('VlepEnergy'        , VlepEnergy        ,  'VlepEnergy/F'        )
+
 
     TreeEXOVV.Branch('METpx'        , METpx        ,  'METpx/F'        )
     TreeEXOVV.Branch('METpy'        , METpy        ,  'METpy/F'        )
@@ -988,7 +1010,8 @@ for ifile in files : #{ Loop over root files
         pv_z = h_pv_z.product()
         pv_ndof = h_pv_ndof.product()
         NPV = 0
-
+        maxBdisc = -999.
+        
         for ivtx in xrange( len(pv_chi) ) :
             if abs(pv_z[ivtx]) < 24. and pv_ndof[ivtx] > 4 and abs(pv_rho[ivtx]) < 2.0 :
                 NPV += 1
@@ -1523,6 +1546,12 @@ for ifile in files : #{ Loop over root files
         event.getByLabel ( l_subjetsAK8Mass, h_subjetsAK8Mass)
         event.getByLabel ( l_subjetsAK8jecFactor0, h_subjetsAK8jecFactor0)
 
+        event.getByLabel ( l_jetsAK4CSV, h_jetsAK4CSV)
+
+        bdiscs = h_jetsAK4CSV.product()
+        for bdisc in bdiscs
+            if bdisc > maxBdisc :
+                maxBdisc = bdisc
 
         
         ak8JetsPassID = []
@@ -1835,6 +1864,7 @@ for ifile in files : #{ Loop over root files
             if options.writeTree :
                 NFatJet             [0] = 1
                 Weight              [0] = evWeight
+                MaxBDisc            [0] = maxBdisc
                 FatJetPt            [0] = vHad0.Perp()
                 FatJetEta           [0] = vHad0.Eta()
                 FatJetPhi           [0] = vHad0.Phi()
@@ -1884,7 +1914,14 @@ for ifile in files : #{ Loop over root files
                     LeptonPz            [ilepton] = leptons[ilepton].Pz()
                     LeptonEnergy        [ilepton] = leptons[ilepton].E()
                     LeptonIso           [ilepton] = leptonsIso[ilepton]
-
+                VlepPt            [0] = vLep.Perp()
+                VlepEta           [0] = vLep.Eta()
+                VlepPhi           [0] = vLep.Phi()
+                VlepRap           [0] = vLep.Rapidity()
+                VlepPx            [0] = vLep.Px()
+                VlepPy            [0] = vLep.Py()
+                VlepPz            [0] = vLep.Pz()
+                VlepEnergy        [0] = vLep.Energy()
 
                 TreeEXOVV.Fill()
                  
@@ -1894,6 +1931,7 @@ for ifile in files : #{ Loop over root files
             if options.writeTree :
                 NFatJet             [0] = 1
                 Weight              [0] = evWeight
+                MaxBDisc            [0] = maxBdisc
                 FatJetPt            [0] = vHad0.Perp()
                 FatJetEta           [0] = vHad0.Eta()
                 FatJetPhi           [0] = vHad0.Phi()
@@ -1947,7 +1985,15 @@ for ifile in files : #{ Loop over root files
                 LeptonPy            [1] = -1. 
                 LeptonPz            [1] = -1. 
                 LeptonEnergy        [1] = -1. 
-                LeptonIso           [1] = -1. 
+                LeptonIso           [1] = -1.
+                VlepPt            [0] = -1.
+                VlepEta           [0] = -1.
+                VlepPhi           [0] = -1.
+                VlepRap           [0] = -1.
+                VlepPx            [0] = -1.
+                VlepPy            [0] = -1.
+                VlepPz            [0] = -1.
+                VlepEnergy        [0] = -1.
                 TreeEXOVV.Fill()
 
             if vHad0.DeltaPhi(vHad1) < 2.1 :
