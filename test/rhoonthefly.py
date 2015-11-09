@@ -311,8 +311,9 @@ for irate in regions :
     
     if ii == 0 :
         rate.Draw("")
-    else : 
-        rate.Draw("same")
+    else :
+        if irate != 3 : 
+            rate.Draw("same")
     ratewjet.SetMarkerStyle(0)
     ratewjet.SetLineColor( rateMetaData[ii][1] )
     ratewjet.SetFillColor( rateMetaData[ii][1] )
@@ -361,7 +362,8 @@ csum.cd()
 pad1.SetLogx()
 pad2.SetLogx()
 csum.Update()
-
+csum.Print( options.outlabel + '_summary.png', 'png')
+csum.Print( options.outlabel + '_summary.pdf', 'pdf')
 
 print 'Writing output ROOT files'
 fout = ROOT.TFile( options.outlabel + '_rate.root', 'RECREATE')
