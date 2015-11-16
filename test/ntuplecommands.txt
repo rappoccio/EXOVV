@@ -1,0 +1,25 @@
+
+python rhoonthefly.py --outlabel wv1263invpb_nomass
+python rhoonthefly.py --outlabel wv1263invpb_nomass_highpt_rate --signalRegion
+
+
+python bkgquick.py --infile exovv_wjets_ht200to400_ntuple.root --predHist rLoModWJET --outlabel wjets_ht200to400_pred --weight 7.377878901865801e-05 
+python bkgquick.py --infile exovv_wjets_ht400to600_ntuple.root --predHist rLoModWJET --outlabel wjets_ht400to600_pred --weight 2.5187923468676794e-05 
+python bkgquick.py --infile exovv_wjets_ht600toInf_ntuple.root --predHist rLoModWJET --outlabel wjets_ht600toInf_pred --weight 1.9206491987321785e-05
+
+
+hadd -f wjets_modfile.root wjets_ht*predplots.root
+
+
+
+python bkgquick.py --infile exovv_wv_v74x_v6_dataset6_ntuple.root --outlabel wv1263invpb --isData --modFile wjets_modfile.root
+python bkgquick.py --infile exovv_wjets_ht200to400_ntuple.root --predHist rLoModWJET --outlabel wjets_ht200to400_pred --weight 7.377878901865801e-05  --modFile wjets_modfile.root
+python bkgquick.py --infile exovv_wjets_ht400to600_ntuple.root --predHist rLoModWJET --outlabel wjets_ht400to600_pred --weight 2.5187923468676794e-05 --modFile wjets_modfile.root
+python bkgquick.py --infile exovv_wjets_ht600toInf_ntuple.root --predHist rLoModWJET --outlabel wjets_ht600toInf_pred --weight 1.9206491987321785e-05 --modFile wjets_modfile.root
+
+hadd -f wjets_pred_predplots.root wjets_ht*predplots.root
+
+
+python -i plotobspred.py --file wjets_pred_predplots
+
+python -i plotobspred.py --file wv1263invpb_predplots --isData

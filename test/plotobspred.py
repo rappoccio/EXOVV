@@ -13,6 +13,12 @@ parser.add_option('--file', type='string', action='store',
                   help='Input file, without the .root')
 
 
+parser.add_option('--isData', action='store_true',
+                  dest='isData',
+                  default = False,
+                  help='Is this data?')
+
+
 
 (options, args) = parser.parse_args()
 argv = []
@@ -29,13 +35,38 @@ tlx.SetNDC()
 tlx.SetTextFont(42)
 tlx.SetTextSize(0.057)
 
+
+ROOT.gStyle.SetOptStat(000000)
+#ROOT.gROOT.Macro("rootlogon.C")
+#ROOT.gStyle.SetPadRightMargin(0.15)
+ROOT.gStyle.SetOptStat(000000)
+ROOT.gStyle.SetTitleFont(43)
+#ROOT.gStyle.SetTitleFontSize(0.05)
+ROOT.gStyle.SetTitleFont(43, "XYZ")
+ROOT.gStyle.SetTitleSize(30, "XYZ")
+#ROOT.gStyle.SetTitleOffset(3.5, "X")
+ROOT.gStyle.SetLabelFont(43, "XYZ")
+ROOT.gStyle.SetLabelSize(24, "XYZ")
+
 f = ROOT.TFile(options.file + '.root')
 
 hobs = f.Get("pred_mvv")
 hpred= f.Get("pred_mvv_pred")
 
+lumi = 1263
 
 
+canv = ROOT.TCanvas('c1','c1', 800, 700)
+canv.cd()
+pad1 = ROOT.TPad('p1', 'p1', 0.,2./7.,1.0,1.0)
+pad1.SetBottomMargin(0.)
+pad2 = ROOT.TPad('p1', 'p1', 0.,0.,1.0,2./7.)
+pad2.SetTopMargin(0.)
+pad2.SetBottomMargin(0.4)
+pad1.Draw()
+pad2.Draw()
+
+pad1.cd()
 hobs.SetMarkerStyle(20)
 hpred.SetLineColor(2)
 hpred.SetMarkerColor(2)
@@ -46,8 +77,13 @@ hs.Add( hobs )
 hs.Add( hpred )
 hs.Draw("nostack")
 hs.GetYaxis().SetTitleOffset(1.0)
+hs.GetXaxis().SetRangeUser(1000., 3500.)
 
 leg = ROOT.TLegend(0.6,0.6,0.8,0.8)
+if not options.isData : 
+    leg.SetHeader("W+Jets MC")
+else :
+    leg.SetHeader("Data")
 leg.AddEntry( hobs, 'Observed', 'p')
 leg.AddEntry( hpred, 'Predicted', 'p')
 
@@ -56,9 +92,39 @@ leg.SetBorderSize(0)
 leg.Draw()
 ROOT.gPad.SetLogy()
 
-tlx.DrawLatex(0.131, 0.905, "CMS Simulation #sqrt{s}=13 TeV")
+if not options.isData: 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(lumi) + " pb^{-1}")
+else : 
+    tlx.DrawLatex(0.131, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, " + str(lumi) + " pb^{-1}")
+    
 
-ROOT.gPad.Print(options.file + '_obspred.pdf', 'pdf')
-ROOT.gPad.Print(options.file + '_obspred.png', 'png')
+ratio = hobs.Clone()
+ratio.SetName('ratio')
+ratio.Divide( hpred )
+ratio.UseCurrentStyle()
+ratio.SetFillStyle(3004)
+ratio.SetFillColor(1)
+
+pad2.cd()
+
+ratio.SetMarkerStyle(1)
+ratio.SetMarkerSize(0)
+ratio.SetTitle(';' + hs.GetXaxis().GetTitle() + ';Ratio')
+
+
+ratio.SetMinimum(0.)
+ratio.SetMaximum(2.)
+ratio.GetYaxis().SetNdivisions(2,4,0,False)
+ratio.GetXaxis().SetRangeUser(1000.,3500.)
+ratio.Draw('e3')
+ratio.GetYaxis().SetTitleOffset(1.0)
+ratio.GetXaxis().SetTitleOffset(3.0)
+#ratio.SetTitleSize(20, "XYZ")
+
+canv.cd()
+canv.Update()
+
+canv.Print(options.file + '_obspred.pdf', 'pdf')
+canv.Print(options.file + '_obspred.png', 'png')
 
 

@@ -9,6 +9,11 @@ parser.add_option('--outlabel', type='string', action='store',
                   default = "nom",
                   help='Label for plots')
 
+parser.add_option('--weight', type='string', action='store',
+                  dest='weight',
+                  default = "wSampleWeight",
+                  help='Weight for MC samples')
+
 parser.add_option('--signalRegion', action='store_true',
                   dest='signalRegion',
                   default = False,
@@ -43,35 +48,40 @@ ROOT.gStyle.SetLabelSize(24, "XYZ")
 
 lumi = 1263.88
 
+weight = '*(' + options.weight + ')'
 
-dataIn = ROOT.TFile( 'exovv_wv_v74x_v6_dataset6_ntuple.root' )
-data = dataIn.Get("TreeEXOVV")
-
-wjetsIn =[
-    [ ROOT.TFile( 'exovv_wjets_ht200to400_ntuple.root' ), 471.6/4936077. * lumi  / 1.95 ],
-    [ ROOT.TFile( 'exovv_wjets_ht400to600_ntuple.root' ), 55.61/4640594. * lumi  / 1.94 ],
-    [ ROOT.TFile( 'exovv_wjets_ht600toInf_ntuple.root' ), 18.81/4581841. * lumi  / 1.96 ]
-]
-
-ttbarsIn = [
-    [ ROOT.TFile( 'exovv_ttbar_v74x_v6_ntuple.root' ), 831.76 / 19665194. * lumi ]
+datasIn = [
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data.root' ),
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data.root' ),
     ]
 
-# Append the actual TTree to the end of the list
+wjetsIn =[
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root' ),
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root' ),
+    ]
+
+ttbarsIn = [
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_TTbar.root' ),
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root' ),
+    ]
+
+dataTrees = []
+wjetsTrees = []
+ttbarTrees = []
+# Append the actual TTrees
+for idata in range(0,len(datasIn)) :
+    dataTrees.append( datasIn[idata].Get("otree") )
 for iw in range(0,len(wjetsIn)) :
-    wjetsIn[iw].append( wjetsIn[iw][0].Get("TreeEXOVV") )
+    wjetsTrees.append( wjetsIn[iw].Get("otree") )
 for ittbar in range(0,len(ttbarsIn)) :
-    ttbarsIn[ittbar].append( ttbarsIn[ittbar][0].Get("TreeEXOVV") )
+    ttbarTrees.append( ttbarsIn[ittbar].Get("otree") )
 
 
 
 xaxis = '#rho = (m/p_{T}R)^{2}'
-if not options.hackedRho : 
-    variable = 'FatJetRhoRatio[0]'
-else :
-    variable = 'FatJetMassSoftDrop[0]/FatJetPt[0]'
-histbins = '(9,0.0,0.3)'
-weightstr= ''
+variable = '(jet_mass_so/(jet_pt_so*0.8))**2'
+histbins = '(30,0.0,0.3)'
+weightstr= 'wSampleWeight'
 
 plotsToMake = [
     # name                        title                                                taucut mmin   mmax    ptmin ptmax   mstyle
@@ -90,63 +100,83 @@ plotsToMake = [
     ## ['pt275to350_m39toInf_tau10', '275 < p_{T} < 350 GeV, m > 39 GeV',                  1.0,  39.286, 13000., 275., 350.,   20],
     ## ['pt275to350_m39toInf_tau06', '275 < p_{T} < 350 GeV, m > 39 GeV, #tau_{21} < 0.6', 0.6,  39.286, 13000., 275., 350.,   24],#6
     #####
-    ['pt200to350_m0toInf_tau10',  '200 < p_{T} < 350 GeV, m > 50 GeV',                  1.0,  15.,    105., 200., 350.,   20],
-    ['pt200to350_m50toInf_tau06', '200 < p_{T} < 350 GeV, m > 50 GeV, #tau_{21} < 0.6', 0.6,  50.,    105., 200., 350.,   24],#7
-    ['qt200to350_m0toInf_tau10',  '200 < p_{T} < 350 GeV, m > 50 GeV',                  1.0,  15.,    105., 200., 350.,   20],
-    ['pt200to350_m28toInf_tau065','200 < p_{T} < 350 GeV, m > 28 GeV, #tau_{21} < 0.65',0.65, 28.571, 105., 200., 350.,   24],#8
-    ['pt350toInf_m0toInf_tau10',  'p_{T} > 350 GeV, m > 50 GeV',                        1.0,  15.,    105., 350., 13000., 20],
-    ['pt350toInf_m50toInf_tau06', 'p_{T} > 350 GeV, m > 50 GeV, #tau_{21} < 0.6',       0.6,  50.,    105., 350., 13000., 24],#9
-    ['pt200to275_m0toInf_tau10',  '200 < p_{T} < 275 GeV, m > 50 GeV',                  1.0,  15.,    105., 200., 275.,   20],
-    ['pt200to275_m39toInf_tau06', '200 < p_{T} < 275 GeV, m > 39 GeV, #tau_{21} < 0.6', 0.6,  39.286, 105., 200., 275.,   24],#10
-    ['qt200to275_m0toInf_tau10',  '200 < p_{T} < 275 GeV, m > 50 GeV',                  1.0,  15.,    105., 200., 275.,   20],
-    ['pt200to275_m28toInf_tau065','200 < p_{T} < 275 GeV, m > 28 GeV, #tau_{21} < 0.65',0.65, 28.571, 105., 200., 275.,   24],#11
-    ['pt275to350_m0toInf_tau10',  '275 < p_{T} < 350 GeV, m > 50 GeV',                  1.0,  15.,    105., 275., 350.,   20],
-    ['pt275to350_m39toInf_tau06', '275 < p_{T} < 350 GeV, m > 39 GeV, #tau_{21} < 0.6', 0.6,  39.286, 105., 275., 350.,   24],#12   
+    ['pt200to350_m0toInf_tau10',  '200 < p_{T} < 350 GeV, m > 50 GeV',                  1.0,  50.,    105., 200., 350.,   20],
+    ['pt200to350_m50toInf_tau06', '200 < p_{T} < 350 GeV, m > 50 GeV, #tau_{21} < 0.6', 0.6,  50.,    105., 200., 350.,   24],#1
+    ['qt200to350_m0toInf_tau10',  '200 < p_{T} < 350 GeV, m > 50 GeV',                  1.0,  28.571, 105., 200., 350.,   20],
+    ['pt200to350_m28toInf_tau065','200 < p_{T} < 350 GeV, m > 28 GeV, #tau_{21} < 0.65',0.65, 28.571, 105., 200., 350.,   24],#2
+    ['pt350toInf_m0toInf_tau10',  'p_{T} > 350 GeV, m > 50 GeV',                        1.0,  50.,    105., 350., 13000., 20],
+    ['pt350toInf_m50toInf_tau06', 'p_{T} > 350 GeV, m > 50 GeV, #tau_{21} < 0.6',       0.6,  50.,    105., 350., 13000., 24],#3
+    ['pt200to275_m0toInf_tau10',  '200 < p_{T} < 275 GeV, m > 50 GeV',                  1.0,  39.286, 105., 200., 275.,   20],
+    ['pt200to275_m39toInf_tau06', '200 < p_{T} < 275 GeV, m > 39 GeV, #tau_{21} < 0.6', 0.6,  39.286, 105., 200., 275.,   24],#4
+    ['qt200to275_m0toInf_tau10',  '200 < p_{T} < 275 GeV, m > 50 GeV',                  1.0,  28.571, 105., 200., 275.,   20],
+    ['pt200to275_m28toInf_tau065','200 < p_{T} < 275 GeV, m > 28 GeV, #tau_{21} < 0.65',0.65, 28.571, 105., 200., 275.,   24],#5
+    ['pt275to350_m0toInf_tau10',  '275 < p_{T} < 350 GeV, m > 50 GeV',                  1.0,  39.286, 105., 275., 350.,   20],
+    ['pt275to350_m39toInf_tau06', '275 < p_{T} < 350 GeV, m > 39 GeV, #tau_{21} < 0.6', 0.6,  39.286, 105., 275., 350.,   24],#6    
     ]
 hdatas = []
-
 hwjets = []
 httbars = []
 
-for [ name, title, taucut, mMin, mMax, ptMin, ptMax, style ] in plotsToMake : 
-    cut = '(' + \
-      '( (LeptonType[0] == 0 && LeptonPt[0] > 120. && METpt > 80.) || (LeptonType[0] == 1 && LeptonPt[0] > 55. && METpt > 40.) )  && ' + \
-      'VlepPt > 200. && ' + \
-      'FatJetRhoRatio[0] > 1e-3 &&' + \
-      'LeptonIso[0] / LeptonPt[0] < 0.10' + '&&' \
-      'FatJetTau21[0] < ' + str(taucut) +  '&&' \
-      'FatJetMassSoftDrop[0] > ' + str(mMin) + '&&' + \
-      'FatJetMassSoftDrop[0] <= ' + str(mMax) + '&&' + \
-      'FatJetPt[0] > ' + str(ptMin) + '&&' + \
-      'FatJetPt[0] <= ' + str(ptMax) + '&&' \
-      'TMath::Sqrt(TMath::Power(FatJetEta[0]-LeptonEta[0],2)+TMath::Power(TVector2::Phi_0_2pi(FatJetPhi[0]-LeptonPhi[0]),2)) > TMath::PiOver2()' + '&&' + \
-      'TVector2::Phi_0_2pi( FatJetPhi[0] - METphi[0]) > TMath::PiOver2()' + '&&' + \
-      'TVector2::Phi_0_2pi( FatJetPhi[0] - VlepPhi[0]) > TMath::PiOver2()' + '&&' + \
-      'MaxBDisc < 0.6' + \
-      ')'
-    trig = '&& ((LeptonType[0] == 0 && Trig >= 7 ) || (LeptonType[0] == 1 && Trig <= 2))'
+rhobins = array.array('d', [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 1.0])
+#rhobins = array.array('d', [0.0, 0.0001, 0.1, 1.0])
+nrhobins = len(rhobins)-1
+
+for [ name, title, taucut, mMin, mMax, ptMin, ptMax, style ] in plotsToMake :
 
 
-    data.Draw(variable + " >> " + name + histbins, cut + trig, 'goff')
-    hdata = ROOT.gDirectory.Get(name)
-    hdata.SetName(name)
-    hdata.SetTitle( ';' + xaxis )
-    hdata.SetMarkerStyle(style)
-    hdata.Sumw2()
-    hdatas.append(hdata)
+    cuts = [
+        '(l_pt > 120. && pfMET > 80.  && l_pt + pfMET  > 200. && '\
+        'ungroomed_jet_pt >= ' + str(ptMin) + '&&'\
+        'ungroomed_jet_pt <  ' + str(ptMax) + '&&'\
+        'jet_mass_so >= ' + str(mMin) + '&&'\
+        'jet_mass_so <  ' + str(mMax) + '&&'\
+        'jet_tau2tau1 < ' + str(taucut)  + \
+        ')',
+
+        '(l_pt > 55.  && pfMET > 40.  && l_pt + pfMET  > 200. && '\
+        'ungroomed_jet_pt >= ' + str(ptMin) + '&&'\
+        'ungroomed_jet_pt <  ' + str(ptMax) + '&&'\
+        'jet_mass_so >= ' + str(mMin) + '&&'\
+        'jet_mass_so <  ' + str(mMax) + '&&'\
+        'jet_tau2tau1 < ' + str(taucut) + \
+        ')',
+    ]
+
+    
+    
+    idataSum = None
+    for idata in dataTrees :
+        dataIndex = dataTrees.index(idata)
+        
+        dataname = name + '_data' + str( dataIndex )
+        hdata = ROOT.TH1D(dataname, ';' + xaxis, nrhobins, rhobins )
+        
+        idata.Draw(variable + " >> " + dataname, cuts[dataIndex], 'goff')
+        #hdata = ROOT.gDirectory.Get(dataname)
+        #hdata.SetName(dataname)
+        #hdata.SetTitle( ';' + xaxis )
+        hdata.SetMarkerStyle(style)
+        #hdata.Sumw2()        
+        if dataIndex == 0 :
+            idataSum = hdata.Clone()
+        else :
+            idataSum.Add( hdata )
+    hdatas.append( idataSum)
+    
+
 
     iwjetSum = None
-    for iwjet in wjetsIn :
-        wjetIndex = wjetsIn.index(iwjet)
+    for iwjet in wjetsTrees :
+        wjetIndex = wjetsTrees.index(iwjet)
         wjetname = name + '_wjet' + str( wjetIndex )
-        
-        iwjet[2].Draw(variable + " >> " + wjetname + histbins, cut, 'goff')
-        hwjet = ROOT.gDirectory.Get(wjetname)
-        hwjet.SetName(wjetname)
-        hwjet.SetTitle( ';' + xaxis )
+        hwjet = ROOT.TH1D(wjetname, ';' + xaxis, nrhobins, rhobins )
+        iwjet.Draw(variable + " >> " + wjetname, cuts[wjetIndex] + weight, 'goff')
+        #hwjet = ROOT.gDirectory.Get(wjetname)
+        #hwjet.SetName(wjetname)
+        #hwjet.SetTitle( ';' + xaxis )
         hwjet.SetMarkerStyle(style)
-        hwjet.Sumw2()
-        hwjet.Scale( iwjet[1] )
+        #hwjet.Sumw2()
+        hwjet.Scale( lumi * 1.21 )
         if wjetIndex == 0 :
             iwjetSum = hwjet.Clone()
         else :
@@ -154,17 +184,17 @@ for [ name, title, taucut, mMin, mMax, ptMin, ptMax, style ] in plotsToMake :
     hwjets.append( iwjetSum)
 
     ittbarSum = None
-    for ittbar in ttbarsIn :
-        ttbarIndex = ttbarsIn.index(ittbar)
+    for ittbar in ttbarTrees :
+        ttbarIndex = ttbarTrees.index(ittbar)
         ttbarname = name + '_ttbar' + str( ttbarIndex )
-        
-        ittbar[2].Draw(variable + " >> " + ttbarname + histbins, cut, 'goff')
-        httbar = ROOT.gDirectory.Get(ttbarname)
-        httbar.SetName(ttbarname)
-        httbar.SetTitle( ';' + xaxis )
+        httbar = ROOT.TH1D(ttbarname, ';' + xaxis, nrhobins, rhobins )
+        ittbar.Draw(variable + " >> " + ttbarname, cuts[ttbarIndex] + weight, 'goff')
+        #httbar = ROOT.gDirectory.Get(ttbarname)
+        #httbar.SetName(ttbarname)
+        #httbar.SetTitle( ';' + xaxis )
         httbar.SetMarkerStyle(style)
-        httbar.Sumw2()
-        httbar.Scale( ittbar[1] )
+        #httbar.Sumw2()
+        httbar.Scale( lumi )
         if ttbarIndex == 0 :
             ittbarSum = httbar.Clone()
         else :
@@ -285,6 +315,27 @@ for ndxToPlot in range(0, len(plotsToMake), 2) :
 
 
 
+for irate in rates :
+    for ibin in range(1,irate.GetNbinsX()) :
+        val = irate.GetBinContent(ibin)
+        err = 0.
+        if abs(val) > 0 : 
+            err1 = irate.GetBinError(ibin) / val
+            err2 = 0.05
+            err = math.sqrt( err1**2 + err2**2) * val
+        irate.SetBinError( ibin, err )
+
+
+for irate in ratewjets :
+    for ibin in range(1,irate.GetNbinsX()) :
+        val = irate.GetBinContent(ibin)
+        err = 0.
+        if abs(val) > 0 : 
+            err1 = irate.GetBinError(ibin) / val
+            err2 = 0.05
+            err = math.sqrt( err1**2 + err2**2) * val
+        irate.SetBinError( ibin, err )
+
 csum = ROOT.TCanvas('csum', 'csum', 600, 600)
 csum.cd()
 pad1 = ROOT.TPad('p1', 'p1',0.0, 0.0, 1.0, 0.2)
@@ -304,7 +355,7 @@ rateMetaData = [
     ]
 
 ii = 0
-leg = ROOT.TLegend(0.17, 0.02, 0.86, 0.3)
+leg = ROOT.TLegend(0.17, 0.60, 0.84, 0.84)
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
 leg.SetNColumns(3)
@@ -314,11 +365,41 @@ if options.signalRegion :
 else :
     regions = [4,5,6]
 
+
+closureErrors = []
+prediction  = ratewjets[regions[1]]
+truth = ratewjets[regions[2]]
+
+
+# Get the difference in closure in MC, apply that as a systematic in data and MC
+for ibin in xrange( 1, truth.GetNbinsX() ) :    
+    val = prediction.GetBinContent(ibin)
+    err1 = prediction.GetBinError(ibin)
+    err2 = abs(prediction.GetBinContent(ibin) - truth.GetBinContent(ibin))
+    prediction.SetBinError( ibin, math.sqrt(err1**2 + err2**2) )
+
+    if val > 0.0 : 
+        closureErrors.append( math.sqrt(err1**2 + err2**2) / val  )
+    else :
+        closureErrors.append( 0.0 )
+
+
+for ival in closureErrors :
+    print ' %6.4e' % (ival),
+print ''
+
+predictionData = rates[regions[1]]
+for ibin in xrange( 1, predictionData.GetNbinsX() ) :
+    err1 = predictionData.GetBinError(ibin)
+    err2 = closureErrors[ibin-1] * predictionData.GetBinContent(ibin)
+    predictionData.SetBinError( ibin, math.sqrt(err1**2 + err2**2) )    
+
+    
 for irate in regions :
     rate = rates[irate]
     ratewjet = ratewjets[irate]
-    rate.SetMaximum(1.0)
-    rate.SetMinimum(0.0)
+    rate.SetMaximum(2)
+    rate.SetMinimum(0)
     leg.AddEntry( rate, rate.GetTitle(), '')
     leg.AddEntry( rate, 'Data', 'p')
     rate.SetMarkerStyle( rateMetaData[ii][0] )
@@ -332,8 +413,8 @@ for irate in regions :
     if ii == 0 :
         rate.Draw("")
     else :
-        if irate != 3 : 
-            rate.Draw("same")
+        #if irate != 3 : 
+        rate.Draw("same")
     ratewjet.SetMarkerStyle(0)
     ratewjet.SetLineColor( rateMetaData[ii][1] )
     ratewjet.SetFillColor( rateMetaData[ii][1] )
@@ -343,7 +424,7 @@ for irate in regions :
     #ratewjet.SetFillColorAlpha( rateMetaData[ii][1], 0.35 )
     ratewjet.Draw("e3 same")
     leg.AddEntry( ratewjet, 'MC', 'f')
-
+    rate.GetXaxis().SetRangeUser(1e-2,0.3)
     ii += 1
 leg.Draw()
 
@@ -370,45 +451,31 @@ frac.SetTitle(';' + xaxis + ';Ratio')
 frac.SetTitleSize(20, "XYZ")
 frac.Draw("")
 frac.Fit('pol0')
-frac.SetMinimum(0.5)
-frac.SetMaximum(1.5)
+frac.SetMinimum(0.)
+frac.SetMaximum(2.0)
 frac.GetYaxis().SetNdivisions(2,4,0,False)
 frac.GetXaxis().SetNdivisions(4,8,0,False)
 
 frac.SetTitle('')
 frac.GetXaxis().SetTitle( frac.GetXaxis().GetTitle() )
 frac.GetXaxis().SetTitleOffset(3.5)
+frac.GetXaxis().SetRangeUser(1e-2,0.3)
 csum.cd()
 pad1.SetLogx()
 pad2.SetLogx()
+#pad2.SetLogy()
+
 csum.Update()
 csum.Print( options.outlabel + '_summary.png', 'png')
 csum.Print( options.outlabel + '_summary.pdf', 'pdf')
+
 
 print 'Writing output ROOT files'
 fout = ROOT.TFile( options.outlabel + '_rate.root', 'RECREATE')
 toWrite = rates[ regions[1] ].Clone()
 toWrite.SetName("rLoMod")
-for ibin in xrange(0,toWrite.GetNbinsX()) :
-    val = toWrite.GetBinContent(ibin)
-    if abs(val) > 0.0 : 
-        err1 = toWrite.GetBinError(ibin) / val
-        err2 = 0.05
-        err = math.sqrt( err1**2 + err2**2)
-    else :
-        err = 0.0
-    toWrite.SetBinError( ibin, err * val )
-toWrite.Write()
 toWriteWJET = ratewjets[ regions[1] ].Clone()
 toWriteWJET.SetName("rLoModWJET")
-for ibin in xrange(0,toWriteWJET.GetNbinsX()) :
-    val = toWriteWJET.GetBinContent(ibin)
-    if abs(val) > 0.0 : 
-        err1 = toWriteWJET.GetBinError(ibin) / val
-        err2 = 0.05
-        err = math.sqrt( err1**2 + err2**2)
-    else :
-        err = 0.0
-    toWriteWJET.SetBinError( ibin, err * val )
+toWrite.Write()
 toWriteWJET.Write()
 fout.Close()
