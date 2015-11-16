@@ -154,7 +154,10 @@ hs.GetYaxis().SetTitleOffset(1.0)
 hs.GetXaxis().SetRangeUser( xaxis[0], xaxis[1])
 
 leg = ROOT.TLegend(0.6,0.6,0.8,0.8)
-leg.AddEntry( hobs, 'Data', 'p')
+if not isMC : 
+    leg.AddEntry( hobs, 'Data', 'p')
+else :
+    leg.AddEntry( hobs, 'Observed MC', 'p')
 leg.AddEntry( hpred, 'Predicted W+Jets', 'f')
 leg.AddEntry( hobs_ttbar, 't#bar{t} MC', 'f')
 
