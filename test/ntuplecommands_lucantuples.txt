@@ -1,0 +1,49 @@
+
+# Create the rho files, data and MC together. 
+# First signal region : 
+python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb_highpt --signalRegion
+# then cross check
+python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb
+
+
+
+
+
+
+# Make pred dists and plots for ttbar MC
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_TTbar.root --outlabel luca_ttbar_el --LeptonType 0 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root --outlabel luca_ttbar_mu --LeptonType 1 
+
+# Now make MC pred dists with the weighting applied, but no mod mass
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET --weight wSampleWeight 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET --weight wSampleWeight 
+
+# Add the el and mu channels
+hadd -f luca_ttbar_predplots.root luca_ttbar_el_predplots.root luca_ttbar_mu_predplots.root
+hadd -f luca_wjets_predplots.root luca_wjets_el_predplots.root luca_wjets_mu_predplots.root
+
+# Make the modfile
+mv luca_wjets_predplots.root luca_modfile_wjets.root
+
+# Run AGAIN on the W+Jets MC
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET  --modFile luca_modfile_wjets.root  --weight wSampleWeight 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET  --modFile luca_modfile_wjets.root  --weight wSampleWeight 
+
+# Add el and mu
+hadd -f luca_wjets_predplots.root luca_wjets_el_predplots.root luca_wjets_mu_predplots.root
+
+
+# Make pretty plots of observed and predicted rates. 
+python -i plotobspred_subtractmc.py --fileWJets luca_wjets_predplots --fileTTbar luca_ttbar_predplots
+
+
+
+# Now make the DATA pred dists with the weighting applied.
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data.root --outlabel luca_mu --LeptonType 1
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data.root --outlabel luca_el --LeptonType 0
+
+# Add el and mu together
+hadd -f luca_predplots.root luca_el_predplots.root luca_mu_predplots.root
+
+python -i plotobspred_subtractmc.py --fileData luca_predplots --fileTTbar luca_ttbar_predplots
+
