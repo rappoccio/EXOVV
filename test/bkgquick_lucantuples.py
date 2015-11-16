@@ -209,7 +209,9 @@ for jentry in xrange( entries ):
 
     weight = 1.0
     if options.weight != None :
-        weight = getattr( t, options.weight )
+        toks = options.weight.lstrip('(').rstrip(')').split('*')
+        for tok in toks :
+            weight *= getattr( t, tok )
 
 
     predJetPt.Accumulate( FatJet.Perp(), sdrho0, tagged0, weight )

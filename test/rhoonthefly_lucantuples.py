@@ -81,7 +81,7 @@ for ittbar in range(0,len(ttbarsIn)) :
 xaxis = '#rho = (m/p_{T}R)^{2}'
 variable = '(jet_mass_so/(jet_pt_so*0.8))**2'
 histbins = '(30,0.0,0.3)'
-weightstr= 'wSampleWeight'
+
 
 plotsToMake = [
     # name                        title                                                taucut mmin   mmax    ptmin ptmax   mstyle

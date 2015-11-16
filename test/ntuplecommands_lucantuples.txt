@@ -1,9 +1,9 @@
 
 # Create the rho files, data and MC together. 
 # First signal region : 
-python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb_highpt --signalRegion
+python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb_highpt --signalRegion --weight "(wSampleWeight*eff_and_pu_Weight)"
 # then cross check
-python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb
+python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb --weight "(wSampleWeight*eff_and_pu_Weight)"
 
 
 
@@ -11,12 +11,12 @@ python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb
 
 
 # Make pred dists and plots for ttbar MC
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_TTbar.root --outlabel luca_ttbar_el --LeptonType 0 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_TTbar.root --outlabel luca_ttbar_el --LeptonType 0 --weight "(wSampleWeight*eff_and_pu_Weight)"
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root --outlabel luca_ttbar_mu --LeptonType 1 
 
 # Now make MC pred dists with the weighting applied, but no mod mass
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET --weight wSampleWeight 
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET --weight wSampleWeight 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET --weight "(wSampleWeight*eff_and_pu_Weight)" 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET --weight "(wSampleWeight*eff_and_pu_Weight)" 
 
 # Add the el and mu channels
 hadd -f luca_ttbar_predplots.root luca_ttbar_el_predplots.root luca_ttbar_mu_predplots.root
@@ -47,3 +47,24 @@ hadd -f luca_predplots.root luca_el_predplots.root luca_mu_predplots.root
 
 python -i plotobspred_subtractmc.py --fileData luca_predplots --fileTTbar luca_ttbar_predplots
 
+
+
+
+Cut and paste commands : 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_TTbar.root --outlabel luca_ttbar_el --LeptonType 0 --weight "(wSampleWeight*eff_and_pu_Weight)"
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root --outlabel luca_ttbar_mu --LeptonType 1 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET --weight "(wSampleWeight*eff_and_pu_Weight)" 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET --weight "(wSampleWeight*eff_and_pu_Weight)" 
+hadd -f luca_ttbar_predplots.root luca_ttbar_el_predplots.root luca_ttbar_mu_predplots.root
+hadd -f luca_wjets_predplots.root luca_wjets_el_predplots.root luca_wjets_mu_predplots.root
+mv luca_wjets_predplots.root luca_modfile_wjets.root
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET  --modFile luca_modfile_wjets.root  --weight wSampleWeight 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET  --modFile luca_modfile_wjets.root  --weight wSampleWeight 
+hadd -f luca_wjets_predplots.root luca_wjets_el_predplots.root luca_wjets_mu_predplots.root
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data.root --outlabel luca_mu --LeptonType 1
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data.root --outlabel luca_el --LeptonType 0
+hadd -f luca_predplots.root luca_el_predplots.root luca_mu_predplots.root
+
+
+python -i plotobspred_subtractmc.py --fileWJets luca_wjets_predplots --fileTTbar luca_ttbar_predplots
+python -i plotobspred_subtractmc.py --fileData luca_predplots --fileTTbar luca_ttbar_predplots
