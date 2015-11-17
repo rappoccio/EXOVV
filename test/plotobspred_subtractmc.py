@@ -14,6 +14,11 @@ parser.add_option('--hist', type='string', action='store',
                   help='Input ttbar MC file, without the .root')
 
 
+parser.add_option('--blind', action = 'store_true',
+                  dest='blind',
+                  default = False,
+                  help='Blind data?')
+
 parser.add_option('--fileData', type='string', action='store',
                   dest='fileData',
                   default = None,
@@ -148,7 +153,8 @@ hserrs.Add( hpredclone, "e3")
 
 hs.Draw("hist")
 hserrs.Draw("same")
-hobs.Draw("same")
+if not options.blind : 
+    hobs.Draw("same")
 hs.Draw("axis same")
 hs.GetYaxis().SetTitleOffset(1.0)
 hs.GetXaxis().SetRangeUser( xaxis[0], xaxis[1])
@@ -187,7 +193,10 @@ ratio.SetTitle(';' + hs.GetXaxis().GetTitle() + ';Ratio')
 ratio.SetMinimum(0.)
 ratio.SetMaximum(2.)
 ratio.GetYaxis().SetNdivisions(2,4,0,False)
-ratio.Draw('e3')
+if not options.blind : 
+    ratio.Draw('e3')
+else :
+    ratio.Draw("axis")
 ratio.GetYaxis().SetTitleOffset(1.0)
 ratio.GetXaxis().SetTitleOffset(3.0)
 #ratio.SetTitleSize(20, "XYZ")

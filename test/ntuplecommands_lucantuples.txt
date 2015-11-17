@@ -2,9 +2,16 @@
 # Create the rho files, data and MC together. 
 # First signal region : 
 python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb_highpt --signalRegion --weight "(wSampleWeight*eff_and_pu_Weight)"
+
+Closure bias :
+ 1.7200e-01  9.0225e-02  5.4846e-02  6.8185e-02  6.6091e-02  6.3557e-02  9.9549e-02  5.5837e-02  1.5739e-01  1.0013e+00 
+
+
 # then cross check
 python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb --weight "(wSampleWeight*eff_and_pu_Weight)"
 
+Closure bias : 
+ 1.1302e-01  1.6380e-01  1.3896e-01  2.1344e-01  1.0395e-01  7.6215e-02  1.0624e-01  1.2215e-01  9.4847e-02  1.1605e-01 
 
 
 

@@ -20,6 +20,11 @@ parser.add_option('--signalRegion', action='store_true',
                   help='Plot signal region?')
 
 
+parser.add_option('--blind', action='store_true',
+                  dest='blind',
+                  default = False,
+                  help='Blind signal region?')
+
 parser.add_option('--hackedRho', action='store_true',
                   dest='hackedRho',
                   default = False,
@@ -255,9 +260,10 @@ for ndxToPlot in range(0, len(plotsToMake), 2) :
     
     hstack1.Draw('hist')
     hstack2.Draw('hist same')
-    
-    hdata1.Draw('e same')
-    hdata2.Draw('e same')
+
+    if not options.blind : 
+        hdata1.Draw('e same')
+        hdata2.Draw('e same')
     maxscale = max( hstack1.GetMaximum(), hdata1.GetMaximum()) * 1.2
     hstack1.SetMaximum( maxscale )
 
@@ -294,9 +300,16 @@ for ndxToPlot in range(0, len(plotsToMake), 2) :
     canvs.append(c)
 
     hrate = hdata2.Clone()
+    hrate.Sumw2()
     hrate.Add( httbar2, -1.0)
     hden = hdata1.Clone()
+    hden.Sumw2()
     hden.Add( httbar1, -1.0 )
+
+    for ibinToFix in xrange( 1, hrate.GetNbinsX() ) :
+        if hrate.GetBinContent(ibinToFix) > hden.GetBinContent(ibinToFix) :
+            hrate.SetBinContent( ibinToFix, hden.GetBinContent(ibinToFix) )
+    
     hrate.SetName( 'rate_' + hdata2.GetName() )
     
     hrate.SetTitle( plotsToMake[ndxToPlot+1][1] )
@@ -413,8 +426,8 @@ for irate in regions :
     if ii == 0 :
         rate.Draw("")
     else :
-        #if irate != 3 : 
-        rate.Draw("same")
+        if irate != 3 or not options.blind : 
+            rate.Draw("same")
     ratewjet.SetMarkerStyle(0)
     ratewjet.SetLineColor( rateMetaData[ii][1] )
     ratewjet.SetFillColor( rateMetaData[ii][1] )
@@ -449,8 +462,11 @@ frac.SetMarkerStyle(20)
 frac.SetMarkerSize(1)
 frac.SetTitle(';' + xaxis + ';Ratio')
 frac.SetTitleSize(20, "XYZ")
-frac.Draw("")
-frac.Fit('pol0')
+if not options.blind : 
+    frac.Draw("")
+    frac.Fit('pol0')
+else :
+    frac.Draw("axis")
 frac.SetMinimum(0.)
 frac.SetMaximum(2.0)
 frac.GetYaxis().SetNdivisions(2,4,0,False)
