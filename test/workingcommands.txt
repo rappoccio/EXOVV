@@ -641,6 +641,10 @@ python EXOVV_fwlite.py --files inputfiles/wjets_ht200to400_b2ganafw_v5.txt --out
 
 
 
+python EXOVV_fwlite.py --files inputfiles/ttbar_v74x_v6_local.txt --outname exovv_ttbar_v74x_v6_ntuple.root --applyFilters --speedyHtMin 200.  --selection 1 --minAK8Pt 200. --maxAK8Pt 30000. --sdmassCutLo 0. --tau21Cut 999. --makeMistag --writeTree >&  ttbar_v74x_v6_local_output.txt &
+
+
+
 -rw-r--r-- 1 rappocc us_cms     306 Oct 24 05:16 jetht_v74x_v43_dataset7_ptlo_taucut7_mcut33_split6.root
 -rw-r--r-- 1 rappocc us_cms     306 Oct 24 05:16 jetht_v74x_v43_dataset7_ptlo_taucut7_mcut33_split5.root
 -rw-r--r-- 1 rappocc us_cms     306 Oct 24 05:16 jetht_v74x_v43_dataset7_ptlo_taucut7_mcut33_split4.root
