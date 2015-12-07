@@ -1,4 +1,0 @@
-/eos/uscms/store/user/rappocc/JetHT/crab_b2gttbar74x_V4_JetHT_devdatta-Run2015B-17Jul2015-v1_B2GAnaFW_v74x_V5p1-bb37d33603bdd9eeda5102b1d8fbf852/150821_165330/0000/B2GEDMNtuple_1.root
-/eos/uscms/store/user/rappocc/JetHT/crab_b2gttbar74x_V4_JetHT_devdatta-Run2015B-17Jul2015-v1_B2GAnaFW_v74x_V5p1-bb37d33603bdd9eeda5102b1d8fbf852/150821_165330/0000/B2GEDMNtuple_2.root
-/eos/uscms/store/user/rappocc/JetHT/crab_b2gttbar74x_V4_JetHT_devdatta-Run2015B-17Jul2015-v1_B2GAnaFW_v74x_V5p1-bb37d33603bdd9eeda5102b1d8fbf852/150821_165330/0000/B2GEDMNtuple_3.root
-/eos/uscms/store/user/rappocc/JetHT/crab_b2gttbar74x_V4_JetHT_devdatta-Run2015B-17Jul2015-v1_B2GAnaFW_v74x_V5p1-bb37d33603bdd9eeda5102b1d8fbf852/150821_165330/0000/B2GEDMNtuple_4.root
