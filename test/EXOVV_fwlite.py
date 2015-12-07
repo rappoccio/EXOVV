@@ -471,15 +471,25 @@ h_rho = Handle("double")
 l_rho = ("fixedGridRhoFastjetAll", "")
 
 #MET label and Handles
-h_metPt = Handle("std::vector<float>")
-l_metPt = ("met" , "metPt")
-h_metPx = Handle("std::vector<float>")
-l_metPx = ("met" , "metPx")
-h_metPy = Handle("std::vector<float>")
-l_metPy = ("met" , "metPy")
-h_metPhi = Handle("std::vector<float>")
-l_metPhi = ("met" , "metPhi")
-
+if options.isData : 
+    h_metPt = Handle("std::vector<float>")
+    l_metPt = ("metNoHF" , "metNoHFPt")
+    h_metPx = Handle("std::vector<float>")
+    l_metPx = ("metNoHF" , "metNoHFPx")
+    h_metPy = Handle("std::vector<float>")
+    l_metPy = ("metNoHF" , "metNoHFPy")
+    h_metPhi = Handle("std::vector<float>")
+    l_metPhi = ("metNoHF" , "metNoHFPhi")
+else : 
+    h_metPt = Handle("std::vector<float>")
+    l_metPt = ("met" , "metPt")
+    h_metPx = Handle("std::vector<float>")
+    l_metPx = ("met" , "metPx")
+    h_metPy = Handle("std::vector<float>")
+    l_metPy = ("met" , "metPy")
+    h_metPhi = Handle("std::vector<float>")
+    l_metPhi = ("met" , "metPhi")
+    
 #AK8 Jets label and Handles
 h_jetsAK8Pt = Handle("std::vector<float>")
 l_jetsAK8Pt = ("jetsAK8" , "jetAK8Pt") #
@@ -784,47 +794,47 @@ if options.writeTree :
     TreeEXOVV.Branch('Weight'              , Weight              ,  'Weight/F'      )
     TreeEXOVV.Branch('MaxBDisc'            , MaxBDisc            ,  'MaxBDisc/F'    )
     TreeEXOVV.Branch('NFatJet'             , NFatJet             ,  'NFatJet/I'        )
-    TreeEXOVV.Branch('FatJetPt'            , FatJetPt            ,  'FatJetPt/F'            )
-    TreeEXOVV.Branch('FatJetEta'           , FatJetEta           ,  'FatJetEta/F'           )
-    TreeEXOVV.Branch('FatJetPhi'           , FatJetPhi           ,  'FatJetPhi/F'           )
-    TreeEXOVV.Branch('FatJetRap'           , FatJetRap           ,  'FatJetRap/F'           )
-    TreeEXOVV.Branch('FatJetPx'            , FatJetPx            ,  'FatJetPx/F'            )
-    TreeEXOVV.Branch('FatJetPy'            , FatJetPy            ,  'FatJetPy/F'            )
-    TreeEXOVV.Branch('FatJetPz'            , FatJetPz            ,  'FatJetPz/F'            )
-    TreeEXOVV.Branch('FatJetEnergy'        , FatJetEnergy        ,  'FatJetEnergy/F'        )
-    TreeEXOVV.Branch('FatJetBDisc'         , FatJetBDisc         ,  'FatJetBDisc/F'         )
-    TreeEXOVV.Branch('FatJetRhoRatio'      , FatJetRhoRatio      ,  'FatJetRhoRatio/F'      )
-    TreeEXOVV.Branch('FatJetMass'          , FatJetMass          ,  'FatJetMass/F'          )
-    TreeEXOVV.Branch('FatJetMassSoftDrop'  , FatJetMassSoftDrop  ,  'FatJetMassSoftDrop/F'  )
-    TreeEXOVV.Branch('FatJetMassPruned'    , FatJetMassPruned    ,  'FatJetMassPruned/F'    )
-    TreeEXOVV.Branch('FatJetMassFiltered'  , FatJetMassFiltered  ,  'FatJetMassFiltered/F'  )
-    TreeEXOVV.Branch('FatJetMassTrimmed'   , FatJetMassTrimmed   ,  'FatJetMassTrimmed/F'   )
-    TreeEXOVV.Branch('FatJetTau1'          , FatJetTau1          ,  'FatJetTau1/F'          )
-    TreeEXOVV.Branch('FatJetTau2'          , FatJetTau2          ,  'FatJetTau2/F'          )
-    TreeEXOVV.Branch('FatJetTau3'          , FatJetTau3          ,  'FatJetTau3/F'          )
-    TreeEXOVV.Branch('FatJetTau32'         , FatJetTau32         ,  'FatJetTau32/F'         )
-    TreeEXOVV.Branch('FatJetTau21'         , FatJetTau21         ,  'FatJetTau21/F'         )
-    TreeEXOVV.Branch('FatJetSDnsubjets'    , FatJetSDnsubjets    ,  'FatJetSDnsubjets/F'    )
-    TreeEXOVV.Branch('FatJetSDbdiscW'      , FatJetSDbdiscW      ,  'FatJetSDbdiscW/F'      )
-    TreeEXOVV.Branch('FatJetSDbdiscB'      , FatJetSDbdiscB      ,  'FatJetSDbdiscB/F'      )
-    TreeEXOVV.Branch('FatJetSDmaxbdisc'    , FatJetSDmaxbdisc    ,  'FatJetSDmaxbdisc/F'    )
-    TreeEXOVV.Branch('FatJetSDsubjetWpt'   , FatJetSDsubjetWpt   ,  'FatJetSDsubjetWpt/F'   )
-    TreeEXOVV.Branch('FatJetSDsubjetWmass' , FatJetSDsubjetWmass ,  'FatJetSDsubjetWmass/F' )
-    TreeEXOVV.Branch('FatJetSDsubjetWp4'   , FatJetSDsubjetWp4   ,  'FatJetSDsubjetWp4/F'   )
-    TreeEXOVV.Branch('FatJetSDsubjetBpt'   , FatJetSDsubjetBpt   ,  'FatJetSDsubjetBpt/F'   )
-    TreeEXOVV.Branch('FatJetSDsubjetBmass' , FatJetSDsubjetBmass ,  'FatJetSDsubjetBmass/F' )
-    TreeEXOVV.Branch('FatJetSDsubjetBp4'   , FatJetSDsubjetBp4   ,  'FatJetSDsubjetBp4/F'   )
+    TreeEXOVV.Branch('FatJetPt'            , FatJetPt            ,  'FatJetPt[NFatJet]/F'            )
+    TreeEXOVV.Branch('FatJetEta'           , FatJetEta           ,  'FatJetEta[NFatJet]/F'           )
+    TreeEXOVV.Branch('FatJetPhi'           , FatJetPhi           ,  'FatJetPhi[NFatJet]/F'           )
+    TreeEXOVV.Branch('FatJetRap'           , FatJetRap           ,  'FatJetRap[NFatJet]/F'           )
+    TreeEXOVV.Branch('FatJetPx'            , FatJetPx            ,  'FatJetPx[NFatJet]/F'            )
+    TreeEXOVV.Branch('FatJetPy'            , FatJetPy            ,  'FatJetPy[NFatJet]/F'            )
+    TreeEXOVV.Branch('FatJetPz'            , FatJetPz            ,  'FatJetPz[NFatJet]/F'            )
+    TreeEXOVV.Branch('FatJetEnergy'        , FatJetEnergy        ,  'FatJetEnergy[NFatJet]/F'        )
+    TreeEXOVV.Branch('FatJetBDisc'         , FatJetBDisc         ,  'FatJetBDisc[NFatJet]/F'         )
+    TreeEXOVV.Branch('FatJetRhoRatio'      , FatJetRhoRatio      ,  'FatJetRhoRatio[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetMass'          , FatJetMass          ,  'FatJetMass[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetMassSoftDrop'  , FatJetMassSoftDrop  ,  'FatJetMassSoftDrop[NFatJet]/F'  )
+    TreeEXOVV.Branch('FatJetMassPruned'    , FatJetMassPruned    ,  'FatJetMassPruned[NFatJet]/F'    )
+    TreeEXOVV.Branch('FatJetMassFiltered'  , FatJetMassFiltered  ,  'FatJetMassFiltered[NFatJet]/F'  )
+    TreeEXOVV.Branch('FatJetMassTrimmed'   , FatJetMassTrimmed   ,  'FatJetMassTrimmed[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetTau1'          , FatJetTau1          ,  'FatJetTau1[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetTau2'          , FatJetTau2          ,  'FatJetTau2[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetTau3'          , FatJetTau3          ,  'FatJetTau3[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetTau32'         , FatJetTau32         ,  'FatJetTau32[NFatJet]/F'         )
+    TreeEXOVV.Branch('FatJetTau21'         , FatJetTau21         ,  'FatJetTau21[NFatJet]/F'         )
+    TreeEXOVV.Branch('FatJetSDnsubjets'    , FatJetSDnsubjets    ,  'FatJetSDnsubjets[NFatJet]/F'    )
+    TreeEXOVV.Branch('FatJetSDbdiscW'      , FatJetSDbdiscW      ,  'FatJetSDbdiscW[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetSDbdiscB'      , FatJetSDbdiscB      ,  'FatJetSDbdiscB[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetSDmaxbdisc'    , FatJetSDmaxbdisc    ,  'FatJetSDmaxbdisc[NFatJet]/F'    )
+    TreeEXOVV.Branch('FatJetSDsubjetWpt'   , FatJetSDsubjetWpt   ,  'FatJetSDsubjetWpt[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetWmass' , FatJetSDsubjetWmass ,  'FatJetSDsubjetWmass[NFatJet]/F' )
+    TreeEXOVV.Branch('FatJetSDsubjetWp4'   , FatJetSDsubjetWp4   ,  'FatJetSDsubjetWp4[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetBpt'   , FatJetSDsubjetBpt   ,  'FatJetSDsubjetBpt[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetBmass' , FatJetSDsubjetBmass ,  'FatJetSDsubjetBmass[NFatJet]/F' )
+    TreeEXOVV.Branch('FatJetSDsubjetBp4'   , FatJetSDsubjetBp4   ,  'FatJetSDsubjetBp4[NFatJet]/F'   )
 
     TreeEXOVV.Branch('NLepton'             , NLepton             ,  'NLepton/I'        )
     TreeEXOVV.Branch('LeptonType'          , LeptonType          ,  'LeptonType/I'          )
-    TreeEXOVV.Branch('LeptonPt'            , LeptonPt            ,  'LeptonPt/F'            )
-    TreeEXOVV.Branch('LeptonEta'           , LeptonEta           ,  'LeptonEta/F'           )
-    TreeEXOVV.Branch('LeptonPhi'           , LeptonPhi           ,  'LeptonPhi/F'           )
-    TreeEXOVV.Branch('LeptonPx'            , LeptonPx            ,  'LeptonPx/F'            )
-    TreeEXOVV.Branch('LeptonPy'            , LeptonPy            ,  'LeptonPy/F'            )
-    TreeEXOVV.Branch('LeptonPz'            , LeptonPz            ,  'LeptonPz/F'            )
-    TreeEXOVV.Branch('LeptonEnergy'        , LeptonEnergy        ,  'LeptonEnergy/F'        )
-    TreeEXOVV.Branch('LeptonIso'           , LeptonIso           ,  'LeptonIso/F'           )
+    TreeEXOVV.Branch('LeptonPt'            , LeptonPt            ,  'LeptonPt[NLepton]/F'            )
+    TreeEXOVV.Branch('LeptonEta'           , LeptonEta           ,  'LeptonEta[NLepton]/F'           )
+    TreeEXOVV.Branch('LeptonPhi'           , LeptonPhi           ,  'LeptonPhi[NLepton]/F'           )
+    TreeEXOVV.Branch('LeptonPx'            , LeptonPx            ,  'LeptonPx[NLepton]/F'            )
+    TreeEXOVV.Branch('LeptonPy'            , LeptonPy            ,  'LeptonPy[NLepton]/F'            )
+    TreeEXOVV.Branch('LeptonPz'            , LeptonPz            ,  'LeptonPz[NLepton]/F'            )
+    TreeEXOVV.Branch('LeptonEnergy'        , LeptonEnergy        ,  'LeptonEnergy[NLepton]/F'        )
+    TreeEXOVV.Branch('LeptonIso'           , LeptonIso           ,  'LeptonIso[NLepton]/F'           )
     TreeEXOVV.Branch('VlepPt'            , VlepPt            ,  'VlepPt/F'            )
     TreeEXOVV.Branch('VlepEta'           , VlepEta           ,  'VlepEta/F'           )
     TreeEXOVV.Branch('VlepPhi'           , VlepPhi           ,  'VlepPhi/F'           )
@@ -1243,6 +1253,7 @@ for ifile in files : #{ Loop over root files
                                 trigIndex = itrigToGet
                                 trigMap[ itrigToGet ] = int(triggerBits[itrig])
                                 if triggerBits[itrig] == 1 :
+                                    Trig[0] = itrigToGet
                                     nSelectedTriggersPassed += 1
                                     ha_htAK8[itrigToGet].Fill( ht, pvWeight )
 
@@ -1265,6 +1276,7 @@ for ifile in files : #{ Loop over root files
                                 trigIndex = itrigToGet
                                 trigMap[ itrigToGet ] = int(triggerBits[itrig])
                                 if triggerBits[itrig] == 1 :
+                                    Trig[0] = itrigToGet
                                     nSelectedTriggersPassed += 1
                                     ha_pt0[itrigToGet].Fill( pt0, pvWeight )
 
@@ -1931,7 +1943,11 @@ for ifile in files : #{ Loop over root files
 
         elif selection == 2 and vHad0 != None and vHad1 != None :
             if options.writeTree :
-                NFatJet             [0] = 1
+                if options.verbose :
+                    print 'Writing hadronic tree'
+                    print 'vHad0.Perp = ' + str(vHad0.Perp() )
+                    print 'vHad1.Perp = ' + str(vHad1.Perp() )
+                NFatJet             [0] = 2
                 Weight              [0] = evWeight
                 MaxBDisc            [0] = maxBdisc
                 FatJetPt            [0] = vHad0.Perp()
@@ -1979,7 +1995,6 @@ for ifile in files : #{ Loop over root files
                 FatJetTau2          [1] = AK8Tau2[1]
                 FatJetTau3          [1] = AK8Tau3[1]
                 FatJetTau21         [1] = tau21_1
-                LeptonType          [1] = -1
                 LeptonPt            [1] = -1. 
                 LeptonEta           [1] = -1. 
                 LeptonPhi           [1] = -1. 
@@ -1996,6 +2011,9 @@ for ifile in files : #{ Loop over root files
                 VlepPy            [0] = -1.
                 VlepPz            [0] = -1.
                 VlepEnergy        [0] = -1.
+                if options.verbose :
+                    print ' FatJetPt[0] = ' + str(FatJetPt[0])
+                    print ' FatJetPt[1] = ' + str(FatJetPt[1])
                 TreeEXOVV.Fill()
 
             if vHad0.DeltaPhi(vHad1) < 2.1 :
