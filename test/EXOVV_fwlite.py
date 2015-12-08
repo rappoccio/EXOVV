@@ -253,16 +253,14 @@ ptTrigsToGet = [
     'HLT_PFJet450',# 540
     'HLT_PFJet500' # 600
     ]
-    
-htcuts = [#200., 250., 300.,
-          480., 540., 680., 750., 900.]
+
+#         300   350   400   475   600   650   800
+htcuts = [400., 450., 500., 540., 680., 750., 900.]
 htcutsa = array('d', htcuts)
 htcutsa.append( 7000. )
 htTrigsToGet = [
-    #'HLT_PFHT200',
-    #'HLT_PFHT250',
-    #'HLT_PFHT300',
-    #'HLT_PFHT350',
+    'HLT_PFHT300',
+    'HLT_PFHT350',
     'HLT_PFHT400',
     'HLT_PFHT475',
     'HLT_PFHT600',
@@ -1253,7 +1251,6 @@ for ifile in files : #{ Loop over root files
                                 trigIndex = itrigToGet
                                 trigMap[ itrigToGet ] = int(triggerBits[itrig])
                                 if triggerBits[itrig] == 1 :
-                                    Trig[0] = itrigToGet
                                     nSelectedTriggersPassed += 1
                                     ha_htAK8[itrigToGet].Fill( ht, pvWeight )
 
@@ -1276,7 +1273,6 @@ for ifile in files : #{ Loop over root files
                                 trigIndex = itrigToGet
                                 trigMap[ itrigToGet ] = int(triggerBits[itrig])
                                 if triggerBits[itrig] == 1 :
-                                    Trig[0] = itrigToGet
                                     nSelectedTriggersPassed += 1
                                     ha_pt0[itrigToGet].Fill( pt0, pvWeight )
 
@@ -1303,20 +1299,36 @@ for ifile in files : #{ Loop over root files
                     print 'No selected triggers passed'
                 continue
 
-            if not options.useJetPtTrigs :
-                passTrig,iht = trigHelperHT( ht, trigMap )
-                if options.verbose : 
-                    print 'Check : ht = ' + str(ht) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
-            else :
-                passTrig,iht = trigHelperPt( pt0, trigMap )
-                if options.verbose : 
-                    print 'Check : pt0 = ' + str(pt0) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
+            ## if not options.useJetPtTrigs :
+            ##     passTrig,iht = trigHelperHT( ht, trigMap )
+            ##     if options.verbose : 
+            ##         print 'Check : ht = ' + str(ht) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
+            ## else :
+            ##     passTrig,iht = trigHelperPt( pt0, trigMap )
+            ##     if options.verbose : 
+            ##         print 'Check : pt0 = ' + str(pt0) + ', iht = ' + str(iht) + ', pass = ' + str(passTrig)
+
+            # If ANY of our triggers passed, keep the event. 
+            passTrig = False
+
+            if options.verbose :
+                print 'Trigger map : '
+                print trigMap
+
+            Trig[0] = 0
+            for itrigForWrite in xrange( len(trigsToGet) - 1, 0, -1) :
+                if trigMap[itrigForWrite] > 0 :
+                    Trig[0] += pow( 10, itrigForWrite)
+                    passTrig = True
 
 
+            if options.verbose :
+                print 'Triggers : ' + str(Trig[0])
+            
             if not passTrig :
                 continue
 
-                        
+
 
             if unprescaled :
                 prescale = 1.0
@@ -2064,13 +2076,6 @@ for ifile in files : #{ Loop over root files
                     h_rhostar_all[selection].Fill( sdrhostar0, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho0, tau21_0, evWeight )
                     
-                    if options.applyHadronicTriggers :
-                        ha_ptAK8[iht].Fill( vHad0.Perp(), pvWeight  )
-                        ha_yAK8[iht].Fill( vHad0.Rapidity(), pvWeight  )
-                        ha_mAK8[iht].Fill( vHad0.M(), pvWeight  )
-                        ha_msoftdropAK8[iht].Fill( sdm0, pvWeight  )
-                        ha_rho_all[iht].Fill( sdrho0, pvWeight )
-                    
                     printString += 'taggable 0'
                     if options.makeMistag == False : 
                         predJetRho.Accumulate( sdrho1, sdrho0, tagged0, evWeight )
@@ -2099,13 +2104,6 @@ for ifile in files : #{ Loop over root files
                     h_rhostar_all[selection].Fill( sdrhostar1, evWeight )
                     h_jetrho_vs_tau21AK8[selection].Fill( sdrho1, tau21_1, evWeight )
 
-                    if options.applyHadronicTriggers : 
-                        ha_ptAK8[iht].Fill( vHad1.Perp(), pvWeight )
-                        ha_yAK8[iht].Fill( vHad1.Rapidity(), pvWeight )
-                        ha_mAK8[iht].Fill( vHad1.M(), pvWeight )
-                        ha_msoftdropAK8[iht].Fill( sdm1, pvWeight )
-                        ha_rho_all[iht].Fill( sdrho1, pvWeight )
-                                        
                     printString += 'taggable 1'
                     if options.makeMistag == False : 
                         predJetRho.Accumulate( sdrho0, sdrho1, tagged1, evWeight )
