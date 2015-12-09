@@ -88,7 +88,7 @@ ROOT.gStyle.SetTitleSize(30, "XYZ")
 ROOT.gStyle.SetLabelFont(43, "XYZ")
 ROOT.gStyle.SetLabelSize(24, "XYZ")
 
-lumi = 2110. 
+lumi = 2110.
 
 # get the predicted distribution
 predFile = ROOT.TFile( options.predFile )
@@ -142,7 +142,7 @@ ROOT.SetOwnership( predJetSDRho, False )
 myfile = ROOT.TFile( options.infile )
 
 # retrieve the ntuple of interest
-t = ROOT.gDirectory.Get( 'otree' )
+t = ROOT.gDirectory.Get( 'treeDumper/EDBRCandidates' )
 entries = t.GetEntriesFast()
 
 for jentry in xrange( entries ):
@@ -159,28 +159,34 @@ for jentry in xrange( entries ):
         continue
 
     FatJet = ROOT.TLorentzVector()
-    FatJet.SetPtEtaPhiE( t.ungroomed_jet_pt, t.ungroomed_jet_eta, t.ungroomed_jet_phi, t.ungroomed_jet_e)
-    sdm0 = t.jet_mass_so
-    sdpt0 = t.jet_pt_so
-    sdrho0 = -1.0
-    if sdpt0 > 0. :
-        sdrho0 = ( sdm0 / (sdpt0 * 0.8))**2
-    Lepton = ROOT.TLorentzVector()
-    Lepton.SetPtEtaPhiE( t.l_pt, t.l_eta, t.l_phi, t.l_e)
-    MET = ROOT.TLorentzVector()
-    MET.SetPtEtaPhiE( t.pfMET, 0, t.pfMET_Phi, t.pfMET )
-    Vlep = Lepton + MET
+    FatJet.SetPtEtaPhiM( t.ptjet1, t.etajet1, t.phijet1, t.massjet1)
+    sdm0 = t.softjet1
+    
+    sdrho0 = t.rhojet1
+
+    Lepton1 = ROOT.TLorentzVector()
+    Lepton2 = ROOT.TLorentzVector()
+
+    Lepton1.SetPtEtaPhiM( t.ptlep1, t.etalep1, t.philep1, 0)
+    Lepton2.SetPtEtaPhiM( t.ptlep2, t.etalep2, t.philep2, 0)
+
+    Vlep = Lepton1 + Lepton2
+
     cut =\
-      ( (options.LeptonType == 0 and Lepton.Perp() > 120. and MET.Perp() > 80.) or (options.LeptonType == 1 and Lepton.Perp() > 55. and MET.Perp() > 40.) )  and\
-      Vlep.Perp() > 200. and\
+      t.ptVlep > 200. and\
       sdrho0 > 1e-3 and \
       FatJet.Perp() >   350. 
 
 
     if not cut :
         continue
-    
-    tau21 = t.jet_tau2tau1
+
+    tau2 = t.tau2
+    tau1 = t.tau1
+    if tau1 > 0.00001 : 
+        tau21 = tau2 / tau1
+    else :
+        continue
 
     taggable = options.sdmassCutLo < sdm0 and sdm0 < options.sdmassCutHi
 
@@ -215,7 +221,7 @@ for jentry in xrange( entries ):
 
 
     predJetPt.Accumulate( FatJet.Perp(), sdrho0, tagged0, weight )
-    predJetMVV.Accumulate( t.mass_lvj_type2, sdrho0, tagged0, weight )
+    predJetMVV.Accumulate( t.candMass, sdrho0, tagged0, weight )
     predJetMVVMod.Accumulate( vvCandMod.M(), sdrho0, tagged0, weight )
     predJetSDMass.Accumulate( sdm0, sdrho0, tagged0, weight )
     predJetMass.Accumulate( FatJet.M(), sdrho0, tagged0, weight )

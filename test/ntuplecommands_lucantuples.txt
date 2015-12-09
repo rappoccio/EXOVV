@@ -1,14 +1,14 @@
 
 # Create the rho files, data and MC together. 
 # First signal region : 
-python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb_highpt --signalRegion --weight "(wSampleWeight*eff_and_pu_Weight)"
+python -i rhoonthefly_lucantuples.py --outlabel wv2110invpb_highpt --signalRegion --weight "(wSampleWeight*eff_and_pu_Weight)"
 
 Closure bias :
  1.7200e-01  9.0225e-02  5.4846e-02  6.8185e-02  6.6091e-02  6.3557e-02  9.9549e-02  5.5837e-02  1.5739e-01  1.0013e+00 
 
 
 # then cross check
-python -i rhoonthefly_lucantuples.py --outlabel wv1263invpb --weight "(wSampleWeight*eff_and_pu_Weight)"
+python -i rhoonthefly_lucantuples.py --outlabel wv2110invpb --weight "(wSampleWeight*eff_and_pu_Weight)"
 
 Closure bias : 
  1.1302e-01  1.6380e-01  1.3896e-01  2.1344e-01  1.0395e-01  7.6215e-02  1.0624e-01  1.2215e-01  9.4847e-02  1.1605e-01 
@@ -19,7 +19,7 @@ Closure bias :
 
 # Make pred dists and plots for ttbar MC
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_TTbar.root --outlabel luca_ttbar_el --LeptonType 0 --weight "(wSampleWeight*eff_and_pu_Weight)"
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root --outlabel luca_ttbar_mu --LeptonType 1 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root --outlabel luca_ttbar_mu --LeptonType 1 --weight "(wSampleWeight*eff_and_pu_Weight)"
 
 # Now make MC pred dists with the weighting applied, but no mod mass
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET --weight "(wSampleWeight*eff_and_pu_Weight)" 
@@ -41,25 +41,25 @@ hadd -f luca_wjets_predplots.root luca_wjets_el_predplots.root luca_wjets_mu_pre
 
 
 # Make pretty plots of observed and predicted rates. 
-python -i plotobspred_subtractmc.py --fileWJets luca_wjets_predplots --fileTTbar luca_ttbar_predplots
+python -i plotobspred_subtractmc.py --fileWJets luca_wjets_predplots --fileTTbar luca_ttbar_predplots --outstr wvMC_results
 
 
 
 # Now make the DATA pred dists with the weighting applied.
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data.root --outlabel luca_mu --LeptonType 1
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data.root --outlabel luca_el --LeptonType 0
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data_golden_2p1.root --outlabel luca_mu --LeptonType 1
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data_golden_2p1.root --outlabel luca_el --LeptonType 0
 
 # Add el and mu together
 hadd -f luca_predplots.root luca_el_predplots.root luca_mu_predplots.root
 
-python -i plotobspred_subtractmc.py --fileData luca_predplots --fileTTbar luca_ttbar_predplots
+python -i plotobspred_subtractmc.py --fileData luca_predplots --fileTTbar luca_ttbar_predplots --outstr wv2110invpb_results
 
 
 
 
 Cut and paste commands : 
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_TTbar.root --outlabel luca_ttbar_el --LeptonType 0 --weight "(wSampleWeight*eff_and_pu_Weight)"
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root --outlabel luca_ttbar_mu --LeptonType 1 
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_TTbar.root --outlabel luca_ttbar_mu --LeptonType 1 --weight "(wSampleWeight*eff_and_pu_Weight)"
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET --weight "(wSampleWeight*eff_and_pu_Weight)" 
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET --weight "(wSampleWeight*eff_and_pu_Weight)" 
 hadd -f luca_ttbar_predplots.root luca_ttbar_el_predplots.root luca_ttbar_mu_predplots.root
@@ -68,10 +68,57 @@ mv luca_wjets_predplots.root luca_modfile_wjets.root
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_WJets.root --outlabel luca_wjets_el --LeptonType 0 --predHist rLoModWJET  --modFile luca_modfile_wjets.root  --weight wSampleWeight 
 python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_WJets.root --outlabel luca_wjets_mu --LeptonType 1 --predHist rLoModWJET  --modFile luca_modfile_wjets.root  --weight wSampleWeight 
 hadd -f luca_wjets_predplots.root luca_wjets_el_predplots.root luca_wjets_mu_predplots.root
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data.root --outlabel luca_mu --LeptonType 1
-python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data.root --outlabel luca_el --LeptonType 0
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data_golden_2p1.root --outlabel luca_mu --LeptonType 1
+python bkgquick_lucantuples.py --infile /data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data_golden_2p1.root --outlabel luca_el --LeptonType 0
 hadd -f luca_predplots.root luca_el_predplots.root luca_mu_predplots.root
 
 
-python -i plotobspred_subtractmc.py --fileWJets luca_wjets_predplots --fileTTbar luca_ttbar_predplots
-python -i plotobspred_subtractmc.py --fileData luca_predplots --fileTTbar luca_ttbar_predplots
+python -i plotobspred_subtractmc.py --fileWJets luca_wjets_predplots --fileTTbar luca_ttbar_predplots --outstr wvMC_results
+python -i plotobspred_subtractmc.py --fileData luca_predplots --fileTTbar luca_ttbar_predplots --outstr wv2110invpb_results
+
+
+
+
+
+
+
+For Jose's ntuples :
+
+
+
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/backgroundV2/treeEDBR_T_T.root --outlabel jose_ttbar_el --LeptonType 0 --weight "totalWeight"
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/backgroundV2/treeEDBR_T_T.root --outlabel jose_ttbar_mu --LeptonType 1 --weight "totalWeight"
+
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-200to400.root --outlabel jose_zjets_200to400 --LeptonType 0 --weight "totalWeight" --predHist rLoModWJET
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-400to600.root --outlabel jose_zjets_400to600 --LeptonType 0 --weight "totalWeight" --predHist rLoModWJET
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-600toInf.root --outlabel jose_zjets_600toInf --LeptonType 0 --weight "totalWeight" --predHist rLoModWJET
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-200to400.root --outlabel jose_zjets_200to400 --LeptonType 1 --weight "totalWeight" --predHist rLoModWJET
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-400to600.root --outlabel jose_zjets_400to600 --LeptonType 1 --weight "totalWeight" --predHist rLoModWJET
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-600toInf.root --outlabel jose_zjets_600toInf --LeptonType 1 --weight "totalWeight" --predHist rLoModWJET
+
+
+
+hadd -f jose_ttbar_predplots.root jose_ttbar_el_predplots.root jose_ttbar_mu_predplots.root
+hadd -f jose_zjets_predplots.root jose_zjets_*to*_predplots.root
+
+
+mv jose_zjets_predplots.root jose_modfile_zjets.root
+
+
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-200to400.root --outlabel jose_zjets_200to400 --LeptonType 0 --weight "totalWeight" --predHist rLoModWJET --modFile jose_modfile_zjets.root
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-400to600.root --outlabel jose_zjets_400to600 --LeptonType 0 --weight "totalWeight" --predHist rLoModWJET --modFile jose_modfile_zjets.root
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-600toInf.root --outlabel jose_zjets_600toInf --LeptonType 0 --weight "totalWeight" --predHist rLoModWJET --modFile jose_modfile_zjets.root
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-200to400.root --outlabel jose_zjets_200to400 --LeptonType 1 --weight "totalWeight" --predHist rLoModWJET --modFile jose_modfile_zjets.root
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-400to600.root --outlabel jose_zjets_400to600 --LeptonType 1 --weight "totalWeight" --predHist rLoModWJET --modFile jose_modfile_zjets.root
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/backgroundV2/treeEDBR_DYJetsToLL_HT-600toInf.root --outlabel jose_zjets_600toInf --LeptonType 1 --weight "totalWeight" --predHist rLoModWJET --modFile jose_modfile_zjets.root
+hadd -f jose_zjets_predplots.root jose_zjets_*to*_predplots.root
+
+
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/elChannel/dataV2/treeEDBR_SingleElectron.root --outlabel jose_el --LeptonType 0
+python bkgquick_josentuples.py --infile /data/EXOVV/EDBRtrees/fullSelection/muChannel/dataV2/treeEDBR_SingleMuon.root --outlabel jose_mu --LeptonType 1
+
+hadd -f jose_predplots.root jose_el_predplots.root jose_mu_predplots.root
+
+
+python -i plotobspred_subtractmc.py --fileWJets jose_zjets_predplots --fileTTbar jose_ttbar_predplots --isZ --outstr zvMC_results
+python -i plotobspred_subtractmc.py --fileData jose_predplots --fileTTbar jose_ttbar_predplots --isZ --outstr zv2110invpb_results

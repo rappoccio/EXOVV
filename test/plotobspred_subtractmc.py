@@ -19,6 +19,18 @@ parser.add_option('--blind', action = 'store_true',
                   default = False,
                   help='Blind data?')
 
+parser.add_option('--isZ', action = 'store_true',
+                  dest='isZ',
+                  default = False,
+                  help='Is this the Z channel?')
+
+
+parser.add_option('--outstr', type='string', action='store',
+                  dest='outstr',
+                  default = None,
+                  help='Output string')
+
+
 parser.add_option('--fileData', type='string', action='store',
                   dest='fileData',
                   default = None,
@@ -96,7 +108,7 @@ xaxes = {
 
 xaxis = xaxes[options.hist]
     
-lumi = 1263
+lumi = 2110
 
 ttbar_norm = 861.57 * lumi / 96834559.
 
@@ -130,7 +142,10 @@ pad1.cd()
 hobs.SetMarkerStyle(20)
 
 hobs_ttbar.SetFillColor(ROOT.kGreen)
-hpred.SetFillColor(ROOT.kRed)
+if options.isZ == False : 
+    hpred.SetFillColor(ROOT.kRed)
+else :
+    hpred.SetFillColor(ROOT.kBlue-7)
 #hpred.SetLineColor(2)
 #hpred.SetMarkerColor(2)
 #hpred.SetMarkerStyle(24)
@@ -159,12 +174,23 @@ hs.Draw("axis same")
 hs.GetYaxis().SetTitleOffset(1.0)
 hs.GetXaxis().SetRangeUser( xaxis[0], xaxis[1])
 
+eobs_1500 = ROOT.Double(0.)
+nobs_1500 = hobs.IntegralAndError( hobs.GetXaxis().FindBin(1500.), hobs.GetXaxis().FindBin(2000.), eobs_1500 )
+ebkg_1500 = ROOT.Double(0.)
+nbkg_1500 = hs.GetStack().Last().IntegralAndError( hs.GetStack().Last().GetXaxis().FindBin(1500.), hs.GetStack().Last().GetXaxis().FindBin(2000.), ebkg_1500 )
+
+print 'Expected background  1500-2000 : %6.2f +- %6.2f' % ( nbkg_1500, ebkg_1500)
+print 'Observed             1500-2000 : %6.2f +- %6.2f' % ( nobs_1500, eobs_1500 )
+
 leg = ROOT.TLegend(0.6,0.6,0.8,0.8)
 if not isMC : 
     leg.AddEntry( hobs, 'Data', 'p')
 else :
     leg.AddEntry( hobs, 'Observed MC', 'p')
-leg.AddEntry( hpred, 'Predicted W+Jets', 'f')
+if options.isZ == False :
+    leg.AddEntry( hpred, 'Predicted W+Jets', 'f')
+else :
+    leg.AddEntry( hpred, 'Predicted Z+Jets', 'f')
 leg.AddEntry( hobs_ttbar, 't#bar{t} MC', 'f')
 
 leg.SetFillColor(0)
@@ -204,10 +230,16 @@ ratio.GetXaxis().SetTitleOffset(3.0)
 canv.cd()
 canv.Update()
 
-if not isMC : 
-    canv.Print(options.fileData + '_obspred.pdf', 'pdf')
-    canv.Print(options.fileData + '_obspred.png', 'png')
+
+outstr = ''
+if options.outstr != None :
+    outstr = options.outstr
 else :
-    canv.Print(options.fileWJets + '_obspred.pdf', 'pdf')
-    canv.Print(options.fileWJets + '_obspred.png', 'png')
+    if not isMC :
+        outstr = options.fileData
+    else :
+        outstr = options.fileWJets
+        
+canv.Print(outstr + '_obspred.pdf', 'pdf')
+canv.Print(outstr + '_obspred.png', 'png')
 

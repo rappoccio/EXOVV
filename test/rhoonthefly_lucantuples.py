@@ -51,13 +51,13 @@ ROOT.gStyle.SetTitleSize(30, "XYZ")
 ROOT.gStyle.SetLabelFont(43, "XYZ")
 ROOT.gStyle.SetLabelSize(24, "XYZ")
 
-lumi = 1263.88
+lumi = 2100
 
 weight = '*(' + options.weight + ')'
 
 datasIn = [
-    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data.root' ),
-    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data.root' ),
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_el/WWTree_data_golden_2p1.root' ),
+    ROOT.TFile( '/data/EXOVV/WWTree_12nov_jecV6/WWTree_mu/WWTree_data_golden_2p1.root' ),
     ]
 
 wjetsIn =[
@@ -161,6 +161,9 @@ for [ name, title, taucut, mMin, mMax, ptMin, ptMax, style ] in plotsToMake :
         #hdata.SetName(dataname)
         #hdata.SetTitle( ';' + xaxis )
         hdata.SetMarkerStyle(style)
+        for ibin in xrange(1,hdata.GetNbinsX()-1) :
+            hdata.SetBinContent( ibin, hdata.GetBinContent(ibin) / hdata.GetXaxis().GetBinWidth(ibin) )
+            hdata.SetBinError( ibin, hdata.GetBinError(ibin) / hdata.GetXaxis().GetBinWidth(ibin) )
         #hdata.Sumw2()        
         if dataIndex == 0 :
             idataSum = hdata.Clone()
@@ -182,6 +185,9 @@ for [ name, title, taucut, mMin, mMax, ptMin, ptMax, style ] in plotsToMake :
         hwjet.SetMarkerStyle(style)
         #hwjet.Sumw2()
         hwjet.Scale( lumi * 1.21 )
+        for ibin in xrange(1,hwjet.GetNbinsX()-1) :
+            hwjet.SetBinContent( ibin, hwjet.GetBinContent(ibin) / hwjet.GetXaxis().GetBinWidth(ibin) )
+            hwjet.SetBinError( ibin, hwjet.GetBinError(ibin) / hwjet.GetXaxis().GetBinWidth(ibin) )
         if wjetIndex == 0 :
             iwjetSum = hwjet.Clone()
         else :
@@ -200,6 +206,9 @@ for [ name, title, taucut, mMin, mMax, ptMin, ptMax, style ] in plotsToMake :
         httbar.SetMarkerStyle(style)
         #httbar.Sumw2()
         httbar.Scale( lumi )
+        for ibin in xrange(1,httbar.GetNbinsX()-1) :
+            httbar.SetBinContent( ibin, httbar.GetBinContent(ibin) / httbar.GetXaxis().GetBinWidth(ibin) )
+            httbar.SetBinError( ibin, httbar.GetBinError(ibin) / httbar.GetXaxis().GetBinWidth(ibin) )
         if ttbarIndex == 0 :
             ittbarSum = httbar.Clone()
         else :
@@ -238,8 +247,8 @@ for ndxToPlot in range(0, len(plotsToMake), 2) :
     httbar2.SetFillColor( ROOT.kGreen + 1)
     httbar2.SetFillStyle(3005)
 
-    hstack1 = ROOT.THStack( hwjet1.GetName() + '_stack1', ';#rho = (m/p_{T}R)^{2};Fraction')
-    hstack2 = ROOT.THStack( hwjet2.GetName() + '_stack2', ';#rho = (m/p_{T}R)^{2};Fraction')
+    hstack1 = ROOT.THStack( hwjet1.GetName() + '_stack1', ';#rho = (m/p_{T}R)^{2};Number')
+    hstack2 = ROOT.THStack( hwjet2.GetName() + '_stack2', ';#rho = (m/p_{T}R)^{2};Number')
     hstack1.Add( httbar1 )
     hstack1.Add( hwjet1 )
     hstack2.Add( httbar2 )
@@ -267,6 +276,8 @@ for ndxToPlot in range(0, len(plotsToMake), 2) :
     maxscale = max( hstack1.GetMaximum(), hdata1.GetMaximum()) * 1.2
     hstack1.SetMaximum( maxscale )
 
+    c.SetLogx()
+
     hstacks.append( hstack1 )
     hstacks.append( hstack2 )
     
@@ -284,7 +295,7 @@ for ndxToPlot in range(0, len(plotsToMake), 2) :
     tlx.SetNDC()
     tlx.SetTextFont(42)
     tlx.SetTextSize(0.057)
-    tlx.DrawLatex(0.131, 0.91, "CMS Preliminary #sqrt{s}=13 TeV, " + str(lumi) + " pb^{-1}")
+    tlx.DrawLatex(0.3, 0.91, "CMS Preliminary #sqrt{s}=13 TeV, " + str(lumi) + " pb^{-1}")
     tlx.SetTextSize(0.025)
 
     tlxm = ROOT.TLatex()

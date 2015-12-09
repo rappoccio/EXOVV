@@ -1,0 +1,10 @@
+python rhoonthefly_hadronic.py --isData --outlabel rho_plots_pt200to350_mcut28_tau065 --ptMin 200. --ptMax 350. --massMin 28.751 --massMax 105. --tauCut 0.65 
+python rhoonthefly_hadronic.py --isData --outlabel rho_plots_pt200to350_mcut50_tau06 --ptMin 200. --ptMax 350. --massMin 50. --massMax 105. --tauCut 0.6 
+python rhoonthefly_hadronic.py --isData --outlabel rho_plots_pt350toInf_mcut50_tau06 --ptMin 350. --massMin 50. --massMax 105. --tauCut 0.6 
+
+python rhoonthefly_hadronic.py --outlabel rho_plots_pt200to350_mcut28_tau065 --ptMin 200. --ptMax 350. --massMin 28.751 --massMax 105. --tauCut 0.65 
+python rhoonthefly_hadronic.py --outlabel rho_plots_pt200to350_mcut50_tau06 --ptMin 200. --ptMax 350. --massMin 50. --massMax 105. --tauCut 0.6 
+python rhoonthefly_hadronic.py --outlabel rho_plots_pt350toInf_mcut50_tau06 --ptMin 350. --massMin 50. --massMax 105. --tauCut 0.6 
+
+
+
