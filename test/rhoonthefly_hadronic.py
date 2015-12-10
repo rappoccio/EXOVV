@@ -184,19 +184,10 @@ tauVsRho = ROOT.TH2F('tauVsRho',';#rho;#tau_{21}', 25, 0, 1, 25, 0, 1)
 ptHist = ROOT.TH1F('ptHist', 'ptHist', 400, 0., 4000.)
 massHist = ROOT.TH1F('massHist', 'massHist', 400, 0., 400.)
 
-rhoNum = ROOT.TH1F('pt' +
-                   ptMinStr + 'to' +
-                   ptMaxStr + '_m' +
-                   massMinStr + 'to' +
-                   massMaxStr + '_tau0' +
-                   str(int(options.tauCut * 10)),
+rhoNum = ROOT.TH1F('rhoNum',
                    ';#rho;Number',
                    nrhobins, rhobins)
-rhoDen = ROOT.TH1F('pt' +
-                   ptMinStr + 'to' +
-                   ptMaxStr + '_m' +
-                   massMinStr + 'to' +
-                   massMaxStr + '_tau10',
+rhoDen = ROOT.TH1F('rhoDen',
                    ';#rho;Number',
                    nrhobins, rhobins)
 
@@ -320,7 +311,10 @@ for ibin in xrange( 1, rhoNum.GetNbinsX() - 1) :
     if abs(den) > 0 :        
         rhoDen.SetBinContent( ibin, den/binwidth )
         rhoDen.SetBinError( ibin, dden/binwidth )
-        
+
+rate = rhoNum.Clone()
+rate.Divide(rhoNum,rhoDen,1,1,"b")
+rate.SetName("rate")
 fout.cd()
 fout.Write()
 fout.Close()

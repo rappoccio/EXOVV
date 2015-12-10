@@ -30,6 +30,7 @@ import ROOT
 import sys
 ROOT.gROOT.Macro("rootlogon.C")
 ROOT.gStyle.SetOptStat(000000)
+ROOT.gStyle.SetOptFit(0000)
 tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(42)
@@ -50,10 +51,14 @@ ROOT.gStyle.SetLabelSize(24, "XYZ")
 
 f = ROOT.TFile(options.file + '.root')
 
-hobs = f.Get("pred_mvv")
-hpred= f.Get("pred_mvv_pred")
+hobs = f.Get("pred_mvvmod")
+hpred= f.Get("pred_mvvmod_pred")
 
-lumi = 1263
+lumi = 2500
+
+if not options.isData :
+    hobs.Scale(lumi)
+    hpred.Scale(lumi)
 
 
 canv = ROOT.TCanvas('c1','c1', 800, 700)
@@ -68,24 +73,35 @@ pad2.Draw()
 
 pad1.cd()
 hobs.SetMarkerStyle(20)
-hpred.SetLineColor(2)
-hpred.SetMarkerColor(2)
-hpred.SetMarkerStyle(24)
+hpred.SetFillColor( ROOT.kYellow )
+hpredclone = hpred.Clone()
+hpredclone.SetName("hpredclone")
+hpredclone.SetFillColor(1)
+hpredclone.SetFillStyle(3004)
+hpredclone.SetMarkerStyle(0)
+
+#hpred.SetLineColor(2)
+#hpred.SetMarkerColor(2)
+#hpred.SetMarkerStyle(24)
 
 hs = ROOT.THStack('hs', ';m_{VV} (GeV);Number')
 hs.Add( hobs )
-hs.Add( hpred )
+hs.Add( hpred, 'hist' )
 hs.Draw("nostack")
 hs.GetYaxis().SetTitleOffset(1.0)
-hs.GetXaxis().SetRangeUser(1000., 3500.)
+#hs.GetXaxis().SetRangeUser(1000., 5000.)
+hpredclone.Draw("same e3")
+hobs.Draw("same")
 
 leg = ROOT.TLegend(0.6,0.6,0.8,0.8)
-if not options.isData : 
-    leg.SetHeader("W+Jets MC")
+if options.isData :
+    leg.AddEntry( hobs, 'Data', 'p')
+    leg.AddEntry( hpred, 'Predicted QCD', 'f')
 else :
-    leg.SetHeader("Data")
-leg.AddEntry( hobs, 'Observed', 'p')
-leg.AddEntry( hpred, 'Predicted', 'p')
+    leg.AddEntry( hobs, 'Observed QCD MC', 'p')
+    leg.AddEntry( hpred, 'Predicted QCD MC', 'f')
+
+
 
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
@@ -115,11 +131,13 @@ ratio.SetTitle(';' + hs.GetXaxis().GetTitle() + ';Ratio')
 ratio.SetMinimum(0.)
 ratio.SetMaximum(2.)
 ratio.GetYaxis().SetNdivisions(2,4,0,False)
-ratio.GetXaxis().SetRangeUser(1000.,3500.)
+#ratio.GetXaxis().SetRangeUser(1000.,3500.)
 ratio.Draw('e3')
+fit = ratio.Fit('pol1')
 ratio.GetYaxis().SetTitleOffset(1.0)
 ratio.GetXaxis().SetTitleOffset(3.0)
 #ratio.SetTitleSize(20, "XYZ")
+
 
 canv.cd()
 canv.Update()
