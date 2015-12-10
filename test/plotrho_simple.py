@@ -143,6 +143,62 @@ pad2.cd()
 rates = [ hLo_data, hLoMod_data, hHi_data ]
 ratemcs = [ hLo_mc, hLoMod_mc, hHi_mc ]
 
+
+for irate in rates :
+    for ibin in range(1,irate.GetNbinsX()) :
+        val = irate.GetBinContent(ibin)
+        err = 0.
+        if abs(val) > 0 : 
+            err1 = irate.GetBinError(ibin) / val
+            err2 = 0.05
+            err = math.sqrt( err1**2 + err2**2) * val
+        irate.SetBinError( ibin, err )
+
+
+for irate in ratemcs :
+    for ibin in range(1,irate.GetNbinsX()) :
+        val = irate.GetBinContent(ibin)
+        err = 0.
+        if abs(val) > 0 : 
+            err1 = irate.GetBinError(ibin) / val
+            err2 = 0.05
+            err = math.sqrt( err1**2 + err2**2) * val
+        irate.SetBinError( ibin, err )
+
+
+
+closureErrors = []
+prediction  = ratemcs[1]
+truth = ratemcs[2]
+
+
+# Get the difference in closure in MC, apply that as a systematic in data and MC
+for ibin in xrange( 1, truth.GetNbinsX() ) :    
+    val = prediction.GetBinContent(ibin)
+    err1 = prediction.GetBinError(ibin)
+    err2 = abs(prediction.GetBinContent(ibin) - truth.GetBinContent(ibin))
+    prediction.SetBinError( ibin, math.sqrt(err1**2 + err2**2) )
+
+    if val > 0.0 : 
+        closureErrors.append( math.sqrt(err1**2 + err2**2) / val  )
+    else :
+        closureErrors.append( 0.0 )
+
+
+for ival in closureErrors :
+    print ' %6.4e' % (ival),
+print ''
+
+predictionData = rates[1]
+for ibin in xrange( 1, predictionData.GetNbinsX() ) :
+    err1 = predictionData.GetBinError(ibin)
+    err2 = closureErrors[ibin-1] * predictionData.GetBinContent(ibin)
+    predictionData.SetBinError( ibin, math.sqrt(err1**2 + err2**2) )    
+
+
+    
+
+
 for irate in xrange( len(rates) ) :
     rate = rates[irate]
     ratemc = ratemcs[irate]
