@@ -68,6 +68,7 @@ tlx.SetTextSize(0.057)
 
 
 ROOT.gStyle.SetOptStat(000000)
+ROOT.gStyle.SetOptFit(0000)
 #ROOT.gROOT.Macro("rootlogon.C")
 #ROOT.gStyle.SetPadRightMargin(0.15)
 ROOT.gStyle.SetOptStat(000000)
@@ -174,6 +175,8 @@ hs.Draw("axis same")
 hs.GetYaxis().SetTitleOffset(1.0)
 hs.GetXaxis().SetRangeUser( xaxis[0], xaxis[1])
 
+hs.SetMinimum(1e-3)
+
 eobs_1500 = ROOT.Double(0.)
 nobs_1500 = hobs.IntegralAndError( hobs.GetXaxis().FindBin(1500.), hobs.GetXaxis().FindBin(2000.), eobs_1500 )
 ebkg_1500 = ROOT.Double(0.)
@@ -219,8 +222,11 @@ ratio.SetTitle(';' + hs.GetXaxis().GetTitle() + ';Ratio')
 ratio.SetMinimum(0.)
 ratio.SetMaximum(2.)
 ratio.GetYaxis().SetNdivisions(2,4,0,False)
+#fit = ROOT.TF1("fit", "pol1", 500, 3000)
 if not options.blind : 
     ratio.Draw('e3')
+#    if isMC : 
+#        ratio.Fit("fit", "LRM")
 else :
     ratio.Draw("axis")
 ratio.GetYaxis().SetTitleOffset(1.0)

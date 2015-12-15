@@ -1585,6 +1585,8 @@ for ifile in files : #{ Loop over root files
         ak8JetsPassTag = []
         AK8Rho = []
         AK8SoftDropM = []
+        AK8SoftDropSJBDisc0 = []
+        AK8SoftDropSJBDisc1 = []
 
         if len( h_jetsAK8Pt.product()) > 0 : 
             #AK8Pt = h_jetsAK8Pt.product()   # Got this earlier, don't get it twice. 
@@ -1640,6 +1642,8 @@ for ifile in files : #{ Loop over root files
             #$ Get Jet Rho and softdrop mass
             sp4_0 = None
             sp4_1 = None
+            sjbdisc_0 = None
+            sjbdisc_1 = None
             ival = int(AK8vSubjetIndex0[i])            
             if ival > -1 :
                 spt0    = AK8SubJetsPt[ival] * AK8SubJetsjecFactor0[ival]
@@ -1648,6 +1652,7 @@ for ifile in files : #{ Loop over root files
                 sm0   = AK8SubJetsMass[ival]* AK8SubJetsjecFactor0[ival]
                 sp4_0Raw = ROOT.TLorentzVector()
                 sp4_0Raw.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
+                sjbdisc_0 = AK8SubJetsBDisc[ival]
 
                 #print 'error... jet corrections are reapplied on existing corrections, dude... fix me.'
 
@@ -1667,6 +1672,7 @@ for ifile in files : #{ Loop over root files
                 sm1   = AK8SubJetsMass[ival]* AK8SubJetsjecFactor0[ival]
                 sp4_1Raw = ROOT.TLorentzVector()
                 sp4_1Raw.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )
+                sjbdisc_1 = AK8SubJetsBDisc[ival]
 
                 ak4JetCorrectorForMass.setJetEta( sp4_1Raw.Eta() )
                 ak4JetCorrectorForMass.setJetPt ( sp4_1Raw.Perp() )
@@ -1681,6 +1687,8 @@ for ifile in files : #{ Loop over root files
                 jetrho = -1.0
                 AK8SoftDropM.append( -1.0 )
                 AK8Rho.append(-1.0)
+                AK8SoftDRopSJBDisc0.append( -999. )
+                AK8SoftDRopSJBDisc1.append( -999. )
             else : 
                 softdrop_p4 = sp4_0 + sp4_1
                 jetR = 0.8
@@ -1688,6 +1696,9 @@ for ifile in files : #{ Loop over root files
                 jetrho *= jetrho
                 AK8SoftDropM.append( softdrop_p4.M() )
                 AK8Rho.append( jetrho )
+                AK8SoftDRopSJBDisc0.append( sjbdisc_0 )
+                AK8SoftDRopSJBDisc1.append( sjbdisc_1 )
+                
 
             
             #$ Jet ID for AK8 jets
