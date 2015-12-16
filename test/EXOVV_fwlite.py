@@ -1687,8 +1687,8 @@ for ifile in files : #{ Loop over root files
                 jetrho = -1.0
                 AK8SoftDropM.append( -1.0 )
                 AK8Rho.append(-1.0)
-                AK8SoftDRopSJBDisc0.append( -999. )
-                AK8SoftDRopSJBDisc1.append( -999. )
+                AK8SoftDropSJBDisc0.append( -999. )
+                AK8SoftDropSJBDisc1.append( -999. )
             else : 
                 softdrop_p4 = sp4_0 + sp4_1
                 jetR = 0.8
@@ -1696,8 +1696,8 @@ for ifile in files : #{ Loop over root files
                 jetrho *= jetrho
                 AK8SoftDropM.append( softdrop_p4.M() )
                 AK8Rho.append( jetrho )
-                AK8SoftDRopSJBDisc0.append( sjbdisc_0 )
-                AK8SoftDRopSJBDisc1.append( sjbdisc_1 )
+                AK8SoftDropSJBDisc0.append( sjbdisc_0 )
+                AK8SoftDropSJBDisc1.append( sjbdisc_1 )
                 
 
             
