@@ -747,8 +747,8 @@ if options.writeTree :
     FatJetTau32         = array('f', [-1., -1.])
     FatJetTau21         = array('f', [-1., -1.]) 
     FatJetSDnsubjets    = array('f', [-1., -1.])
-    FatJetSDbdiscW      = array('f', [-1., -1.])
-    FatJetSDbdiscB      = array('f', [-1., -1.])
+    FatJetSDbdisc0      = array('f', [-1., -1.])
+    FatJetSDbdisc1      = array('f', [-1., -1.])
     FatJetSDmaxbdisc    = array('f', [-1., -1.])
     FatJetSDsubjetWpt   = array('f', [-1., -1.])
     FatJetSDsubjetWmass = array('f', [-1., -1.])
@@ -813,8 +813,8 @@ if options.writeTree :
     TreeEXOVV.Branch('FatJetTau32'         , FatJetTau32         ,  'FatJetTau32[NFatJet]/F'         )
     TreeEXOVV.Branch('FatJetTau21'         , FatJetTau21         ,  'FatJetTau21[NFatJet]/F'         )
     TreeEXOVV.Branch('FatJetSDnsubjets'    , FatJetSDnsubjets    ,  'FatJetSDnsubjets[NFatJet]/F'    )
-    TreeEXOVV.Branch('FatJetSDbdiscW'      , FatJetSDbdiscW      ,  'FatJetSDbdiscW[NFatJet]/F'      )
-    TreeEXOVV.Branch('FatJetSDbdiscB'      , FatJetSDbdiscB      ,  'FatJetSDbdiscB[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetSDbdisc0'      , FatJetSDbdisc0      ,  'FatJetSDbdisc0[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetSDbdisc1'      , FatJetSDbdisc1      ,  'FatJetSDbdisc1[NFatJet]/F'      )
     TreeEXOVV.Branch('FatJetSDmaxbdisc'    , FatJetSDmaxbdisc    ,  'FatJetSDmaxbdisc[NFatJet]/F'    )
     TreeEXOVV.Branch('FatJetSDsubjetWpt'   , FatJetSDsubjetWpt   ,  'FatJetSDsubjetWpt[NFatJet]/F'   )
     TreeEXOVV.Branch('FatJetSDsubjetWmass' , FatJetSDsubjetWmass ,  'FatJetSDsubjetWmass[NFatJet]/F' )
@@ -1913,6 +1913,8 @@ for ifile in files : #{ Loop over root files
                 FatJetRhoRatio      [0] = sdrho0
                 FatJetMassSoftDrop  [0] = sdm0
                 FatJetMass          [0] = vHad0.M()
+                FatJetSDbdisc0      [0] = AK8SoftDropSJBDisc0[0]
+                FatJetSDbdisc1      [0] = AK8SoftDropSJBDisc1[0]
                 FatJetTau1          [0] = AK8Tau1[0]
                 FatJetTau2          [0] = AK8Tau2[0]
                 FatJetTau3          [0] = AK8Tau3[0]
@@ -1934,7 +1936,9 @@ for ifile in files : #{ Loop over root files
                 FatJetBDisc         [1] = -1. 
                 FatJetRhoRatio      [1] = -1. 
                 FatJetMassSoftDrop  [1] = -1. 
-                FatJetMass          [1] = -1. 
+                FatJetMass          [1] = -1.
+                FatJetSDbdisc0      [1] = -1.
+                FatJetSDbdisc1      [1] = -1.
                 FatJetTau1          [1] = -1. 
                 FatJetTau2          [1] = -1. 
                 FatJetTau3          [1] = -1. 
@@ -1984,6 +1988,8 @@ for ifile in files : #{ Loop over root files
                 FatJetRhoRatio      [0] = sdrho0
                 FatJetMassSoftDrop  [0] = sdm0
                 FatJetMass          [0] = vHad0.M()
+                FatJetSDbdisc0      [0] = AK8SoftDropSJBDisc0[0]
+                FatJetSDbdisc1      [0] = AK8SoftDropSJBDisc1[0]
                 FatJetTau1          [0] = AK8Tau1[0]
                 FatJetTau2          [0] = AK8Tau2[0]
                 FatJetTau3          [0] = AK8Tau3[0]
@@ -2014,6 +2020,8 @@ for ifile in files : #{ Loop over root files
                 FatJetRhoRatio      [1] = sdrho1
                 FatJetMassSoftDrop  [1] = sdm1
                 FatJetMass          [1] = vHad1.M()
+                FatJetSDbdisc0      [1] = AK8SoftDropSJBDisc0[1]
+                FatJetSDbdisc1      [1] = AK8SoftDropSJBDisc1[1]
                 FatJetTau1          [1] = AK8Tau1[1]
                 FatJetTau2          [1] = AK8Tau2[1]
                 FatJetTau3          [1] = AK8Tau3[1]
