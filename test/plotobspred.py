@@ -20,6 +20,13 @@ parser.add_option('--isData', action='store_true',
 
 
 
+parser.add_option('--blind', action='store_true',
+                  dest='blind',
+                  default = False,
+                  help='Blind signal region?')
+
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -85,13 +92,19 @@ hpredclone.SetMarkerStyle(0)
 #hpred.SetMarkerStyle(24)
 
 hs = ROOT.THStack('hs', ';m_{VV} (GeV);Number')
-hs.Add( hobs )
+if not options.blind : 
+    hs.Add( hobs )
 hs.Add( hpred, 'hist' )
 hs.Draw("nostack")
 hs.GetYaxis().SetTitleOffset(1.0)
 #hs.GetXaxis().SetRangeUser(1000., 5000.)
 hpredclone.Draw("same e3")
-hobs.Draw("same")
+if not options.blind :
+    hobs.Draw("same")
+else :
+    hobs.Draw("axis same")
+
+
 
 leg = ROOT.TLegend(0.6,0.6,0.8,0.8)
 if options.isData :
@@ -132,8 +145,11 @@ ratio.SetMinimum(0.)
 ratio.SetMaximum(2.)
 ratio.GetYaxis().SetNdivisions(2,4,0,False)
 #ratio.GetXaxis().SetRangeUser(1000.,3500.)
-ratio.Draw('e3')
-fit = ratio.Fit('pol1')
+if not options.blind : 
+    ratio.Draw('e3')
+else :
+    ratio.Draw("axis")
+#fit = ratio.Fit('pol1')
 ratio.GetYaxis().SetTitleOffset(1.0)
 ratio.GetXaxis().SetTitleOffset(3.0)
 #ratio.SetTitleSize(20, "XYZ")
@@ -142,7 +158,10 @@ ratio.GetXaxis().SetTitleOffset(3.0)
 canv.cd()
 canv.Update()
 
-canv.Print(options.file + '_obspred.pdf', 'pdf')
-canv.Print(options.file + '_obspred.png', 'png')
-
+if not options.blind : 
+    canv.Print(options.file + '_obspred.pdf', 'pdf')
+    canv.Print(options.file + '_obspred.png', 'png')
+else : 
+    canv.Print(options.file + '_obspred_blind.pdf', 'pdf')
+    canv.Print(options.file + '_obspred_blind.png', 'png')
 

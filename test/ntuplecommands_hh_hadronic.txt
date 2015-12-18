@@ -1,0 +1,17 @@
+python hhrhoonthefly_hadronic.py --isData --outlabel rho_plots_hh_pt200to350_mcut60_tau07 --ptMin 200. --ptMax 350. --massMin 30. --massMax 160. --tauCut 0.7 
+python hhrhoonthefly_hadronic.py --isData --outlabel rho_plots_hh_pt200to350_mcut105_tau06 --ptMin 200. --ptMax 350. --massMin 105. --massMax 160. --tauCut 0.6 
+python hhrhoonthefly_hadronic.py --isData --outlabel rho_plots_hh_pt350toInf_mcut105_tau06 --ptMin 350. --massMin 105. --massMax 160. --tauCut 0.6 
+
+python hhrhoonthefly_hadronic.py --outlabel rho_plots_hh_pt200to350_mcut60_tau07 --ptMin 200. --ptMax 350. --massMin 30. --massMax 160. --tauCut 0.7 
+python hhrhoonthefly_hadronic.py --outlabel rho_plots_hh_pt200to350_mcut105_tau06 --ptMin 200. --ptMax 350. --massMin 105. --massMax 160. --tauCut 0.6 
+python hhrhoonthefly_hadronic.py --outlabel rho_plots_hh_pt350toInf_mcut105_tau06 --ptMin 350. --massMin 105. --massMax 160. --tauCut 0.6 
+
+python -i plotrho_simple.py --dataFileLo rho_plots_hh_pt200to350_mcut105_tau06_data.root --dataFileLoMod rho_plots_hh_pt200to350_mcut60_tau066_data.root --dataFileHi rho_plots_hh_pt350toInf_mcut105_tau06_data.root  --mcFileLo rho_plots_hh_pt200to350_mcut105_tau06_qcdmc.root --mcFileLoMod rho_plots_hh_pt200to350_mcut60_tau066_qcdmc.root --mcFileHi rho_plots_hh_pt350toInf_mcut105_tau06_qcdmc.root  --outname hh2500invpb_highpt
+
+
+python hhbkgquick_hadntuples.py --isData 
+
+python hhbkgquick_hadntuples.py --predHist rLoModMC --outlabel hh2500invpb_bkg_qcd
+
+python -i plotobspred.py --file hh2500invpb_bkg_qcd_predplots
+python -i plotobspred.py --file hh2500invpb_bkg_nom_predplots --isData
