@@ -195,10 +195,10 @@ if options.makeResponseMatrix :
         responses.append(response)
 
 ptBinA = array.array('d', [150, 230, 320, 410, 515, 610, 640, 700])
+nbinsPt = len(ptBinA) - 1
 if options.makeResponseMatrix2D :
         response = ROOT.RooUnfoldResponse()
         response.SetName("2d_response")
-        nbinsPt = len(ptBinA) - 1
         trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, 25, 0, 500)
         measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, 25, 0, 500)
         response.Setup(measVarHist, trueVarHist)
