@@ -1167,8 +1167,9 @@ for ifile in files : #{ Loop over root files
             if options.verbose : 
                 print trigMap
             passTrig, ipt0 = trigHelper( pt0 , trigMap )
-            if options.verbose : 
-                print 'Check : pt0 = ' + str(jetPtAK4[0]) + ', ipt0 = ' + str(ipt0) + ', pass = ' + str(passTrig)
+            if options.verbose :
+              
+                print 'Check : pt0 = ' + str(jetPtAK8[0]) + ', ipt0 = ' + str(ipt0) + ', pass = ' + str(passTrig)
 
 
             if unprescaled :
