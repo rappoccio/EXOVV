@@ -81,7 +81,7 @@ parser.add_option('--maxTau21', type='float', action='store',
                   help='Maximum Tau21 cut')
 
 parser.add_option('--weightQCDSample', type='float', action='store',
-                  default=False,
+                  default=None,
                   dest='weightQCDSample',
                   help='Weight the QCD samples')
                   
@@ -128,6 +128,8 @@ trigsToGet = [
     'HLT_PFJet450',
     'HLT_PFJet500' 
     ]
+if options.verbose :
+    print 'start solving issues, its verbose time!'    
 # Jet energy resolution (nominal, up/down) for AK8 jets
 def getJER(jetEta, jerType) :
 
@@ -186,7 +188,8 @@ def trigHelper( pt0, trigs ) :
             break
     ipass = trigs[ipt0]
     return ipass, ipt0
-
+if options.verbose :
+    print 'definitions made for everything'
 responses = []
 if options.makeResponseMatrix :
     for ipt,pt in enumerate(pt0cuts) :
@@ -632,7 +635,8 @@ ak8JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK8)
 
 #@ EVENT LOOP
 
-    
+if options.verbose :
+     print 'handles gotten, start event loop'    
 filelist = file( options.files )
 filesraw = filelist.readlines()
 files = []
@@ -647,11 +651,13 @@ for ifile in filesraw : #{ Loop over text file and find root files linked
 
 # loop over files
 for ifile in files : #{ Loop over root files
-    print 'Processing file ' + ifile
+    if options.verbose :
+        print 'Processing file ' + ifile
     events = Events (ifile)
     if options.maxevents > 0 and nevents > options.maxevents :
         break
-
+    if options.verbose :
+        print 'begin looping events'
     # loop over events in this file
     i = 0
 
@@ -663,7 +669,10 @@ for ifile in files : #{ Loop over root files
     
     for event in events: #{ Loop over events in root files
         if options.maxevents > 0 and nevents > options.maxevents :
+            if options.verbose : 
+                print 'breaking for max events'
             break
+            
         i += 1
         nevents += 1
 
@@ -799,7 +808,8 @@ for ifile in files : #{ Loop over root files
             if options.verbose :
                 print 'Event weight = ' + str( evWeight )
 
-
+        if options.verbose:
+            print 'pre-hist fill event weight: ' + str(evWeight)
         #Get MET HERE
         event.getByLabel ( l_metPt, h_metPt )
         event.getByLabel ( l_metPx, h_metPx )
@@ -1177,10 +1187,14 @@ for ifile in files : #{ Loop over root files
             if options.verbose :
                 print 'Prescale = ' + str(prescale)
                 
-            #evWeight = evWeight * prescale            
+            if options.isMC == False :
+                evWeight = evWeight * prescale            
             if passTrig == False :
+                if options.verbose:
+                    print str(passTrig)
                 continue
-
+            if options.verbose :
+                print 'made it to line 1193'
         if options.verbose :
             print 'ipt0 = ' + str(ipt0) + ', pt0 = ' + str(pt0)
         if ipt0 != None and ipt0 >= 0 :
@@ -1207,7 +1221,13 @@ for ifile in files : #{ Loop over root files
                         print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
                             AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho
                         )
-                    
+                    if options.verbose :
+                        print 'FILLING HISTOGRAMS FOR NON-HLT BINNED VARIABLES'
+                        print 'event weight ' + str(evWeight)
+                        print 'AK8 Pt: ' + str(AK8P4Corr.Perp())
+                        print 'AK8 Rapidity: ' + str(AK8P4Corr.Rapidity())
+                        print 'AK8 Phi: ' + str(AK8P4Corr.Phi())
+                        print 'AK8 M: ' + str(AK8P4Corr.M())
                     h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
                     h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
                     h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )
@@ -1227,7 +1247,8 @@ for ifile in files : #{ Loop over root files
                     h_jetrhoAK8.Fill( AK8JetRho[i], evWeight )
                     h_subjetDRAK8.Fill( AK8subjetDR[i], evWeight )                
                     h_jetzAK8.Fill( AK8JetZ[i] , evWeight )
-
+                    if options.verbose :
+                        print "NON-HLT BINNED HISTS FILLED!"
                     if recoBin != None and recoBin >= 0 :
                         if options.verbose :
                             print 'In jet loop, filling bin ' + str(recoBin)
@@ -1250,7 +1271,10 @@ for ifile in files : #{ Loop over root files
                         ha_jetrhoAK8[recoBin].Fill( AK8JetRho[i], evWeight )
                         ha_subjetDRAK8[recoBin].Fill( AK8subjetDR[i], evWeight )                
                         ha_jetzAK8[recoBin].Fill( AK8JetZ[i] , evWeight )
-
+                        if options.verbose :
+                            print 'filling 2D Hisogram: '
+                            print 'AK8 Pt: ' + str(AK8P4Corr.Perp())
+                            print 'AK8 Mass: ' + str(AK8P4Corr.M())
                         h_2DHisto_meas.Fill( AK8P4Corr.Perp(), AK8P4Corr.M(), evWeight )
 
 
@@ -1293,8 +1317,8 @@ for ifile in files : #{ Loop over root files
                                     print '   Candidates : '
                                     for genJet in ak8GenJetsP4Corr :
                                         print '    %3d %6.2f, %6.2f, %6.2f, %6.2f, dR = %6.3f' % ( ak8GenJetsP4Corr.index(genJet), genJet.Perp(), genJet.Eta(), genJet.Phi(), genJet.M(), genJet.DeltaR( AK8P4Corr) )
-
-
+                elif options.verbose :
+                    print "ak8JetsPassID[i] == True  = " + str(ak8JetsPassID[i] == True)  + " and AK8P4Corr.Perp() > options.minAK8JetPt = " + str(AK8P4Corr.Perp() > options.minAK8JetPt) + " and AK8JetZ[i] != None = " + str(AK8JetZ[i] != None)
         # Here we have no reco jet but a gen jet ===> that is a Miss. 
         if options.makeResponseMatrix and len( ak8GenJetsP4Corr ) > 0 :
             for igen in range(0, len( ak8GenJetsP4Corr ) ):
@@ -1323,11 +1347,13 @@ for ifile in files : #{ Loop over root files
                 else:
                     responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
 
-
+print "magic 0"
 f.cd()
+print "magic 0.5"
 f.Write()
-
-for response in responses :
-    response.Write()
-
+print "magic 1"
+if options.isMc or options.makeResponseMatri or options.makeResponseMatrix2D :
+    for response in responses :
+        response.Write()
+print "magic 2"
 f.Close()
