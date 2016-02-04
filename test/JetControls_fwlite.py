@@ -116,7 +116,7 @@ import copy
 import random
 import array
 #pt0cuts = [100., 150., 200., 300., 400., 500., 600., 700., 800. ]
-pt0cuts = [150., 230., 320., 410., 515., 610., 640., 700. ]
+pt0cuts = [150., 230., 320., 410., 515., 610., 640., 700.]
 trigsToGet = [
 #    'HLT_PFJet60',
     'HLT_PFJet80',
@@ -197,7 +197,7 @@ if options.makeResponseMatrix :
         response.SetName("m_response_" + str( int(pt)))
         responses.append(response)
 
-ptBinA = array.array('d', [150, 230, 320, 410, 515, 610, 640, 700])
+ptBinA = array.array('d', [80, 140, 200, 260, 320, 400, 450, 500])
 nbinsPt = len(ptBinA) - 1
 if options.makeResponseMatrix2D :
         response = ROOT.RooUnfoldResponse()
@@ -470,6 +470,11 @@ h_nefAK8 = ROOT.TH1F("nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0)
 h_cefAK8 = ROOT.TH1F("cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) 
 h_ncAK8 = ROOT.TH1F("ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) 
 h_nchAK8 = ROOT.TH1F("nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100)
+
+## Efficiency plots
+
+h_genwithreco = ROOT.TH1F("genwreco", "Gen Jet with Reco Jet", 300, 0, 3000)
+h_genjets = ROOT.TH1F("genjets", "Gen Jets", 300, 0, 3000)
 
 # Gen level truth
 h_ptAK8Gen = ROOT.TH1F("ptAK8Gen", "AK8Gen Jet p_{T};p_{T} (GeV)", 300, 0, 3000)
@@ -1228,7 +1233,7 @@ for ifile in files : #{ Loop over root files
                         print 'AK8 Rapidity: ' + str(AK8P4Corr.Rapidity())
                         print 'AK8 Phi: ' + str(AK8P4Corr.Phi())
                         print 'AK8 M: ' + str(AK8P4Corr.M())
-                    h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight  )
+                    h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight )
                     h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
                     h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )
                     h_mAK8.Fill( AK8P4Corr.M(), evWeight  )
@@ -1247,6 +1252,7 @@ for ifile in files : #{ Loop over root files
                     h_jetrhoAK8.Fill( AK8JetRho[i], evWeight )
                     h_subjetDRAK8.Fill( AK8subjetDR[i], evWeight )                
                     h_jetzAK8.Fill( AK8JetZ[i] , evWeight )
+                   
                     if options.verbose :
                         print "NON-HLT BINNED HISTS FILLED!"
                     if recoBin != None and recoBin >= 0 :
@@ -1276,6 +1282,7 @@ for ifile in files : #{ Loop over root files
                             print 'AK8 Pt: ' + str(AK8P4Corr.Perp())
                             print 'AK8 Mass: ' + str(AK8P4Corr.M())
                         h_2DHisto_meas.Fill( AK8P4Corr.Perp(), AK8P4Corr.M(), evWeight )
+                        
 
 
                         
@@ -1339,11 +1346,15 @@ for ifile in files : #{ Loop over root files
         if options.makeResponseMatrix2D and len( ak8GenJetsP4Corr) > 0 :
             for igen in range(0, len( ak8GenJetsP4Corr ) ):
                 genp4 = ak8GenJetsP4Corr[igen]
+                genpt = genp4.Perp()
+                h_genjets.Fill(genpt, evWeight)
                 if ak8JetsP4Corr != None :
                     ireco = None
                     ireco = getMatched( genp4, ak8JetsP4Corr)
                     if ireco == None:
                         responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
+                    else:
+                        h_genwithreco.Fill(genp4.Perp(), evWeight)
                 else:
                     responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
 
