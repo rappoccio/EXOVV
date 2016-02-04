@@ -1164,7 +1164,7 @@ for ifile in files : #{ Loop over root files
                             print '    Passed trigger                : ' + triggerNameStrings[itrig]
                         if triggerPrescales[itrig] == 1.0 :
                             unprescaled = True
-                        prescale = prescale * triggerPrescales[itrig]
+                        prescale = triggerPrescales[itrig]
                     else :
                         if options.verbose :
                             print '    found trigger name but failed : ' + triggerNameStrings[itrig]
