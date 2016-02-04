@@ -1,0 +1,8 @@
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_16.root
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_17.root
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_18.root
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_19.root
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_2.root
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_20.root
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_21.root
+root://cmsxrootd-site.fnal.gov//store/user/knash/JetHT/crab_Run2015D-PromptReco-v3_Sep25_v74x_V7_25ns/150925_193904/0000/B2GEDMNtuple_22.root
