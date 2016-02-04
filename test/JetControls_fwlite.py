@@ -1358,13 +1358,8 @@ for ifile in files : #{ Loop over root files
                 else:
                     responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
 
-print "magic 0"
 f.cd()
-print "magic 0.5"
 f.Write()
-print "magic 1"
-if options.isMc or options.makeResponseMatri or options.makeResponseMatrix2D :
-    for response in responses :
-        response.Write()
-print "magic 2"
+for response in responses :
+    response.Write()
 f.Close()
