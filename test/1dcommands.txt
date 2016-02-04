@@ -1,0 +1,22 @@
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt170to300.txt --outname qcd_pt170to300_allpt.root --isMC --applyFilters --minAK8JetPt 200.  --makeResponseMatrix --verbose  >& qcd_pt170to300_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt300to470.txt --outname qcd_pt300to470_allpt.root --isMC --applyFilters --minAK8JetPt 200.  --makeResponseMatrix --verbose >& qcd_pt300to470_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt470to600.txt --outname qcd_pt470to600_allpt.root --isMC --applyFilters --minAK8JetPt 200.  --makeResponseMatrix --verbose >& qcd_pt470to600_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt600to800.txt --outname qcd_pt600to800_allpt.root --isMC --applyFilters --minAK8JetPt 200.  --makeResponseMatrix --verbose >& qcd_pt600to800_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt800to1000.txt --outname qcd_pt800to1000_allpt.root --isMC --applyFilters --minAK8JetPt 200. --makeResponseMatrix --verbose  >& qcd_pt800to1000_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname qcd_pt1000to1400_allpt.root --isMC --applyFilters --minAK8JetPt 200. --makeResponseMatrix --verbose >& qcd_pt1000to1400_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname qcd_pt1400to1800_allpt.root --isMC --applyFilters --minAK8JetPt 200. --makeResponseMatrix --verbose  >& qcd_pt1400to1800_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_allpt.root --isMC --applyFilters --minAK8JetPt 200. --makeResponseMatrix --verbose >& qcd_pt1800to2400_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_allpt.root --isMC --applyFilters --minAK8JetPt 200. --makeResponseMatrix --verbose >& qcd_pt2400to3200_output_allpt.txt &
+
+python JetControls_fwlite.py --files inputfiles/qcd_pt3200toInf.txt --outname qcd_pt3200toInf_allpt.root --isMC --applyFilters --minAK8JetPt 200. --makeResponseMatrix --verbose  >& qcd_pt3200toInf_output_lowpt.txt &
+
+
