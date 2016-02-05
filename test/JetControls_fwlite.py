@@ -490,6 +490,7 @@ h_jetrhoAK8Gen = ROOT.TH1F("jetrhoAK8Gen", "AK8Gen Jet #rho=#frac{m}{p_{T} R};Je
 h_jetareaAK8Gen = ROOT.TH1F("jetareaAK8Gen", "AK8Gen Jet Area;Jet Area", 100, 0, 6.28)
 h_subjetDRAK8Gen = ROOT.TH1F("subjetDRAK8Gen", "#Delta R between subjets;#Delta R", 100, 0, 6.28)
 h_jetzAK8Gen = ROOT.TH1F("jetzAK8Gen", "Jet z;z", 100, 0.0, 1.0)
+h_pt0 = ROOT.TH1F("pt0", "p_{T} of leading jet;p_{T} (GeV))", 150, 0, 1500)
 
 # Delta R for finding issues
 
@@ -1207,6 +1208,7 @@ for ifile in files : #{ Loop over root files
             h_trig_raw.Fill( ipt0 )
             #ha_ht[ipt0].Fill( ht )
             ha_pt0[ipt0].Fill( pt0 )
+            h_pt0.Fill(pt0, evWeight)
 
                     
         ptAsymmetry = None
