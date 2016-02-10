@@ -1194,7 +1194,7 @@ for ifile in files : #{ Loop over root files
                 print 'Prescale = ' + str(prescale)
                 
             if options.isMC == False :
-                evWeight = evWeight * prescale            
+                evWeight = 1            
             if passTrig == False :
                 if options.verbose:
                     print str(passTrig)

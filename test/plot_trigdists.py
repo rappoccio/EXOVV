@@ -20,7 +20,7 @@ parser.add_option('--outname', type='string', action='store',
 
 parser.add_option('--dir', type='string', action='store',
                   dest='dir',
-                  default = "hists",
+                  default = "",
                   help='Directory containing root histograms')
 
 
@@ -42,11 +42,11 @@ import sys
 ROOT.gROOT.Macro("rootlogon.C")
 
 
-f = ROOT.TFile(options.dir + '/' + options.file)
+f = ROOT.TFile(options.file)
 trigs = [
 #    'HLT_PFJet60',
 #    'HLT_PFJet80',
-    'HLT_PFJet140',
+#    'HLT_PFJet140',
     'HLT_PFJet200',
     'HLT_PFJet260',
     'HLT_PFJet320',
@@ -56,7 +56,7 @@ trigs = [
     ]
 
 scales = [
-    4000,500000, 180, 60, 20, 1, 1
+    66, 12, 4, 1, 1, 1
     ]
 colors = [ #ROOT.kRed + 1,
             ROOT.kWhite, ROOT.kRed - 10, ROOT.kRed - 9, ROOT.kRed - 7, ROOT.kRed - 4, ROOT.kRed, ROOT.kRed + 1,    ]
