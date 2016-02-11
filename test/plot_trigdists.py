@@ -57,7 +57,7 @@ trigs = [
 
 scales = [
     #66, 12, 4, 1, 1, 1
-    66, 6, 3, 2, 1, 1
+    66, 6, 3, 1.5, 1, 1
     ]
 colors = [ #ROOT.kRed + 1,
             ROOT.kWhite, ROOT.kRed - 10, ROOT.kRed - 9, ROOT.kRed - 7, ROOT.kRed - 4, ROOT.kRed, ROOT.kRed + 1,    ]
