@@ -1054,7 +1054,7 @@ for ifile in files : #{ Loop over root files
                 ak8JetsP4Corr.append( AK8P4Corr*jetScale)
                 if options.verbose:
                     print 'AK8 Post-Correction' + str(AK8P4Corr.Perp()*jetScale)
-            else :
+            else :################################################################################# this bit here is broken for the JER
                 ak8JetsP4Corr.append( AK8P4Corr )
 
 
@@ -1197,7 +1197,7 @@ for ifile in files : #{ Loop over root files
                 evWeight = 1            
             if passTrig == False :
                 if options.verbose:
-                    print str(passTrig)
+                    print 'pass trigger ?' + str(passTrig)
                 continue
             if options.verbose :
                 print 'made it to line 1193'
@@ -1210,7 +1210,9 @@ for ifile in files : #{ Loop over root files
             ha_pt0[ipt0].Fill( pt0 )
             h_pt0.Fill(pt0, evWeight)
 
-                    
+
+        if options.verbose :
+            print 'About to check jet kinematics'
         ptAsymmetry = None
         dPhiJJ = None
         njetsPassed = len( ak8JetsP4Corr )
@@ -1218,11 +1220,12 @@ for ifile in files : #{ Loop over root files
             ptAsymmetry = (ak8JetsP4Corr[0].Perp() - ak8JetsP4Corr[1].Perp()) / (ak8JetsP4Corr[0].Perp() + ak8JetsP4Corr[1].Perp())
             dPhiJJ = ak8JetsP4Corr[0].DeltaPhi( ak8JetsP4Corr[1] )
 
-        passKin = True #ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0
-        if passKin : 
+        passKin = ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0
+        if passKin :
+            print 'Passed kinematics'
             for i in range(0,len(ak8JetsP4Corr)) :
                 AK8P4Corr = ak8JetsP4Corr[i]
-                recoBin = binFinder( AK8P4Corr.Perp() )
+                recoBin = ipt0
                 if ak8JetsPassID[i] == True and  AK8P4Corr.Perp() > options.minAK8JetPt and AK8JetZ[i] != None :
                     if options.verbose : 
                         print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
