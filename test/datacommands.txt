@@ -1,16 +1,16 @@
-python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt --outname jetht_dataset1_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers --verbose >& jetht_dataset1_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset1.txt --outname jetht_dataset1_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset1_output_allpt.txt &
 
-python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt --outname jetht_dataset2_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers --verbose >& jetht_dataset2_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset2.txt --outname jetht_dataset2_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset2_output_allpt.txt &
 
-python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_1.txt --outname jetht_dataset4_1_1_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers --verbose >& jetht_dataset4_1_1_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_1.txt --outname jetht_dataset4_1_1_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset4_1_1_output_allpt.txt &
 
-python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_2.txt --outname jetht_dataset4_1_2_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers --verbose >& jetht_dataset4_1_2_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_2.txt --outname jetht_dataset4_1_2_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset4_1_2_output_allpt.txt &
 
-python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_3.txt --outname jetht_dataset4_1_3_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers --verbose >& jetht_dataset4_1_3_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_3.txt --outname jetht_dataset4_1_3_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset4_1_3_output_allpt.txt &
 
-python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_4.txt --outname jetht_dataset4_1_4_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers --verbose >& jetht_dataset4_1_4_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_4.txt --outname jetht_dataset4_1_4_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset4_1_4_output_allpt.txt &
 
-python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_5.txt --outname jetht_dataset4_1_5_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers --verbose >& jetht_dataset4_1_5_output_allpt.txt &
+python JetControls_fwlite.py --files inputfiles/jetht_dataset4_1_5.txt --outname jetht_dataset4_1_5_allpt.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset4_1_5_output_allpt.txt &
 
 
 
