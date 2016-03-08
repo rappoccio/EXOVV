@@ -197,13 +197,13 @@ if options.makeResponseMatrix :
         response.SetName("m_response_" + str( int(pt)))
         responses.append(response)
 
-ptBinA = array.array('d', [80, 140, 200, 260, 320, 400, 450, 500])
+ptBinA = array.array('d', [150., 230., 320., 410., 515., 610., 640., 700])
 nbinsPt = len(ptBinA) - 1
 if options.makeResponseMatrix2D :
         response = ROOT.RooUnfoldResponse()
         response.SetName("2d_response")
-        trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, 25, 0, 500)
-        measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, 25, 0, 500)
+        trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, 50, 0, 1000)
+        measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, 50, 0, 1000)
         response.Setup(measVarHist, trueVarHist)
         responses.append(response)
 #@ Labels and Handles
@@ -566,8 +566,8 @@ for itrig,trig in enumerate( trigsToGet ) :
     #ha_jetzAK8Gen.append(ROOT.TH1F("jetzAK8Gen", "Jet z;z", 100, 0.0, 1.0))
 
 #2D Histo for 2D Unfolding
-h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 25, 0, 500)
-h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 25, 0, 500)
+h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
 
 #@ JET CORRECTIONS
 
@@ -1289,6 +1289,8 @@ for ifile in files : #{ Loop over root files
                         h_2DHisto_meas.Fill( AK8P4Corr.Perp(), AK8P4Corr.M(), evWeight )
                         
 
+                        if options.verbose : 
+                            print 'Reco jet %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( i, AK8P4Corr.Perp(), AK8P4Corr.Eta(), AK8P4Corr.Phi(), AK8P4Corr.M() )
 
                         
                         if options.isMC : 
@@ -1308,10 +1310,14 @@ for ifile in files : #{ Loop over root files
                                 
                                 h_2DHisto_gen.Fill( ak8GenJetsP4Corr[igen].Perp(), ak8GenJetsP4Corr[igen].M(), evWeight )
                                 
+
                                 if options.makeResponseMatrix : 
                                     responses[recoBin].Fill( AK8P4Corr.M(), ak8GenJetsP4Corr[igen].M(), evWeight )
                                 elif options.makeResponseMatrix2D :
                                     responses[0].Fill( AK8P4Corr.Perp(), AK8P4Corr.M(), ak8GenJetsP4Corr[igen].Perp(), ak8GenJetsP4Corr[igen].M(), evWeight)
+                                    if options.verbose :
+                                        print 'Gen jet  %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( igen, ak8GenJetsP4Corr[igen].Perp(), ak8GenJetsP4Corr[igen].Eta(), ak8GenJetsP4Corr[igen].Phi(), ak8GenJetsP4Corr[igen].M() )
+
 
 
                             # Here we have no gen jet but have a reco jet ===> that is a Fake
@@ -1333,7 +1339,7 @@ for ifile in files : #{ Loop over root files
                     print "ak8JetsPassID[i] == True  = " + str(ak8JetsPassID[i] == True)  + " and AK8P4Corr.Perp() > options.minAK8JetPt = " + str(AK8P4Corr.Perp() > options.minAK8JetPt) + " and AK8JetZ[i] != None = " + str(AK8JetZ[i] != None)
         # Here we have no reco jet but a gen jet ===> that is a Miss. 
         if options.makeResponseMatrix and len( ak8GenJetsP4Corr ) > 0 :
-            for igen in range(0, len( ak8GenJetsP4Corr ) ):
+            for igen in range(0, min(2, len( ak8GenJetsP4Corr ) ) ):
                 genp4 = ak8GenJetsP4Corr[igen]
                 genpt = genp4.Perp()
                 genPtBin = binFinder( genpt )
@@ -1349,18 +1355,33 @@ for ifile in files : #{ Loop over root files
                     responses[genPtBin].Miss( genp4.M(), evWeight )
 
         if options.makeResponseMatrix2D and len( ak8GenJetsP4Corr) > 0 :
-            for igen in range(0, len( ak8GenJetsP4Corr ) ):
+            for igen in range(0, min(2,len( ak8GenJetsP4Corr ) ) ):
                 genp4 = ak8GenJetsP4Corr[igen]
                 genpt = genp4.Perp()
                 h_genjets.Fill(genpt, evWeight)
+
+
                 if ak8JetsP4Corr != None :
                     ireco = None
                     ireco = getMatched( genp4, ak8JetsP4Corr)
                     if ireco == None:
+                        if options.verbose :
+                            print 'Response matrix miss!'
+                            print 'GenJet  %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( igen, genp4.Perp(), genp4.Eta(), genp4.Phi(), genp4.M() )
+                            print '   Candidates : '
+                            for recoJet in ak8JetsP4Corr : 
+                                print 'RecoJet %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( ak8JetsP4Corr.index(recoJet), recoJet.Perp(), recoJet.Eta(), recoJet.Phi(), recoJet.M() )
+
                         responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
                     else:
                         h_genwithreco.Fill(genp4.Perp(), evWeight)
                 else:
+                    if options.verbose :
+                        print 'Response matrix miss!'
+                        print 'GenJet  %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( igen, genp4.Perp(), genp4.Eta(), genp4.Phi(), genp4.M() )
+                        print '   Candidates : '
+                        for recoJet in ak8JetsP4Corr : 
+                            print 'RecoJet %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( ak8JetsP4Corr.index(recoJet), recoJet.Perp(), recoJet.Eta(), recoJet.Phi(), recoJet.M() )
                     responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
 
 f.cd()
