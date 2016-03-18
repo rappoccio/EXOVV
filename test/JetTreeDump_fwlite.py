@@ -29,6 +29,11 @@ parser.add_option('--verbose', action='store_true',
                   dest='verbose',
                   help='Print debugging info')
 
+parser.add_option('--writeTree', action='store_true',
+                  default=True,
+                  dest='writeTree',
+                  help='Write Tree?')
+
 parser.add_option('--isMC', action='store_true',
                   default=False,
                   dest='isMC',
@@ -110,11 +115,10 @@ import ROOT
 import sys
 from DataFormats.FWLite import Events, Handle
 ROOT.gROOT.Macro("rootlogon.C")
-ROOT.gSystem.Load("libAnalysisPredictedDistribution")
-ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+
 import copy
 import random
-import array
+from array import array
 #pt0cuts = [100., 150., 200., 300., 400., 500., 600., 700., 800. ]
 pt0cuts = [150., 230., 320., 410., 515., 610., 640., 700.]
 trigsToGet = [
@@ -190,22 +194,12 @@ def trigHelper( pt0, trigs ) :
     return ipass, ipt0
 if options.verbose :
     print 'definitions made for everything'
-responses = []
-if options.makeResponseMatrix :
-    for ipt,pt in enumerate(pt0cuts) :
-        response = ROOT.RooUnfoldResponse( 100, 0, 1000)
-        response.SetName("m_response_" + str( int(pt)))
-        responses.append(response)
 
-ptBinA = array.array('d', [150., 230., 320., 410., 515., 610., 640., 700])
+ptBinA = array('d', [150., 230., 320., 410., 515., 610., 640., 700])
 nbinsPt = len(ptBinA) - 1
-if options.makeResponseMatrix2D :
-        response = ROOT.RooUnfoldResponse()
-        response.SetName("2d_response")
-        trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, 50, 0, 1000)
-        measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, 50, 0, 1000)
-        response.Setup(measVarHist, trueVarHist)
-        responses.append(response)
+
+
+
 #@ Labels and Handles
 
 #generator labels and handles
@@ -421,6 +415,15 @@ h_genJetsAK8Phi = Handle("std::vector<float>")
 l_genJetsAK8Phi = ("genJetsAK8" , "genJetsAK8Phi")
 h_genJetsAK8Mass = Handle("std::vector<float>")
 l_genJetsAK8Mass = ("genJetsAK8" , "genJetsAK8Mass")
+h_genJetsAK8SoftDropMass = Handle("std::vector<float>")
+l_genJetsAK8SoftDropMass = ("genJetsAK8SoftDrop" , "genJetsAK8SoftDropMass")
+h_genJetsAK8SoftDropPt = Handle("std::vector<float>")
+l_genJetsAK8SoftDropPt = ("genJetsAK8SoftDrop" , "genJetsAK8SoftDropPt")
+h_genJetsAK8SoftDropPhi = Handle("std::vector<float>")
+l_genJetsAK8SoftDropPhi = ("genJetsAK8SoftDrop" , "genJetsAK8SoftDropPhi")
+h_genJetsAK8SoftDropEta = Handle("std::vector<float>")
+l_genJetsAK8SoftDropEta = ("genJetsAK8SoftDrop" , "genJetsAK8SoftDropEta")
+
 
 # MET and HCAL Filter handles
 h_filterNameStrings = Handle( "std::vector<std::string>")
@@ -446,128 +449,135 @@ l_triggerPrescales = ("TriggerUserData", "triggerPrescaleTree")
 f = ROOT.TFile(options.outname, "RECREATE")
 f.cd()
 
-#^ Plot initialization
-h_trig = ROOT.TH1F("h_trig", "Trigger Fired With Weight", len(pt0cuts), 0, len(pt0cuts) )
-h_trig_raw = ROOT.TH1F("h_trigraw", "Trigger Fired", len(pt0cuts), 0, len(pt0cuts) )
-h_ht = ROOT.TH1F("ht", "H_{T};H_{T} (GeV)", 150, 0, 1500)
-h_met = ROOT.TH1F("met", "Missing p_{T};p_{T} (GeV)", 100, 0, 1000)
-h_ptAK8 = ROOT.TH1F("ptAK8", "AK8 Jet p_{T};p_{T} (GeV)", 300, 0, 3000)
-h_yAK8 = ROOT.TH1F("yAK8", "AK8 Jet Rapidity;y", 120, -6, 6)
-h_phiAK8 = ROOT.TH1F("phiAK8", "AK8 Jet #phi;#phi (radians)",100,-ROOT.Math.Pi(),ROOT.Math.Pi())
-h_mAK8 = ROOT.TH1F("mAK8", "AK8 Jet Mass;Mass (GeV)", 100, 0, 1000)
-h_msoftdropAK8 = ROOT.TH1F("msoftdropAK8", "AK8 Softdrop Jet Mass;Mass (GeV)", 100, 0, 1000)
-h_mprunedAK8 = ROOT.TH1F("mprunedAK8", "AK8 Pruned Jet Mass;Mass (GeV)", 100, 0, 1000)
-h_mtrimmedAK8 = ROOT.TH1F("mtrimmedAK8", "AK8 Trimmed Jet Mass;Mass (GeV)", 100, 0, 1000)
-h_mfilteredAK8 = ROOT.TH1F("mfilteredAK8", "AK8 Filtered Jet Mass;Mass (GeV)", 100, 0, 1000)
-h_tau21AK8 = ROOT.TH1F("tau21AK8", "AK8 Jet #tau_{2} / #tau_{1};#tau_{21}", 100, 0, 1.0)
-h_jetrhoAK8 = ROOT.TH1F("jetrhoAK8", "AK8 Jet #rho=#frac{m}{p_{T} R};Jet #rho", 100, 0, 1.0)
-h_jetareaAK8 = ROOT.TH1F("jetareaAK8", "AK8 Jet Area;Jet Area", 100, 0, 6.28)
-h_subjetDRAK8 = ROOT.TH1F("subjetDRAK8", "#Delta R between subjets;#Delta R", 100, 0, 6.28)
-h_jetzAK8 = ROOT.TH1F("jetzAK8", "Jet z;z", 100, 0.0, 1.0)
-h_nhfAK8 = ROOT.TH1F("nhfAK8", "AK8 Neutral hadron fraction;NHF", 100, 0, 1.0) 
-h_chfAK8 = ROOT.TH1F("chfAK8", "AK8 Charged hadron fraction;CHF", 100, 0, 1.0) 
-h_nefAK8 = ROOT.TH1F("nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) 
-h_cefAK8 = ROOT.TH1F("cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) 
-h_ncAK8 = ROOT.TH1F("ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) 
-h_nchAK8 = ROOT.TH1F("nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100)
 
-## Efficiency plots
+if options.writeTree : 
+    TreeEXOVV = ROOT.TTree("TreeEXOVV", "TreeEXOVV")
+    Trig        = array('i', [0]  )
+    Weight      = array('f', [0.] )
 
-h_genwithreco = ROOT.TH1F("genwreco", "Gen Jet with Reco Jet", 300, 0, 3000)
-h_genjets = ROOT.TH1F("genjets", "Gen Jets", 300, 0, 3000)
-
-# Gen level truth
-h_ptAK8Gen = ROOT.TH1F("ptAK8Gen", "AK8Gen Jet p_{T};p_{T} (GeV)", 300, 0, 3000)
-h_yAK8Gen = ROOT.TH1F("yAK8Gen", "AK8Gen Jet Rapidity;y", 120, -6, 6)
-h_phiAK8Gen = ROOT.TH1F("phiAK8Gen", "AK8Gen Jet #phi;#phi (radians)",100,-ROOT.Math.Pi(),ROOT.Math.Pi())
-h_mAK8Gen = ROOT.TH1F("mAK8Gen", "AK8Gen Jet Mass;Mass (GeV)", 100, 0, 1000)
-h_msoftdropAK8Gen = ROOT.TH1F("msoftdropAK8Gen", "AK8Gen Softdrop Jet Mass;Mass (GeV)", 100, 0, 1000)
-#h_mprunedAK8Gen = ROOT.TH1F("mprunedAK8Gen", "AK8Gen Pruned Jet Mass;Mass (GeV)", 100, 0, 1000)
-#h_mtrimmedAK8Gen = ROOT.TH1F("mtrimmedAK8Gen", "AK8Gen Trimmed Jet Mass;Mass (GeV)", 100, 0, 1000)
-#h_mfilteredAK8Gen = ROOT.TH1F("mfilteredAK8Gen", "AK8Gen Filtered Jet Mass;Mass (GeV)", 100, 0, 1000)
-h_tau21AK8Gen = ROOT.TH1F("tau21AK8Gen", "AK8Gen Jet #tau_{2} / #tau_{1};#tau_{21}", 100, 0, 1.0)
-h_jetrhoAK8Gen = ROOT.TH1F("jetrhoAK8Gen", "AK8Gen Jet #rho=#frac{m}{p_{T} R};Jet #rho", 100, 0, 1.0)
-h_jetareaAK8Gen = ROOT.TH1F("jetareaAK8Gen", "AK8Gen Jet Area;Jet Area", 100, 0, 6.28)
-h_subjetDRAK8Gen = ROOT.TH1F("subjetDRAK8Gen", "#Delta R between subjets;#Delta R", 100, 0, 6.28)
-h_jetzAK8Gen = ROOT.TH1F("jetzAK8Gen", "Jet z;z", 100, 0.0, 1.0)
-h_pt0 = ROOT.TH1F("pt0", "p_{T} of leading jet;p_{T} (GeV))", 150, 0, 1500)
-
-# Delta R for finding issues
-
-h_deltaR = ROOT.TH1F('h_deltaR', 'Delta R Between Gen and Reco Jets; Delta R', 100, 0, .9)
-
-ha_ht = []
-ha_pt0 = []
-ha_met = []
-ha_ptAK8 = []
-ha_yAK8 = []
-ha_phiAK8 = []
-ha_mAK8 = []
-ha_msoftdropAK8 = []
-ha_mprunedAK8 = []
-ha_mtrimmedAK8 = []
-ha_mfilteredAK8 = []
-ha_tau21AK8 = []
-ha_jetrhoAK8 = []
-ha_jetareaAK8 = []
-ha_subjetDRAK8 = []
-ha_jetzAK8 = []
-ha_nhfAK8 = []
-ha_chfAK8 = []
-ha_nefAK8 = []
-ha_cefAK8 = []
-ha_ncAK8 = []
-ha_nchAK8 = []
-
-ha_ptAK8Gen = []
-ha_yAK8Gen = []
-ha_phiAK8Gen = []
-ha_mAK8Gen = []
-
-
-
-for itrig,trig in enumerate( trigsToGet ) :
-    ha_ht.append ( ROOT.TH1F( trig + "_ht", "H_{T}, " + trig + ";H_{T} (GeV))", 150, 0, 1500))
-    ha_pt0.append ( ROOT.TH1F( trig + "_pt0", "p_{T} of leading jet, " + trig + ";p_{T} (GeV))", 150, 0, 1500))
-    ha_met.append ( ROOT.TH1F( trig + "_met", "Missing p_{T}, " + trig + ";p_{T} (GeV))", 100, 0, 1000))
-    ha_ptAK8.append ( ROOT.TH1F( trig + "_ptAK8", "AK8 Jet p_{T}, " + trig + ";p_{T} (GeV))", 300, 0, 3000))
-    ha_yAK8.append ( ROOT.TH1F( trig + "_yAK8", "AK8 Jet Rapidity, " + trig + ";y", 120, -6, 6))
-    ha_phiAK8.append ( ROOT.TH1F( trig + "_phiAK8", "AK8 Jet #phi, " + trig + ";#phi (radians))",100,-ROOT.Math.Pi(),ROOT.Math.Pi()) )
-    ha_mAK8.append ( ROOT.TH1F( trig + "_mAK8", "AK8 Jet Mass, " + trig + ";Mass (GeV))", 100, 0, 1000))
+    NFatJet             = array('i', [0] )
+    FatJetPt            = array('f', [-1., -1.])
+    FatJetEta           = array('f', [-1., -1.])
+    FatJetPhi           = array('f', [-1., -1.])
+    FatJetRap           = array('f', [-1., -1.])
+    FatJetBDisc         = array('f', [-1., -1.])
+    FatJetRhoRatio      = array('f', [-1., -1.])
+    FatJetMass          = array('f', [-1., -1.])
+    FatJetMassSoftDrop  = array('f', [-1., -1.])
+    FatJetMassPruned    = array('f', [-1., -1.])
+    FatJetMassFiltered  = array('f', [-1., -1.])
+    FatJetMassTrimmed   = array('f', [-1., -1.])
+    FatJetTau1          = array('f', [-1., -1.]) 
+    FatJetTau2          = array('f', [-1., -1.]) 
+    FatJetTau3          = array('f', [-1., -1.]) 
+    FatJetTau32         = array('f', [-1., -1.])
+    FatJetTau21         = array('f', [-1., -1.]) 
+    FatJetSDnsubjets    = array('f', [-1., -1.])
+    FatJetSDbdisc0      = array('f', [-1., -1.])
+    FatJetSDbdisc1      = array('f', [-1., -1.])
+    FatJetSDmaxbdisc    = array('f', [-1., -1.])
+    FatJetSDsubjetWpt   = array('f', [-1., -1.])
+    FatJetSDsubjetWmass = array('f', [-1., -1.])
+    FatJetSDsubjetWp4   = array('f', [-1., -1.])
+    FatJetSDsubjetBpt   = array('f', [-1., -1.])
+    FatJetSDsubjetBmass = array('f', [-1., -1.])
+    FatJetSDsubjetBp4   = array('f', [-1., -1.])
+    FatJetCorrUp        = array('f', [-1., -1.])
+    FatJetCorrDn        = array('f', [-1., -1.])
     
-    ha_msoftdropAK8.append ( ROOT.TH1F( trig + "_msoftdropAK8", "AK8 Softdrop Jet Mass, " + trig + ";Mass (GeV))", 100, 0, 1000))
-    ha_mprunedAK8.append ( ROOT.TH1F( trig + "_mprunedAK8", "AK8 Pruned Jet Mass, " + trig + ";Mass (GeV))", 100, 0, 1000))
-    ha_mtrimmedAK8.append ( ROOT.TH1F( trig + "_mtrimmedAK8", "AK8 Trimmed Jet Mass, " + trig + ";Mass (GeV))", 100, 0, 1000))
-    ha_mfilteredAK8.append ( ROOT.TH1F( trig + "_mfilteredAK8", "AK8 Filtered Jet Mass, " + trig + ";Mass (GeV))", 100, 0, 1000))
-    ha_tau21AK8.append ( ROOT.TH1F( trig + "_tau21AK8", "AK8 Jet #tau_{2} / #tau_{1}, " + trig + ";#tau_{21}", 100, 0, 1.0))
-    ha_jetrhoAK8.append ( ROOT.TH1F( trig + "_jetrhoAK8", "AK8 Jet #rho=#frac{m}{p_{T} R}, " + trig + ";Jet #rho", 100, 0, 1.0))
-    ha_jetareaAK8.append ( ROOT.TH1F( trig + "_jetareaAK8", "AK8 Jet Area, " + trig + ";Jet Area", 100, 0, 6.28))
-    ha_subjetDRAK8.append ( ROOT.TH1F( trig + "_subjetDRAK8", "#Delta R between subjets, " + trig + ";#Delta R", 100, 0, 6.28))
-    ha_jetzAK8.append ( ROOT.TH1F( trig + "_jetzAK8", "Jet z, " + trig + ";z", 100, 0.0, 1.0))
-    ha_nhfAK8.append( ROOT.TH1F( trig + "_nhfAK8", "AK8 Neutral hadron fraction;NHF", 100, 0, 1.0) )
-    ha_chfAK8.append( ROOT.TH1F( trig + "_chfAK8", "AK8 Charged hadron fraction;CHF", 100, 0, 1.0) )
-    ha_nefAK8.append( ROOT.TH1F( trig + "_nefAK8", "AK8 Neutral EM fraction;NEF", 100, 0, 1.0) )
-    ha_cefAK8.append( ROOT.TH1F( trig + "_cefAK8", "AK8 Charged EM fraction;CEF", 100, 0, 1.0) )
-    ha_ncAK8.append( ROOT.TH1F( trig + "_ncAK8", "AK8 Number of constituents;Number of constituents", 100, 0, 100) )
-    ha_nchAK8.append( ROOT.TH1F( trig + "_nchAK8", "AK8 Number of charged hadrons;N charged hadrons", 100, 0, 100) )
-    
-    ha_ptAK8Gen.append(ROOT.TH1F(trig + "ptAK8Gen", "AK8Gen Jet p_{T};p_{T} (GeV)", 300, 0, 3000))
-    ha_yAK8Gen.append(ROOT.TH1F(trig + "yAK8Gen", "AK8Gen Jet Rapidity;y", 120, -6, 6))
-    ha_phiAK8Gen.append(ROOT.TH1F(trig + "phiAK8Gen", "AK8Gen Jet #phi;#phi (radians)",100,-ROOT.Math.Pi(),ROOT.Math.Pi()))
-    ha_mAK8Gen.append(ROOT.TH1F(trig + "mAK8Gen", "AK8Gen Jet Mass;Mass (GeV)", 100, 0, 1000))
-    #ha_msoftdropAK8Gen.append(ROOT.TH1F("msoftdropAK8Gen", "AK8Gen Softdrop Jet Mass;Mass (GeV)", 100, 0, 1000))
-    #ha_mprunedAK8Gen.append(ROOT.TH1F("mprunedAK8Gen", "AK8Gen Pruned Jet Mass;Mass (GeV)", 100, 0, 1000))
-    #ha_mtrimmedAK8Gen.append(ROOT.TH1F("mtrimmedAK8Gen", "AK8Gen Trimmed Jet Mass;Mass (GeV)", 100, 0, 1000))
-    #ha_mfilteredAK8Gen.append(ROOT.TH1F("mfilteredAK8Gen", "AK8Gen Filtered Jet Mass;Mass (GeV)", 100, 0, 1000))
-    #ha_tau21AK8Gen.append(ROOT.TH1F("tau21AK8Gen", "AK8Gen Jet #tau_{2} / #tau_{1};#tau_{21}", 100, 0, 1.0))
-    #ha_jetrhoAK8Gen.append(ROOT.TH1F("jetrhoAK8Gen", "AK8Gen Jet #rho=#frac{m}{p_{T} R};Jet #rho", 100, 0, 1.0))
-    #ha_jetareaAK8Gen.append(ROOT.TH1F("jetareaAK8Gen", "AK8Gen Jet Area;Jet Area", 100, 0, 6.28))
-    #ha_subjetDRAK8Gen.append(ROOT.TH1F("subjetDRAK8Gen", "#Delta R between subjets;#Delta R", 100, 0, 6.28))
-    #ha_jetzAK8Gen.append(ROOT.TH1F("jetzAK8Gen", "Jet z;z", 100, 0.0, 1.0))
 
-#2D Histo for 2D Unfolding
-h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
-h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+
+    NGenJet             = array('i', [0] )
+    GenJetPt            = array('f', [-1., -1.])
+    GenJetEta           = array('f', [-1., -1.])
+    GenJetPhi           = array('f', [-1., -1.])
+    GenJetRap           = array('f', [-1., -1.])
+    GenJetBDisc         = array('f', [-1., -1.])
+    GenJetRhoRatio      = array('f', [-1., -1.])
+    GenJetMass          = array('f', [-1., -1.])
+    GenJetMassSoftDrop  = array('f', [-1., -1.])
+    GenJetMassPruned    = array('f', [-1., -1.])
+    GenJetMassFiltered  = array('f', [-1., -1.])
+    GenJetMassTrimmed   = array('f', [-1., -1.])
+    GenJetTau1          = array('f', [-1., -1.]) 
+    GenJetTau2          = array('f', [-1., -1.]) 
+    GenJetTau3          = array('f', [-1., -1.]) 
+    GenJetTau32         = array('f', [-1., -1.])
+    GenJetTau21         = array('f', [-1., -1.]) 
+    GenJetSDnsubjets    = array('f', [-1., -1.])
+    GenJetSDbdisc0      = array('f', [-1., -1.])
+    GenJetSDbdisc1      = array('f', [-1., -1.])
+    GenJetSDmaxbdisc    = array('f', [-1., -1.])
+    GenJetSDsubjetWpt   = array('f', [-1., -1.])
+    GenJetSDsubjetWmass = array('f', [-1., -1.])
+    GenJetSDsubjetWp4   = array('f', [-1., -1.])
+    GenJetSDsubjetBpt   = array('f', [-1., -1.])
+    GenJetSDsubjetBmass = array('f', [-1., -1.])
+    GenJetSDsubjetBp4   = array('f', [-1., -1.])
+    
+    METpx        = array('f', [-1.])
+    METpy        = array('f', [-1.])
+    METpt        = array('f', [-1.])
+    METphi       = array('f', [-1.])
+    Nvtx         = array('f', [-1.])
+
+
+
+    TreeEXOVV.Branch('Trig'                , Trig                ,  'Trig/I'        )
+    TreeEXOVV.Branch('Weight'              , Weight              ,  'Weight/F'      )
+    TreeEXOVV.Branch('NFatJet'             , NFatJet             ,  'NFatJet/I'        )
+    TreeEXOVV.Branch('FatJetPt'            , FatJetPt            ,  'FatJetPt[NFatJet]/F'            )
+    TreeEXOVV.Branch('FatJetEta'           , FatJetEta           ,  'FatJetEta[NFatJet]/F'           )
+    TreeEXOVV.Branch('FatJetPhi'           , FatJetPhi           ,  'FatJetPhi[NFatJet]/F'           )
+    TreeEXOVV.Branch('FatJetRap'           , FatJetRap           ,  'FatJetRap[NFatJet]/F'           )
+    TreeEXOVV.Branch('FatJetBDisc'         , FatJetBDisc         ,  'FatJetBDisc[NFatJet]/F'         )
+    TreeEXOVV.Branch('FatJetRhoRatio'      , FatJetRhoRatio      ,  'FatJetRhoRatio[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetMass'          , FatJetMass          ,  'FatJetMass[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetMassSoftDrop'  , FatJetMassSoftDrop  ,  'FatJetMassSoftDrop[NFatJet]/F'  )
+    TreeEXOVV.Branch('FatJetMassPruned'    , FatJetMassPruned    ,  'FatJetMassPruned[NFatJet]/F'    )
+    TreeEXOVV.Branch('FatJetMassFiltered'  , FatJetMassFiltered  ,  'FatJetMassFiltered[NFatJet]/F'  )
+    TreeEXOVV.Branch('FatJetMassTrimmed'   , FatJetMassTrimmed   ,  'FatJetMassTrimmed[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetTau1'          , FatJetTau1          ,  'FatJetTau1[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetTau2'          , FatJetTau2          ,  'FatJetTau2[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetTau3'          , FatJetTau3          ,  'FatJetTau3[NFatJet]/F'          )
+    TreeEXOVV.Branch('FatJetTau32'         , FatJetTau32         ,  'FatJetTau32[NFatJet]/F'         )
+    TreeEXOVV.Branch('FatJetTau21'         , FatJetTau21         ,  'FatJetTau21[NFatJet]/F'         )
+    TreeEXOVV.Branch('FatJetSDnsubjets'    , FatJetSDnsubjets    ,  'FatJetSDnsubjets[NFatJet]/F'    )
+    TreeEXOVV.Branch('FatJetSDbdisc0'      , FatJetSDbdisc0      ,  'FatJetSDbdisc0[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetSDbdisc1'      , FatJetSDbdisc1      ,  'FatJetSDbdisc1[NFatJet]/F'      )
+    TreeEXOVV.Branch('FatJetSDmaxbdisc'    , FatJetSDmaxbdisc    ,  'FatJetSDmaxbdisc[NFatJet]/F'    )
+    TreeEXOVV.Branch('FatJetSDsubjetWpt'   , FatJetSDsubjetWpt   ,  'FatJetSDsubjetWpt[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetWmass' , FatJetSDsubjetWmass ,  'FatJetSDsubjetWmass[NFatJet]/F' )
+    TreeEXOVV.Branch('FatJetSDsubjetWp4'   , FatJetSDsubjetWp4   ,  'FatJetSDsubjetWp4[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetBpt'   , FatJetSDsubjetBpt   ,  'FatJetSDsubjetBpt[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetSDsubjetBmass' , FatJetSDsubjetBmass ,  'FatJetSDsubjetBmass[NFatJet]/F' )
+    TreeEXOVV.Branch('FatJetSDsubjetBp4'   , FatJetSDsubjetBp4   ,  'FatJetSDsubjetBp4[NFatJet]/F'   )
+    TreeEXOVV.Branch('FatJetCorrUp'        , FatJetCorrUp        ,  'FatJetCorrUp[NFatJet]/F'        )
+    TreeEXOVV.Branch('FatJetCorrDn'        , FatJetCorrDn        ,  'FatJetCorrDn[NFatJet]/F'        )
+
+
+    TreeEXOVV.Branch('NGenJet'             , NGenJet             ,  'NGenJet/I'        )
+    TreeEXOVV.Branch('GenJetPt'            , GenJetPt            ,  'GenJetPt[NGenJet]/F'            )
+    TreeEXOVV.Branch('GenJetEta'           , GenJetEta           ,  'GenJetEta[NGenJet]/F'           )
+    TreeEXOVV.Branch('GenJetPhi'           , GenJetPhi           ,  'GenJetPhi[NGenJet]/F'           )
+    TreeEXOVV.Branch('GenJetRap'           , GenJetRap           ,  'GenJetRap[NGenJet]/F'           )
+    TreeEXOVV.Branch('GenJetBDisc'         , GenJetBDisc         ,  'GenJetBDisc[NGenJet]/F'         )
+    TreeEXOVV.Branch('GenJetRhoRatio'      , GenJetRhoRatio      ,  'GenJetRhoRatio[NGenJet]/F'      )
+    TreeEXOVV.Branch('GenJetMass'          , GenJetMass          ,  'GenJetMass[NGenJet]/F'          )
+    TreeEXOVV.Branch('GenJetMassSoftDrop'  , GenJetMassSoftDrop  ,  'GenJetMassSoftDrop[NGenJet]/F'  )
+
+    
+
+    TreeEXOVV.Branch('METpx'        , METpx        ,  'METpx/F'        )
+    TreeEXOVV.Branch('METpy'        , METpy        ,  'METpy/F'        )
+    TreeEXOVV.Branch('METpt'        , METpt        ,  'METpt/F'        )
+    TreeEXOVV.Branch('METphi'       , METphi       ,  'METphi/F'       )
+    TreeEXOVV.Branch('Nvtx'         , Nvtx         ,  'Nvtx/F'         )
+
+
+
+
+
 
 #@ JET CORRECTIONS
 
@@ -578,9 +588,6 @@ ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 #jecParStrAK4 = ROOT.std.string('JECs/PHYS14_25_V2_AK4PFchs.txt')
 #jecUncAK4 = ROOT.JetCorrectionUncertainty( jecParStrAK4 )
 
-if options.jecSys != None:
-    jecParStrAK8 = ROOT.std.string('JECs/Summer15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
-    jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
 if options.isMC : 
     print 'Getting L3 for AK4'
@@ -597,6 +604,12 @@ if options.isMC :
     L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L2Relative_AK8PFchs.txt");
     print 'Getting L1 for AK8'
     L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L1FastJet_AK8PFchs.txt");
+
+
+    jecParStrAK8 = ROOT.std.string('JECs/Summer15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
+    jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
+
+    
 else :
     print 'Getting L3 for AK4'
     L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L3Absolute_AK4PFchs.txt");## same deal as above
@@ -701,7 +714,7 @@ for ifile in files : #{ Loop over root files
         lastRun = 1
         currRun = 1
         trigMap = {}
-        ipt0 = None
+        ipt0 = -1
 
         # Speed up processing by preselecting an AK8 jet with high pt
         gotAK8 = event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
@@ -795,7 +808,7 @@ for ifile in files : #{ Loop over root files
 
 
 
-        if options.deweightFlat  : 
+        if options.isMC and options.deweightFlat  : 
             #@ Event weights
             gotGenerator = event.getByLabel( l_generator, h_generator )
             if gotGenerator :
@@ -834,10 +847,17 @@ for ifile in files : #{ Loop over root files
         ###################################################################
 
         #EVENT AK8 HANDLES
-        event.getByLabel ( l_genJetsAK8Pt, h_genJetsAK8Pt )
-        event.getByLabel ( l_genJetsAK8Eta, h_genJetsAK8Eta )
-        event.getByLabel ( l_genJetsAK8Phi, h_genJetsAK8Phi )
-        event.getByLabel ( l_genJetsAK8Mass, h_genJetsAK8Mass )
+
+        if options.isMC : 
+            event.getByLabel ( l_genJetsAK8Pt, h_genJetsAK8Pt )
+            event.getByLabel ( l_genJetsAK8Eta, h_genJetsAK8Eta )
+            event.getByLabel ( l_genJetsAK8Phi, h_genJetsAK8Phi )
+            event.getByLabel ( l_genJetsAK8Mass, h_genJetsAK8Mass )
+            event.getByLabel ( l_genJetsAK8SoftDropMass, h_genJetsAK8SoftDropMass )
+            event.getByLabel ( l_genJetsAK8SoftDropPt, h_genJetsAK8SoftDropPt )
+            event.getByLabel ( l_genJetsAK8SoftDropPhi, h_genJetsAK8SoftDropPhi )
+            event.getByLabel ( l_genJetsAK8SoftDropEta, h_genJetsAK8SoftDropEta )
+        
         
         # event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt ) got this above to speed things up
         event.getByLabel ( l_jetsAK8Eta, h_jetsAK8Eta )
@@ -880,6 +900,8 @@ for ifile in files : #{ Loop over root files
 
 
         ak8JetsP4Corr = []
+        ak8JetsCorrUp = []
+        ak8JetsCorrDn = []
         ak8JetsP4SoftDropCorr = []
         ak8JetsPassID = []
         AK8SoftDropM = []
@@ -942,7 +964,10 @@ for ifile in files : #{ Loop over root files
                 GenAK8Eta = h_genJetsAK8Eta.product()
                 GenAK8Phi = h_genJetsAK8Phi.product()
                 GenAK8Mass = h_genJetsAK8Mass.product()
-
+                GenAK8SoftDropPt = h_genJetsAK8SoftDropPt.product()
+                GenAK8SoftDropEta = h_genJetsAK8SoftDropEta.product()
+                GenAK8SoftDropPhi = h_genJetsAK8SoftDropPhi.product()
+                GenAK8SoftDropMass = h_genJetsAK8SoftDropMass.product()
         
 
         njets = len(h_jetsAK8Pt.product())
@@ -1000,9 +1025,9 @@ for ifile in files : #{ Loop over root files
             AK8P4Corr = AK8P4Raw*newJEC
                                                     
             # Gen Jets
-            if options.makeResponseMatrix or options.isMC or options.makeResponseMatrix2D : 
-            # Make response matrix
-                ak8GenJetsP4Corr = []
+            if options.isMC:
+                ak8GenJetsP4 = []
+                ak8GenJetsSoftDropP4 = []
                 if len( GenAK8Pt ) > 0 :
                     for igen in range(0, len( GenAK8Pt ) ):
 
@@ -1010,53 +1035,32 @@ for ifile in files : #{ Loop over root files
                         geneta = GenAK8Eta[igen]
                         genphi = GenAK8Phi[igen]
                         genmass = GenAK8Mass[igen]
+                        gensoftdroppt = GenAK8SoftDropPt[igen]
+                        gensoftdropeta = GenAK8SoftDropEta[igen]
+                        gensoftdropphi = GenAK8SoftDropPhi[igen]
+                        gensoftdropmass = GenAK8SoftDropMass[igen]
 
                         genp4 = ROOT.TLorentzVector()
                         genp4.SetPtEtaPhiM( genpt, geneta, genphi, genmass )
-
-                        ak8GenJetsP4Corr.append( genp4 )           
+                        gensoftdropp4 = ROOT.TLorentzVector()
+                        gensoftdropp4.SetPtEtaPhiM( gensoftdroppt, gensoftdropeta, gensoftdropphi, gensoftdropmass )
+                        
+                        ak8GenJetsP4.append( genp4 )
+                        ak8GenJetsSoftDropP4.append( gensoftdropp4 )
             
-            
-            #@ Smear Jets
-
-            jetScale = 1
-            if options.jerSys != None :
-                igenJet = getMatched( AK8P4Corr , ak8GenJetsP4Corr  )
-                if igenJet == None :
-                    AK8isFake.append(True)
-                else :
-                    AK8isFake.append(False)
-                    scale = options.jerSys  #JER nominal=0.1, up=0.2, down=0.0
-                    my_jerSys = 0
-                    if options.jerSys > 0 :
-                        my_jerSys = 1
-                    elif options.jerSys == 0.0 :
-                        my_jerSys = 0
-                    else :
-                        my_jerSys = -1
-                    scale = getJER(AK8Eta[i], my_jerSys) #JER nominal=0, up=+1, down=-1
-                    recopt = AK8P4Corr.Perp()
-                    genpt = ak8GenJetsP4Corr[igenJet].Perp()
-                    deltapt = (recopt-genpt)*(scale-1.0)
-                    ptscale = max(0.0, (recopt+deltapt)/recopt)
-                    jetScale *= ptscale
                 
             #@ JEC Scaling for AK8 Jets
-
-            if options.jecSys != None :
-                if options.verbose :
-                    print 'AK8 Jets Pre-Corrected' + str(AK8P4Corr.Perp())
+            ak8JetsP4Corr.append( AK8P4Corr )
+            if options.isMC  :
                 jecUncAK8.setJetEta( AK8P4Corr.Eta() )
                 jecUncAK8.setJetPt( AK8P4Corr.Perp() )
-                upOrDown = bool(options.jecSys > 0.0)
-                unc = abs(jecUncAK8.getUncertainty(upOrDown))
-                jetScale += unc * options.jecSys
-                ak8JetsP4Corr.append( AK8P4Corr*jetScale)
-                if options.verbose:
-                    print 'AK8 Post-Correction' + str(AK8P4Corr.Perp()*jetScale)
-            else :################################################################################# this bit here is broken for the JER
-                ak8JetsP4Corr.append( AK8P4Corr )
-
+                ak8JetsCorrUp.append( 1. + jecUncAK8.getUncertainty(1) )
+                jecUncAK8.setJetEta( AK8P4Corr.Eta() )
+                jecUncAK8.setJetPt( AK8P4Corr.Perp() )
+                ak8JetsCorrDn.append( 1. - jecUncAK8.getUncertainty(0) )
+            else :
+                ak8JetsCorrUp.append( -1.0 )
+                ak8JetsCorrDn.append( -1.0 )
 
             tau21 = -1.0
             if AK8Tau1[i] > 0.0 :
@@ -1154,238 +1158,73 @@ for ifile in files : #{ Loop over root files
             triggerPrescales = h_triggerPrescales.product()            
 
             for itrig in xrange(0, len(triggerNameStrings) ) :
-
-                    
                 if "HLT_PFJet" in triggerNameStrings[itrig] : #\
                   #or "HLT_PFHT" in triggerNameStrings[itrig] \
                   #or "HLT_HT" in triggerNameStrings[itrig] :
                     for itrigToGet, trigToGet in enumerate(trigsToGet) : 
                         if trigToGet in triggerNameStrings[itrig] :
                             trigIndex = itrigToGet
-                            trigMap[ itrigToGet ] = int(triggerBits[itrig])
-                                          
-                    if triggerBits[itrig] == 1 :
-                        
-                        if options.verbose : 
-                            print '    Passed trigger                : ' + triggerNameStrings[itrig]
-                        if triggerPrescales[itrig] == 1.0 :
-                            unprescaled = True
-                        prescale = triggerPrescales[itrig]
-                    else :
-                        if options.verbose :
-                            print '    found trigger name but failed : ' + triggerNameStrings[itrig]
+                            trigMap[ itrigToGet ] = int(triggerBits[itrig])                                          
 
-            if not readTriggers :
-                if options.verbose :
-                    print 'Did not find triggers'
-                continue
 
-            if options.verbose : 
-                print trigMap
-            passTrig, ipt0 = trigHelper( pt0 , trigMap )
+
+            if options.writeTree and not options.isMC : 
+                Trig[0] = 0
+                for itrigForWrite in xrange( len(trigsToGet) - 1, -1, -1) :
+                    if trigMap[itrigForWrite] > 0 :
+                        Trig[0] += pow( 10, itrigForWrite)
+
+
+        if options.writeTree :
             if options.verbose :
-              
-                print 'Check : pt0 = ' + str(jetPtAK8[0]) + ', ipt0 = ' + str(ipt0) + ', pass = ' + str(passTrig)
+                print 'Writing hadronic tree'
 
-
-            if unprescaled :
-                prescale = 1.0
-            if options.verbose :
-                print 'Prescale = ' + str(prescale)
-                
-            if options.isMC == False :
-                evWeight = 1            
-            if passTrig == False :
-                if options.verbose:
-                    print 'pass trigger ?' + str(passTrig)
-                continue
-            if options.verbose :
-                print 'made it to line 1193'
-        if options.verbose :
-            print 'ipt0 = ' + str(ipt0) + ', pt0 = ' + str(pt0)
-        if ipt0 != None and ipt0 >= 0 :
-            h_trig.Fill( ipt0, evWeight )
-            h_trig_raw.Fill( ipt0 )
-            #ha_ht[ipt0].Fill( ht )
-            ha_pt0[ipt0].Fill( pt0 )
-            h_pt0.Fill(pt0, evWeight)
-
-
-        if options.verbose :
-            print 'About to check jet kinematics'
-        ptAsymmetry = None
-        dPhiJJ = None
-        njetsPassed = len( ak8JetsP4Corr )
-        if njetsPassed >= 2 :
-            ptAsymmetry = (ak8JetsP4Corr[0].Perp() - ak8JetsP4Corr[1].Perp()) / (ak8JetsP4Corr[0].Perp() + ak8JetsP4Corr[1].Perp())
-            dPhiJJ = ak8JetsP4Corr[0].DeltaPhi( ak8JetsP4Corr[1] )
-
-        passKin = ptAsymmetry != None and ptAsymmetry < 0.3 and dPhiJJ > 2.0
-        if passKin :
-            #print 'Passed kinematics'
-            for i in range(0,len(ak8JetsP4Corr)) :
-                AK8P4Corr = ak8JetsP4Corr[i]
-                recoBin = ipt0
-                if ak8JetsPassID[i] == True and  AK8P4Corr.Perp() > options.minAK8JetPt and AK8JetZ[i] != None :
-                    if options.verbose : 
-                        print '  corr jet pt = {0:8.2f}, y = {1:6.2f}, phi = {2:6.2f}, m = {3:6.2f}, m_sd = {4:6.2f}, tau21 = {5:6.2f}, jetrho = {6:10.2e}'.format (
-                            AK8P4Corr.Perp(), AK8P4Corr.Rapidity(), AK8P4Corr.Phi(), AK8P4Corr.M(), AK8SoftDropM[i], tau21, jetrho
-                        )
-                    if options.verbose :
-                        print 'FILLING HISTOGRAMS FOR NON-HLT BINNED VARIABLES'
-                        print 'event weight ' + str(evWeight)
-                        print 'AK8 Pt: ' + str(AK8P4Corr.Perp())
-                        print 'AK8 Rapidity: ' + str(AK8P4Corr.Rapidity())
-                        print 'AK8 Phi: ' + str(AK8P4Corr.Phi())
-                        print 'AK8 M: ' + str(AK8P4Corr.M())
-                    h_ptAK8.Fill( AK8P4Corr.Perp(), evWeight )
-                    h_yAK8.Fill( AK8P4Corr.Rapidity(), evWeight  )
-                    h_phiAK8.Fill( AK8P4Corr.Phi(), evWeight  )
-                    h_mAK8.Fill( AK8P4Corr.M(), evWeight  )
-                    h_msoftdropAK8.Fill( AK8SoftDropM[i], evWeight  )
-                    h_mprunedAK8.Fill( AK8PrunedM[i], evWeight  )
-                    h_mfilteredAK8.Fill( AK8FilteredM[i], evWeight  )
-                    h_mtrimmedAK8.Fill( AK8TrimmedM[i], evWeight  )
-                    h_jetareaAK8.Fill( AK8Area[i], evWeight )
-                    h_tau21AK8.Fill( AK8Tau21[i], evWeight )
-                    h_nhfAK8.Fill( AK8nhf[i], evWeight )
-                    h_chfAK8.Fill( AK8chf[i], evWeight )
-                    h_nefAK8.Fill( AK8nef[i], evWeight )
-                    h_cefAK8.Fill( AK8cef[i], evWeight )
-                    h_ncAK8.Fill( AK8nconstituents[i], evWeight )
-                    h_nchAK8.Fill( AK8nch[i], evWeight )
-                    h_jetrhoAK8.Fill( AK8JetRho[i], evWeight )
-                    h_subjetDRAK8.Fill( AK8subjetDR[i], evWeight )                
-                    h_jetzAK8.Fill( AK8JetZ[i] , evWeight )
-                   
-                    if options.verbose :
-                        print "NON-HLT BINNED HISTS FILLED!"
-                    if recoBin != None and recoBin >= 0 :
-                        if options.verbose :
-                            print 'In jet loop, filling bin ' + str(recoBin)
-                        ha_ptAK8[recoBin].Fill( AK8P4Corr.Perp()  , evWeight)
-                        ha_yAK8[recoBin].Fill( AK8P4Corr.Rapidity()  , evWeight)
-                        ha_phiAK8[recoBin].Fill( AK8P4Corr.Phi()  , evWeight)
-                        ha_mAK8[recoBin].Fill( AK8P4Corr.M()  , evWeight)
-                        ha_msoftdropAK8[recoBin].Fill( AK8SoftDropM[i]  , evWeight)
-                        ha_mprunedAK8[recoBin].Fill( AK8PrunedM[i]  , evWeight)
-                        ha_mfilteredAK8[recoBin].Fill( AK8FilteredM[i]  , evWeight)
-                        ha_mtrimmedAK8[recoBin].Fill( AK8TrimmedM[i]  , evWeight)
-                        ha_jetareaAK8[recoBin].Fill( AK8Area[i] , evWeight)
-                        ha_tau21AK8[recoBin].Fill( AK8Tau21[i] , evWeight)
-                        ha_nhfAK8[recoBin].Fill( AK8nhf[i], evWeight )
-                        ha_chfAK8[recoBin].Fill( AK8chf[i], evWeight )
-                        ha_nefAK8[recoBin].Fill( AK8nef[i], evWeight )
-                        ha_cefAK8[recoBin].Fill( AK8cef[i], evWeight )
-                        ha_ncAK8[recoBin].Fill( AK8nconstituents[i], evWeight )
-                        ha_nchAK8[recoBin].Fill( AK8nch[i], evWeight )
-                        ha_jetrhoAK8[recoBin].Fill( AK8JetRho[i], evWeight )
-                        ha_subjetDRAK8[recoBin].Fill( AK8subjetDR[i], evWeight )                
-                        ha_jetzAK8[recoBin].Fill( AK8JetZ[i] , evWeight )
-                        if options.verbose :
-                            print 'filling 2D Hisogram: '
-                            print 'AK8 Pt: ' + str(AK8P4Corr.Perp())
-                            print 'AK8 Mass: ' + str(AK8P4Corr.M())
-                        h_2DHisto_meas.Fill( AK8P4Corr.Perp(), AK8P4Corr.M(), evWeight )
-                        
-
-                        if options.verbose : 
-                            print 'Reco jet %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( i, AK8P4Corr.Perp(), AK8P4Corr.Eta(), AK8P4Corr.Phi(), AK8P4Corr.M() )
-
-                        
-                        if options.isMC : 
-                            igen = getMatched( AK8P4Corr, ak8GenJetsP4Corr )
-
-                            # Here is the case where we found reco and gen jets, Fill histograms and response matrices
-                            if igen != None and igen >= 0 :
-
-                                h_ptAK8Gen.Fill( ak8GenJetsP4Corr[igen].Perp()  , evWeight)
-                                h_yAK8Gen.Fill( ak8GenJetsP4Corr[igen].Rapidity()  , evWeight)
-                                h_phiAK8Gen.Fill( ak8GenJetsP4Corr[igen].Phi()  , evWeight)
-                                h_mAK8Gen.Fill( ak8GenJetsP4Corr[igen].M()  , evWeight)                            
-                                ha_ptAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].Perp()  , evWeight)
-                                ha_yAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].Rapidity()  , evWeight)
-                                ha_phiAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].Phi()  , evWeight)
-                                ha_mAK8Gen[recoBin].Fill( ak8GenJetsP4Corr[igen].M(), evWeight )
-                                
-                                h_2DHisto_gen.Fill( ak8GenJetsP4Corr[igen].Perp(), ak8GenJetsP4Corr[igen].M(), evWeight )
-                                
-
-                                if options.makeResponseMatrix : 
-                                    responses[recoBin].Fill( AK8P4Corr.M(), ak8GenJetsP4Corr[igen].M(), evWeight )
-                                elif options.makeResponseMatrix2D :
-                                    responses[0].Fill( AK8P4Corr.Perp(), AK8P4Corr.M(), ak8GenJetsP4Corr[igen].Perp(), ak8GenJetsP4Corr[igen].M(), evWeight)
-                                    if options.verbose :
-                                        print 'Gen jet  %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( igen, ak8GenJetsP4Corr[igen].Perp(), ak8GenJetsP4Corr[igen].Eta(), ak8GenJetsP4Corr[igen].Phi(), ak8GenJetsP4Corr[igen].M() )
-
-
-
-                            # Here we have no gen jet but have a reco jet ===> that is a Fake
-                            elif options.makeResponseMatrix :
-                                responses[recoBin].Fake( ak8JetsP4Corr[i].M(), evWeight )
-                                if options.verbose : 
-                                    print 'Response matrix fake : %6.2f, %6.2f, %6.2f, %6.2f' % ( AK8P4Corr.Perp(), AK8P4Corr.Eta(), AK8P4Corr.Phi(), AK8P4Corr.M() )
-                                    print '   Candidates : '
-                                    for genJet in ak8GenJetsP4Corr :
-                                        print '    %3d %6.2f, %6.2f, %6.2f, %6.2f, dR = %6.3f' % ( ak8GenJetsP4Corr.index(genJet), genJet.Perp(), genJet.Eta(), genJet.Phi(), genJet.M(), genJet.DeltaR( AK8P4Corr) )
-                            elif options.makeResponseMatrix2D :
-                                responses[0].Fake( ak8JetsP4Corr[i].Perp(), ak8JetsP4Corr[i].M(), evWeight)
-                                if options.verbose :
-                                    print '2D response matrix fake :  %6.2f, %6.2f, %6.2f, %6.2f' % ( AK8P4Corr.Perp(), AK8P4Corr.Eta(), AK8P4Corr.Phi(), AK8P4Corr.M() )
-                                    print '   Candidates : '
-                                    for genJet in ak8GenJetsP4Corr :
-                                        print '    %3d %6.2f, %6.2f, %6.2f, %6.2f, dR = %6.3f' % ( ak8GenJetsP4Corr.index(genJet), genJet.Perp(), genJet.Eta(), genJet.Phi(), genJet.M(), genJet.DeltaR( AK8P4Corr) )
-                elif options.verbose :
-                    print "ak8JetsPassID[i] == True  = " + str(ak8JetsPassID[i] == True)  + " and AK8P4Corr.Perp() > options.minAK8JetPt = " + str(AK8P4Corr.Perp() > options.minAK8JetPt) + " and AK8JetZ[i] != None = " + str(AK8JetZ[i] != None)
-        # Here we have no reco jet but a gen jet ===> that is a Miss. 
-        if options.makeResponseMatrix and len( ak8GenJetsP4Corr ) > 0 :
-            for igen in range(0, min(2, len( ak8GenJetsP4Corr ) ) ):
-                genp4 = ak8GenJetsP4Corr[igen]
-                genpt = genp4.Perp()
-                genPtBin = binFinder( genpt )
-                if genPtBin == None :
-                    continue
-                
-                if ak8JetsP4Corr != None :
-                    ireco = None
-                    ireco = getMatched( genp4, ak8JetsP4Corr )
-                    if ireco == None : 
-                        responses[genPtBin].Miss( genp4.M(), evWeight )
+            Weight              [0] = evWeight
+            
+            NFatJet             [0] = min( 2, len(ak8JetsP4Corr))
+            for ifatjet in xrange( int(NFatJet[0]) ) :
+                jetP4 = ak8JetsP4Corr[ifatjet]
+                FatJetPt            [ifatjet] = jetP4.Perp()
+                FatJetEta           [ifatjet] = jetP4.Eta()
+                FatJetPhi           [ifatjet] = jetP4.Phi()
+                FatJetRap           [ifatjet] = jetP4.Rapidity()
+                if AK8JetRho[ifatjet] != None : 
+                    FatJetRhoRatio      [ifatjet] = AK8JetRho[ifatjet]
                 else :
-                    responses[genPtBin].Miss( genp4.M(), evWeight )
+                    FatJetRhoRatio      [ifatjet] = -1.
+                if ak8JetsP4SoftDropCorr[ifatjet] != None : 
+                    FatJetMassSoftDrop  [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].M()
+                else :
+                    FatJetMassSoftDrop  [ifatjet] = -1.0
+                FatJetMass          [ifatjet] = jetP4.M()
+                FatJetTau1          [ifatjet] = AK8Tau1[ifatjet]
+                FatJetTau2          [ifatjet] = AK8Tau2[ifatjet]
+                FatJetTau3          [ifatjet] = AK8Tau3[ifatjet]
+                FatJetTau21         [ifatjet] = AK8Tau21[ifatjet]
+                FatJetCorrUp        [ifatjet] = ak8JetsCorrUp[ifatjet]
+                FatJetCorrDn        [ifatjet] = ak8JetsCorrDn[ifatjet]
 
-        if options.makeResponseMatrix2D and len( ak8GenJetsP4Corr) > 0 :
-            for igen in range(0, min(2,len( ak8GenJetsP4Corr ) ) ):
-                genp4 = ak8GenJetsP4Corr[igen]
-                genpt = genp4.Perp()
-                h_genjets.Fill(genpt, evWeight)
+            if options.isMC : 
+                NGenJet             [0] = min( 2, len(ak8GenJetsP4))
+                for igenjet in xrange( int(NGenJet[0]) ) :
+                    jetP4 = ak8GenJetsP4[igenjet]
+                    GenJetPt            [igenjet] = jetP4.Perp()
+                    GenJetEta           [igenjet] = jetP4.Eta()
+                    GenJetPhi           [igenjet] = jetP4.Phi()
+                    GenJetRap           [igenjet] = jetP4.Rapidity()
+                    GenJetMassSoftDrop  [igenjet] = ak8GenJetsSoftDropP4[igenjet].M()
+                    GenJetMass          [igenjet] = jetP4.M()
+
+                
+            METpx               [0] = metPx
+            METpy               [0] = metPy
+            METpt               [0] = metPt
+            METphi              [0] = metPhi     
+            Nvtx                [0] = NPV
+            TreeEXOVV.Fill()
 
 
-                if ak8JetsP4Corr != None :
-                    ireco = None
-                    ireco = getMatched( genp4, ak8JetsP4Corr)
-                    if ireco == None:
-                        if options.verbose :
-                            print 'Response matrix miss!'
-                            print 'GenJet  %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( igen, genp4.Perp(), genp4.Eta(), genp4.Phi(), genp4.M() )
-                            print '   Candidates : '
-                            for recoJet in ak8JetsP4Corr : 
-                                print 'RecoJet %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( ak8JetsP4Corr.index(recoJet), recoJet.Perp(), recoJet.Eta(), recoJet.Phi(), recoJet.M() )
-
-                        responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
-                    else:
-                        h_genwithreco.Fill(genp4.Perp(), evWeight)
-                else:
-                    if options.verbose :
-                        print 'Response matrix miss!'
-                        print 'GenJet  %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( igen, genp4.Perp(), genp4.Eta(), genp4.Phi(), genp4.M() )
-                        print '   Candidates : '
-                        for recoJet in ak8JetsP4Corr : 
-                            print 'RecoJet %6.0f : %6.2f, %6.2f, %6.2f, %6.2f' % ( ak8JetsP4Corr.index(recoJet), recoJet.Perp(), recoJet.Eta(), recoJet.Phi(), recoJet.M() )
-                    responses[0].Miss( genp4.Perp(), genp4.M(), evWeight )
 
 f.cd()
-f.Write()
-for response in responses :
-    response.Write()
+TreeEXOVV.Write()
 f.Close()
