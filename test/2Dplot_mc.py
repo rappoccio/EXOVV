@@ -25,7 +25,8 @@ if options.plotUnc:
     jecup = ROOT.TFile('2DClosure_jecup.root')
     jerdn = ROOT.TFile('2DClosure_jerdn.root')
     jerup = ROOT.TFile('2DClosure_jerup.root')
-    for i in range(0, 6):
+    for i in range(1, 7):
+        print i 
         jecdna.append(jecdn.Get('mass' + str(i)))
         jecupa.append(jecup.Get('mass' + str(i)))
         jerdna.append(jerdn.Get('mass' + str(i)))
@@ -149,15 +150,15 @@ for i in datacanvases:
     jerUP  = jerupa[index]
     jerDOWN = jerdna[index]
     if options.plotUnc:
-        for ibin in xrange(0,hReco.GetNbinsX()):
+        for ibin in xrange(1,hReco.GetNbinsX()):
             val = float(hReco.GetBinContent(ibin))
             err1 = float(hReco.GetBinError(ibin))
             upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
             downjes = float(abs(nom.GetBinContent(ibin) - jesDOWN.GetBinContent(ibin)))
-            sys = float(((upjes + downjes)/2.) * val)
+            sys = float(((upjes + downjes)/2.))
             upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
             downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
-            sys2 = float(((upjer + downjer )/2.) * val)
+            sys2 = float(((upjer + downjer )/2.))
             err = sqrt(err1*err1 + sys*sys + sys2*sys2)
             hReco.SetBinError(ibin, err)
     ################################## Make top plot nice
