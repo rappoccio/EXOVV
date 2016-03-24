@@ -4,10 +4,32 @@ ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
+from optparse import OptionParser
+parser = OptionParser()
+
+parser.add_option('--plotUnc', action='store_true',
+                  default= 'False',
+                  dest='plotUnc',
+                  help='Plot MC with systematic uncertainties added to it')                                  
+(options, args) = parser.parse_args()
+
 
 
 f = ROOT.TFile('2DClosure.root')
-
+jecdna = []
+jecupa = []
+jerdna = []
+jerupa = []
+if options.plotUnc:
+    jecdn = ROOT.TFile('2DClosure_jecdn.root')
+    jecup = ROOT.TFile('2DClosure_jecup.root')
+    jerdn = ROOT.TFile('2DClosure_jerdn.root')
+    jerup = ROOT.TFile('2DClosure_jerup.root')
+    for i in range(0, 6):
+        jecdna.append(jecdn.Get('mass' + str(i)))
+        jecupa.append(jecup.Get('mass' + str(i)))
+        jerdna.append(jerdn.Get('mass' + str(i)))
+        jerupa.append(jerup.Get('mass' + str(i)))
 
 
 ROOT.gStyle.SetOptStat(000000)
@@ -121,6 +143,23 @@ for i in datacanvases:
     MCtruth[index].UseCurrentStyle()
     ################################## Uncertainties
     hReco = datalist[index]
+    nom = datalist[index]
+    jesUP  = jecupa[index]
+    jesDOWN = jecdna[index]
+    jerUP  = jerupa[index]
+    jerDOWN = jerdna[index]
+    if options.plotUnc:
+        for ibin in xrange(0,hReco.GetNbinsX()):
+            val = float(hReco.GetBinContent(ibin))
+            err1 = float(hReco.GetBinError(ibin))
+            upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+            downjes = float(abs(nom.GetBinContent(ibin) - jesDOWN.GetBinContent(ibin)))
+            sys = float(((upjes + downjes)/2.) * val)
+            upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+            downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
+            sys2 = float(((upjer + downjer )/2.) * val)
+            err = sqrt(err1*err1 + sys*sys + sys2*sys2)
+            hReco.SetBinError(ibin, err)
     ################################## Make top plot nice
     hReco.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
     hReco.SetMarkerStyle(20)

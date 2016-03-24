@@ -9,15 +9,33 @@ from ROOT import TCanvas
 from ROOT import RooUnfoldSvd
 
 
+from optparse import OptionParser
+parser = OptionParser()
+
+parser.add_option('--extension', action ='store', type = 'string',
+                 default ='',
+                 dest='extension',
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
+                                
+(options, args) = parser.parse_args()
+
 
 myfile = TFile('qcdmc_stitched_qcdmc.root')
 
+outtext = ''
+outfile = None
 
-response = myfile.Get('2d_response')
+
+response = myfile.Get('2d_response' + options.extension)
+outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
+outtext = options.extension
+
 truth = myfile.Get('PFJet_pt_m_AK8Gen')
 reco = myfile.Get('PFJet_pt_m_AK8')
+
 response.Draw('colz')
-outfile = TFile('2DClosure.root', 'RECREATE')
+
+
 unfold = RooUnfoldBayes(response, reco, 6)
 #unfold= RooUnfoldSvd(response, reco, 5);
 
@@ -84,11 +102,12 @@ for i, canvas in enumerate(canvases) :
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
     legends[i].AddEntry(namesgen[i], 'Gen', 'l')
     legends[i].Draw()
-    canvas.SaveAs('unfolded_closure_preplotter_'+pt_bin[i]+'.png')
+    canvas.SaveAs('unfolded_closure_preplotter_'+pt_bin[i] + options.extension + '.png')
     
 outfile.cd()
 for hists in namesreco:
     hists.Write()
 for stuff in namesgen:
     stuff.Write()
+outfile.Write()
 outfile.Close()
