@@ -58,7 +58,7 @@ c8 = TCanvas()
 
 canvases = {c2, c3, c4, c5, c6, c7, c8}
 
-pt_bins = {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6}
+pt_bins = {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7}
 
 pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 5: '650-760', 6: '760-Inf'}
 
@@ -94,10 +94,10 @@ legends = [leg1, leg2, leg3, leg4, leg5, leg6, leg7]
 
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
-    namesreco[i] = reco_unfolded.ProjectionY('mass' + str(i), i, pt_bins[i])
+    namesreco[i] = reco_unfolded.ProjectionY('mass' + str(i), i+1, pt_bins[i]+1)
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesreco[i].Draw('hist')
-    namesgen[i] = truth.ProjectionY('genmass' + str(i), i, pt_bins[i])
+    namesgen[i] = truth.ProjectionY('genmass' + str(i), i+1, pt_bins[i]+1)
     namesgen[i].SetLineColor(4)
     namesgen[i].Draw('same hist')
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
