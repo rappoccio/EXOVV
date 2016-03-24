@@ -203,11 +203,17 @@ for itree,t in enumerate(trees) :
             continue
 
 
-        passkin = (FatJetPt[0] - FatJetPt[1])/(FatJetPt[0] + FatJetPt[1]) < 0.3 and ROOT.TVector2.Phi_0_2pi( FatJetPhi[0] - FatJetPhi[1] ) > 2.0
+        maxjet = 0
+        if FatJetPt[0] < FatJetPt[1] :
+            maxjet = 1
+
+        passkin = (FatJetPt[maxjet] - FatJetPt[1])/(FatJetPt[maxjet] + FatJetPt[1]) < 0.3 and ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[1] ) > 2.0
         if not passkin :
             continue
 
-        pt0 = FatJetPt[0]
+
+        
+        pt0 = FatJetPt[maxjet]
         trigbin, weight = trigHelper( pt0, Trig[0] )
 
 
@@ -233,7 +239,7 @@ for itree,t in enumerate(trees) :
         if trigbin == None :
             continue
 
-        #print ' %8.2f %6d %30s %9.2f' % (FatJetPt[0], trigbin, trigs[trigbin], scales[trigbin] )
+        #print ' %8.2f %6d %30s %9.2f' % (FatJetPt[maxjet], trigbin, trigs[trigbin], scales[trigbin] )
         
         pt0hists[trigbin].Fill( pt0, weight )
 
