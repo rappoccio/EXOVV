@@ -7,15 +7,28 @@ from ROOT import RooUnfold
 from ROOT import RooUnfoldBayes
 from ROOT import TCanvas
 from ROOT import RooUnfoldSvd
+from optparse import OptionParser
+parser = OptionParser()
 
-
+parser.add_option('--extension', action ='store', type = 'string',
+                 default ='',
+                 dest='extension',
+                 help='Runs jec for data, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
+                                
+(options, args) = parser.parse_args()
 
 mcfile = TFile('qcdmc_stitched_qcdmc.root')
+
+
+outfile = TFile('2DData' + options.extension + '.root', 'RECREATE')
+outtext = options.extension
+
+
 datafile = TFile('jetht_40pbinv_weighted_dataplots.root')
 
 
 
-response = mcfile.Get('2d_response')
+response = mcfile.Get('2d_response'+ options.extension)
 truth = mcfile.Get('PFJet_pt_m_AK8Gen')
 
 reco = datafile.Get('PFJet_pt_m_AK8')
@@ -24,7 +37,6 @@ truth.Scale( 1. / truth.Integral() )
 reco.Scale( 1. / reco.Integral() )
 
 response.Draw('colz')
-outfile = TFile('2DResults.root', 'RECREATE')
 unfold = RooUnfoldBayes(response, reco, 6)
 #unfold= RooUnfoldSvd(response, reco, 5);
 
@@ -91,7 +103,7 @@ for i, canvas in enumerate(canvases) :
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
     legends[i].AddEntry(namesgen[i], 'Gen', 'l')
     legends[i].Draw()
-    canvas.SaveAs('unfolded_results_preplotter_'+pt_bin[i]+'.png')
+    canvas.SaveAs('unfolded_results_preplotter_'+ outtext +pt_bin[i]+'.png')
     
 outfile.cd()
 for hists in namesreco:
