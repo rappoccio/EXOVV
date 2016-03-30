@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from optparse import OptionParser
 from jettools import getJER
+from math import sqrt
 
 parser = OptionParser()
 
@@ -36,7 +37,6 @@ trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, 50, 0, 1000
 measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, 50, 0, 1000)
 response.Setup(measVarHist, trueVarHist)
 
-
 response_jecup = ROOT.RooUnfoldResponse()
 response_jecup.SetName("2d_response_jecup")
 response_jecup.Setup(measVarHist, trueVarHist)
@@ -54,9 +54,32 @@ response_jerdn.SetName("2d_response_jerdn")
 response_jerdn.Setup(measVarHist, trueVarHist)
 
 
+response_softdrop = ROOT.RooUnfoldResponse()
+response_softdrop.SetName("2d_response_softdrop")
+response_softdrop.Setup(measVarHist, trueVarHist)
+
+
+response_softdrop_jecup = ROOT.RooUnfoldResponse()
+response_softdrop_jecup.SetName("2d_response_softdrop_jecup")
+response_softdrop_jecup.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jecdn = ROOT.RooUnfoldResponse()
+response_softdrop_jecdn.SetName("2d_response_softdrop_jecdn")
+response_softdrop_jecdn.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jerup = ROOT.RooUnfoldResponse()
+response_softdrop_jerup.SetName("2d_response_softdrop_jerup")
+response_softdrop_jerup.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jerdn = ROOT.RooUnfoldResponse()
+response_softdrop_jerdn.SetName("2d_response_softdrop_jerdn")
+response_softdrop_jerdn.Setup(measVarHist, trueVarHist)
 
 h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
 h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+
+h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
 
 
 def getMatched( p4, coll, dRMax = 0.1) :
@@ -134,7 +157,10 @@ for itree,t in enumerate(trees) :
     GenJetPhi = array.array('f', [-1,-1])
     GenJetMass = array.array('f', [-1,-1])
     GenJetMassSoftDrop = array.array('f', [-1,-1])
-
+    GenJetRhoRatio = array.array('f', [-1, -1])
+    FatJetPtSoftDrop = array.array('f', [-1, -1])
+    GenJetPtSoftDrop = array.array('f', [-1, -1])
+    
     
     Trig = array.array('i', [-1] )
 
@@ -156,7 +182,10 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus ('FatJetCorrUp', 1)
     t.SetBranchStatus ('FatJetCorrDn', 1)
     t.SetBranchStatus ('Trig', 1)
-
+    t.SetBranchStatus ('GenJetRhoRatio', 1)
+    t.SetBranchStatus ('GenJetPtSoftDrop', 1)
+    t.SetBranchStatus ('FatJetPtSoftDrop', 1)
+    
     t.SetBranchAddress ('NFatJet', NFatJet)
     t.SetBranchAddress ('NGenJet', NGenJet)
     t.SetBranchAddress ('FatJetPt', FatJetPt)
@@ -174,7 +203,9 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress ('FatJetRhoRatio', FatJetRhoRatio)
     t.SetBranchAddress ('FatJetTau21', FatJetTau21)
     t.SetBranchAddress ('Trig', Trig)
-    
+    t.SetBranchAddress ('GenJetRhoRatio', GenJetRhoRatio)
+    t.SetBranchAddress ('FatJetPtSoftDrop', FatJetPtSoftDrop)
+    t.SetBranchAddress ('GenJetPtSoftDrop', GenJetPtSoftDrop)
     entries = t.GetEntriesFast()
     print 'Processing tree ' + str(itree)
     
@@ -195,29 +226,35 @@ for itree,t in enumerate(trees) :
         FatJets = []
         GenJetsMassSD = []
         FatJetsMassSD = []        
-
-
-
+        GenJetsSD = []
+        FatJetsSD = []
         weight = qcdWeights[itree]
         
         for igen in xrange( int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()
             GenJet.SetPtEtaPhiM( GenJetPt[igen], GenJetEta[igen], GenJetPhi[igen], GenJetMass[igen])
+            GenJetSD = ROOT.TLorentzVector()
+            GenJetSD.SetPtEtaPhiM( GenJetPtSoftDrop[igen], GenJetEta[igen], GenJetPhi[igen], GenJetMassSoftDrop[igen] )
             GenJets.append(GenJet)
+            GenJetsSD.append(GenJetSD)
             GenJetsMassSD.append( GenJetMassSoftDrop[igen] )            
             h_2DHisto_gen.Fill( GenJet.Perp(), GenJet.M(), weight )
-
-
+            h_2DHisto_genSD.Fill( GenJetSD.Perp(), GenJetSD.M(), weight)
         # First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
         for ijet in xrange( int(NFatJet[0]) ):
+            
             FatJet = ROOT.TLorentzVector()
             FatJet.SetPtEtaPhiM( FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet])
+            
+            FatJetSD = ROOT.TLorentzVector()
+            FatJetSD.SetPtEtaPhiM( FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet]  )
+            
+            FatJetsSD.append(FatJetSD)
             FatJets.append(FatJet)
-            FatJetsMassSD.append( FatJetMassSoftDrop[ijet] )
-
+           
             h_2DHisto_meas.Fill( FatJet.Perp(), FatJet.M(), weight )
-
-
+            
+            h_2DHisto_measSD.Fill( FatJetSD.Perp(), FatJetSD.M())
 
             igen = getMatched( FatJet, GenJets )
 
@@ -235,21 +272,45 @@ for itree,t in enumerate(trees) :
                 genpt = GenJets[igen].Perp()
                 deltapt = (recopt-genpt)*(valdn-1.0)
                 smeardn = max(0.0, (recopt+deltapt)/recopt)
-
-                
+                                                
                 response.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecup.Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecdn.Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJet.M()* FatJetCorrDn[ijet], GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerup.Fill( FatJet.Perp() * smearup, FatJet.M()* smearup, GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerdn.Fill( FatJet.Perp() * smeardn, FatJet.M()* smeardn, GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                
+                response_softdrop.Fill( FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jecup.Fill( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jecdn.Fill( FatJetSD.Perp()  * FatJetCorrDn[ijet], FatJetSD.M() * FatJetCorrDn[ijet], GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jerup.Fill( FatJetSD.Perp()  * smearup, FatJetSD.M() * smearup, GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jerdn.Fill( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
             else : # Here we have a "Fake"
                 response.Fake( FatJet.Perp(), FatJet.M(), weight )
-
+                response_jecup.Fake( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], weight )
+                response_jecdn.Fake( FatJet.Perp() * FatJetCorrDn[ijet], FatJet.M()* FatJetCorrDn[ijet], weight )
+                response_jerup.Fake( FatJet.Perp() * smearup, FatJet.M() * smearup, weight )
+                response_jerdn.Fake( FatJet.Perp() * smeardn, FatJet.M() * smeardn, weight )
+                
+                response_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                response_softdrop_jecup.Fake( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], weight )
+                response_softdrop_jecdn.Fake( FatJetSD.Perp()  * FatJetCorrDn[ijet], FatJetSD.M() * FatJetCorrDn[ijet], weight )
+                response_softdrop_jerup.Fake( FatJetSD.Perp()  * smearup, FatJetSD.M() * smearup, weight )
+                response_softdrop_jerdn.Fake( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, weight )
         # Now get the "Misses" (i.e. we have no RECO jet)
         for igen in xrange( int(NGenJet[0]) ):
             ijet = getMatched( GenJets[igen], FatJets )
             if ijet == None :
                 response.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                response_jecup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                response_jecdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                response_jerup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                response_jerdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                
+                response_softdrop.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jecup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jecdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jerup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jerdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
 
 
 
@@ -263,4 +324,13 @@ response_jerup.Write()
 response_jerdn.Write()
 h_2DHisto_gen.Write()
 h_2DHisto_meas.Write()
+
+h_2DHisto_measSD.Write()
+h_2DHisto_genSD.Write()
+response_softdrop.Write()
+response_softdrop_jecup.Write()
+response_softdrop_jecdn.Write()
+response_softdrop_jerup.Write()
+response_softdrop_jerdn.Write()
+
 fout.Close()

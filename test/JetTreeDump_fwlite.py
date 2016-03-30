@@ -464,6 +464,7 @@ if options.writeTree :
     FatJetRhoRatio      = array('f', [-1., -1.])
     FatJetMass          = array('f', [-1., -1.])
     FatJetMassSoftDrop  = array('f', [-1., -1.])
+    FatJetPtSoftDrop    = array('f', [-1., -1.])
     FatJetMassPruned    = array('f', [-1., -1.])
     FatJetMassFiltered  = array('f', [-1., -1.])
     FatJetMassTrimmed   = array('f', [-1., -1.])
@@ -514,6 +515,7 @@ if options.writeTree :
     GenJetSDsubjetBpt   = array('f', [-1., -1.])
     GenJetSDsubjetBmass = array('f', [-1., -1.])
     GenJetSDsubjetBp4   = array('f', [-1., -1.])
+    GenJetPtSoftDrop    = array('f', [-1., -1.])
     
     METpx        = array('f', [-1.])
     METpy        = array('f', [-1.])
@@ -534,6 +536,7 @@ if options.writeTree :
     TreeEXOVV.Branch('FatJetRhoRatio'      , FatJetRhoRatio      ,  'FatJetRhoRatio[NFatJet]/F'      )
     TreeEXOVV.Branch('FatJetMass'          , FatJetMass          ,  'FatJetMass[NFatJet]/F'          )
     TreeEXOVV.Branch('FatJetMassSoftDrop'  , FatJetMassSoftDrop  ,  'FatJetMassSoftDrop[NFatJet]/F'  )
+    TreeEXOVV.Branch('FatJetPtSoftDrop'    , FatJetPtSoftDrop    ,  'FatJetPtSoftDrop[NFatJet]/F'    )
     TreeEXOVV.Branch('FatJetMassPruned'    , FatJetMassPruned    ,  'FatJetMassPruned[NFatJet]/F'    )
     TreeEXOVV.Branch('FatJetMassFiltered'  , FatJetMassFiltered  ,  'FatJetMassFiltered[NFatJet]/F'  )
     TreeEXOVV.Branch('FatJetMassTrimmed'   , FatJetMassTrimmed   ,  'FatJetMassTrimmed[NFatJet]/F'   )
@@ -565,7 +568,7 @@ if options.writeTree :
     TreeEXOVV.Branch('GenJetRhoRatio'      , GenJetRhoRatio      ,  'GenJetRhoRatio[NGenJet]/F'      )
     TreeEXOVV.Branch('GenJetMass'          , GenJetMass          ,  'GenJetMass[NGenJet]/F'          )
     TreeEXOVV.Branch('GenJetMassSoftDrop'  , GenJetMassSoftDrop  ,  'GenJetMassSoftDrop[NGenJet]/F'  )
-
+    TreeEXOVV.Branch('GenJetPtSoftDrop'    , GenJetPtSoftDrop    ,  'GenJetPtSoftDrop[NGenJet]/F'    )
     
 
     TreeEXOVV.Branch('METpx'        , METpx        ,  'METpx/F'        )
@@ -1194,6 +1197,7 @@ for ifile in files : #{ Loop over root files
                     FatJetRhoRatio      [ifatjet] = -1.
                 if ak8JetsP4SoftDropCorr[ifatjet] != None : 
                     FatJetMassSoftDrop  [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].M()
+                    FatJetPtSoftDrop    [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].Perp()
                 else :
                     FatJetMassSoftDrop  [ifatjet] = -1.0
                 FatJetMass          [ifatjet] = jetP4.M()
@@ -1214,6 +1218,7 @@ for ifile in files : #{ Loop over root files
                     GenJetRap           [igenjet] = jetP4.Rapidity()
                     GenJetMassSoftDrop  [igenjet] = ak8GenJetsSoftDropP4[igenjet].M()
                     GenJetMass          [igenjet] = jetP4.M()
+                    GenJetPtSoftDrop    [igenjet] = ak8GenJetsSoftDropP4[igenjet].Perp()
 
                 
             METpx               [0] = metPx
