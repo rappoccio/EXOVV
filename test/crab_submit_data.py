@@ -12,7 +12,7 @@ config.JobType.psetName = 'PSet.py'
 config.Data.inputDataset = '/JetHT/algomez-RunIIFall15MiniAODv2-PU25nsData2015v1_B2GAnaFW_v76x_v1p0-f22ee4b431887aefaa4bd1ff29f8ab62/USER'
 config.Data.inputDBS = 'phys03'
 config.Data.splitting = 'FileBased'
-config.Data.unitsPerJob = 1
+config.Data.unitsPerJob = 1000
 
 config.Site.storageSite = 'T3_US_FNALLPC'
 
