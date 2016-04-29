@@ -34,7 +34,7 @@ def main():
 
     config.section_("General")
     #config.General.requestName = 'EXOVV_QCD_Pt_170to300'
-    config.General.workArea = 'crab_projects'
+    config.General.workArea = 'crab_tightmatch'
     config.General.transferOutputs = True
     config.General.transferLogs = True
 
@@ -50,7 +50,7 @@ def main():
     #config.Data.inputDataset = '/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/alkahn-RunIIFall15MiniAODv2-PU25nsData2015v1_B2GAnaFW_v76x_v1p0-a5b607ee9aade77691e6d24b0736dda8/USER'
     config.Data.inputDBS = 'phys03'
     config.Data.splitting = 'FileBased'
-    config.Data.unitsPerJob = 1000
+    config.Data.unitsPerJob = 50
 
     config.section_("Site")
     config.Site.storageSite = 'T3_US_FNALLPC'
@@ -80,7 +80,7 @@ def main():
     for ijob, job in enumerate(jobs) :
 
         datasetname = job.split('/')[1]
-        config.General.requestName = 'EXOVV_' + datasetname
+        config.General.requestName = 'EXOVV_tightmatch' + datasetname
         config.Data.inputDataset = job
         print 'Submitting ' + config.General.requestName + ', dataset = ' + job
         print 'Configuration :'

@@ -20,7 +20,7 @@ parser.add_option('--extension', action ='store', type = 'string',
 (options, args) = parser.parse_args()
 
 
-myfile = TFile('qcdmc_stitched_qcdmc.root')
+myfile = TFile('qcd_76x_qcdmc.root')
 
 outtext = ''
 outfile = None
@@ -93,7 +93,7 @@ for i, canvas in enumerate(canvasesSD):
     canvas.cd()
     namesrecoSD[i] =  reco_unfoldedSD.ProjectionY('massSD' + str(i), i+1, i+1)
     namesrecoSD[i].SetTitle('SD Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
-    namesreco[i].Draw('hist')
+    namesrecoSD[i].Draw('hist')
     namesgenSD[i] = truthSD.ProjectionY('genmassSD' + str(i), i+1, i+1)
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')

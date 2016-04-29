@@ -398,6 +398,8 @@ def JetTreeDump_FWLite(argv) :
         FatJetMass          = array('f', [-1., -1.])
         FatJetMassSoftDrop  = array('f', [-1., -1.])
         FatJetPtSoftDrop    = array('f', [-1., -1.])
+        FatJetPhiSoftDrop   = array('f', [-1., -1.])
+        FatJetRapSoftDrop   = array('f', [-1., -1.])
         FatJetMassPruned    = array('f', [-1., -1.])
         FatJetMassFiltered  = array('f', [-1., -1.])
         FatJetMassTrimmed   = array('f', [-1., -1.])
@@ -447,7 +449,10 @@ def JetTreeDump_FWLite(argv) :
         GenJetSDsubjetBmass = array('f', [-1., -1.])
         GenJetSDsubjetBp4   = array('f', [-1., -1.])
         GenJetPtSoftDrop    = array('f', [-1., -1.])
+        GenJetPhiSoftDrop   = array('f', [-1., -1.])
+        GenJetRapSoftDrop   = array('f', [-1., -1.])
 
+        
         METpx        = array('f', [-1.])
         METpy        = array('f', [-1.])
         METpt        = array('f', [-1.])
@@ -468,6 +473,8 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('FatJetMass'          , FatJetMass          ,  'FatJetMass[NFatJet]/F'          )
         TreeEXOVV.Branch('FatJetMassSoftDrop'  , FatJetMassSoftDrop  ,  'FatJetMassSoftDrop[NFatJet]/F'  )
         TreeEXOVV.Branch('FatJetPtSoftDrop'    , FatJetPtSoftDrop    ,  'FatJetPtSoftDrop[NFatJet]/F'    )
+        TreeEXOVV.Branch('FatJetPhiSoftDrop'   , FatJetPhiSoftDrop   ,  'FatJetPhiSoftDrop[NFatJet]/F'   )
+        TreeEXOVV.Branch('FatJetRapSoftDrop'   , FatJetRapSoftDrop   ,  'FatJetRapSoftDrop[NFatJet]/F'   )
         TreeEXOVV.Branch('FatJetMassPruned'    , FatJetMassPruned    ,  'FatJetMassPruned[NFatJet]/F'    )
         TreeEXOVV.Branch('FatJetMassFiltered'  , FatJetMassFiltered  ,  'FatJetMassFiltered[NFatJet]/F'  )
         TreeEXOVV.Branch('FatJetMassTrimmed'   , FatJetMassTrimmed   ,  'FatJetMassTrimmed[NFatJet]/F'   )
@@ -499,6 +506,8 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('GenJetMass'          , GenJetMass          ,  'GenJetMass[NGenJet]/F'          )
         TreeEXOVV.Branch('GenJetMassSoftDrop'  , GenJetMassSoftDrop  ,  'GenJetMassSoftDrop[NGenJet]/F'  )
         TreeEXOVV.Branch('GenJetPtSoftDrop'    , GenJetPtSoftDrop    ,  'GenJetPtSoftDrop[NGenJet]/F'    )
+        TreeEXOVV.Branch('GenJetPhiSoftDrop'   , GenJetPhiSoftDrop   ,  'GenJetPhiSoftDrop[NGenJet]/F'   )
+        TreeEXOVV.Branch('GenJetRapSoftDrop'   , GenJetRapSoftDrop   ,  'GenJetRapSoftDrop[NGenJet]/F'   )
 
 
         TreeEXOVV.Branch('METpx'        , METpx        ,  'METpx/F'        )
@@ -524,43 +533,43 @@ def JetTreeDump_FWLite(argv) :
 
     if options.isMC : 
         print 'Getting L3 for AK4'
-        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L3Absolute_AK4PFchs.txt");
+        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L3Absolute_AK4PFPuppi.txt");
         print 'Getting L2 for AK4'
-        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L2Relative_AK4PFchs.txt");## USE 50 NS CORRECTIONS BUT THE UNCERTAINTY IS FOR 25
+        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L2Relative_AK4PFPuppi.txt");## USE 50 NS CORRECTIONS BUT THE UNCERTAINTY IS FOR 25
         print 'Getting L1 for AK4'
-        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L1FastJet_AK4PFchs.txt");
+        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L1FastJet_AK4PFPuppi.txt");
 
 
         print 'Getting L3 for AK8'
-        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L3Absolute_AK8PFchs.txt");
+        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L3Absolute_AK8PFPuppi.txt");
         print 'Getting L2 for AK8'
-        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L2Relative_AK8PFchs.txt");
+        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L2Relative_AK8PFPuppi.txt");
         print 'Getting L1 for AK8'
-        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L1FastJet_AK8PFchs.txt");
+        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L1FastJet_AK8PFPuppi.txt");
 
 
-        jecParStrAK8 = ROOT.std.string('JECs/Summer15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
+        jecParStrAK8 = ROOT.std.string('JECs/Fall15_25nsV2_DATA_Uncertainty_AK8PFPuppi.txt')
         jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
 
     else :
         print 'Getting L3 for AK4'
-        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L3Absolute_AK4PFchs.txt");## same deal as above
+        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L3Absolute_AK4PFPuppi.txt");## same deal as above
         print 'Getting L2 for AK4'
-        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2Relative_AK4PFchs.txt");
+        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2Relative_AK4PFPuppi.txt");
         print 'Getting L1 for AK4'
-        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L1FastJet_AK4PFchs.txt");
+        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L1FastJet_AK4PFPuppi.txt");
         # for data only :
-        ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2L3Residual_AK4PFchs.txt");
+        ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2L3Residual_AK4PFPuppi.txt");
 
         print 'Getting L3 for AK8'
-        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L3Absolute_AK8PFchs.txt");
+        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L3Absolute_AK8PFPuppi.txt");
         print 'Getting L2 for AK8'
-        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2Relative_AK8PFchs.txt");
+        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2Relative_AK8PFPuppi.txt");
         print 'Getting L1 for AK8'
-        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L1FastJet_AK8PFchs.txt");
+        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L1FastJet_AK8PFPuppi.txt");
         # for data only :
-        ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2L3Residual_AK8PFchs.txt");
+        ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2L3Residual_AK8PFPuppi.txt");
 
 
 
@@ -1120,6 +1129,8 @@ def JetTreeDump_FWLite(argv) :
                     if ak8JetsP4SoftDropCorr[ifatjet] != None : 
                         FatJetMassSoftDrop  [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].M()
                         FatJetPtSoftDrop    [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].Perp()
+                        FatJetPhiSoftDrop   [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].Phi()
+                        FatJetRapSoftDrop   [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].Rapidity()
                     else :
                         FatJetMassSoftDrop  [ifatjet] = -1.0
                     FatJetMass          [ifatjet] = jetP4.M()
@@ -1141,6 +1152,8 @@ def JetTreeDump_FWLite(argv) :
                         GenJetMassSoftDrop  [igenjet] = ak8GenJetsSoftDropP4[igenjet].M()
                         GenJetMass          [igenjet] = jetP4.M()
                         GenJetPtSoftDrop    [igenjet] = ak8GenJetsSoftDropP4[igenjet].Perp()
+                        GenJetPhiSoftDrop   [igenjet] = ak8GenJetsSoftDropP4[igenjet].Phi()
+                        GenJetRapSoftDrop   [igenjet] = ak8GenJetsSoftDropP4[igenjet].Rapidity()
 
 
                 METpx               [0] = metPx
