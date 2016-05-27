@@ -105,6 +105,14 @@ parser.add_option('--makeResponseMatrix2D', action='store_true',
                   dest ='makeResponseMatrix2D',
                   help = 'Make 2D Response Matrix')
 
+
+parser.add_option('--doPDFs', action='store_true',
+                  default =False,
+                  dest ='doPDFs',
+                  help = 'Run the PDF uncertainties')
+
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -113,12 +121,22 @@ argv = []
 
 import ROOT
 import sys
+import math
 from DataFormats.FWLite import Events, Handle
 ROOT.gROOT.Macro("rootlogon.C")
 
 import copy
 import random
 from array import array
+
+if options.doPDFs:
+    try : 
+        import lhapdf
+        nnpdfs = lhapdf.mkPDFs("NNPDF30_lo_as_0130")
+    except :
+        print 'LHAPDF is not working, did you do "source setup_lhapdf.csh"?'
+    
+
 #pt0cuts = [100., 150., 200., 300., 400., 500., 600., 700., 800. ]
 pt0cuts = [150., 230., 320., 410., 515., 610., 640., 700.]
 trigsToGet = [
@@ -205,6 +223,8 @@ nbinsPt = len(ptBinA) - 1
 #generator labels and handles
 h_generator = Handle("GenEventInfoProduct")
 l_generator = ("generator")
+h_lhe = Handle("LHEEventProduct")
+l_lhe = ("externalLHEProducer", "")
 
 #muon labels and handles
 h_muPt = Handle("std::vector<float>")
@@ -455,6 +475,9 @@ if options.writeTree :
     Trig        = array('i', [0]  )
     Weight      = array('f', [0.] )
 
+    NNPDF3weight_CorrDn     = array('f', [-1.])
+    NNPDF3weight_CorrUp     = array('f', [-1.])    
+
     NFatJet             = array('i', [0] )
     FatJetPt            = array('f', [-1., -1.])
     FatJetEta           = array('f', [-1., -1.])
@@ -527,6 +550,11 @@ if options.writeTree :
 
     TreeEXOVV.Branch('Trig'                , Trig                ,  'Trig/I'        )
     TreeEXOVV.Branch('Weight'              , Weight              ,  'Weight/F'      )
+
+    TreeEXOVV.Branch('NNPDF3weight_CorrDn'   ,  NNPDF3weight_CorrDn       ,  'NNPDF3weight_CorrDn/F'          )
+    TreeEXOVV.Branch('NNPDF3weight_CorrUp'   ,  NNPDF3weight_CorrUp       ,  'NNPDF3weight_CorrUp/F'          )
+
+    
     TreeEXOVV.Branch('NFatJet'             , NFatJet             ,  'NFatJet/I'        )
     TreeEXOVV.Branch('FatJetPt'            , FatJetPt            ,  'FatJetPt[NFatJet]/F'            )
     TreeEXOVV.Branch('FatJetEta'           , FatJetEta           ,  'FatJetEta[NFatJet]/F'           )
@@ -810,26 +838,76 @@ for ifile in files : #{ Loop over root files
 
 
 
+        gotGenerator = False
 
-        if options.isMC and options.deweightFlat  : 
-            #@ Event weights
+        if options.isMC and (options.deweightFlat or options.doPDFs) :
             gotGenerator = event.getByLabel( l_generator, h_generator )
-            if gotGenerator :
 
-                if options.deweightFlat : 
-                    #evWeight = evWeight * h_generator.product().weight()
-                    pthat = 0.0
-                    if h_generator.product().hasBinningValues() :
-                        pthat = h_generator.product().binningValues()[0]
-                        evWeight = evWeight * 1/pow(pthat/15.,4.5)
+            
+        if gotGenerator  : 
+            #@ Event weights
+            if options.deweightFlat : 
+                #evWeight = evWeight * h_generator.product().weight()
+                pthat = 0.0
+                if h_generator.product().hasBinningValues() :
+                    pthat = h_generator.product().binningValues()[0]
+                    evWeight = evWeight * 1/pow(pthat/15.,4.5)
+                if options.verbose :
+                    print 'Event weight = ' + str( evWeight )
+                    print 'pthat = ' + str(pthat)
+
+
+            if options.doPDFs:
+                #@Event weight errors
+
+
+                if h_generator.product().hasPDF() :
+                    pdf = h_generator.product().pdf()
+
+                    pdfval1_nom = nnpdfs[0].xfxQ(pdf.id.first, pdf.x.first, pdf.scalePDF) 
+                    pdfval2_nom = nnpdfs[0].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
+
+                    weights = []
+                    for ipdf in xrange(1, len(nnpdfs)) :
+                        w1 = nnpdfs[ipdf].xfxQ(pdf.id.first, pdf.x.first, pdf.scalePDF) 
+                        w2 = nnpdfs[ipdf].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
+                        weight = w1/pdfval1_nom * w2/pdfval2_nom
+                        weights.append( weight )
+                    weightup = 0.
+                    for iup in xrange(1, len(nnpdfs), 2):
+                        weightup += (1.0 - weights[iup])**2
+                    weightup = weightup / (len(nnpdfs) * 0.5)
+                    weightup = 1 + math.sqrt(weightup)
+
+
+                    weightdn = 0.
+                    for idn in xrange(2, len(nnpdfs)-1, 2):
+                        weightdn += (1.0 - weights[idn])**2
+                    weightdn = weightdn / (len(nnpdfs) * 0.5)
+                    weightdn = 1 - math.sqrt(weightdn)
+
+                    nnpdfval1 = weightup
+                    nnpdfval2 = weightdn            
                     if options.verbose :
-                        print 'Event weight = ' + str( evWeight )
-                        print 'pthat = ' + str(pthat)
+                        print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f nnpdf1=%6.2f nnpdf2=%6.2f' % (pdf.id.first,pdf.id.second,
+                                                                                                                                pdf.x.first, pdf.x.second,
+                                                                                                                                pdf.xPDF.first, pdf.xPDF.second,
+                                                                                                                                pdf.scalePDF, nnpdfval1, nnpdfval2)
+    
+                    NNPDF3weight_CorrDn            [0] = weightdn
+                    NNPDF3weight_CorrUp            [0] = weightup   
+
+
+                    
         if options.weightQCDSample != None :
             evWeight = evWeight * options.weightQCDSample
             if options.verbose :
                 print 'Event weight = ' + str( evWeight )
 
+
+
+
+                
         if options.verbose:
             print 'pre-hist fill event weight: ' + str(evWeight)
         #Get MET HERE
