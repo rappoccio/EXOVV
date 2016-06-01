@@ -1,24 +1,27 @@
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt170to300.txt --outname qcd_pt170to300_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 0.033811597704377146  >&  qcd_pt170to300_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt170to300.txt --outname qcd_pt170to300_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 0.033811597704377146  >&  qcd_pt170to300_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt300to470.txt --outname qcd_pt300to470_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 0.0026639252153138073 >&  qcd_pt300to470_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt300to470.txt --outname qcd_pt300to470_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 0.0026639252153138073 >&  qcd_pt300to470_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt470to600.txt --outname qcd_pt470to600_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 0.0003287351658383203 >&  qcd_pt470to600_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt470to600.txt --outname qcd_pt470to600_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 0.0003287351658383203 >&  qcd_pt470to600_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt600to800.txt --outname qcd_pt600to800_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 9.431734227960323e-05 >&  qcd_pt600to800_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt600to800.txt --outname qcd_pt600to800_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 9.431734227960323e-05 >&  qcd_pt600to800_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt800to1000.txt --outname qcd_pt800to1000_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 1.6225942213075215e-05 >&  qcd_pt800to1000_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt800to1000.txt --outname qcd_pt800to1000_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 1.6225942213075215e-05 >&  qcd_pt800to1000_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname qcd_pt1000to1400_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 6.3307279903637264e-06 >&  qcd_pt1000to1400_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt1000to1400.txt --outname qcd_pt1000to1400_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 6.3307279903637264e-06 >&  qcd_pt1000to1400_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname qcd_pt1400to1800_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 4.256689516516046e-06 >&  qcd_pt1400to1800_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt1400to1800.txt --outname qcd_pt1400to1800_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 4.256689516516046e-06 >&  qcd_pt1400to1800_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 5.896811064825265e-07 >&  qcd_pt1800to2400_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt1800to2400.txt --outname qcd_pt1800to2400_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 5.896811064825265e-07 >&  qcd_pt1800to2400_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 3.4427395492557326e-08 >&  qcd_pt2400to3200_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt2400to3200.txt --outname qcd_pt2400to3200_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 3.4427395492557326e-08 >&  qcd_pt2400to3200_output_tree.txt &
 
-python JetTreeDump_fwlite.py --files inputfiles/qcd_pt3200toInf.txt --outname qcd_pt3200toInf_tree.root --isMC --applyFilters --minAK8JetPt 200.   --weightQCDSample 8.504945303503866e-10 >&  qcd_pt3200toInf_output_tree.txt &
+python JetTreeDump_fwlite.py --files inputfiles/qcd_pt3200toInf.txt --outname qcd_pt3200toInf_pdf_tree.root --isMC --doPDFs --applyFilters --minAK8JetPt 200.   --weightQCDSample 8.504945303503866e-10 >&  qcd_pt3200toInf_output_tree.txt &
 
 
+python JetTreeDump_fwlite.py --files inputfiles/jetht_dataset1_orig.txt --outname jetht_dataset1_tree.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset1_output_tree.txt &
+
+python JetTreeDump_fwlite.py --files inputfiles/jetht_dataset2_orig.txt --outname jetht_dataset2_tree.root --applyFilters --minAK8JetPt 200. --applyTriggers  >& jetht_dataset2_output_tree.txt &
 
 
 
