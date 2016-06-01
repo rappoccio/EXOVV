@@ -82,6 +82,18 @@ h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{
 h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
 
 
+h_pt_meas = ROOT.TH1F("h_pt_meas", ";Jet p_{T} (GeV); Number", 150, 0, 3000)
+h_y_meas = ROOT.TH1F("h_y_meas", ";Jet Rapidity; Number", 50, -2.5, 2.5 )
+h_phi_meas = ROOT.TH1F("h_phi_meas", ";Jet #phi (radians); Number", 50, -ROOT.TMath.Pi(), ROOT.TMath.Pi() )
+h_m_meas = ROOT.TH1F("h_m_meas", ";Jet Mass (GeV); Number", 50, 0, 500 )
+h_msd_meas = ROOT.TH1F("h_msd_meas", ";Jet Soft Drop Mass (GeV); Number", 50, 0, 500 )
+h_rho_meas = ROOT.TH1F("h_rho_meas", ";Jet (m/p_{T}R)^{2}; Number", 100, 0, 1.0 )
+h_tau21_meas = ROOT.TH1F("h_tau21_meas", ";Jet #tau_{2}/#tau_{1}; Number", 50, 0, 1.0 )
+h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Number", 50, 0, ROOT.TMath.TwoPi() )
+h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", 50, 0, 1.0 )
+h_rho_vs_tau_meas = ROOT.TH2F("h_rho_vs_tau21_meas", ";Jet (m/p_{T}R)^{2};Jet #tau_{2}/#tau_{1}", 100, 0, 1.0, 50, 0, 1.0 )
+
+
 def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None : 
         for i,c in enumerate(coll):
@@ -103,33 +115,33 @@ ROOT.gStyle.SetTitleSize(30, "XYZ")
 ROOT.gStyle.SetLabelFont(43, "XYZ")
 ROOT.gStyle.SetLabelSize(24, "XYZ")
 
-lumi = 2100
+lumi = 40.
 
 
 
 qcdIn =[
-    ROOT.TFile('qcd_pt170to300_tree.root'),
-    ROOT.TFile('qcd_pt300to470_tree.root'),
-    ROOT.TFile('qcd_pt470to600_tree.root'),
-    ROOT.TFile('qcd_pt600to800_tree.root'),
-    ROOT.TFile('qcd_pt800to1000_tree.root'),
-    ROOT.TFile('qcd_pt1000to1400_tree.root'),
-    ROOT.TFile('qcd_pt1400to1800_tree.root'),
-    ROOT.TFile('qcd_pt1800to2400_tree.root'),
-    ROOT.TFile('qcd_pt2400to3200_tree.root'),
-    ROOT.TFile('qcd_pt3200toInf_tree.root'),
+#    ROOT.TFile('qcd_pt170to300_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt300to470_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt470to600_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt600to800_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt800to1000_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt1000to1400_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt1400to1800_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt1800to2400_pdf_tree.root'),
+#    ROOT.TFile('qcd_pt2400to3200_pdf_tree.root'),
+    ROOT.TFile('qcd_pt3200toInf_pdf_tree.root'),
     ]
 
 qcdWeights =[
-    0.033811597704377146,
-    0.0026639252153138073,
-    0.0003287351658383203,
-    9.431734227960323e-05,
-    1.6225942213075215e-05,
-    6.3307279903637264e-06,
-    4.256689516516046e-06,
-    5.896811064825265e-07,
-    3.4427395492557326e-08,
+#    0.033811597704377146,
+#    0.0026639252153138073,
+#    0.0003287351658383203,
+#    9.431734227960323e-05,
+#    1.6225942213075215e-05,
+#    6.3307279903637264e-06,
+#    4.256689516516046e-06,
+#    5.896811064825265e-07,
+#    3.4427395492557326e-08,
     8.504945303503866e-10
         ]
 
@@ -144,6 +156,7 @@ for itree,t in enumerate(trees) :
     NFatJet = array.array('i', [0] )
     FatJetPt = array.array('f', [-1,-1])
     FatJetEta = array.array('f', [-1,-1])
+    FatJetRap = array.array('f', [-1,-1])
     FatJetPhi = array.array('f', [-1,-1])
     FatJetMass = array.array('f', [-1,-1])
     FatJetMassSoftDrop = array.array('f', [-1,-1])
@@ -169,6 +182,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus ('NGenJet', 1)
     t.SetBranchStatus ('FatJetPt', 1)
     t.SetBranchStatus ('FatJetEta', 1)
+    t.SetBranchStatus ('FatJetRap', 1)
     t.SetBranchStatus ('FatJetPhi', 1)
     t.SetBranchStatus ('FatJetMass', 1)
     t.SetBranchStatus ('FatJetMassSoftDrop', 1)
@@ -190,6 +204,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress ('NGenJet', NGenJet)
     t.SetBranchAddress ('FatJetPt', FatJetPt)
     t.SetBranchAddress ('FatJetEta', FatJetEta)
+    t.SetBranchAddress ('FatJetRap', FatJetRap)
     t.SetBranchAddress ('FatJetPhi', FatJetPhi)
     t.SetBranchAddress ('FatJetMass', FatJetMass)
     t.SetBranchAddress ('FatJetMassSoftDrop', FatJetMassSoftDrop)
@@ -229,6 +244,27 @@ for itree,t in enumerate(trees) :
         GenJetsSD = []
         FatJetsSD = []
         weight = qcdWeights[itree]
+
+        maxjet = 0
+        minjet = 1
+        if FatJetPt[0] < FatJetPt[1] :
+            maxjet = 1
+            minjet = 0
+
+
+        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
+        dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
+
+                
+        if dphi > 2.0 :
+            h_ptasym_meas.Fill( ptasym, weight )
+        if ptasym < 0.3 :
+            h_dphi_meas.Fill( dphi, weight )
+
+        passkin = ptasym < 0.3 and dphi > 2.0
+        if not passkin :
+            continue
+
         
         for igen in xrange( int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()
@@ -284,6 +320,23 @@ for itree,t in enumerate(trees) :
                 response_softdrop_jecdn.Fill( FatJetSD.Perp()  * FatJetCorrDn[ijet], FatJetSD.M() * FatJetCorrDn[ijet], GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
                 response_softdrop_jerup.Fill( FatJetSD.Perp()  * smearup, FatJetSD.M() * smearup, GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
                 response_softdrop_jerdn.Fill( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+
+
+
+
+                # Make some data-to-MC plots
+
+                h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
+                h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
+                h_pt_meas.Fill( FatJetPt[ijet] , weight )
+                h_y_meas.Fill( FatJetRap[ijet] , weight )
+                h_phi_meas.Fill( FatJetPhi[ijet] , weight )
+                h_m_meas.Fill( FatJetMass[ijet] , weight )
+                h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
+                h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
+                h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
+                
             else : # Here we have a "Fake"
                 response.Fake( FatJet.Perp(), FatJet.M(), weight )
                 response_jecup.Fake( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], weight )
@@ -332,5 +385,17 @@ response_softdrop_jecup.Write()
 response_softdrop_jecdn.Write()
 response_softdrop_jerup.Write()
 response_softdrop_jerdn.Write()
+
+
+h_pt_meas.Write()
+h_y_meas.Write()
+h_phi_meas.Write()
+h_m_meas.Write()
+h_msd_meas.Write()
+h_rho_meas.Write()
+h_tau21_meas.Write()
+h_dphi_meas.Write()
+h_ptasym_meas.Write()
+h_rho_vs_tau_meas.Write()
 
 fout.Close()
