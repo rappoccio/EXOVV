@@ -201,7 +201,16 @@ nbinsToPlot = len(ptBinAToPlot) - 1
 h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 50, 0, 1000)
 h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 50, 0, 1000)
 
-
+h_pt_meas = ROOT.TH1F("h_pt_meas", ";Jet p_{T} (GeV); Number", 150, 0, 3000)
+h_y_meas = ROOT.TH1F("h_y_meas", ";Jet Rapidity; Number", 50, -2.5, 2.5 )
+h_phi_meas = ROOT.TH1F("h_phi_meas", ";Jet #phi (radians); Number", 50, -ROOT.TMath.Pi(), ROOT.TMath.Pi() )
+h_m_meas = ROOT.TH1F("h_m_meas", ";Jet Mass (GeV); Number", 50, 0, 500 )
+h_msd_meas = ROOT.TH1F("h_msd_meas", ";Jet Soft Drop Mass (GeV); Number", 50, 0, 500 )
+h_rho_meas = ROOT.TH1F("h_rho_meas", ";Jet (m/p_{T}R)^{2}; Number", 100, 0, 1.0 )
+h_tau21_meas = ROOT.TH1F("h_tau21_meas", ";Jet #tau_{2}/#tau_{1}; Number", 50, 0, 1.0 )
+h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Number", 50, 0, ROOT.TMath.TwoPi() )
+h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", 50, 0, 1.0 )
+h_rho_vs_tau_meas = ROOT.TH2F("h_rho_vs_tau21_meas", ";Jet (m/p_{T}R)^{2};Jet #tau_{2}/#tau_{1}", 100, 0, 1.0, 50, 0, 1.0 )
 
 for itrig,trig in enumerate(trigs) :
     pt0histpre = ROOT.TH1F(var + "_" + trig + "_pre", var + "_" + trig + "_pre", 200, 0, 2000)
@@ -226,22 +235,37 @@ canvpre = ROOT.TCanvas(var + '_stackcanvpre', var +'_stackcanvpre')
 
 for itree,t in enumerate(trees) :
     FatJetPt = array.array('f', [-1,-1])
+    FatJetRap = array.array('f', [-1,-1])
     FatJetPhi = array.array('f', [-1,-1])
     FatJetMass = array.array('f', [-1,-1])
     FatJetMassSoftDrop = array.array('f', [-1,-1])
+    FatJetRhoRatio = array.array('f', [-1,-1])
+    FatJetTau21 = array.array('f', [-1,-1])
+    FatJetTau32 = array.array('f', [-1,-1])
+    METpt = array.array('f', [-1])
     Trig = array.array('i', [-1] )
 
     t.SetBranchStatus ('*', 0)
     t.SetBranchStatus ('FatJetPt', 1)
+    t.SetBranchStatus ('FatJetRap', 1)
     t.SetBranchStatus ('FatJetPhi', 1)
     t.SetBranchStatus ('FatJetMass', 1)
     t.SetBranchStatus ('FatJetMassSoftDrop', 1)
+    t.SetBranchStatus( 'FatJetRhoRatio', 1)
+    t.SetBranchStatus( 'FatJetTau21', 1)
+    t.SetBranchStatus( 'FatJetTau32', 1)
+    t.SetBranchStatus( 'METpt', 1)
     t.SetBranchStatus ('Trig', 1)
 
     t.SetBranchAddress ('FatJetPt', FatJetPt)
+    t.SetBranchAddress ('FatJetRap', FatJetRap)
     t.SetBranchAddress ('FatJetPhi', FatJetPhi)
     t.SetBranchAddress ('FatJetMass', FatJetMass)
     t.SetBranchAddress ('FatJetMassSoftDrop', FatJetMassSoftDrop)
+    t.SetBranchAddress( 'FatJetRhoRatio', FatJetRhoRatio)
+    t.SetBranchAddress( 'FatJetTau21', FatJetTau21)
+    t.SetBranchAddress( 'FatJetTau32', FatJetTau32)
+    t.SetBranchAddress( 'METpt', METpt)    
     t.SetBranchAddress ('Trig', Trig)
     
     entries = t.GetEntriesFast()
@@ -252,17 +276,11 @@ for itree,t in enumerate(trees) :
         if Trig[0] == None or Trig[0] < 0 :
             continue
 
-
         maxjet = 0
         minjet = 1
         if FatJetPt[0] < FatJetPt[1] :
             maxjet = 1
             minjet = 0
-
-        passkin = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet]) < 0.3 and ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] ) > 2.0
-        if not passkin :
-            continue
-
         pt0 = FatJetPt[maxjet]
 
 
@@ -308,30 +326,48 @@ for itree,t in enumerate(trees) :
                 pt0histsTurnon[0].Fill( pt0, scales[0] )
 
                 
-        
+
         ipass, trigbin = trigHelper( pt0, Trig[0] )
         weight = scales[trigbin]
+
+
+        if trigbin == None or ipass == False :
+            continue
+
+
+        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
+        dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
+
+                
+        if dphi > 2.0 :
+            h_ptasym_meas.Fill( ptasym, weight )
+        if ptasym < 0.3 :
+            h_dphi_meas.Fill( dphi, weight )
+
+        passkin = ptasym < 0.3 and dphi > 2.0
+        if not passkin :
+            continue
+
+
         #print 'pt0 = %6.2f, trigbin = %6d, weight = %8.2f' % (pt0, trigbin, weight )
 
         #print '   %10.2f, %6d, %6d, %30s, %6.2f' % (FatJetPt[0], Trig[0], trigbin, trigs[trigbin], scales[trigbin] )
         
-        if trigbin == None or ipass == False :
-            continue
-
         #print ' %8.2f %6d %30s %9.2f' % (FatJetPt[maxjet], trigbin, trigs[trigbin], scales[trigbin] )
         
         pt0hists[trigbin].Fill( pt0, weight )
-
-
-
-        
-
         
         for ijet in [0,1] :
             h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
             h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
-
-
+            h_pt_meas.Fill( FatJetPt[ijet] , weight )
+            h_y_meas.Fill( FatJetRap[ijet] , weight )
+            h_phi_meas.Fill( FatJetPhi[ijet] , weight )
+            h_m_meas.Fill( FatJetMass[ijet] , weight )
+            h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
+            h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
+            h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
+            h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
     
 leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
 leg.SetFillColor(0)
@@ -399,4 +435,14 @@ fout = ROOT.TFile(options.outname, 'RECREATE')
 fout.cd()
 h_2DHisto_meas.Write()
 h_2DHisto_measSD.Write()
+h_pt_meas.Write()
+h_y_meas.Write()
+h_phi_meas.Write()
+h_m_meas.Write()
+h_msd_meas.Write()
+h_rho_meas.Write()
+h_tau21_meas.Write()
+h_dphi_meas.Write()
+h_ptasym_meas.Write()
+h_rho_vs_tau_meas.Write()
 fout.Close()
