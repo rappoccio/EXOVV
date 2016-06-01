@@ -204,10 +204,12 @@ for itree,t in enumerate(trees) :
 
 
         maxjet = 0
+        minjet = 1
         if FatJetPt[0] < FatJetPt[1] :
             maxjet = 1
+            minjet = 0
 
-        passkin = (FatJetPt[maxjet] - FatJetPt[1])/(FatJetPt[maxjet] + FatJetPt[1]) < 0.3 and ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[1] ) > 2.0
+        passkin = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet]) < 0.3 and ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] ) > 2.0
         if not passkin :
             continue
 
@@ -285,6 +287,23 @@ if logy[ipt0hist] :
 canvpre.Update()
 canvpre.Print( 'trigplots_pre_' + var + '.png', 'png')
 canvpre.Print( 'trigplots_pre_' + var + '.pdf', 'pdf')
+
+ptBinB = [ 0.]
+for ival in ptBinA : ptBinB.append( ival )
+
+for ihist, hist in enumerate(pt0histspre) :
+    print '%30s : %10d : ' % (hist.GetName(), hist.GetEntries()),
+    for iptbin in xrange( 0, len(ptBinB) ) :
+        bin1 = hist.GetXaxis().FindBin( ptBinB[iptbin] )
+        bin2 = hist.GetXaxis().FindBin( ptBinB[iptbin] + 1 )
+        bin3 = hist.GetXaxis().FindBin( 10000. )
+        nbin = hist.Integral(bin1, bin2) 
+        nover= hist.Integral(bin2, bin3 )
+        ntot = hist.Integral()
+        print ' %8.4f ' % ( nbin / ntot ),
+    print ''
+        
+
 
 
 fout = ROOT.TFile(options.outname, 'RECREATE')
