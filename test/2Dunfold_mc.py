@@ -66,6 +66,7 @@ canvasesSD = []
 legendsSD = []
 namesrecoSD = []
 namesgenSD = []
+keepHists = []
 for i in range(0, 7):
     namesreco.append(None)
     namesgen.append(None)
@@ -78,10 +79,12 @@ for i in range(0, 7):
 
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
-    namesreco[i] = reco_unfolded.ProjectionY('mass' + str(i), i+1, i+1)
+    ihist = namesreco[i] = reco_unfolded.ProjectionY('mass' + str(i), i+1, i+1)
+    keepHists.append( ihist )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesreco[i].Draw('hist')
-    namesgen[i] = truth.ProjectionY('genmass' + str(i), i+1 , i+1)
+    ihist = namesgen[i] = truth.ProjectionY('genmass' + str(i), i+1 , i+1)
+    keepHists.append( ihist) 
     namesgen[i].SetLineColor(2)
     namesgen[i].Draw('same hist')
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
@@ -91,16 +94,18 @@ for i, canvas in enumerate(canvases) :
 
 for i, canvas in enumerate(canvasesSD):
     canvas.cd()
-    namesrecoSD[i] =  reco_unfoldedSD.ProjectionY('massSD' + str(i), i+1, i+1)
+    ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionY('massSD' + str(i), i+1, i+1)
+    keepHists.append(ihist)
     namesrecoSD[i].SetTitle('SD Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
-    namesreco[i].Draw('hist')
-    namesgenSD[i] = truthSD.ProjectionY('genmassSD' + str(i), i+1, i+1)
+    namesrecoSD[i].Draw('hist')
+    ihist = namesgenSD[i] = truthSD.ProjectionY('genmassSD' + str(i), i+1, i+1)
+    keepHists.append(ihist)
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')
     legendsSD[i].AddEntry(namesrecoSD[i], 'SD Reco', 'l')
     legendsSD[i].AddEntry(namesgenSD[i], 'SD Gen', 'l')
     legendsSD[i].Draw()
-    canvas.SaveAs('unfolded_closure_softdrop_preplotter_'+pt_bin[i]+options.extension + '.png')    
+    canvas.SaveAs('unfolded_closure_softdrop_preplotter_' + pt_bin[i] + options.extension + '.png')    
 
 
 
