@@ -16,31 +16,42 @@ parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
                  help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
+parser.add_option('--pythia6', action ='store_true', default=False, dest='pythia6')
+
                                 
 (options, args) = parser.parse_args()
 
 
 myfile = TFile('qcdmc_stitched_qcdmc.root')
-
+pythia6 = None
 outtext = ''
 outfile = None
 
 
 response = myfile.Get('2d_response' + options.extension )
-outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
 outtext = options.extension
 truth = myfile.Get('PFJet_pt_m_AK8Gen')
 reco = myfile.Get('PFJet_pt_m_AK8')
-
 responseSD = myfile.Get('2d_response_softdrop' + options.extension )
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
 recoSD = myfile.Get('PFJet_pt_m_AK8SD')
-
 response.Draw('colz')
+
+truth.Scale(1./truth.Integral())
+reco.Scale(1./reco.Integral())
+
+truthSD.Scale(1./truthSD.Integral())
+recoSD.Scale(1./recoSD.Integral())
+
+
+pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 5: '650-760', 6: '760-Inf'}
+
+
 
 
 unfold = RooUnfoldBayes(response, reco, 6)
 unfoldSD = RooUnfoldBayes(responseSD, recoSD, 6)
+
 #unfold= RooUnfoldSvd(response, reco, 5);
 
 reco_unfolded = unfold.Hreco()
@@ -56,7 +67,6 @@ truth.SetLineColor(4)
 
 truth.Draw('SAME')
 
-pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 5: '650-760', 6: '760-Inf'}
 
 canvases = []
 namesreco = []
@@ -79,7 +89,7 @@ for i in range(0, 7):
 
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
-    ihist = namesreco[i] = reco_unfolded.ProjectionY('mass' + str(i), i+1, i+1)
+    ihist = namesreco[i] = reco_unfolded.ProjectionY('pythia8_mass' + str(i), i+1, i+1)
     keepHists.append( ihist )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesreco[i].Draw('hist')
@@ -94,7 +104,7 @@ for i, canvas in enumerate(canvases) :
 
 for i, canvas in enumerate(canvasesSD):
     canvas.cd()
-    ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionY('massSD' + str(i), i+1, i+1)
+    ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionY('pythia8_massSD' + str(i), i+1, i+1)
     keepHists.append(ihist)
     namesrecoSD[i].SetTitle('SD Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesrecoSD[i].Draw('hist')
@@ -108,7 +118,7 @@ for i, canvas in enumerate(canvasesSD):
     canvas.SaveAs('unfolded_closure_softdrop_preplotter_' + pt_bin[i] + options.extension + '.png')    
 
 
-
+outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
 outfile.cd()
 for hists in namesreco:
     hists.Write()
