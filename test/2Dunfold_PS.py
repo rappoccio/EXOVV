@@ -24,6 +24,7 @@ pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop')
 # Get data hists and normalize
 data_reco = datafile.Get('PFJet_pt_m_AK8')
 data_reco_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
+
 data_reco.Scale(1./data_reco.Integral())
 data_reco_softdrop.Scale(1./data_reco_softdrop.Integral())
 
@@ -105,8 +106,52 @@ for i, canvas in enumerate(canvases_softdrop) :
     legends_softdrop[i].AddEntry(namesgen_softdrop[i], 'Gen', 'l')
     legends_softdrop[i].Draw()
     canvas.SaveAs('partonshower_unc_test_softdrop'+str(i)+'.png')
+# unfold data with pythia 6
+unfold_ps_data = RooUnfoldBayes(pythia6_response, data_reco, 6)
+unfolded_ps_data = unfold_ps_data.Hreco()
+
+canvases_data = []
+namesreco_data = []
+namesgen_data = []
+legends_data = []
+
+for x in range(0, 7):
+    canvases_data.append(TCanvas("canvas_data" + str(x)))
+    legends_data.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data) : 
+    canvas.cd()
+    namesreco_data.append(unfolded_ps_data.ProjectionY('data_unfolded_by_pythia6' + str(i), i+1, i+1))
+    namesreco_data[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data[i].Draw('hist')
+    legends_data[i].AddEntry(namesreco_data[i], 'Reco', 'l')
+    legends_data[i].Draw()
+    canvas.SaveAs('partonshower_unc_data'+str(i)+'.png')
+    
+# unfold softdrop data with pythia 6
+unfold_ps_data_softdrop = RooUnfoldBayes(pythia6_response_softdrop, data_reco_softdrop, 6)
+unfolded_ps_data_softdrop = unfold_ps_data_softdrop.Hreco()
+
+canvases_data_softdrop = []
+namesreco_data_softdrop = []
+legends_data_softdrop = []
+
+for x in range(0, 7):
+    canvases_data_softdrop.append(TCanvas("canvas_data_softdrop" + str(x)))
+    legends_data_softdrop.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_softdrop) : 
+    canvas.cd()
+    namesreco_data_softdrop.append(unfolded_ps_data_softdrop.ProjectionY('data_unfolded_by_pythia6_softdrop' + str(i), i+1, i+1))
+    namesreco_data_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_softdrop[i].Draw('hist')
+    legends_data_softdrop[i].AddEntry(namesreco_data_softdrop[i], 'Reco', 'l')
+    legends_data_softdrop[i].Draw()
+    canvas.SaveAs('partonshower_unc_data_softdrop'+str(i)+'.png')
 outfile = TFile('PS_hists.root', 'RECREATE')
 outfile.cd()
 for i in range(0, 7):
     namesreco[i].Write()
     namesreco_softdrop[i].Write()
+    namesreco_data[i].Write()
+    namesreco_data_softdrop[i].Write()

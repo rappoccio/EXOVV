@@ -25,8 +25,6 @@ jerupa = []
 jerupaSD = []
 ps = []
 ps_softdrop = []
-pythia8_unfolded_reco = []
-pythia8_unfolded_reco_softdrop = []
 
 # scaling per bin to "make plots more beautifuler"
 scales = [1./40., 1./70., 1./90., 1./130., 1./120., 1./110, 1./9240.]
@@ -49,45 +47,6 @@ for i in range(0, 7):
     jerupa.append(jerup.Get('mass' + str(i)))
     jerupaSD.append(jerup.Get('massSD'+str(i)))
 # PS uncertainties gotten from unfolding pythia8 reco with pythia 6 responses
-parton_shower = ROOT.TFile('PS_hists.root')
-unfolded_with_pythia8 = ROOT.TFile('2DClosure.root')
-compare_canvases = []
-compare_legends = []
-for i in range(0, 7):
-    temp_diff = []
-    temp_softdrop_diff = []
-    ps.append(parton_shower.Get('pythia8_unfolded_by_pythia6'+str(i)))
-    ps_softdrop.append(parton_shower.Get('pythia8_unfolded_by_pythia6_softdrop'+str(i)))
-    
-    
-    pythia8_unfolded_reco.append(unfolded_with_pythia8.Get('pythia8_mass'+str(i)))
-    pythia8_unfolded_reco_softdrop.append(unfolded_with_pythia8.Get('pythia8_massSD'+str(i)))
-   
-    pythia8_unfolded_reco[i].SetLineColor(3)
-    compare_canvases.append(TCanvas('compare'+str(i), 'compare'+str(i)))
-    compare_legends.append(TLegend(.5, .7, .85, .85))
-    compare_canvases[i].cd()
-    compare_legends[i].AddEntry(ps[i], 'Pythia8 Unfolded by Pythia 6', 'l')
-    compare_legends[i].AddEntry(pythia8_unfolded_reco[i], 'Pythia8 Unfolded by Pythia 8', 'l')
-    
-    pythia8_unfolded_reco[i].Draw('hist')
-    ps[i].Draw('hist same')
-    compare_legends[i].Draw()
-    
-    compare_canvases[i].SaveAs('compare'+str(i)+'.png')
-    
-    temp_unc = (ps[i] - pythia8_unfolded_reco[i])
-    temp_softdrop_unc = (ps_softdrop[i] - pythia8_unfolded_reco_softdrop[i])
-    temp_unc.Scale(scales[i])
-    temp_softdrop_unc.Scale(scales[i])
-#take the differences in the bins between the pythia 8 unfolded with pythia 8 and the pythia 8 unfolded with pythia 6
-    for ibin in xrange(1,temp_unc.GetNbinsX()):
-        temp_diff.append(abs(temp_unc.GetBinContent(ibin)))
-        temp_softdrop_diff.append(abs(temp_softdrop_unc.GetBinContent(ibin)))
-    ps_differences.append(temp_diff)
-    ps_differences_softdrop.append(temp_softdrop_diff)
-
-
 
 ROOT.gStyle.SetOptStat(000000)
 ROOT.gStyle.SetTitleFont(43,"XYZ")
@@ -144,6 +103,32 @@ for x in range(0, 7):
     datacanvases[x].SetLeftMargin(0.15)
     datacanvasesSD[x].SetLeftMargin(0.15)
 #d800 =d.Get('unfolded_6')
+
+parton_shower = ROOT.TFile('PS_hists.root')
+unfolded_with_pythia8 = ROOT.TFile('2DClosure.root')
+compare_canvases = []
+compare_legends = []
+for i in range(0, 7):
+    temp_diff = []
+    temp_softdrop_diff = []
+    ps.append(parton_shower.Get('data_unfolded_by_pythia6'+str(i)))
+    ps_softdrop.append(parton_shower.Get('data_unfolded_by_pythia6_softdrop'+str(i)))
+      
+    temp_unc = (ps[i] - datalist[i])
+    temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
+    temp_unc.Scale(scales[i])
+    temp_softdrop_unc.Scale(scales[i])
+#take the differences in the bins between the pythia 8 unfolded with pythia 8 and the pythia 8 unfolded with pythia 6
+    for ibin in xrange(1,temp_unc.GetNbinsX()):
+        temp_diff.append(abs(temp_unc.GetBinContent(ibin)))
+        temp_softdrop_diff.append(abs(temp_softdrop_unc.GetBinContent(ibin)))
+    ps_differences.append(temp_diff)
+    ps_differences_softdrop.append(temp_softdrop_diff)
+
+
+
+
+
 
 # Canvases
 ptbins = ['#bf{p_{T} 200-240 GeV}','#bf{p_{T} 240-310 GeV}','#bf{p_{T} 310-400 GeV}','#bf{p_{T} 400-530 GeV}','#bf{p_{T} 530-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} >760 GeV}']
@@ -417,5 +402,3 @@ for i in datacanvasesSD:
     padsSD[index][1].Update()
     datacanvasesSD[index].Draw()
     datacanvasesSD[index].SaveAs("unfoldedresults_softdrop_" + str(index) + ".png")
-
-
