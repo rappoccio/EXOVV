@@ -701,8 +701,7 @@ for ifile in filesraw : #{ Loop over text file and find root files linked
 
 # loop over files
 for ifile in files : #{ Loop over root files
-    if options.verbose :
-        print 'Processing file ' + ifile
+    print 'Processing file ' + ifile
     events = Events (ifile)
     if options.maxevents > 0 and nevents > options.maxevents :
         break

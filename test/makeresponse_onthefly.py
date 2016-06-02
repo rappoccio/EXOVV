@@ -28,7 +28,7 @@ import random
 
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
-ptBinA = array.array('d', [  200., 240., 310., 400., 530., 650., 760., 13000.])
+ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
 nbinsPt = len(ptBinA) - 1
 
 response = ROOT.RooUnfoldResponse()
@@ -120,28 +120,29 @@ lumi = 40.
 
 
 qcdIn =[
-#    ROOT.TFile('qcd_pt170to300_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt300to470_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt470to600_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt600to800_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt800to1000_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt1000to1400_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt1400to1800_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt1800to2400_pdf_tree.root'),
-#    ROOT.TFile('qcd_pt2400to3200_pdf_tree.root'),
+    ROOT.TFile('qcd_pt170to300_pdf_tree.root'),
+    ROOT.TFile('qcd_pt300to470_pdf_tree.root'),
+    ROOT.TFile('qcd_pt470to600_pdf_tree.root'),
+    ROOT.TFile('qcd_pt600to800_pdf_tree.root'),
+    ROOT.TFile('qcd_pt800to1000_pdf_tree.root'),
+    ROOT.TFile('qcd_pt1000to1400_pdf_tree.root'),
+    ROOT.TFile('qcd_pt1400to1800_pdf_tree.root'),
+    ROOT.TFile('qcd_pt1800to2400_pdf_tree.root'),
+    ROOT.TFile('qcd_pt2400to3200_pdf_tree.root'),
     ROOT.TFile('qcd_pt3200toInf_pdf_tree.root'),
     ]
 
 qcdWeights =[
-#    0.033811597704377146,
-#    0.0026639252153138073,
-#    0.0003287351658383203,
-#    9.431734227960323e-05,
-#    1.6225942213075215e-05,
-#    6.3307279903637264e-06,
-#    4.256689516516046e-06,
-#    5.896811064825265e-07,
-#    3.4427395492557326e-08,
+    0.10858888888888889,
+#    0.033811597704377146,   #### Processing is broken for this, for now run on partial sample
+    0.0026639252153138073,
+    0.0003287351658383203,
+    9.431734227960323e-05,
+    1.6225942213075215e-05,
+    6.3307279903637264e-06,
+    4.256689516516046e-06,
+    5.896811064825265e-07,
+    3.4427395492557326e-08,
     8.504945303503866e-10
         ]
 
