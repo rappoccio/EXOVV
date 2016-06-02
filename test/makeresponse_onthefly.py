@@ -133,7 +133,7 @@ qcdIn =[
     ]
 
 qcdWeights =[
-    0.10858888888888889,
+    0.036992995300193815,
 #    0.033811597704377146,   #### Processing is broken for this, for now run on partial sample
     0.0026639252153138073,
     0.0003287351658383203,
@@ -373,6 +373,7 @@ for itree,t in enumerate(trees) :
         # Now get the "Misses" (i.e. we have no RECO jet)
         for igen in xrange( int(NGenJet[0]) ):
             ijet = getMatched( GenJets[igen], FatJets )
+            ijetSD = getMatched( GenJetsSD[igen], FatJetsSD, dRMax=0.5 )
             if ijet == None :
                 response.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
