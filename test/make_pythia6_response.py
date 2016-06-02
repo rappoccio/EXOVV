@@ -8,7 +8,7 @@ parser = OptionParser()
 
 parser.add_option('--outlabel', type='string', action='store',
                   dest='outlabel',
-                  default = "rho_plots",
+                  default = "qcdmc_point01weightcut_pythia6",
                   help='Label for plots')
 
 
@@ -16,7 +16,10 @@ parser.add_option('--maxEvents', type='int', action='store',
                   dest='maxEvents',
                   default = None,
                   help='Max events')
-
+parser.add_option('--weightCut', type='float', action='store',
+                  dest='weightCut',
+                  default=0.01,
+                  help='Discard Events with weight above the cut')
 
 (options, args) = parser.parse_args()
 argv = []
@@ -82,7 +85,7 @@ h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{
 h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
 
 def getMatched( p4, coll, dRMax = 0.1) :
-    if coll != None : 
+    if coll != None :
         for i,c in enumerate(coll):
             if p4.DeltaR(c) < dRMax :
                 return i
@@ -107,39 +110,20 @@ lumi = 2100
 
 
 qcdIn =[
-    ROOT.TFile('qcd_pt170to300_tree.root'),
-    ROOT.TFile('qcd_pt300to470_tree.root'),
-    ROOT.TFile('qcd_pt470to600_tree.root'),
-    ROOT.TFile('qcd_pt600to800_tree.root'),
-    ROOT.TFile('qcd_pt800to1000_tree.root'),
-    ROOT.TFile('qcd_pt1000to1400_tree.root'),
-    ROOT.TFile('qcd_pt1400to1800_tree.root'),
-    ROOT.TFile('qcd_pt1800to2400_tree.root'),
-    ROOT.TFile('qcd_pt2400to3200_tree.root'),
-    ROOT.TFile('qcd_pt3200toInf_tree.root'),
-    ]
+    ROOT.TFile("qcd_pt-15_tree.root")]
 
 qcdWeights =[
-    0.033811597704377146,
-    0.0026639252153138073,
-    0.0003287351658383203,
-    9.431734227960323e-05,
-    1.6225942213075215e-05,
-    6.3307279903637264e-06,
-    4.256689516516046e-06,
-    5.896811064825265e-07,
-    3.4427395492557326e-08,
-    8.504945303503866e-10
-        ]
+    1    ]
 
 trees = []
 # Append the actual TTrees
 for iq in qcdIn:
     trees.append( iq.Get("TreeEXOVV") )
-fout = ROOT.TFile(options.outlabel + '_qcdmc.root', 'RECREATE')
+fout = ROOT.TFile(options.outlabel, 'RECREATE')
 
 
 for itree,t in enumerate(trees) :
+    Weight = array.array('f', [-1])
     NFatJet = array.array('i', [0] )
     FatJetPt = array.array('f', [-1,-1])
     FatJetEta = array.array('f', [-1,-1])
@@ -158,11 +142,12 @@ for itree,t in enumerate(trees) :
     GenJetMassSoftDrop = array.array('f', [-1,-1])
     GenJetRhoRatio = array.array('f', [-1, -1])
     FatJetPtSoftDrop = array.array('f', [-1, -1])
-    GenJetPtSoftDrop = array.array('f', [-1, -1])    
-    
-    Trig = array.array('i', [-1] )
+    GenJetPtSoftDrop = array.array('f', [-1, -1])
 
+    Trig = array.array('i', [-1] )
+ 
     t.SetBranchStatus ('*', 0)
+    t.SetBranchStatus ('Weight', 1)
     t.SetBranchStatus ('NFatJet', 1)
     t.SetBranchStatus ('NGenJet', 1)
     t.SetBranchStatus ('FatJetPt', 1)
@@ -174,7 +159,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus ('GenJetEta', 1)
     t.SetBranchStatus ('GenJetPhi', 1)
     t.SetBranchStatus ('GenJetMass', 1)
-    t.SetBranchStatus ('GenJetMassSoftDrop', 1)    
+    t.SetBranchStatus ('GenJetMassSoftDrop', 1)
     t.SetBranchStatus ('FatJetRhoRatio', 1)
     t.SetBranchStatus ('FatJetTau21', 1)
     t.SetBranchStatus ('FatJetCorrUp', 1)
@@ -184,6 +169,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus ('GenJetPtSoftDrop', 1)
     t.SetBranchStatus ('FatJetPtSoftDrop', 1)
     
+    t.SetBranchAddress ('Weight', Weight)
     t.SetBranchAddress ('NFatJet', NFatJet)
     t.SetBranchAddress ('NGenJet', NGenJet)
     t.SetBranchAddress ('FatJetPt', FatJetPt)
@@ -206,7 +192,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress ('GenJetPtSoftDrop', GenJetPtSoftDrop)
     entries = t.GetEntriesFast()
     print 'Processing tree ' + str(itree)
-    
+
 
     if options.maxEvents != None :
         eventsToRun = options.maxEvents
@@ -223,11 +209,16 @@ for itree,t in enumerate(trees) :
         GenJets = []
         FatJets = []
         GenJetsMassSD = []
-        FatJetsMassSD = []        
+        FatJetsMassSD = []
         GenJetsSD = []
         FatJetsSD = []
-        weight = qcdWeights[itree]
+        FatJetz = []
+        GenJetz = []
+        weight = Weight[0]
         
+        if weight > options.weightCut:
+            continue
+        #print weight
         for igen in xrange( int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()
             GenJet.SetPtEtaPhiM( GenJetPt[igen], GenJetEta[igen], GenJetPhi[igen], GenJetMass[igen])
@@ -235,26 +226,29 @@ for itree,t in enumerate(trees) :
             GenJetSD.SetPtEtaPhiM( GenJetPtSoftDrop[igen], GenJetEta[igen], GenJetPhi[igen], GenJetMassSoftDrop[igen] )
             GenJets.append(GenJet)
             GenJetsSD.append(GenJetSD)
-            GenJetsMassSD.append( GenJetMassSoftDrop[igen] )            
+            GenJetsMassSD.append( GenJetMassSoftDrop[igen] )
             h_2DHisto_gen.Fill( GenJet.Perp(), GenJet.M(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.Perp(), GenJetSD.M(), weight)
+
           #First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
         for ijet in xrange( int(NFatJet[0]) ):
-            
+
             FatJet = ROOT.TLorentzVector()
             FatJet.SetPtEtaPhiM( FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet])
-            
+
             FatJetSD = ROOT.TLorentzVector()
             FatJetSD.SetPtEtaPhiM( FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet]  )
-            
+
             FatJetsSD.append(FatJetSD)
             FatJets.append(FatJet)
-           
+
+
+
+
             h_2DHisto_meas.Fill( FatJet.Perp(), FatJet.M(), weight )
-            
             h_2DHisto_measSD.Fill( FatJetSD.Perp(), FatJetSD.M(), weight)
-            
-            
+
+
             igen = getMatched( FatJet, GenJets )
             igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.5)
             if igen != None :  # Here we have a "Fill"
@@ -265,27 +259,27 @@ for itree,t in enumerate(trees) :
                 genpt = GenJets[igen].Perp()
                 deltapt = (recopt-genpt)*(valup-1.0)
                 smearup = max(0.0, (recopt+deltapt)/recopt)
-                
+
                 valdn = getJER(FatJet.Eta(), -1) #JER nominal=0, dn=+1, down=-1
                 recopt = FatJet.Perp()
                 genpt = GenJets[igen].Perp()
                 deltapt = (recopt-genpt)*(valdn-1.0)
                 smeardn = max(0.0, (recopt+deltapt)/recopt)
-                                                
+
                 response.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecup.Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecdn.Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJet.M()* FatJetCorrDn[ijet], GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerup.Fill( FatJet.Perp() * smearup, FatJet.M()* smearup, GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerdn.Fill( FatJet.Perp() * smeardn, FatJet.M()* smeardn, GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                
-                
+
+
             else : # Here we have a "Fake"
                 response.Fake( FatJet.Perp(), FatJet.M(), weight )
                 response_jecup.Fake( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], weight )
                 response_jecdn.Fake( FatJet.Perp() * FatJetCorrDn[ijet], FatJet.M()* FatJetCorrDn[ijet], weight )
                 response_jerup.Fake( FatJet.Perp() * smearup, FatJet.M() * smearup, weight )
                 response_jerdn.Fake( FatJet.Perp() * smeardn, FatJet.M() * smeardn, weight )
-                
+
             if igenSD != None:
                 response_softdrop.Fill( FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
                 response_softdrop_jecup.Fill( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
@@ -297,7 +291,7 @@ for itree,t in enumerate(trees) :
                 response_softdrop_jecup.Fake( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], weight )
                 response_softdrop_jecdn.Fake( FatJetSD.Perp()  * FatJetCorrDn[ijet], FatJetSD.M() * FatJetCorrDn[ijet], weight )
                 response_softdrop_jerup.Fake( FatJetSD.Perp()  * smearup, FatJetSD.M() * smearup, weight )
-                response_softdrop_jerdn.Fake( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, weight )            
+                response_softdrop_jerdn.Fake( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, weight )
 
         # Now get the "Misses" (i.e. we have no RECO jet)
         for igen in xrange( int(NGenJet[0]) ):
@@ -309,8 +303,8 @@ for itree,t in enumerate(trees) :
                 response_jecdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                
-                
+
+
             if ijetSD == None:
                 response_softdrop.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
                 response_softdrop_jecup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )

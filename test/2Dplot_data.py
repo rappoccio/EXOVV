@@ -23,21 +23,66 @@ jerdna = []
 jerdnaSD = []
 jerupa = []
 jerupaSD = []
-if options.plotUnc:
-    jecdn = ROOT.TFile('2DData_jecdn.root')
-    jecup = ROOT.TFile('2DData_jecup.root')
-    jerdn = ROOT.TFile('2DData_jerdn.root')
-    jerup = ROOT.TFile('2DData_jerup.root')
-    for i in range(0, 7):
-        print i 
-        jecdna.append(jecdn.Get('mass' + str(i)))
-        jecdnaSD.append(jecdn.Get('massSD'+ str(i)))
-        jecupa.append(jecup.Get('mass' + str(i)))
-        jecupaSD.append(jecup.Get('massSD'+str(i)))
-        jerdna.append(jerdn.Get('mass' + str(i)))
-        jerdnaSD.append(jerdn.Get('massSD'+str(i)))
-        jerupa.append(jerup.Get('mass' + str(i)))
-        jerupaSD.append(jerup.Get('massSD'+str(i)))
+ps = []
+ps_softdrop = []
+pythia8_unfolded_reco = []
+pythia8_unfolded_reco_softdrop = []
+
+ps_differences = []
+ps_differences_softdrop = []
+jecdn = ROOT.TFile('2DData_jecdn.root')
+jecup = ROOT.TFile('2DData_jecup.root')
+jerdn = ROOT.TFile('2DData_jerdn.root')
+jerup = ROOT.TFile('2DData_jerup.root')
+for i in range(0, 7):
+    jecdna.append(jecdn.Get('mass' + str(i)))
+    jecdnaSD.append(jecdn.Get('massSD'+ str(i)))
+    jecupa.append(jecup.Get('mass' + str(i)))
+    jecupaSD.append(jecup.Get('massSD'+str(i)))
+    jerdna.append(jerdn.Get('mass' + str(i)))
+    jerdnaSD.append(jerdn.Get('massSD'+str(i)))
+    jerupa.append(jerup.Get('mass' + str(i)))
+    jerupaSD.append(jerup.Get('massSD'+str(i)))
+# PS uncertainties gotten from unfolding pythia8 reco with pythia 6 responses
+parton_shower = ROOT.TFile('PS_hists.root')
+unfolded_with_pythia8 = ROOT.TFile('2DClosure.root')
+compare_canvases = []
+compare_legends = []
+for i in range(0, 7):
+    temp_diff = []
+    temp_softdrop_diff = []
+    ps.append(parton_shower.Get('pythia8_unfolded_by_pythia6'+str(i)))
+    ps_softdrop.append(parton_shower.Get('pythia8_unfolded_by_pythia6_softdrop'+str(i)))
+    
+    
+    pythia8_unfolded_reco.append(unfolded_with_pythia8.Get('pythia8_mass'+str(i)))
+    pythia8_unfolded_reco_softdrop.append(unfolded_with_pythia8.Get('pythia8_massSD'+str(i)))
+   
+    pythia8_unfolded_reco[i].SetLineColor(3)
+    compare_canvases.append(TCanvas('compare'+str(i), 'compare'+str(i)))
+    compare_legends.append(TLegend(.5, .7, .85, .85))
+    compare_canvases[i].cd()
+    compare_legends[i].AddEntry(ps[i], 'Pythia8 Unfolded by Pythia 6', 'l')
+    compare_legends[i].AddEntry(pythia8_unfolded_reco[i], 'Pythia8 Unfolded by Pythia 8', 'l')
+    
+    pythia8_unfolded_reco[i].Draw('hist')
+    ps[i].Draw('hist same')
+    compare_legends[i].Draw()
+    
+    compare_canvases[i].SaveAs('compare'+str(i)+'.png')
+    
+    temp_unc = ps[i] - pythia8_unfolded_reco[i]
+    temp_softdrop_unc = ps_softdrop[i] - pythia8_unfolded_reco_softdrop[i]
+#take the differences in the bins between the pythia 8 unfolded with pythia 8 and the pythia 8 unfolded with pythia 6
+    for ibin in xrange(1,temp_unc.GetNbinsX()):
+        temp_diff.append(abs(temp_unc.GetBinContent(ibin)))
+        temp_softdrop_diff.append(abs(temp_softdrop_unc.GetBinContent(ibin)))
+    ps_differences.append(temp_diff)
+    ps_differences_softdrop.append(temp_softdrop_diff)
+print ps_differences
+
+
+#scales = [1./]
 
 
 ROOT.gStyle.SetOptStat(000000)
@@ -109,11 +154,22 @@ for b in atlx:
     b.SetNDC()
     b.SetTextFont(43)
     b.SetTextSize(30)
+for b in atlxSD:
+    b.SetNDC()
+    b.SetTextFont(43)
+    b.SetTextSize(30)
 for g in atlxpt:
     g.SetNDC()
     g.SetTextFont(43)
     g.SetTextSize(25)
+for g in atlxSDpt:
+    g.SetNDC()
+    g.SetTextFont(43)
+    g.SetTextSize(25)
 for leg in alegends :
+    leg.SetFillColor(0)
+    leg.SetBorderSize(0)
+for leg in alegendsSD :
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
 for icanv,canv in enumerate ( datacanvases) :
@@ -155,25 +211,33 @@ for i in datacanvases:
     jesDOWN = jecdna[index]
     jerUP  = jerupa[index]
     jerDOWN = jerdna[index]
-    if options.plotUnc:
-        for ibin in xrange(1,hReco.GetNbinsX()):
-            val = float(hReco.GetBinContent(ibin))
-            err1 = float(hReco.GetBinError(ibin))
-            upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
-            downjes = float(abs(nom.GetBinContent(ibin) - jesDOWN.GetBinContent(ibin)))
-            sys = float(((upjes + downjes)/2.))
-            upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
-            downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
-            sys2 = float(((upjer + downjer )/2.))
-            err = sqrt(err1*err1 + sys*sys + sys2*sys2)
-            hReco.SetBinError(ibin, err)
-
+    for ibin in xrange(1,hReco.GetNbinsX()):
+        val = float(hReco.GetBinContent(ibin))
+        err1 = float(hReco.GetBinError(ibin))
+        upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+        downjes = float(abs(nom.GetBinContent(ibin) - jesDOWN.GetBinContent(ibin)))
+        sys = float(((upjes + downjes)/2.))
+        upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+        downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
+        sys2 = float(((upjer + downjer )/2.))
+        err = sqrt(err1*err1 + sys*sys + sys2*sys2)
+        hReco.SetBinError(ibin, err)
+    hRecoCopy = hReco.Clone()
+    for ibin in xrange(1, hRecoCopy.GetNbinsX()):
+        temp = hRecoCopy.GetBinError(ibin)
+        hRecoCopy.SetBinError(ibin, temp + ps_differences[index][ibin-1] )
     ################################## Make top plot nice
-    hReco.SetTitle(";; #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
+    hRecoCopy.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
+    hRecoCopy.SetMarkerStyle(20)
+    hRecoCopy.SetAxisRange(1e-8, 10, "Y")
+    hRecoCopy.SetFillColor(ROOT.kGreen)
+    hRecoCopy.Draw("E2")
+    hRecoCopy.Draw("E same")
+    hReco.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
     hReco.SetMarkerStyle(20)
-    hReco.SetAxisRange( 1e-8, 1e+3, "Y")
+    hReco.SetAxisRange( 1e-8, 10, "Y")
     hReco.SetFillColor(ROOT.kYellow)
-    hReco.Draw("E2")
+    hReco.Draw("E2 same")
     hReco.Draw("E same")
     MCtruth[index].SetLineColor(2)
     #MCtruth[index].Scale(lumi)
@@ -181,35 +245,47 @@ for i in datacanvases:
     atlx[index].DrawLatex(0.131, 0.926, "CMS Preliminary #sqrt{s}=13 TeV, 40 pb^{-1}")
     atlxpt[index].DrawLatex(0.555, 0.559, ptbins[index])
     ################################## legends
-    alegends[index].AddEntry(MCtruth[index], 'Data', 'l')
-    alegends[index].AddEntry(hReco, 'Exp + Stat Uncertainty', 'f')
+    alegends[index].AddEntry(MCtruth[index], 'Pythia8', 'l')
+    alegends[index].AddEntry(hRecoCopy, 'Parton Shower + Experimental', 'f')
+    alegends[index].AddEntry(hReco, 'JES + JER', 'f')
     alegends[index].Draw()
     #################################### ratio plot stuff
     trueCopy = MCtruth[index].Clone()
     trueCopy.SetName( trueCopy.GetName() + "_copy")
     datcopy = hReco.Clone()
     datcopy.SetName( datcopy.GetName() + "_copy" )
-    datcopy.GetYaxis().SetTitle("Theory/Data")
-    histstokeep.append( [datcopy,trueCopy])
+    datcopy.GetYaxis().SetTitle("Theory/Unfolded")
+    datcopycopy = hRecoCopy.Clone()
+    datcopycopy.SetName(hRecoCopy.GetName()+"_copyofcopy")
+    histstokeep.append( [datcopycopy,datcopy,trueCopy])
     for ibin in xrange(1,datcopy.GetNbinsX()):
         if datcopy.GetBinContent(ibin) > 0: 
             datcopy.SetBinError(ibin, datcopy.GetBinError(ibin)/datcopy.GetBinContent(ibin))
+            datcopycopy.SetBinError(ibin, datcopycopy.GetBinError(ibin)/datcopycopy.GetBinContent(ibin))
         else:
             datcopy.SetBinError(ibin, 0)
+            datcopycopy.SetBinError(ibin, 0)
         datcopy.SetBinContent(ibin, 1.0)
-        
+        datcopycopy.SetBinContent(ibin, 1.0)
     trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
     pads[index][1].cd()
-    trueCopy.SetTitle(";Jet Mass (GeV);Theory/Data")
+    trueCopy.SetTitle(";Jet Mass (GeV);Theory/Unfolded")
     trueCopy.UseCurrentStyle()
     trueCopy.GetXaxis().SetTitleOffset(3)
     datcopy.SetMinimum(0)
     datcopy.SetMaximum(2)
     datcopy.GetYaxis().SetNdivisions(2,4,0,False)
+    datcopycopy.SetMinimum(0)
+    datcopycopy.SetMaximum(2)
+    datcopycopy.GetYaxis().SetNdivisions(2,4,0,False)
+    datcopycopy.SetFillColor(ROOT.kGreen)
+    datcopy.GetYaxis().SetTitle("Theory/Unfolded")
+    datcopycopy.GetYaxis().SetTitle("Theory/Unfolded")
     trueCopy.SetLineStyle(2)
     trueCopy.SetLineColor(2)
     datcopy.SetFillColor(ROOT.kYellow)
-    datcopy.Draw('e2')
+    datcopycopy.Draw('e2')
+    datcopy.Draw('e2 same')
     datcopy.SetMarkerStyle(0)
     trueCopy.Draw("hist same")
     
@@ -232,22 +308,31 @@ for i in datacanvasesSD:
     jesDOWN = jecdnaSD[index]
     jerUP  = jerupaSD[index]
     jerDOWN = jerdnaSD[index]
-    if options.plotUnc:
-        for ibin in xrange(1,hReco.GetNbinsX()):
-            val = float(hReco.GetBinContent(ibin))
-            err1 = float(hReco.GetBinError(ibin))
-            upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
-            downjes = float(abs(nom.GetBinContent(ibin) - jesDOWN.GetBinContent(ibin)))
-            sys = float(((upjes + downjes)/2.))
-            upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
-            downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
-            sys2 = float(((upjer + downjer )/2.))
-            err = sqrt(err1*err1 + sys*sys + sys2*sys2)
-            hReco.SetBinError(ibin, err)
+    for ibin in xrange(1,hReco.GetNbinsX()):
+        val = float(hReco.GetBinContent(ibin))
+        err1 = float(hReco.GetBinError(ibin))
+        upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+        downjes = float(abs(nom.GetBinContent(ibin) - jesDOWN.GetBinContent(ibin)))
+        sys = float(((upjes + downjes)/2.))
+        upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+        downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
+        sys2 = float(((upjer + downjer )/2.))
+        err = sqrt(err1*err1 + sys*sys + sys2*sys2)
+        hReco.SetBinError(ibin, err)
+    hRecoCopy = hReco.Clone()
+    for ibin in xrange(1, hRecoCopy.GetNbinsX()):
+        temp = hRecoCopy.GetBinError(ibin)
+        hRecoCopy.SetBinError(ibin, temp + ps_differences_softdrop[index][ibin-1] )
+    hRecoCopy.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
+    hRecoCopy.SetMarkerStyle(20)
+    hRecoCopy.SetAxisRange(1e-8, 10, "Y")
+    hRecoCopy.SetFillColor(ROOT.kGreen)
+    hRecoCopy.Draw("E2")
+    hRecoCopy.Draw("E same")
     ################################## Make top plot nice
-    hReco.SetTitle(";; #frac{d#sigma}{dmdp_{T}} (#frac{pb}{GeV^{2}})")
+    hReco.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{pb}{GeV^{2}})")
     hReco.SetMarkerStyle(20)
-    hReco.SetAxisRange( .0001, 1000000, "Y")
+    hReco.SetAxisRange( 1e-8, 10, "Y")
     hReco.SetFillStyle(1001)
     hReco.SetFillColor(ROOT.kYellow)
     hReco.Draw("E2")
@@ -258,25 +343,52 @@ for i in datacanvasesSD:
     atlxSD[index].DrawLatex(0.131, 0.926, "CMS Preliminary #sqrt{s}=13 TeV, 40 pb^{-1}")
     atlxSDpt[index].DrawLatex(0.555, 0.559, ptbins[index])
     ################################## legends
-    alegendsSD[index].AddEntry(MCtruth[index], 'Data w/ MMDT Beta = 0', 'l')
-    alegendsSD[index].AddEntry(hReco, 'Exp + Stat Uncertainty', 'f')
+    alegendsSD[index].AddEntry(MCtruth[index], 'Pythia8', 'l')
+    alegendsSD[index].AddEntry(hRecoCopy, 'Parton Shower + Exp + Stat', 'f')
+    alegendsSD[index].AddEntry(hReco, 'Exp + Stat Uncertainty-MMDT Beta = 0', 'f')
     alegendsSD[index].Draw()
     #################################### ratio plot stuff
     trueCopy = MCtruthSD[index].Clone()
+    trueCopy.SetName( trueCopy.GetName() + "_copy")
+    datcopy = hReco.Clone()
+    datcopy.SetName( datcopy.GetName() + "_copy" )
+    datcopy.GetYaxis().SetTitle("Theory/Unfolded")
+    datcopycopy = hRecoCopy.Clone()
+    datcopycopy.SetName(hRecoCopy.GetName()+"_copyofcopy")
+    datcopycopy.GetYaxis().SetTitle("Theory/Unfolded")
+    histstokeep.append( [datcopycopy,datcopy,trueCopy])
+    for ibin in xrange(1,datcopy.GetNbinsX()):
+        if datcopy.GetBinContent(ibin) > 0: 
+            datcopy.SetBinError(ibin, datcopy.GetBinError(ibin)/datcopy.GetBinContent(ibin))
+            datcopycopy.SetBinError(ibin, datcopycopy.GetBinError(ibin)/datcopycopy.GetBinContent(ibin))
+        else:
+            datcopy.SetBinError(ibin, 0)
+            datcopycopy.SetBinError(ibin, 0)
+        datcopy.SetBinContent(ibin, 1.0)
+        datcopycopy.SetBinContent(ibin, 1.0)
     trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
     padsSD[index][1].cd()
-    trueCopy.SetTitle(";Jet Mass (GeV);Theory/Data")
+    trueCopy.SetTitle(";Jet Mass (GeV);Theory/Unfolded")
     trueCopy.UseCurrentStyle()
     trueCopy.GetXaxis().SetTitleOffset(3)
-    trueCopy.SetMinimum(0)
-    trueCopy.SetMaximum(2)
-    trueCopy.GetYaxis().SetNdivisions(2,4,0,False)
-    trueCopy.SetFillStyle(1001)
-    trueCopy.SetFillColor(ROOT.kYellow)
-    trueCopy.Draw("E2")
+    datcopy.SetMinimum(0)
+    datcopy.SetMaximum(2)
+    datcopy.GetYaxis().SetNdivisions(2,4,0,False)
+    datcopycopy.SetMinimum(0)
+    datcopycopy.SetMaximum(2)
+    datcopycopy.GetYaxis().SetNdivisions(2,4,0,False)
+    datcopycopy.SetFillColor(ROOT.kGreen)
+    trueCopy.SetLineStyle(2)
+    trueCopy.SetLineColor(2)
+    datcopy.SetFillColor(ROOT.kYellow)
+    datcopycopy.Draw('e2')
+    datcopy.Draw('e2 same')
+    datcopy.SetMarkerStyle(0)
+    trueCopy.Draw("hist same")    
     hRatioListSD.append( trueCopy)
     padsSD[index][0].Update()
     padsSD[index][1].Update()
     datacanvasesSD[index].Draw()
-    datacanvasesSD[index].SaveAs("unfoldedresultsSD_" + str(index) + ".png")
+    datacanvasesSD[index].SaveAs("unfoldedresults_softdrop_" + str(index) + ".png")
+
 
