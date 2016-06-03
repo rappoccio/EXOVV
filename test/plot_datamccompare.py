@@ -54,9 +54,9 @@ f = ROOT.TFile(options.file)
 fmc = ROOT.TFile( options.mcfile )
 
 
-logy = [ True, False, True, True, True, True, True, True, False, False, False,False,False,False,False,False, ]
-
+logy =  [ True,       False,      True,       True,         True,           False,          True ]
 hists = ['h_pt_meas', 'h_y_meas', 'h_m_meas', 'h_msd_meas', 'h_tau21_meas', 'h_dphi_meas', 'h_ptasym_meas']
+
 ## titles = [
 ##     'AK8 p_{T};p_{T} (GeV)',
 ##     'AK8 Rapidity;y',
@@ -129,7 +129,7 @@ for ihist,histname in enumerate(hists):
     mchist.UseCurrentStyle()
     
     if logy[ihist] : 
-        canv.SetLogy()
+        pad0.SetLogy()
         datahist.SetMinimum(0.1)
     #leg.Draw()
     canv.Update()
@@ -150,7 +150,7 @@ for ihist,histname in enumerate(hists):
     iratio.Divide( datahist )
     iratio.Draw('e')
     iratio.SetMinimum(0.0)
-    iratio.SetMaximum(2.0)
+    iratio.SetMaximum(3.0)
     iratio.GetYaxis().SetNdivisions(2,4,0,False)
     iratio.GetYaxis().SetTitleOffset(1.0)
     iratio.GetXaxis().SetTitleOffset(3.0)    

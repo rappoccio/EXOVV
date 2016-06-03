@@ -27,7 +27,8 @@ ps = []
 ps_softdrop = []
 
 # scaling per bin to "make plots more beautifuler"
-scales = [1./40., 1./70., 1./90., 1./130., 1./120., 1./110, 1./9240.]
+
+scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./9240.]
 
 
 
@@ -131,7 +132,7 @@ for i in range(0, 7):
 
 
 # Canvases
-ptbins = ['#bf{p_{T} 200-240 GeV}','#bf{p_{T} 240-310 GeV}','#bf{p_{T} 310-400 GeV}','#bf{p_{T} 400-530 GeV}','#bf{p_{T} 530-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} >760 GeV}']
+ptbins = ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} >760 GeV}']
 
 
 pads = []

@@ -195,7 +195,7 @@ pt0histspre = []
 pt0hists = []
 pt0histsTurnon = []
 
-ptBinAToPlot = array.array('d', [  200., 240., 310., 460., 530., 650., 760., 13000.])
+ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
 nbinsToPlot = len(ptBinAToPlot) - 1
 
 h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 50, 0, 1000)
