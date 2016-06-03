@@ -27,6 +27,7 @@ pythia6 = None
 outtext = ''
 outfile = None
 
+ROOT.gStyle.SetOptStat(000000)
 
 response = myfile.Get('2d_response' + options.extension )
 outtext = options.extension
@@ -56,6 +57,49 @@ unfoldSD = RooUnfoldBayes(responseSD, recoSD, 6)
 
 reco_unfolded = unfold.Hreco()
 reco_unfoldedSD = unfoldSD.Hreco()
+
+################### New Correlation matrix stuff
+cov = unfold.Ereco()
+covSD = unfoldSD.Ereco()
+
+nb= cov.GetNrows()
+import math
+cor = ROOT.TH2F("cor", "", nb, 0, nb, nb, 0, nb)
+corSD = ROOT.TH2F("corSD", "", nb, 0, nb, nb, 0, nb)
+
+
+for i in xrange(0,nb) :
+    for j in xrange(0,nb) :
+        Viijj = cov[i][i] * cov[j][j]
+        if Viijj>0.0 :
+            cor.SetBinContent(i+1, j+1, cov[i][j]/math.sqrt(Viijj))
+        
+for i in xrange(0,nb) :
+    for j in xrange(0,nb) :
+        Viijj = covSD[i][i] * covSD[j][j]
+        if Viijj>0.0 :
+            corSD.SetBinContent(i+1,j+1, covSD[i][j]/math.sqrt(Viijj) )
+
+cov_canvas=TCanvas("cov canvas", "cov canvas")
+cov_canvas.cd()
+cor.SetMinimum(-1.0)
+cor.SetMaximum(1.0)
+cor.Draw("colz")
+cov_canvas.Update()
+cov_canvas.Print("CovarianceMatrix.png", "png")
+cov_canvas.Print("CovarianceMatrix.pdf", "pdf")
+
+covSD_canvas=TCanvas("covSDcanvas", "covSDcanvas")
+covSD_canvas.cd()
+corSD.SetMinimum(-1.0)
+corSD.SetMaximum(1.0)
+corSD.Draw("colz")
+covSD_canvas.Update()
+covSD_canvas.Print("CovarianceMatrixSD.png", "png")
+covSD_canvas.Print("CovarianceMatrixSD.pdf", "pdf")
+###################
+creco = TCanvas("creco", "creco")
+
 
 reco_unfolded.Draw()
 
