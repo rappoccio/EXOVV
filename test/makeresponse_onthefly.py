@@ -69,6 +69,21 @@ response_jerdn = ROOT.RooUnfoldResponse()
 response_jerdn.SetName("2d_response_jerdn")
 response_jerdn.Setup(measVarHist, trueVarHist)
 
+response_jernom = ROOT.RooUnfoldResponse()
+response_jernom.SetName("2d_response_jernom")
+response_jernom.Setup(measVarHist, trueVarHist)
+
+response_jmrup = ROOT.RooUnfoldResponse()
+response_jmrup.SetName("2d_response_jmrup")
+response_jmrup.Setup(measVarHist, trueVarHist)
+
+response_jmrdn = ROOT.RooUnfoldResponse()
+response_jmrdn.SetName("2d_response_jmrdn")
+response_jmrdn.Setup(measVarHist, trueVarHist)
+
+response_jmrnom = ROOT.RooUnfoldResponse()
+response_jmrnom.SetName("2d_response_jmrnom")
+response_jmrnom.Setup(measVarHist, trueVarHist)
 
 response_softdrop = ROOT.RooUnfoldResponse()
 response_softdrop.SetName("2d_response_softdrop")
@@ -90,6 +105,22 @@ response_softdrop_jerup.Setup(measVarHist, trueVarHist)
 response_softdrop_jerdn = ROOT.RooUnfoldResponse()
 response_softdrop_jerdn.SetName("2d_response_softdrop_jerdn")
 response_softdrop_jerdn.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jernom = ROOT.RooUnfoldResponse()
+response_softdrop_jernom.SetName("2d_response_softdrop_jernom")
+response_softdrop_jernom.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jmrup = ROOT.RooUnfoldResponse()
+response_softdrop_jmrup.SetName("2d_response_softdrop_jmrup")
+response_softdrop_jmrup.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jmrdn = ROOT.RooUnfoldResponse()
+response_softdrop_jmrdn.SetName("2d_response_softdrop_jmrdn")
+response_softdrop_jmrdn.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jmrnom = ROOT.RooUnfoldResponse()
+response_softdrop_jmrnom.SetName("2d_response_softdrop_jmrnom")
+response_softdrop_jmrnom.Setup(measVarHist, trueVarHist)
 
 h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
 h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
@@ -320,15 +351,17 @@ for itree,t in enumerate(trees) :
            
             h_2DHisto_meas.Fill( FatJet.Perp(), FatJet.M(), weight )
             
-            h_2DHisto_measSD.Fill( FatJetSD.Perp(), FatJetSD.M())
+            h_2DHisto_measSD.Fill( FatJetSD.Perp(), FatJetSD.M(), weight)
 
             igen = getMatched( FatJet, GenJets )
             igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.5)
             
-            
+            jmrnom = 1.1
+            jmrup = 1.2
+            jmrdn = 1.0
             if igen != None :  # Here we have a "Fill"
 
-
+                
                 valup = getJER(FatJet.Eta(), +1) #JER nominal=0, up=+1, down=-1
                 recopt = FatJet.Perp()
                 genpt = GenJets[igen].Perp()
@@ -341,14 +374,29 @@ for itree,t in enumerate(trees) :
                 deltapt = (recopt-genpt)*(valdn-1.0)
                 smeardn = max(0.0, (recopt+deltapt)/recopt)
                                                 
+                valnom = getJER(FatJet.Eta(), 0)
+                recopt = FatJet.Perp()
+                genpt = GenJets[igen].Perp()
+                deltapt = (recopt-genpt)*(valnom-1.0)
+                smearnom = max(0.0, (recopt+deltapt)/recopt)
+
+
                 response.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecup.Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecdn.Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJet.M()* FatJetCorrDn[ijet], GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerup.Fill( FatJet.Perp() * smearup, FatJet.M()* smearup, GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerdn.Fill( FatJet.Perp() * smeardn, FatJet.M()* smeardn, GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                response_jernom.Fill(FatJet.Perp() * smearnom, FatJet.M()*smearnom, GenJets[igen].Perp(), GenJets[igen].M(), weight)
                 
-                response_pdfup.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_up)
-                response_pdfdn.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_dn)
+                response_jmrup.Fill( FatJet.Perp(), FatJet.M()*jmrup, GenJets[igen].Perp(), GenJets[igen].M(), weight)
+                response_jmrdn.Fill( FatJet.Perp(), FatJet.M()*jmrdn, GenJets[igen].Perp(), GenJets[igen].M(), weight)
+                response_jmrnom.Fill(FatJet.Perp(), FatJet.M()*jmrnom, GenJets[igen].Perp(), GenJets[igen].M(), weight)
+
+                if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
+                    pass
+                else:
+                    response_pdfup.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_up)
+                    response_pdfdn.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_dn)
 
                 # Make some data-to-MC plots
 
@@ -367,20 +415,53 @@ for itree,t in enumerate(trees) :
                 response_jecdn.Fake( FatJet.Perp() * FatJetCorrDn[ijet], FatJet.M()* FatJetCorrDn[ijet], weight )
                 response_jerup.Fake( FatJet.Perp() * smearup, FatJet.M() * smearup, weight )
                 response_jerdn.Fake( FatJet.Perp() * smeardn, FatJet.M() * smeardn, weight ) 
+                response_jernom.Fake(FatJet.Perp() * smearnom, FatJet.M() * smearnom,weight)
+                response_jmrup.Fake( FatJet.Perp(), FatJet.M()*jmrup, weight)
+                response_jmrnom.Fake(FatJet.Perp(), FatJet.M()*jmrnom, weight)
+                response_jmrdn.Fake( FatJet.Perp(), FatJet.M()*jmrdn, weight)
 
-                response_pdfup.Fake(FatJet.Perp(), FatJet.M(), weight*pdfweight_up)
-                response_pdfdn.Fake(FatJet.Perp(), FatJet.M(), weight*pdfweight_dn)
+                if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
+                    pass
+                else:
+                    response_pdfup.Fake(FatJet.Perp(), FatJet.M(), weight*pdfweight_up)
+                    response_pdfdn.Fake(FatJet.Perp(), FatJet.M(), weight*pdfweight_dn)
 
 
             if igenSD != None:
+                
+ #### be less conservative, define jes and jer for SD now
+                valupSD = getJER(FatJetSD.Eta(), +1)
+                recoptSD = FatJetSD.Perp()
+                genptSD = GenJetsSD[igenSD].Perp()
+                deltaptSD = (recoptSD-genptSD)*(valupSD-1.0)
+                smearupSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+        
+                valdnSD = getJER(FatJetSD.Eta(), -1)
+                recoptSD = FatJetSD.Perp()
+                genptSD = GenJetsSD[igenSD].Perp()
+                deltaptSD = (recoptSD-genptSD)*(valdnSD-1.0)
+                smeardnSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+
+                valnomSD = getJER(FatJetSD.Eta(), 0)
+                recoptSD = FatJetSD.Perp()
+                genptSD = GenJetsSD[igenSD].Perp()
+                deltaptSD = (recoptSD-genptSD)*(valnomSD-1.0)
+                smearnomSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+        
                 response_softdrop.Fill( FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
                 response_softdrop_jecup.Fill( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
                 response_softdrop_jecdn.Fill( FatJetSD.Perp()  * FatJetCorrDn[ijet], FatJetSD.M() * FatJetCorrDn[ijet], GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
-                response_softdrop_jerup.Fill( FatJetSD.Perp()  * smearup, FatJetSD.M() * smearup, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
-                response_softdrop_jerdn.Fill( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
-                
-                response_softdrop_pdfup.Fill( FatJetSD.Perp(), FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight*pdfweight_up)
-                response_softdrop_pdfdn.Fill( FatJetSD.Perp(), FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight*pdfweight_dn)
+                response_softdrop_jerup.Fill( FatJetSD.Perp()  * smearupSD, FatJetSD.M() * smearupSD, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
+                response_softdrop_jerdn.Fill( FatJetSD.Perp()  * smeardnSD, FatJetSD.M() * smeardnSD, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
+                response_softdrop_jernom.Fill(FatJetSD.Perp() * smearnomSD, FatJetSD.M() * smearnomSD, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight)
+                response_softdrop_jmrnom.Fill(FatJetSD.Perp(), FatJetSD.M()*jmrnom, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight)
+                response_softdrop_jmrup.Fill(FatJetSD.Perp(), FatJetSD.M()*jmrup, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight)
+                response_softdrop_jmrdn.Fill(FatJetSD.Perp(), FatJetSD.M()*jmrdn, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight)
+                if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
+                    pass
+                else:
+                    response_softdrop_pdfup.Fill( FatJetSD.Perp(), FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight*pdfweight_up)
+                    response_softdrop_pdfdn.Fill( FatJetSD.Perp(), FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight*pdfweight_dn)
 
                 h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
                 h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
@@ -388,11 +469,17 @@ for itree,t in enumerate(trees) :
                 response_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
                 response_softdrop_jecup.Fake( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], weight )
                 response_softdrop_jecdn.Fake( FatJetSD.Perp()  * FatJetCorrDn[ijet], FatJetSD.M() * FatJetCorrDn[ijet], weight )
-                response_softdrop_jerup.Fake( FatJetSD.Perp()  * smearup, FatJetSD.M() * smearup, weight )
-                response_softdrop_jerdn.Fake( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, weight )            
-                
-                response_softdrop_pdfup.Fake( FatJetSD.Perp(), FatJetSD.M(), weight*pdfweight_up)
-                response_softdrop_pdfdn.Fake( FatJetSD.Perp(), FatJetSD.M(), weight*pdfweight_dn)
+                response_softdrop_jerup.Fake( FatJetSD.Perp()  * smearupSD, FatJetSD.M() * smearupSD, weight )
+                response_softdrop_jerdn.Fake( FatJetSD.Perp()  * smeardnSD, FatJetSD.M() * smeardnSD, weight )
+                response_softdrop_jernom.Fake(FatJetSD.Perp() * smearnomSD, FatJetSD.M() * smearnomSD, weight)            
+                response_softdrop_jmrnom.Fake(FatJetSD.Perp(), FatJetSD.M()*jmrnom, weight)
+                response_softdrop_jmrup.Fake(FatJetSD.Perp(), FatJetSD.M()*jmrup, weight)
+                response_softdrop_jmrdn.Fake(FatJetSD.Perp(), FatJetSD.M()*jmrdn, weight)
+                if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
+                    pass
+                else:
+                    response_softdrop_pdfup.Fake( FatJetSD.Perp(), FatJetSD.M(), weight*pdfweight_up)
+                    response_softdrop_pdfdn.Fake( FatJetSD.Perp(), FatJetSD.M(), weight*pdfweight_dn)
 
 
                 
@@ -405,10 +492,16 @@ for itree,t in enumerate(trees) :
                 response_jecup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jecdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                response_jerdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight ) 
-                
-                response_pdfup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_up)
-                response_pdfdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_dn)
+                response_jerdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                response_jernom.Miss(GenJets[igen].Perp(), GenJets[igen].M(), weight)
+                response_jmrnom.Miss(GenJets[igen].Perp(), GenJets[igen].M(), weight)
+                response_jmrup.Miss(GenJets[igen].Perp(), GenJets[igen].M(), weight)
+                response_jmrdn.Miss(GenJets[igen].Perp(), GenJets[igen].M(), weight)
+                if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
+                    pass
+                else:
+                    response_pdfup.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_up)
+                    response_pdfdn.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight*pdfweight_dn)
 
 
             if ijetSD == None:
@@ -417,9 +510,15 @@ for itree,t in enumerate(trees) :
                 response_softdrop_jecdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
                 response_softdrop_jerup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
                 response_softdrop_jerdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
-                
-                response_softdrop_pdfup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight*pdfweight_up)
-                response_softdrop_pdfdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight*pdfweight_dn)
+                response_softdrop_jernom.Miss(GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight )
+                response_softdrop_jmrnom.Miss(GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight)
+                response_softdrop_jmrup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight)
+                response_softdrop_jmrdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight)
+                if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
+                    pass
+                else:
+                    response_softdrop_pdfup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight*pdfweight_up)
+                    response_softdrop_pdfdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight*pdfweight_dn)
 
 fout.cd()
 #response.Hresponse().Draw()
@@ -430,12 +529,18 @@ response_jerup.Write()
 response_jerdn.Write()
 h_2DHisto_gen.Write()
 h_2DHisto_meas.Write()
+response_jmrup.Write()
+response_jmrdn.Write()
+response_jmrnom.Write()
+response_jernom.Write()
 
 
 response_pdfup.Write()
 response_pdfdn.Write()
 response_softdrop_pdfup.Write()
 response_softdrop_pdfdn.Write()
+
+
 
 h_2DHisto_measSD.Write()
 h_2DHisto_genSD.Write()
@@ -444,7 +549,10 @@ response_softdrop_jecup.Write()
 response_softdrop_jecdn.Write()
 response_softdrop_jerup.Write()
 response_softdrop_jerdn.Write()
-
+response_softdrop_jmrup.Write()
+response_softdrop_jmrdn.Write()
+response_softdrop_jmrnom.Write()
+response_softdrop_jernom.Write()
 
 h_pt_meas.Write()
 h_y_meas.Write()

@@ -15,19 +15,18 @@ parser = OptionParser()
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
-                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
 parser.add_option('--pythia6', action ='store_true', default=False, dest='pythia6')
 
                                 
 (options, args) = parser.parse_args()
 
 
-myfile = TFile('qcdmc_stitched_qcdmc.root')
+myfile = TFile('qcdmc_stitched_pdf_qcdmc.root')
 pythia6 = None
 outtext = ''
 outfile = None
 
-ROOT.gStyle.SetOptStat(000000)
 
 response = myfile.Get('2d_response' + options.extension )
 outtext = options.extension
@@ -50,56 +49,13 @@ pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 
 
 
 
-unfold = RooUnfoldBayes(response, reco, 6)
-unfoldSD = RooUnfoldBayes(responseSD, recoSD, 6)
+unfold = RooUnfoldBayes(response, reco, 3)
+unfoldSD = RooUnfoldBayes(responseSD, recoSD, 3)
 
 #unfold= RooUnfoldSvd(response, reco, 5);
 
 reco_unfolded = unfold.Hreco()
 reco_unfoldedSD = unfoldSD.Hreco()
-
-################### New Correlation matrix stuff
-cov = unfold.Ereco()
-covSD = unfoldSD.Ereco()
-
-nb= cov.GetNrows()
-import math
-cor = ROOT.TH2F("cor", "", nb, 0, nb, nb, 0, nb)
-corSD = ROOT.TH2F("corSD", "", nb, 0, nb, nb, 0, nb)
-
-
-for i in xrange(0,nb) :
-    for j in xrange(0,nb) :
-        Viijj = cov[i][i] * cov[j][j]
-        if Viijj>0.0 :
-            cor.SetBinContent(i+1, j+1, cov[i][j]/math.sqrt(Viijj))
-        
-for i in xrange(0,nb) :
-    for j in xrange(0,nb) :
-        Viijj = covSD[i][i] * covSD[j][j]
-        if Viijj>0.0 :
-            corSD.SetBinContent(i+1,j+1, covSD[i][j]/math.sqrt(Viijj) )
-
-cov_canvas=TCanvas("cov canvas", "cov canvas")
-cov_canvas.cd()
-cor.SetMinimum(-1.0)
-cor.SetMaximum(1.0)
-cor.Draw("colz")
-cov_canvas.Update()
-cov_canvas.Print("CovarianceMatrix.png", "png")
-cov_canvas.Print("CovarianceMatrix.pdf", "pdf")
-
-covSD_canvas=TCanvas("covSDcanvas", "covSDcanvas")
-covSD_canvas.cd()
-corSD.SetMinimum(-1.0)
-corSD.SetMaximum(1.0)
-corSD.Draw("colz")
-covSD_canvas.Update()
-covSD_canvas.Print("CovarianceMatrixSD.png", "png")
-covSD_canvas.Print("CovarianceMatrixSD.pdf", "pdf")
-###################
-creco = TCanvas("creco", "creco")
-
 
 reco_unfolded.Draw()
 
