@@ -1,4 +1,10 @@
-def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, softdrop= "", keephists=[]):
+import ROOT
+ROOT.gSystem.Load("../libRooUnfold")
+from ROOT import TCanvas, TLegend
+from ROOT import gRandom, TH1, TH1D, cout
+from math import sqrt
+
+def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[]):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./9240.]
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
@@ -93,8 +99,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         MC_list[i].Draw( "hist SAME" )
     
         ####################################################################################### Latex Drawn Here
-        atlx[i].DrawLatex(0.131, 0.926, "CMS Preliminary #sqrt{s}=13 TeV, 40 pb^{-1}")
-        atlxpt[i].DrawLatex(0.555, 0.559, ptbins[i])
+        latex_list[i].DrawLatex(0.131, 0.926, "CMS Preliminary #sqrt{s}=13 TeV, 40 pb^{-1}")
+        latexpt_list[i].DrawLatex(0.555, 0.559, ptbins_dict[i])
     
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(MC_list[i], 'Pythia8'+softdrop, 'l')
@@ -131,7 +137,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datJMR.GetYaxis().SetTitleOffset(2)
         datJMR.GetYaxis().SetTitleSize(18)
         ##################################################################################### divide error by bin content and set to unity
-        histstokeep.append( [datcopycopy,datcopy,trueCopy, datPDF, datJMR])
+        keephists.append( [datcopycopy,datcopy,trueCopy, datPDF, datJMR])
         for ibin in xrange(1,datcopy.GetNbinsX()):
             if datcopy.GetBinContent(ibin) > 0: 
                 datcopy.SetBinError(ibin, datcopy.GetBinError(ibin)/datcopy.GetBinContent(ibin))

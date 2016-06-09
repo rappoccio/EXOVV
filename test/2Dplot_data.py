@@ -19,15 +19,29 @@ f = ROOT.TFile('2DData.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 
 jecdna = []
-jecdnaSD = []
 jecupa = []
-jecupaSD = []
 jerdna = []
-jerdnaSD = []
 jerupa = []
+jernoma = []
+jmrdna = []
+jmrupa = []
+jmrnoma = []
+
+
+jecdnaSD = []
+jecupaSD = []
+jerdnaSD = []
 jerupaSD = []
+jernomaSD = []
+jmrdnaSD = []
+jmrupaSD = []
+jmrnomaSD = []
+
 ps = []
 ps_softdrop = []
+
+ps_differences = []
+ps_differences_softdrop = []
 
 
 scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./9240.]
@@ -39,30 +53,30 @@ jecdn = ROOT.TFile('2DData_jecdn.root')
 jecup = ROOT.TFile('2DData_jecup.root')
 jerdn = ROOT.TFile('2DData_jerdn.root')
 jerup = ROOT.TFile('2DData_jerup.root')
-jernom = ROOT.TFile('2DClosure_jernom.root')
-jmrupfile = ROOT.TFile('2DClosure_jmrup.root')
-jmrdnfile = ROOT.TFile('2DClosure_jmrdn.root')
-jmrnomfile= ROOT.TFile('2DClosure_jmrnom.root')
+jernom = ROOT.TFile('2DData_jernom.root')
+jmrupfile = ROOT.TFile('2DData_jmrup.root')
+jmrdnfile = ROOT.TFile('2DData_jmrdn.root')
+jmrnomfile= ROOT.TFile('2DData_jmrnom.root')
 
 ##################################################################### Get uncertainty hists
 for i in range(0, 7):
-    jecdna.append(jecdn.Get('pythia8_mass' + str(i)))
-    jecupa.append(jecup.Get('pythia8_mass' + str(i)))
-    jerdna.append(jerdn.Get('pythia8_mass' + str(i)))
-    jerupa.append(jerup.Get('pythia8_mass' + str(i)))
-    jernoma.append(jernom.Get('pythia8_mass'+str(i)))
-    jmrupa.append(jmrupfile.Get('pythia8_mass' + str(i)))
-    jmrdna.append(jmrdnfile.Get('pythia8_mass' + str(i)))
-    jmrnoma.append(jmrnomfile.Get('pythia8_mass' + str(i)))
+    jecdna.append(jecdn.Get('mass' + str(i)))
+    jecupa.append(jecup.Get('mass' + str(i)))
+    jerdna.append(jerdn.Get('mass' + str(i)))
+    jerupa.append(jerup.Get('mass' + str(i)))
+    jernoma.append(jernom.Get('mass'+str(i)))
+    jmrupa.append(jmrupfile.Get('mass' + str(i)))
+    jmrdna.append(jmrdnfile.Get('mass' + str(i)))
+    jmrnoma.append(jmrnomfile.Get('mass' + str(i)))
 
-    jecdnaSD.append(jecdn.Get('pythia8_massSD' + str(i)))
-    jecupaSD.append(jecup.Get('pythia8_massSD' + str(i)))
-    jerdnaSD.append(jerdn.Get('pythia8_massSD' + str(i)))
-    jerupaSD.append(jerup.Get('pythia8_massSD' + str(i)))
-    jernomaSD.append(jernom.Get('pythia8_massSD'+str(i)))
-    jmrupaSD.append(jmrupfile.Get('pythia8_massSD' + str(i)))
-    jmrdnaSD.append(jmrdnfile.Get('pythia8_massSD' + str(i)))
-    jmrnomaSD.append(jmrnomfile.Get('pythia8_massSD' + str(i)))
+    jecdnaSD.append(jecdn.Get('massSD' + str(i)))
+    jecupaSD.append(jecup.Get('massSD' + str(i)))
+    jerdnaSD.append(jerdn.Get('massSD' + str(i)))
+    jerupaSD.append(jerup.Get('massSD' + str(i)))
+    jernomaSD.append(jernom.Get('massSD'+str(i)))
+    jmrupaSD.append(jmrupfile.Get('massSD' + str(i)))
+    jmrdnaSD.append(jmrdnfile.Get('massSD' + str(i)))
+    jmrnomaSD.append(jmrnomfile.Get('massSD' + str(i)))
 
 
 ROOT.gStyle.SetOptStat(000000)
@@ -106,8 +120,8 @@ atlxSD = []
 atlxSDpt = []
 comparisons = []
 for x in range(0, 7):
-    datalistSD.append(f.Get('pythia8_massSD'+str(x)))
-    datalist.append(f.Get('pythia8_mass'+str(x)))
+    datalistSD.append(f.Get('massSD'+str(x)))
+    datalist.append(f.Get('mass'+str(x)))
     MCtruth.append(f.Get('genmass' + str(x)))
     MCtruthSD.append(f.Get('genmassSD' + str(x)))
     atlx.append(ROOT.TLatex())
@@ -121,7 +135,6 @@ for x in range(0, 7):
 
 ################################################################################################################# Get Parton Showering Unc.
 parton_shower = ROOT.TFile('PS_hists.root')
-unfolded_with_pythia8 = ROOT.TFile('2DClosure.root')
 compare_canvases = []
 compare_legends = []
 
@@ -133,6 +146,7 @@ for i in range(0, 7):
       
     temp_unc = (ps[i] - datalist[i])
     temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
+
     temp_unc.Scale(scales[i])
     temp_softdrop_unc.Scale(scales[i])
 
@@ -247,5 +261,5 @@ histstokeep = []
 
 
 
-plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldeddata_", jmrupa, jmrdna, jmrnoma, keephists=histstokeep)
-plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldeddata_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, softdrop="MMDT Beta=0", keephists=histstokeep)
+plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldeddata_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, ptbins, keephists=histstokeep)
+plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldeddata_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, ptbins, softdrop="MMDT Beta=0", keephists=histstokeep)
