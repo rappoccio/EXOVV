@@ -1,0 +1,19 @@
+python 2Dunfold_data.py
+python 2Dunfold_data.py --extension _jerup
+python 2Dunfold_data.py --extension _jerdn
+python 2Dunfold_data.py --extension _jecup
+python 2Dunfold_data.py --extension _jecdn
+python 2Dplot_data.py 
+
+python 2Dunfold_mc.py
+python 2Dunfold_mc.py --extension _jerup
+python 2Dunfold_mc.py --extension _jerdn
+python 2Dunfold_mc.py --extension _jernom
+python 2Dunfold_mc.py --extension _jecup
+python 2Dunfold_mc.py --extension _jecdn
+python 2Dunfold_mc.py --extension _jmrup
+python 2Dunfold_mc.py --extension _jmrdn
+python 2Dunfold_mc.py --extension _jmrnom
+python 2Dunfold_PS.py 
+python 2Dunfold_pdf.py
+python -i 2Dplot_mc.py 
