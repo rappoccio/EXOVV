@@ -467,19 +467,19 @@ for itree,t in enumerate(trees) :
                 jmrvalnomSD = 1.1
                 recomassSD = FatJetSD.M()
                 genmassSD = GenJetsSD[igenSD].M()
-                deltamassSD = (recomassSD-genmassSD)*(jmrvalnomSD)
+                deltamassSD = (recomassSD-genmassSD)*(jmrvalnomSD-1.0)
                 jmrnomSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
   
                 jmrvalupSD = 1.2
                 recomassSD = FatJetSD.M()
                 genmassSD = GenJetsSD[igenSD].M()
-                deltamassSD = (recomassSD-genmassSD)*(jmrvalupSD)
+                deltamassSD = (recomassSD-genmassSD)*(jmrvalupSD-1.0)
                 jmrupSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
 
                 jmrvaldnSD = 1.0
                 recomassSD = FatJetSD.M()
                 genmassSD = GenJetsSD[igenSD].M()
-                deltamassSD = (recomassSD-genmassSD)*(jmrvaldnSD)
+                deltamassSD = (recomassSD-genmassSD)*(jmrvaldnSD-1.0)
                 jmrdnSD = max(0.0, (recomassSD-genmassSD)/recomassSD)
 
                 response_softdrop.Fill( FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
