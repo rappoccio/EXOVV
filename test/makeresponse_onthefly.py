@@ -416,7 +416,7 @@ for itree,t in enumerate(trees) :
 
                 # Make some data-to-MC plots
 
-                h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
+#                h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
                 h_pt_meas.Fill( FatJetPt[ijet] , weight )
                 h_y_meas.Fill( FatJetRap[ijet] , weight )
                 h_phi_meas.Fill( FatJetPhi[ijet] , weight )
@@ -498,7 +498,7 @@ for itree,t in enumerate(trees) :
                     response_softdrop_pdfdn.Fill( FatJetSD.Perp(), FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight*pdfweight_dn)
 
                 h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
-                h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
+ #               h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
             else:
                 response_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
                 response_softdrop_jecup.Fake( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], weight )
