@@ -16,6 +16,13 @@ parser.add_option('--extension', action ='store', type = 'string',
                   dest='extension',
                   help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
 
+
+parser.add_option('--softdrop', action ='store_true',
+                  default =False,
+                  dest='softdrop',
+                  help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -24,16 +31,27 @@ myfile = TFile('qcdmc_stitched_withpdf_qcdmc.root')
 outtext = ''
 outfile = None
 
+if options.softdrop == False : 
+    response = myfile.Get('2d_response_softdrop' + options.extension)
+    outfile = TFile('2DClosure_softdrop' + options.extension + '.root', 'RECREATE')
+    outtext = options.extension
 
-response = myfile.Get('2d_response' + options.extension)
-outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
-outtext = options.extension
+    truth = myfile.Get('PFJet_pt_m_AK8SDgen')
 
-truth = myfile.Get('PFJet_pt_m_AK8Gen')
 
+    reco = myfile.Get('PFJet_pt_m_AK8SD')
+
+else :
+    response = myfile.Get('2d_response' + options.extension)
+    outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
+    outtext = options.extension
+
+    truth = myfile.Get('PFJet_pt_m_AK8Gen')
+
+
+    reco = myfile.Get('PFJet_pt_m_AK8')
+        
 c_reco = ROOT.TCanvas("c_reco", "c_reco")
-reco = myfile.Get('PFJet_pt_m_AK8')
-
 reco.Draw("colz")
 
 #####################
