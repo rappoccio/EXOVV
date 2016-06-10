@@ -381,19 +381,19 @@ for itree,t in enumerate(trees) :
                 jmrvalup = 1.2
                 recomass = FatJet.M()
                 genmass = GenJets[igen].M()
-                deltamass = (recomass-genmass)*(jmrvalup)
+                deltamass = (recomass-genmass)*(jmrvalup-1.0)
                 jmrup = max(0.0, (recomass+deltamass)/recomass) 
                 
                 jmrvaldn = 1.0
                 recomass = FatJet.M()
                 genmass = GenJets[igen].M()
-                deltamass = (recomass-genmass)*(jmrvaldn)
+                deltamass = (recomass-genmass)*(jmrvaldn-1.0)
                 jmrdn = max(0.0, (recomass+deltamass)/recomass)
 
                 jmrvalnom = 1.1
                 recomass = FatJet.M()
                 genmass = GenJets[igen].M()
-                deltamass = (recomass-genmass)*(jmrvalnom)
+                deltamass = (recomass-genmass)*(jmrvalnom-1.0)
                 jmrnom = max(0.0, (recomass+deltamass)/recomass)
 
 
