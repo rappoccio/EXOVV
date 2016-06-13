@@ -216,8 +216,8 @@ for itree,t in enumerate(trees) :
         GenJetz = []
         weight = Weight[0]
         
-        if weight > options.weightCut:
-            continue
+#        if weight > options.weightCut:
+#            continue
         #print weight
         for igen in xrange( int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()

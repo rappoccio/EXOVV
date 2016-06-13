@@ -15,14 +15,14 @@ parser = OptionParser()
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
-                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
 parser.add_option('--pythia6', action ='store_true', default=False, dest='pythia6')
 
                                 
 (options, args) = parser.parse_args()
 
 
-myfile = TFile('qcdmc_stitched_qcdmc.root')
+myfile = TFile('qcdmc_stitched_pdf_qcdmc.root')
 pythia6 = None
 outtext = ''
 outfile = None
@@ -49,8 +49,8 @@ pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 
 
 
 
-unfold = RooUnfoldBayes(response, reco, 6)
-unfoldSD = RooUnfoldBayes(responseSD, recoSD, 6)
+unfold = RooUnfoldBayes(response, reco, 3)
+unfoldSD = RooUnfoldBayes(responseSD, recoSD, 3)
 
 #unfold= RooUnfoldSvd(response, reco, 5);
 

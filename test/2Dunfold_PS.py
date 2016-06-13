@@ -52,7 +52,7 @@ pythia6_gen.Scale(1./pythia6_gen.Integral())
 pythia6_gen_softdrop.Scale(1./pythia6_gen_softdrop.Integral())
 
 # unfold the UNGROOMED pythia8 reco with pythia6 response matrix and partition into pt bins
-unfold_ps = RooUnfoldBayes(pythia6_response, pythia8_reco, 6)
+unfold_ps = RooUnfoldBayes(pythia6_response, pythia8_reco, 3)
 unfolded_ps = unfold_ps.Hreco()
 
 canvases = []
@@ -80,7 +80,7 @@ for i, canvas in enumerate(canvases) :
 
 # unfold the SoftDrop pythia8 reco with pythia6 response matrix and partition into pt bins
 
-unfold_ps_softdrop = RooUnfoldBayes(pythia6_response_softdrop, pythia8_reco_softdrop, 6)
+unfold_ps_softdrop = RooUnfoldBayes(pythia6_response_softdrop, pythia8_reco_softdrop, 3)
 unfolded_ps_softdrop = unfold_ps_softdrop.Hreco()
 
 canvases_softdrop = []
@@ -107,7 +107,7 @@ for i, canvas in enumerate(canvases_softdrop) :
     legends_softdrop[i].Draw()
     canvas.SaveAs('partonshower_unc_test_softdrop'+str(i)+'.png')
 # unfold data with pythia 6
-unfold_ps_data = RooUnfoldBayes(pythia6_response, data_reco, 6)
+unfold_ps_data = RooUnfoldBayes(pythia6_response, data_reco, 3)
 unfolded_ps_data = unfold_ps_data.Hreco()
 
 canvases_data = []
@@ -129,7 +129,7 @@ for i, canvas in enumerate(canvases_data) :
     canvas.SaveAs('partonshower_unc_data'+str(i)+'.png')
     
 # unfold softdrop data with pythia 6
-unfold_ps_data_softdrop = RooUnfoldBayes(pythia6_response_softdrop, data_reco_softdrop, 6)
+unfold_ps_data_softdrop = RooUnfoldBayes(pythia6_response_softdrop, data_reco_softdrop, 3)
 unfolded_ps_data_softdrop = unfold_ps_data_softdrop.Hreco()
 
 canvases_data_softdrop = []
