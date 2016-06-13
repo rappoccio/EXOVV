@@ -8,7 +8,7 @@ parser = OptionParser()
 
 parser.add_option('--outlabel', type='string', action='store',
                   dest='outlabel',
-                  default = "qcdmc_point01weightcut_pythia6",
+                  default = "qcdmc_stitched_pythia6",
                   help='Label for plots')
 
 
@@ -31,7 +31,7 @@ import random
 
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
-ptBinA = array.array('d', [  200., 240., 310., 400., 530., 650., 760., 13000.])
+ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
 nbinsPt = len(ptBinA) - 1
 
 response = ROOT.RooUnfoldResponse()
@@ -83,6 +83,23 @@ h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} 
 
 h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
 h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+
+h_m_fulldist = ROOT.TH1F("PFJet_m_AK8_fulldist", "Full Spectrum Mass (GeV)", 50, 0, 1000)
+h_pt_fulldist = ROOT.TH1F("PFJet_pt_AK8_fulldist", "Full Spectrum P_{T}", nbinsPt, ptBinA)
+h_pt_fulldist_softdrop = ROOT.TH1F("PFJet_pt_AK8SD_fulldist", "Full Spectrum P_{T}", nbinsPt, ptBinA)
+h_m_fulldist_softdrop = ROOT.TH1F("PFJet_m_AK8SD_fulldist", "Full Spectrum Mass (GeV)", 50, 0, 1000)
+
+h_m_drmatched = ROOT.TH1F("PFJet_m_AK8_drmatched", "Mass After dR Matching", 50, 0, 1000)
+h_pt_drmatched = ROOT.TH1F("PFJet_pt_AK8_drmatched", "P_{T} After dR Matching", nbinsPt, ptBinA )
+h_m_softdrop_drmatched = ROOT.TH1F("PFJet_m_AK8SD_drmatched", "SoftDrop Match After dR Matching", 50, 0, 1000)
+h_pt_softdrop_drmatched = ROOT.TH1F("PFJet_pt_AK8SD_drmatched", "SoftDrop P_{T} After dR Matching", nbinsPt, ptBinA)
+
+h_mreco_mgen = ROOT.TH1F("h_mreco_mgen", "Reco Mass/Gen Mass", 1000, 0, 2)
+h_ptreco_ptgen = ROOT.TH1F("h_recopt_genpt", "Reco Pt/Gen Pt", 1000, 0, 2)
+
+
+h_mreco_mgen_softdrop = ROOT.TH1F("h_mreco_mgen_softdrop", "SoftDrop Reco Mass/Gen Mass", 1000, 0, 2)
+h_ptreco_ptgen_softdrop = ROOT.TH1F("h_ptreco_ptgen_softdrop", "SoftDrop Reco Pt/Gen Pt", 1000, 0, 2)
 
 def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None :
@@ -215,9 +232,8 @@ for itree,t in enumerate(trees) :
         FatJetz = []
         GenJetz = []
         weight = Weight[0]
-        
-#        if weight > options.weightCut:
-#            continue
+        if 5e-7 < weight/(GenJetPt[0]+GenJetPt[1]):
+            continue
         #print weight
         for igen in xrange( int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()
@@ -229,7 +245,7 @@ for itree,t in enumerate(trees) :
             GenJetsMassSD.append( GenJetMassSoftDrop[igen] )
             h_2DHisto_gen.Fill( GenJet.Perp(), GenJet.M(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.Perp(), GenJetSD.M(), weight)
-
+        
           #First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
         for ijet in xrange( int(NFatJet[0]) ):
 
@@ -247,7 +263,10 @@ for itree,t in enumerate(trees) :
 
             h_2DHisto_meas.Fill( FatJet.Perp(), FatJet.M(), weight )
             h_2DHisto_measSD.Fill( FatJetSD.Perp(), FatJetSD.M(), weight)
-
+ #           h_m_fulldist.Fill(FatJet.M(), weight)
+ #           h_pt_fulldist.Fill(FatJet.Perp(), weight)
+ #           h_pt_fulldist_softdrop.Fill(FatJetSD.Perp(), weight)
+ #           h_m_fulldist_softdrop.Fill(FatJetSD.M(), weight)
 
             igen = getMatched( FatJet, GenJets )
             igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.5)
@@ -271,8 +290,13 @@ for itree,t in enumerate(trees) :
                 response_jecdn.Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJet.M()* FatJetCorrDn[ijet], GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerup.Fill( FatJet.Perp() * smearup, FatJet.M()* smearup, GenJets[igen].Perp(), GenJets[igen].M(), weight )
                 response_jerdn.Fill( FatJet.Perp() * smeardn, FatJet.M()* smeardn, GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                
 
+#                h_ptreco_ptgen.Fill(FatJet.Perp()/GenJets[igen].Perp(), weight)
+#                h_mreco_mgen.Fill(FatJet.M()/GenJets[igen].M(), weight)
 
+#                h_m_drmatched.Fill(FatJet.M(), weight)
+#                h_pt_drmatched.Fill(FatJet.Perp(), weight) 
             else : # Here we have a "Fake"
                 response.Fake( FatJet.Perp(), FatJet.M(), weight )
                 response_jecup.Fake( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], weight )
@@ -286,6 +310,10 @@ for itree,t in enumerate(trees) :
                 response_softdrop_jecdn.Fill( FatJetSD.Perp()  * FatJetCorrDn[ijet], FatJetSD.M() * FatJetCorrDn[ijet], GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
                 response_softdrop_jerup.Fill( FatJetSD.Perp()  * smearup, FatJetSD.M() * smearup, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
                 response_softdrop_jerdn.Fill( FatJetSD.Perp()  * smeardn, FatJetSD.M() * smeardn, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
+#                h_m_softdrop_drmatched.Fill(FatJetSD.M(), weight)
+#                h_pt_softdrop_drmatched.Fill(FatJetSD.Perp(), weight)
+#                h_mreco_mgen_softdrop.Fill(FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
+#                h_ptreco_ptgen_softdrop.Fill(FatJetSD.Perp()/GenJetsSD[igenSD].Perp(), weight)
             else:
                 response_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
                 response_softdrop_jecup.Fake( FatJetSD.Perp()  * FatJetCorrUp[ijet], FatJetSD.M() * FatJetCorrUp[ijet], weight )
@@ -323,6 +351,24 @@ response_jerup.Write()
 response_jerdn.Write()
 h_2DHisto_gen.Write()
 h_2DHisto_meas.Write()
+
+#h_m_fulldist.Write()
+#h_pt_fulldist.Write()
+#h_m_fulldist_softdrop.Write()
+#h_pt_fulldist_softdrop.Write()
+
+#h_m_drmatched.Write()
+#h_pt_drmatched.Write()
+#h_m_softdrop_drmatched.Write()
+#h_pt_softdrop_drmatched.Write()
+
+#h_mreco_mgen.Write()
+#h_ptreco_ptgen.Write()
+#h_mreco_mgen_softdrop.Write()
+#h_ptreco_ptgen_softdrop.Write()
+
+
+
 
 h_2DHisto_measSD.Write()
 h_2DHisto_genSD.Write()

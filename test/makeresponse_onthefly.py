@@ -140,6 +140,19 @@ h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Number", 50, 0, ROO
 h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", 50, 0, 1.0 )
 h_rho_vs_tau_meas = ROOT.TH2F("h_rho_vs_tau21_meas", ";Jet (m/p_{T}R)^{2};Jet #tau_{2}/#tau_{1}", 100, 0, 1.0, 50, 0, 1.0 )
 
+h_massup = ROOT.TH1F("h_massup", "JMR Up Variation", 50, 0, 1000)
+h_massdn = ROOT.TH1F("h_massdn", "JMR Down Variation", 50, 0, 1000)
+h_massnom = ROOT.TH1F("h_massnom", "JMR Nominal", 50, 0, 1000)
+
+h_massup_softdrop = ROOT.TH1F("h_massup_softdrop", "JMR Up Softdrop", 50, 0, 1000)
+h_massdn_softdrop = ROOT.TH1F("h_massdn_softdrop", "JMR Down Softdrop", 50, 0, 1000)
+h_massnom_softdrop = ROOT.TH1F("h_massnom_softdrop", "JMR Nominal Softdrop", 50, 0, 1000)
+
+h_mreco_mgen = ROOT.TH1F("h_mreco_mgen", "Reco Mass/Gen Mass", 1000, 0, 2)
+h_ptreco_ptgen = ROOT.TH1F("h_ptreco_ptgen", "Reco Pt/Gen Pt", 1000, 0, 2)
+h_mreco_mgen_softdrop = ROOT.TH1F("h_mreco_mgen_softdrop", "Reco Mass/Gen Mass Softdrop", 1000, 0, 2)
+h_ptreco_ptgen_softdrop = ROOT.TH1F("h_ptreco_ptgen_softdrop", "Reco Pt/Gen Pt Softdrop", 1000, 0, 2)
+
 
 def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None : 
@@ -178,7 +191,7 @@ qcdIn =[
     ROOT.TFile('qcd_pt2400to3200_pdf_tree.root'),
     ROOT.TFile('qcd_pt3200toInf_pdf_tree.root'),
     ]
-
+masslessSD = 0
 qcdWeights =[
     0.036992995300193815,
 #    0.033811597704377146,   #### Processing is broken for this, for now run on partial sample
@@ -408,6 +421,10 @@ for itree,t in enumerate(trees) :
                 response_jmrdn.Fill( FatJet.Perp(), FatJet.M()*jmrdn, GenJets[igen].Perp(), GenJets[igen].M(), weight)
                 response_jmrnom.Fill(FatJet.Perp(), FatJet.M()*jmrnom, GenJets[igen].Perp(), GenJets[igen].M(), weight)
 
+                h_massup.Fill(FatJet.M()*jmrup, weight)
+                h_massdn.Fill(FatJet.M()*jmrdn, weight)
+                h_massnom.Fill(FatJet.M()*jmrnom, weight)
+
                 if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                     pass
                 else:
@@ -424,7 +441,11 @@ for itree,t in enumerate(trees) :
                 h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
                 h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
                 h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
-                
+                if GenJets[igen].M() != 0:
+                    h_mreco_mgen.Fill(FatJet.M()/GenJets[igen].M(), weight)
+                else:
+                    h_mreco_mgen.Fill(FatJet.M()/0.140, weight)
+                h_ptreco_ptgen.Fill(FatJet.Perp()/GenJets[igen].Perp(), weight)        
             else : # Here we have a "Fake"
                 response.Fake( FatJet.Perp(), FatJet.M(), weight )
                 response_jecup.Fake( FatJet.Perp() * FatJetCorrUp[ijet], FatJet.M()* FatJetCorrUp[ijet], weight )
@@ -491,6 +512,15 @@ for itree,t in enumerate(trees) :
                 response_softdrop_jmrnom.Fill(FatJetSD.Perp(), FatJetSD.M()*jmrnomSD, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight)
                 response_softdrop_jmrup.Fill(FatJetSD.Perp(), FatJetSD.M()*jmrupSD, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight)
                 response_softdrop_jmrdn.Fill(FatJetSD.Perp(), FatJetSD.M()*jmrdnSD, GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight)
+                h_massup_softdrop.Fill(FatJetSD.M()*jmrupSD, weight)
+                h_massdn_softdrop.Fill(FatJetSD.M()*jmrdnSD, weight)
+                h_massnom_softdrop.Fill(FatJetSD.M()*jmrnomSD, weight)
+                if GenJetsSD[igenSD].M() != 0:
+                    h_mreco_mgen_softdrop.Fill(FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
+                else:
+                    h_mreco_mgen_softdrop.Fill(FatJetSD.M()/0.14, weight)
+                    masslessSD += 1
+                h_ptreco_ptgen_softdrop.Fill(FatJetSD.Perp()/GenJetsSD[igenSD].Perp(), weight)
                 if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                     pass
                 else:
@@ -553,7 +583,7 @@ for itree,t in enumerate(trees) :
                 else:
                     response_softdrop_pdfup.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight*pdfweight_up)
                     response_softdrop_pdfdn.Miss( GenJetsSD[igen].Perp(), GenJetsSD[igen].M(), weight*pdfweight_dn)
-
+print "Number of Massless Softdrop Jets: " + str(masslessSD)
 fout.cd()
 #response.Hresponse().Draw()
 response.Write()
@@ -574,6 +604,10 @@ response_pdfdn.Write()
 response_softdrop_pdfup.Write()
 response_softdrop_pdfdn.Write()
 
+h_mreco_mgen.Write()
+h_ptreco_ptgen.Write()
+h_mreco_mgen_softdrop.Write()
+h_ptreco_ptgen_softdrop.Write()
 
 
 h_2DHisto_measSD.Write()
