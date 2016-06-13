@@ -10,6 +10,7 @@
 ##################
 
 #@ CONFIGURATION
+import sys
 
 def JetTreeDump_FWLite(argv) :
     
@@ -30,6 +31,27 @@ def JetTreeDump_FWLite(argv) :
                       default=None,
                       dest='xrootd',
                       help='xrootd redirector, try root://cmsxrootd.fnal.gov/')
+
+
+
+    parser.add_option('--puStr', type='string', action='store',
+                      default='',
+                      dest='puStr',
+                      help='Pileup method string (>=76x versions: CHS or Puppi)')
+
+    
+    parser.add_option('--metStr', type='string', action='store',
+                      default='',
+                      dest='metStr',
+                      help='MET method string (>=76x versions: Full)')
+
+
+
+    parser.add_option('--btagger', type='string', action='store',
+                      default='CSV',
+                      dest='btagger',
+                      help='B discriminator to use (74x CSV, 76x CSVv2)')
+
     
     parser.add_option('--verbose', action='store_true',
                       default=False,
@@ -350,87 +372,87 @@ def JetTreeDump_FWLite(argv) :
 
     #MET label and Handles
     h_metPt = Handle("std::vector<float>")
-    l_metPt = ("met" , "metPt")
+    l_metPt = ("met" + options.metStr , "met" + options.metStr + "Pt")
     h_metPx = Handle("std::vector<float>")
-    l_metPx = ("met" , "metPx")
+    l_metPx = ("met" + options.metStr , "met" + options.metStr + "Px")
     h_metPy = Handle("std::vector<float>")
-    l_metPy = ("met" , "metPy")
+    l_metPy = ("met" + options.metStr , "met" + options.metStr + "Py")
     h_metPhi = Handle("std::vector<float>")
-    l_metPhi = ("met" , "metPhi")
+    l_metPhi = ("met" + options.metStr , "met" + options.metStr + "Phi")
 
     #AK8 Jets label and Handles
     h_jetsAK8Pt = Handle("std::vector<float>")
-    l_jetsAK8Pt = ("jetsAK8" , "jetAK8Pt") #
+    l_jetsAK8Pt = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "Pt") #
     h_jetsAK8Eta = Handle("std::vector<float>")
-    l_jetsAK8Eta = ("jetsAK8" , "jetAK8Eta")
+    l_jetsAK8Eta = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "Eta")
     h_jetsAK8Phi = Handle("std::vector<float>")
-    l_jetsAK8Phi = ("jetsAK8" , "jetAK8Phi")
+    l_jetsAK8Phi = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "Phi")
     h_jetsAK8Mass = Handle("std::vector<float>")
-    l_jetsAK8Mass = ("jetsAK8" , "jetAK8Mass")
+    l_jetsAK8Mass = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "Mass")
     h_jetsAK8Energy = Handle("std::vector<float>")
-    l_jetsAK8Energy = ("jetsAK8" , "jetAK8E")
+    l_jetsAK8Energy = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "E")
     h_jetsAK8JEC = Handle("std::vector<float>")
-    l_jetsAK8JEC = ("jetsAK8" , "jetAK8jecFactor0")
+    l_jetsAK8JEC = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "jecFactor0")
     h_jetsAK8Y = Handle("std::vector<float>")
-    l_jetsAK8Y = ("jetsAK8" , "jetAK8Y")
+    l_jetsAK8Y = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "Y")
 
     h_jetsAK8nHadEnergy = Handle("std::vector<float>")
-    l_jetsAK8nHadEnergy = ("jetsAK8" , "jetAK8neutralHadronEnergy")
+    l_jetsAK8nHadEnergy = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "neutralHadronEnergy")
     h_jetsAK8nEMEnergy = Handle("std::vector<float>")
-    l_jetsAK8nEMEnergy = ("jetsAK8" , "jetAK8neutralEmEnergy")
+    l_jetsAK8nEMEnergy = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "neutralEmEnergy")
     h_jetsAK8HFHadronEnergy = Handle("std::vector<float>")
-    l_jetsAK8HFHadronEnergy = ("jetsAK8" , "jetAK8HFHadronEnergy")
+    l_jetsAK8HFHadronEnergy = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "HFHadronEnergy")
     h_jetsAK8cHadEnergy = Handle("std::vector<float>")
-    l_jetsAK8cHadEnergy = ("jetsAK8" , "jetAK8chargedHadronEnergy")
+    l_jetsAK8cHadEnergy = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "chargedHadronEnergy")
     h_jetsAK8cEMEnergy = Handle("std::vector<float>")
-    l_jetsAK8cEMEnergy = ("jetsAK8" , "jetAK8chargedEmEnergy")
+    l_jetsAK8cEMEnergy = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "chargedEmEnergy")
     h_jetsAK8numDaughters = Handle("std::vector<float>")
-    l_jetsAK8numDaughters = ("jetsAK8" , "jetAK8numberOfDaughters")
+    l_jetsAK8numDaughters = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "numberOfDaughters")
     h_jetsAK8cMultip = Handle("std::vector<float>")
-    l_jetsAK8cMultip = ("jetsAK8" , "jetAK8chargedMultiplicity")
+    l_jetsAK8cMultip = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "chargedMultiplicity")
     h_jetsAK8Y = Handle("std::vector<float>")
-    l_jetsAK8Y = ("jetsAK8" , "jetAK8Y")
+    l_jetsAK8Y = ("jetsAK8" + options.puStr , "jetAK8" + options.puStr + "Y")
 
     h_jetsAK8Keys = Handle("std::vector<std::vector<int> >")
-    l_jetsAK8Keys = ( "jetKeysAK8" , "" )
+    l_jetsAK8Keys = ( "jetKeysAK8" + options.puStr , "" )
 
     h_jetsAK8SoftDropMass = Handle("std::vector<float>")
-    l_jetsAK8SoftDropMass = ("jetsAK8", "jetAK8softDropMass" )
+    l_jetsAK8SoftDropMass = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "softDropMass" )
     h_jetsAK8TrimMass = Handle("std::vector<float>")
-    l_jetsAK8TrimMass = ("jetsAK8", "jetAK8trimmedMass" )
+    l_jetsAK8TrimMass = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "trimmedMass" )
     h_jetsAK8PrunMass = Handle("std::vector<float>")
-    l_jetsAK8PrunMass = ("jetsAK8", "jetAK8prunedMass" )
+    l_jetsAK8PrunMass = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "prunedMass" )
     h_jetsAK8FiltMass = Handle("std::vector<float>")
-    l_jetsAK8FiltMass = ("jetsAK8", "jetAK8filteredMass" )
+    l_jetsAK8FiltMass = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "filteredMass" )
     h_jetsAK8Tau1 = Handle("std::vector<float>")
-    l_jetsAK8Tau1 = ("jetsAK8", "jetAK8tau1" )
+    l_jetsAK8Tau1 = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "tau1" )
     h_jetsAK8Tau2 = Handle("std::vector<float>")
-    l_jetsAK8Tau2 = ("jetsAK8", "jetAK8tau2" )
+    l_jetsAK8Tau2 = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "tau2" )
     h_jetsAK8Tau3 = Handle("std::vector<float>")
-    l_jetsAK8Tau3 = ("jetsAK8", "jetAK8tau3" )
+    l_jetsAK8Tau3 = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "tau3" )
     h_jetsAK8nSubJets = Handle("std::vector<float>")
-    l_jetsAK8nSubJets = ("jetsAK8", "jetAK8nSubJets" )
+    l_jetsAK8nSubJets = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "nSubJets" )
     h_jetsAK8minmass = Handle("std::vector<float>")
-    l_jetsAK8minmass = ("jetsAK8", "jetAK8minmass" )
+    l_jetsAK8minmass = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "minmass" )
     h_jetsAK8Area = Handle("std::vector<float>")
-    l_jetsAK8Area = ( "jetsAK8" , "jetAK8jetArea" )
+    l_jetsAK8Area = ( "jetsAK8" + options.puStr , "jetAK8" + options.puStr + "jetArea" )
 
 
     h_jetsAK8vSubjetIndex0 = Handle("std::vector<float>")
-    l_jetsAK8vSubjetIndex0 = ("jetsAK8", "jetAK8vSubjetIndex0")
+    l_jetsAK8vSubjetIndex0 = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "vSubjetIndex0")
     h_jetsAK8vSubjetIndex1 = Handle("std::vector<float>")
-    l_jetsAK8vSubjetIndex1 = ("jetsAK8", "jetAK8vSubjetIndex1")
+    l_jetsAK8vSubjetIndex1 = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "vSubjetIndex1")
 
     h_subjetsAK8Pt = Handle( "std::vector<float>")
-    l_subjetsAK8Pt = ("subjetsAK8", "subjetAK8Pt")
+    l_subjetsAK8Pt = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "Pt")
     h_subjetsAK8Eta = Handle( "std::vector<float>")
-    l_subjetsAK8Eta = ("subjetsAK8", "subjetAK8Eta")
+    l_subjetsAK8Eta = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "Eta")
     h_subjetsAK8Phi = Handle( "std::vector<float>")
-    l_subjetsAK8Phi = ("subjetsAK8", "subjetAK8Phi")
+    l_subjetsAK8Phi = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "Phi")
     h_subjetsAK8Mass = Handle( "std::vector<float>")
-    l_subjetsAK8Mass = ("subjetsAK8", "subjetAK8Mass")
+    l_subjetsAK8Mass = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "Mass")
     h_subjetsAK8BDisc = Handle( "std::vector<float>")
-    l_subjetsAK8BDisc = ("subjetsAK8", "subjetAK8CSV")
+    l_subjetsAK8BDisc = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + options.btagger)
 
 
 
@@ -699,9 +721,12 @@ def JetTreeDump_FWLite(argv) :
     files = []
     nevents = 0
     for ifile in filesraw : #{ Loop over text file and find root files linked
-        if len( ifile ) > 2 : 
-            #s = 'root://cmsxrootd.fnal.gov/' + ifile.rstrip()
-            s = options.xrootd + ifile.rstrip()
+        if len( ifile ) > 2 :
+            if options.xrootd != None : 
+                #s = 'root://cmsxrootd.fnal.gov/' + ifile.rstrip()
+                s = options.xrootd + ifile.rstrip()
+            else :
+                s = ifile.rstrip()
             files.append( s )
             print 'Added ' + s
             #} End loop over txt file
@@ -971,8 +996,6 @@ def JetTreeDump_FWLite(argv) :
             event.getByLabel ( l_jetsAK8Tau1, h_jetsAK8Tau1 )
             event.getByLabel ( l_jetsAK8Tau2, h_jetsAK8Tau2 )
             event.getByLabel ( l_jetsAK8Tau3, h_jetsAK8Tau3 )
-            event.getByLabel ( l_jetsAK8nSubJets, h_jetsAK8nSubJets )
-            event.getByLabel ( l_jetsAK8minmass, h_jetsAK8minmass )
 
             event.getByLabel ( l_jetsAK8vSubjetIndex0, h_jetsAK8vSubjetIndex0 )
             event.getByLabel ( l_jetsAK8vSubjetIndex1, h_jetsAK8vSubjetIndex1 )
@@ -1021,8 +1044,6 @@ def JetTreeDump_FWLite(argv) :
                 AK8Tau1 = h_jetsAK8Tau1.product()
                 AK8Tau2 = h_jetsAK8Tau2.product()
                 AK8Tau3 = h_jetsAK8Tau3.product()
-                AK8nSubJets = h_jetsAK8nSubJets.product()
-                AK8minmass = h_jetsAK8minmass.product()
                 AK8vSubjetIndex0 = h_jetsAK8vSubjetIndex0.product()
                 AK8vSubjetIndex1 = h_jetsAK8vSubjetIndex1.product()
                 AK8Keys = h_jetsAK8Keys.product()
@@ -1081,10 +1102,11 @@ def JetTreeDump_FWLite(argv) :
                 chf = AK8cHadE[i] / AK8P4Raw.E()
                 cef = AK8cEME[i] / AK8P4Raw.E()
                 nconstituents = AK8numDaughters[i]
-                nch = AK8cMultip[i] 
+                nch = AK8cMultip[i]
+                ## SR: Switch to tight jet ID
                 goodJet = \
-                  nhf < 0.99 and \
-                  nef < 0.99 and \
+                  nhf < 0.90 and \
+                  nef < 0.90 and \
                   chf > 0.00 and \
                   cef < 0.99 and \
                   nconstituents > 1 and \
@@ -1217,7 +1239,7 @@ def JetTreeDump_FWLite(argv) :
                 ipt0 = binFinder( pt0  )
                 if options.verbose :
                     print 'For MC : bin is ' + str(ipt0)
-            elif options.applyTriggers and readTriggers :
+            if options.applyTriggers and readTriggers :
 
                 passTrig = False
                 prescale = 1.0
