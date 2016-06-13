@@ -10,6 +10,7 @@
 ##################
 
 #@ CONFIGURATION
+import sys
 
 def JetTreeDump_FWLite(argv) :
     
@@ -699,9 +700,12 @@ def JetTreeDump_FWLite(argv) :
     files = []
     nevents = 0
     for ifile in filesraw : #{ Loop over text file and find root files linked
-        if len( ifile ) > 2 : 
-            #s = 'root://cmsxrootd.fnal.gov/' + ifile.rstrip()
-            s = options.xrootd + ifile.rstrip()
+        if len( ifile ) > 2 :
+            if options.xrootd != None : 
+                #s = 'root://cmsxrootd.fnal.gov/' + ifile.rstrip()
+                s = options.xrootd + ifile.rstrip()
+            else :
+                s = ifile.rstrip()
             files.append( s )
             print 'Added ' + s
             #} End loop over txt file
@@ -1081,10 +1085,11 @@ def JetTreeDump_FWLite(argv) :
                 chf = AK8cHadE[i] / AK8P4Raw.E()
                 cef = AK8cEME[i] / AK8P4Raw.E()
                 nconstituents = AK8numDaughters[i]
-                nch = AK8cMultip[i] 
+                nch = AK8cMultip[i]
+                ## SR: Switch to tight jet ID
                 goodJet = \
-                  nhf < 0.99 and \
-                  nef < 0.99 and \
+                  nhf < 0.90 and \
+                  nef < 0.90 and \
                   chf > 0.00 and \
                   cef < 0.99 and \
                   nconstituents > 1 and \
@@ -1217,7 +1222,7 @@ def JetTreeDump_FWLite(argv) :
                 ipt0 = binFinder( pt0  )
                 if options.verbose :
                     print 'For MC : bin is ' + str(ipt0)
-            elif options.applyTriggers and readTriggers :
+            if options.applyTriggers and readTriggers :
 
                 passTrig = False
                 prescale = 1.0
