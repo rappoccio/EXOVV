@@ -44,8 +44,7 @@ ROOT.gROOT.Macro("rootlogon.C")
 import array
 
 #                             80   140   200   260   320   400   450
-ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760.])
-nbinsPt = len(ptBinA) - 1
+ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760.] )
 
 
 trigs = [
@@ -106,17 +105,24 @@ trigfuncs = [isPFJet80, isPFJet140, isPFJet200, isPFJet260, isPFJet320, isPFJet4
 
 def trigHelper( pt, trig ) :
 
-
+    #print 'pt, trig = ', pt, ' ', trig,
     if pt < ptBinA[0] :
         return False, None
     
     nptBinA = len( ptBinA )
-    ipt = 0
-    for ipt in xrange( nptBinA-1, 0, -1) :
-        if pt > ptBinA[ipt] :
+    ikeep = 0
+    for ipt in xrange( nptBinA-1, -1, -1) :
+        if pt >= ptBinA[ipt]:
+            ikeep = ipt
             break
-    ipass = trigfuncs[ipt](trig)
-    return ipass, ipt
+    #print ', ikeep = ', ikeep, 
+    ipass = trigfuncs[ikeep](trig)
+    #print ', ipass = ', ipass, 
+    #if ipass == True : 
+    #    print ', scale = ', scales[ikeep]
+    #else: 
+    #    print ''
+    return ipass, ikeep
     
         
     ## selectedTrig = None
@@ -195,7 +201,7 @@ pt0histspre = []
 pt0hists = []
 pt0histsTurnon = []
 
-ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
+ptBinAToPlot = array.array('d', [  150., 260., 350., 460., 550., 650., 760.])
 nbinsToPlot = len(ptBinAToPlot) - 1
 
 h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 50, 0, 1000)
@@ -234,18 +240,20 @@ stackpre = ROOT.THStack(var + '_stackpre', title)
 canvpre = ROOT.TCanvas(var + '_stackcanvpre', var +'_stackcanvpre')
 
 for itree,t in enumerate(trees) :
-    FatJetPt = array.array('f', [-1,-1])
-    FatJetRap = array.array('f', [-1,-1])
-    FatJetPhi = array.array('f', [-1,-1])
-    FatJetMass = array.array('f', [-1,-1])
-    FatJetMassSoftDrop = array.array('f', [-1,-1])
-    FatJetRhoRatio = array.array('f', [-1,-1])
-    FatJetTau21 = array.array('f', [-1,-1])
-    FatJetTau32 = array.array('f', [-1,-1])
+    NFatJet = array.array('i', [0] )
+    FatJetPt = array.array('f', [-1]*5)
+    FatJetRap = array.array('f', [-1]*5)
+    FatJetPhi = array.array('f', [-1]*5)
+    FatJetMass = array.array('f', [-1]*5)
+    FatJetMassSoftDrop = array.array('f', [-1]*5)
+    FatJetRhoRatio = array.array('f', [-1]*5)
+    FatJetTau21 = array.array('f', [-1]*5)
+    FatJetTau32 = array.array('f', [-1]*5)
     METpt = array.array('f', [-1])
     Trig = array.array('i', [-1] )
 
     t.SetBranchStatus ('*', 0)
+    t.SetBranchStatus ('NFatJet', 1)
     t.SetBranchStatus ('FatJetPt', 1)
     t.SetBranchStatus ('FatJetRap', 1)
     t.SetBranchStatus ('FatJetPhi', 1)
@@ -257,6 +265,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus( 'METpt', 1)
     t.SetBranchStatus ('Trig', 1)
 
+    t.SetBranchAddress ('NFatJet', NFatJet)
     t.SetBranchAddress ('FatJetPt', FatJetPt)
     t.SetBranchAddress ('FatJetRap', FatJetRap)
     t.SetBranchAddress ('FatJetPhi', FatJetPhi)
@@ -273,70 +282,44 @@ for itree,t in enumerate(trees) :
         ientry = t.GetEntry( jentry )
         if ientry < 0:
             break
-        if Trig[0] == None or Trig[0] < 0 :
+        if Trig[0] == None or Trig[0] <= 0 :
+            continue
+        if FatJetPt[0] < 150. :
+            continue
+        if jentry % 100000 == 0 : 
+            print '%15d / %20d = %6.2f' % (jentry, entries, float(jentry)/float(entries) )
+
+
+        if NFatJet[0] < 2 :
             continue
 
-        maxjet = 0
-        minjet = 1
-        if FatJetPt[0] < FatJetPt[1] :
-            maxjet = 1
-            minjet = 0
+        ptToSort = [ ]
+        for ijet in xrange(NFatJet[0]):
+            ptToSort.append( (ijet, FatJetPt[ijet] ) )
+
+        ptSorted = sorted( ptToSort, key= lambda student: student[1] )
+
+        indices = [ index[0] for index in ptSorted ]
+        
+        maxjet = indices[0]
+        minjet = indices[1]
         pt0 = FatJetPt[maxjet]
 
-
-        if isPFJet450( Trig[0] ) :
-            pt0histspre[6].Fill( pt0, scales[6] )
-
-            
-        if isPFJet400( Trig[0] )  :
-            pt0histspre[5].Fill( pt0, scales[5] )
-            if isPFJet450( Trig[0] ) :
-                pt0histsTurnon[5].Fill( pt0, scales[5] )
-
-
-            
-        if isPFJet320( Trig[0] )  :
-            pt0histspre[4].Fill( pt0, scales[4] )
-            if isPFJet400( Trig[0] ) :
-                pt0histsTurnon[4].Fill( pt0, scales[4] )
-
-
-            
-        if isPFJet260( Trig[0] )  :
-            pt0histspre[3].Fill( pt0, scales[3] )
-            if isPFJet320( Trig[0] ) :
-                pt0histsTurnon[3].Fill( pt0, scales[3] )
-
-            
-        if isPFJet200( Trig[0] )  :
-            pt0histspre[2].Fill( pt0, scales[2] )
-            if isPFJet260( Trig[0] ) :
-                pt0histsTurnon[2].Fill( pt0, scales[2] )
-
-            
-        if isPFJet140( Trig[0] ) :
-            pt0histspre[1].Fill( pt0, scales[1] )
-            if isPFJet200( Trig[0] ) :
-                pt0histsTurnon[1].Fill( pt0, scales[1] )
-
-                        
-        if isPFJet80( Trig[0] ) :
-            pt0histspre[0].Fill( pt0, scales[0] )
-            if isPFJet140( Trig[0] ) :
-                pt0histsTurnon[0].Fill( pt0, scales[0] )
-
-                
+        if pt0 > 13000. : # Sanity check
+            continue
+        
+        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
+        dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
 
         ipass, trigbin = trigHelper( pt0, Trig[0] )
+
+        #print 'ipass, trigbin, trig, pt0 = ', ipass, ' ', trigbin, ' ', Trig[0], ' ', pt0
+        if trigbin == None or ipass == False :
+            continue
+        
         weight = scales[trigbin]
 
 
-        if trigbin == None or ipass == False :
-            continue
-
-
-        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
-        dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
 
                 
         if dphi > 2.0 :
@@ -347,6 +330,53 @@ for itree,t in enumerate(trees) :
         passkin = ptasym < 0.3 and dphi > 2.0
         if not passkin :
             continue
+
+
+        if isPFJet450( Trig[0] ) :
+            pt0histspre[6].Fill( pt0, scales[6] )
+
+            
+        elif isPFJet400( Trig[0] )  :
+            pt0histspre[5].Fill( pt0, scales[5] )
+            if isPFJet450( Trig[0] ) :
+                pt0histsTurnon[5].Fill( pt0, scales[5] )
+
+
+            
+        elif isPFJet320( Trig[0] )  :
+            pt0histspre[4].Fill( pt0, scales[4] )
+            if isPFJet400( Trig[0] ) :
+                pt0histsTurnon[4].Fill( pt0, scales[4] )
+
+
+            
+        elif isPFJet260( Trig[0] )  :
+            pt0histspre[3].Fill( pt0, scales[3] )
+            if isPFJet320( Trig[0] ) :
+                pt0histsTurnon[3].Fill( pt0, scales[3] )
+
+            
+        elif isPFJet200( Trig[0] )  :
+            pt0histspre[2].Fill( pt0, scales[2] )
+            if isPFJet260( Trig[0] ) :
+                pt0histsTurnon[2].Fill( pt0, scales[2] )
+
+            
+        elif isPFJet140( Trig[0] ) :
+            pt0histspre[1].Fill( pt0, scales[1] )
+            if isPFJet200( Trig[0] ) :
+                pt0histsTurnon[1].Fill( pt0, scales[1] )
+
+                        
+        elif isPFJet80( Trig[0] ) :
+            pt0histspre[0].Fill( pt0, scales[0] )
+            if isPFJet140( Trig[0] ) :
+                pt0histsTurnon[0].Fill( pt0, scales[0] )
+
+                
+
+
+
 
 
         #print 'pt0 = %6.2f, trigbin = %6d, weight = %8.2f' % (pt0, trigbin, weight )
@@ -376,12 +406,16 @@ legpre = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
 legpre.SetFillColor(0)
 legpre.SetBorderSize(0)
 
+fout = ROOT.TFile(options.outname, 'RECREATE')
+fout.cd()
+
 
 for ipt0hist,pt0hist in enumerate(pt0hists):
     stack.Add( pt0hist )
     stackpre.Add( pt0histspre[ipt0hist] )
     leg.AddEntry(pt0hist, trigs[ipt0hist], 'f')
     legpre.AddEntry(pt0histspre[ipt0hist], trigs[ipt0hist], 'p')    
+    pt0hist.Write()
     
 canv.cd()
 stack.Draw('hist')
@@ -406,21 +440,6 @@ canvpre.Update()
 canvpre.Print( 'trigplots_pre_' + var + '.png', 'png')
 canvpre.Print( 'trigplots_pre_' + var + '.pdf', 'pdf')
 
-ptBinB = [ 0.]
-for ival in ptBinA : ptBinB.append( ival )
-
-for ihist, hist in enumerate(pt0histspre) :
-    print '%30s : %10d : ' % (hist.GetName(), hist.GetEntries()),
-    for iptbin in xrange( 0, len(ptBinB) ) :
-        bin1 = hist.GetXaxis().FindBin( ptBinB[iptbin] )
-        bin2 = hist.GetXaxis().FindBin( ptBinB[iptbin] + 1 )
-        bin3 = hist.GetXaxis().FindBin( 10000. )
-        nbin = hist.Integral(bin1, bin2) 
-        nover= hist.Integral(bin2, bin3 )
-        ntot = hist.Integral()
-        print ' %8.4f ' % ( nbin / ntot ),
-    print ''
-        
 
 turnoncanvs = []
 for itrig, trig in enumerate(trigs):
@@ -431,8 +450,6 @@ for itrig, trig in enumerate(trigs):
     turnoncanvs.append(turnoncanv)
 
 
-fout = ROOT.TFile(options.outname, 'RECREATE')
-fout.cd()
 h_2DHisto_meas.Write()
 h_2DHisto_measSD.Write()
 h_pt_meas.Write()

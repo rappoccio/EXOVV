@@ -508,66 +508,66 @@ def JetTreeDump_FWLite(argv) :
         NNPDF3weight_CorrUp     = array('f', [-1.])    
 
         NFatJet             = array('i', [0] )
-        FatJetPt            = array('f', [-1., -1.])
-        FatJetEta           = array('f', [-1., -1.])
-        FatJetPhi           = array('f', [-1., -1.])
-        FatJetRap           = array('f', [-1., -1.])
-        FatJetBDisc         = array('f', [-1., -1.])
-        FatJetRhoRatio      = array('f', [-1., -1.])
-        FatJetMass          = array('f', [-1., -1.])
-        FatJetMassSoftDrop  = array('f', [-1., -1.])
-        FatJetPtSoftDrop    = array('f', [-1., -1.])
-        FatJetMassPruned    = array('f', [-1., -1.])
-        FatJetMassFiltered  = array('f', [-1., -1.])
-        FatJetMassTrimmed   = array('f', [-1., -1.])
-        FatJetTau1          = array('f', [-1., -1.]) 
-        FatJetTau2          = array('f', [-1., -1.]) 
-        FatJetTau3          = array('f', [-1., -1.]) 
-        FatJetTau32         = array('f', [-1., -1.])
-        FatJetTau21         = array('f', [-1., -1.]) 
-        FatJetSDnsubjets    = array('f', [-1., -1.])
-        FatJetSDbdisc0      = array('f', [-1., -1.])
-        FatJetSDbdisc1      = array('f', [-1., -1.])
-        FatJetSDmaxbdisc    = array('f', [-1., -1.])
-        FatJetSDsubjetWpt   = array('f', [-1., -1.])
-        FatJetSDsubjetWmass = array('f', [-1., -1.])
-        FatJetSDsubjetWp4   = array('f', [-1., -1.])
-        FatJetSDsubjetBpt   = array('f', [-1., -1.])
-        FatJetSDsubjetBmass = array('f', [-1., -1.])
-        FatJetSDsubjetBp4   = array('f', [-1., -1.])
-        FatJetCorrUp        = array('f', [-1., -1.])
-        FatJetCorrDn        = array('f', [-1., -1.])
+        FatJetPt            = array('f', [-1., -1., -1., -1., -1.])
+        FatJetEta           = array('f', [-1., -1., -1., -1., -1.])
+        FatJetPhi           = array('f', [-1., -1., -1., -1., -1.])
+        FatJetRap           = array('f', [-1., -1., -1., -1., -1.])
+        FatJetBDisc         = array('f', [-1., -1., -1., -1., -1.])
+        FatJetRhoRatio      = array('f', [-1., -1., -1., -1., -1.])
+        FatJetMass          = array('f', [-1., -1., -1., -1., -1.])
+        FatJetMassSoftDrop  = array('f', [-1., -1., -1., -1., -1.])
+        FatJetPtSoftDrop    = array('f', [-1., -1., -1., -1., -1.])
+        FatJetMassPruned    = array('f', [-1., -1., -1., -1., -1.])
+        FatJetMassFiltered  = array('f', [-1., -1., -1., -1., -1.])
+        FatJetMassTrimmed   = array('f', [-1., -1., -1., -1., -1.])
+        FatJetTau1          = array('f', [-1., -1., -1., -1., -1.]) 
+        FatJetTau2          = array('f', [-1., -1., -1., -1., -1.]) 
+        FatJetTau3          = array('f', [-1., -1., -1., -1., -1.]) 
+        FatJetTau32         = array('f', [-1., -1., -1., -1., -1.])
+        FatJetTau21         = array('f', [-1., -1., -1., -1., -1.]) 
+        FatJetSDnsubjets    = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDbdisc0      = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDbdisc1      = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDmaxbdisc    = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDsubjetWpt   = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDsubjetWmass = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDsubjetWp4   = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDsubjetBpt   = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDsubjetBmass = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDsubjetBp4   = array('f', [-1., -1., -1., -1., -1.])
+        FatJetCorrUp        = array('f', [-1., -1., -1., -1., -1.])
+        FatJetCorrDn        = array('f', [-1., -1., -1., -1., -1.])
 
 
 
         NGenJet             = array('i', [0] )
-        GenJetPt            = array('f', [-1., -1.])
-        GenJetEta           = array('f', [-1., -1.])
-        GenJetPhi           = array('f', [-1., -1.])
-        GenJetRap           = array('f', [-1., -1.])
-        GenJetBDisc         = array('f', [-1., -1.])
-        GenJetRhoRatio      = array('f', [-1., -1.])
-        GenJetMass          = array('f', [-1., -1.])
-        GenJetMassSoftDrop  = array('f', [-1., -1.])
-        GenJetMassPruned    = array('f', [-1., -1.])
-        GenJetMassFiltered  = array('f', [-1., -1.])
-        GenJetMassTrimmed   = array('f', [-1., -1.])
-        GenJetTau1          = array('f', [-1., -1.]) 
-        GenJetTau2          = array('f', [-1., -1.]) 
-        GenJetTau3          = array('f', [-1., -1.]) 
-        GenJetTau32         = array('f', [-1., -1.])
-        GenJetTau21         = array('f', [-1., -1.]) 
-        GenJetSDnsubjets    = array('f', [-1., -1.])
-        GenJetSDbdisc0      = array('f', [-1., -1.])
-        GenJetSDbdisc1      = array('f', [-1., -1.])
-        GenJetSDmaxbdisc    = array('f', [-1., -1.])
-        GenJetSDsubjetWpt   = array('f', [-1., -1.])
-        GenJetSDsubjetWmass = array('f', [-1., -1.])
-        GenJetSDsubjetWp4   = array('f', [-1., -1.])
-        GenJetSDsubjetBpt   = array('f', [-1., -1.])
-        GenJetSDsubjetBmass = array('f', [-1., -1.])
-        GenJetSDsubjetBp4   = array('f', [-1., -1.])
-        GenJetPtSoftDrop    = array('f', [-1., -1.])
+        GenJetPt            = array('f', [-1., -1., -1., -1., -1.])
+        GenJetEta           = array('f', [-1., -1., -1., -1., -1.])
+        GenJetPhi           = array('f', [-1., -1., -1., -1., -1.])
+        GenJetRap           = array('f', [-1., -1., -1., -1., -1.])
+        GenJetBDisc         = array('f', [-1., -1., -1., -1., -1.])
+        GenJetRhoRatio      = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMass          = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassSoftDrop  = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassPruned    = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassFiltered  = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassTrimmed   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetTau1          = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetTau2          = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetTau3          = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetTau32         = array('f', [-1., -1., -1., -1., -1.])
+        GenJetTau21         = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetSDnsubjets    = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDbdisc0      = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDbdisc1      = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDmaxbdisc    = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetWpt   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetWmass = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetWp4   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetBpt   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetBmass = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetBp4   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetPtSoftDrop    = array('f', [-1., -1., -1., -1., -1.])
 
         METpx        = array('f', [-1.])
         METpy        = array('f', [-1.])
@@ -1266,23 +1266,32 @@ def JetTreeDump_FWLite(argv) :
                 triggerBits = h_triggerBits.product()
                 triggerPrescales = h_triggerPrescales.product()            
 
+                
                 for itrig in xrange(0, len(triggerNameStrings) ) :
                     if "HLT_PFJet" in triggerNameStrings[itrig] : #\
                       #or "HLT_PFHT" in triggerNameStrings[itrig] \
                       #or "HLT_HT" in triggerNameStrings[itrig] :
+                        #print 'itrig, name, passed : ', itrig, ',', triggerNameStrings[itrig], ',', int(triggerBits[itrig])
                         for itrigToGet, trigToGet in enumerate(trigsToGet) : 
+                            #print 'itrigToGet, trigToGet ', itrigToGet, ', ', trigToGet
                             if trigToGet in triggerNameStrings[itrig] :
-                                trigIndex = itrigToGet
+                                #print 'trigToGet :', trigToGet
                                 trigMap[ itrigToGet ] = int(triggerBits[itrig])                                          
 
 
 
-                if options.writeTree and not options.isMC : 
+                if options.writeTree : 
                     Trig[0] = 0
+                    if options.verbose : 
+                        print 'trigmap:',
+                        print trigMap,
                     for itrigForWrite in xrange( len(trigsToGet) - 1, -1, -1) :
+                        #print 'itrigForWrite : ', itrigForWrite
                         if trigMap[itrigForWrite] > 0 :
                             Trig[0] += pow( 10, itrigForWrite)
-
+                            #print 'iterating, trig = ', Trig[0]
+                    if options.verbose : 
+                        print 'Trig : ', Trig[0]
 
             if options.writeTree :
                 if options.verbose :
@@ -1290,7 +1299,7 @@ def JetTreeDump_FWLite(argv) :
 
                 Weight              [0] = evWeight
 
-                NFatJet             [0] = min( 2, len(ak8JetsP4Corr))
+                NFatJet             [0] = min( 5, len(ak8JetsP4Corr))
                 for ifatjet in xrange( int(NFatJet[0]) ) :
                     jetP4 = ak8JetsP4Corr[ifatjet]
                     FatJetPt            [ifatjet] = jetP4.Perp()
@@ -1315,7 +1324,7 @@ def JetTreeDump_FWLite(argv) :
                     FatJetCorrDn        [ifatjet] = ak8JetsCorrDn[ifatjet]
 
                 if options.isMC : 
-                    NGenJet             [0] = min( 2, len(ak8GenJetsP4))
+                    NGenJet             [0] = min( 5, len(ak8GenJetsP4))
                     for igenjet in xrange( int(NGenJet[0]) ) :
                         jetP4 = ak8GenJetsP4[igenjet]
                         GenJetPt            [igenjet] = jetP4.Perp()
