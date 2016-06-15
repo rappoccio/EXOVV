@@ -203,11 +203,11 @@ pt0histspre = []
 pt0hists = []
 pt0histsTurnon = []
 
-ptBinAToPlot = array.array('d', [  150., 260., 350., 460., 550., 650., 760.])
+ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760.])
 nbinsToPlot = len(ptBinAToPlot) - 1
 
-h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 50, 0, 1000)
-h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 50, 0, 1000)
+h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 150, 0, 1500)
+h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 150, 0, 1500)
 
 h_pt_meas = ROOT.TH1F("h_pt_meas", ";Jet p_{T} (GeV); Number", 150, 0, 3000)
 h_y_meas = ROOT.TH1F("h_y_meas", ";Jet Rapidity; Number", 50, -2.5, 2.5 )
@@ -287,7 +287,7 @@ for itree,t in enumerate(trees) :
             break
         if Trig[0] == None or Trig[0] <= 0 :
             continue
-        if FatJetPt[0] < 150. :
+        if FatJetPt[0] < 200. :
             continue
         if jentry % 100000 == 0 : 
             print '%15d / %20d = %6.2f' % (jentry, entries, float(jentry)/float(entries) )
@@ -316,13 +316,18 @@ for itree,t in enumerate(trees) :
 
         ipass, trigbin = trigHelper( pt0, Trig[0] )
 
-                        
-        #if dphi > 2.0 :
-        #    h_ptasym_meas.Fill( ptasym, weight )
-        #if ptasym < 0.3 :
-        #    h_dphi_meas.Fill( dphi, weight )
+        if trigbin != None and trigbin >= 0 : 
+            weight = scales[trigbin]
+        else :
+            weight = 0.0
 
-        passkin = ptasym < 0.5 and dphi > 3.14159
+                        
+        if dphi > 1.57 :
+            h_ptasym_meas.Fill( ptasym, weight )
+        if ptasym < 0.3 :
+            h_dphi_meas.Fill( dphi, weight )
+
+        passkin = ptasym < 0.5 and dphi > 1.57
         if not passkin :
             continue
 
@@ -374,13 +379,6 @@ for itree,t in enumerate(trees) :
         #print 'ipass, trigbin, trig, pt0 = ', ipass, ' ', trigbin, ' ', Trig[0], ' ', pt0
         if trigbin == None or ipass == False :
             continue
-        
-        weight = scales[trigbin]
-
-
-
-
-
 
 
         #print 'pt0 = %6.2f, trigbin = %6d, weight = %8.2f' % (pt0, trigbin, weight )
@@ -453,10 +451,11 @@ for itrig, trig in enumerate(trigs):
     turnoncanv = ROOT.TCanvas("cturnon" + str(itrig), "cturnon" + str(itrig) )
     pt0histsTurnon[itrig].Draw('e')
     pt0histsTurnon[itrig].SetMinimum(0.0)
-    pt0histsTurnon[itrig].SetMaximum(1.1)
+    pt0histsTurnon[itrig].SetMaximum(1.1)    
     turnoncanvs.append(turnoncanv)
-    turnoncanv.Print( 'trigplots_turnon_' + var + '.png', 'png')
-    turnoncanv.Print( 'trigplots_turnon_' + var + '.pdf', 'pdf')
+    turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + '.png', 'png')
+    turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + '.pdf', 'pdf')
+    pt0histsTurnon[itrig].Write()
 
 
 h_2DHisto_meas.Write()
