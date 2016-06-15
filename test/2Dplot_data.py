@@ -7,11 +7,6 @@ from math import sqrt
 from plot_tools import plotter, setup
 from optparse import OptionParser
 parser = OptionParser()
-
-parser.add_option('--plotUnc', action='store_true',
-                  default= 'False',
-                  dest='plotUnc',
-                  help='Plot MC with systematic uncertainties added to it')                                  
 (options, args) = parser.parse_args()
 
 

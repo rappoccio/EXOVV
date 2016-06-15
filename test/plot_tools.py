@@ -53,7 +53,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             upjmr = float(abs(jmrup.GetBinContent(ibin) - jmrnom.GetBinContent(ibin)))
             downjmr = float(abs(jmrnom.GetBinContent(ibin) - jmrdn.GetBinContent(ibin)))
             sys = float(((upjmr + downjmr)/2.))
-            err = sqrt(err1*err1 + sys*sys)
+            err = err1 + sys
             hRecoJMR.SetBinError(ibin, err)
         ######################################################################################## Add Parton Shower Uncertainties
         hRecoCopy = hRecoJMR.Clone()
