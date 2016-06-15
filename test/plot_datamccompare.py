@@ -150,7 +150,7 @@ for ihist,histname in enumerate(hists):
     iratio.Divide( datahist )
     iratio.Draw('e')
     iratio.SetMinimum(0.0)
-    iratio.SetMaximum(3.0)
+    iratio.SetMaximum(2.0)
     iratio.GetYaxis().SetNdivisions(2,4,0,False)
     iratio.GetYaxis().SetTitleOffset(1.0)
     iratio.GetXaxis().SetTitleOffset(3.0)    
