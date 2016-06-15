@@ -87,6 +87,9 @@ ROOT.gStyle.SetPadRightMargin(0.15)
 
 tlxs = []
 
+
+scale = 1.0
+
 for ihist,histname in enumerate(hists):
     canv = ROOT.TCanvas(histname + '_canv', histname +'_canv', 800, 700)
     canv.SetBottomMargin(0.0)
@@ -118,8 +121,13 @@ for ihist,histname in enumerate(hists):
     if options.rebin != None :
         datahist.Rebin( options.rebin )
     datahists.append( datahist )
+
+    if ihist == 0 :
+        bin1 = datahist.GetXaxis().FindBin(250)
+        bin2 = datahist.GetXaxis().FindBin(3000)
+        scale = datahist.Integral(bin1,bin2) / mchist.Integral(bin1,bin2)
         
-    mchist.Scale( datahist.Integral() / mchist.Integral() )
+    mchist.Scale( scale )
             
 
     datahist.Draw('e')

@@ -310,6 +310,8 @@ for itree,t in enumerate(trees) :
 
         if pt0 > 13000. : # Sanity check
             continue
+        if FatJetPt[minjet] < 200. : # require both jets to be >= 200 GeV
+            continue
         
         ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
         dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
