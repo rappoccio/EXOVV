@@ -25,6 +25,7 @@ import ROOT
 import array
 import math
 import random
+from operator import itemgetter
 
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
@@ -180,16 +181,16 @@ lumi = 40.
 
 
 qcdIn =[
-    ROOT.TFile('qcd_pt170to300_pdf_tree.root'),
-    ROOT.TFile('qcd_pt300to470_pdf_tree.root'),
-    ROOT.TFile('qcd_pt470to600_pdf_tree.root'),
-    ROOT.TFile('qcd_pt600to800_pdf_tree.root'),
-    ROOT.TFile('qcd_pt800to1000_pdf_tree.root'),
-    ROOT.TFile('qcd_pt1000to1400_pdf_tree.root'),
-    ROOT.TFile('qcd_pt1400to1800_pdf_tree.root'),
-    ROOT.TFile('qcd_pt1800to2400_pdf_tree.root'),
-    ROOT.TFile('qcd_pt2400to3200_pdf_tree.root'),
-    ROOT.TFile('qcd_pt3200toInf_pdf_tree.root'),
+    ROOT.TFile('qcd_pt170to300_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt300to470_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt470to600_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt600to800_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt800to1000_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt1000to1400_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt1400to1800_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt1800to2400_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt2400to3200_withtrig_tightid.root'),
+    ROOT.TFile('qcd_pt3200toInf_withtrig_tightid.root'),
     ]
 masslessSD = 0
 qcdWeights =[
@@ -315,11 +316,25 @@ for itree,t in enumerate(trees) :
         FatJetsSD = []
         weight = qcdWeights[itree]
 
-        maxjet = 0
-        minjet = 1
-        if FatJetPt[0] < FatJetPt[1] :
-            maxjet = 1
-            minjet = 0
+        ptToSort = [ ]
+        for ijet in xrange(NFatJet[0]):
+            ptToSort.append( (ijet, FatJetPt[ijet] ) )
+
+        ptSorted = sorted( ptToSort, key=itemgetter(1), reverse=True)
+
+        indices = [ index[0] for index in ptSorted ]
+
+        if len(indices) < 2 :
+            continue
+        
+        maxjet = indices[0]
+        minjet = indices[1]
+        pt0 = FatJetPt[maxjet]
+
+        if pt0 > 13000. : # Sanity check
+            continue
+        if FatJetPt[minjet] < 200. : # require both jets to be >= 200 GeV
+            continue
 
 
         ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
@@ -327,8 +342,8 @@ for itree,t in enumerate(trees) :
 
         pdfweight_up = NNPDF3weight_CorrUp[0]
         pdfweight_dn = NNPDF3weight_CorrDn[0]        
-        print "pdfweight up: " + str(pdfweight_up)
-        print "pdfweight down: " + str(pdfweight_dn)
+        #print "pdfweight up: " + str(pdfweight_up)
+        #print "pdfweight down: " + str(pdfweight_dn)
         
         if dphi > 2.0 :
             h_ptasym_meas.Fill( ptasym, weight )
@@ -351,7 +366,7 @@ for itree,t in enumerate(trees) :
             h_2DHisto_gen.Fill( GenJet.Perp(), GenJet.M(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.Perp(), GenJetSD.M(), weight)
         # First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
-        for ijet in xrange( int(NFatJet[0]) ):
+        for ijet in [ indices[0], indices[1] ] :
             
             FatJet = ROOT.TLorentzVector()
             FatJet.SetPtEtaPhiM( FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet])
