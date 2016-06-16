@@ -8,7 +8,7 @@ parser = OptionParser()
 
 parser.add_option('--outlabel', type='string', action='store',
                   dest='outlabel',
-                  default = "qcdmc_stitched_pythia6",
+                  default = "qcdmc_stitched_pythia6.root",
                   help='Label for plots')
 
 
@@ -142,24 +142,24 @@ fout = ROOT.TFile(options.outlabel, 'RECREATE')
 for itree,t in enumerate(trees) :
     Weight = array.array('f', [-1])
     NFatJet = array.array('i', [0] )
-    FatJetPt = array.array('f', [-1,-1])
-    FatJetEta = array.array('f', [-1,-1])
-    FatJetPhi = array.array('f', [-1,-1])
-    FatJetMass = array.array('f', [-1,-1])
-    FatJetMassSoftDrop = array.array('f', [-1,-1])
-    FatJetTau21 = array.array('f', [-1,-1])
-    FatJetCorrUp = array.array('f', [-1,-1])
-    FatJetCorrDn = array.array('f', [-1,-1])
-    FatJetRhoRatio = array.array('f', [-1,-1])
+    FatJetPt = array.array('f', [-1]*5)
+    FatJetEta = array.array('f', [-1]*5)
+    FatJetPhi = array.array('f', [-1]*5)
+    FatJetMass = array.array('f', [-1]*5)
+    FatJetMassSoftDrop = array.array('f', [-1]*5)
+    FatJetTau21 = array.array('f', [-1]*5)
+    FatJetCorrUp = array.array('f', [-1]*5)
+    FatJetCorrDn = array.array('f', [-1]*5)
+    FatJetRhoRatio = array.array('f', [-1]*5)
     NGenJet = array.array('i', [0] )
-    GenJetPt = array.array('f', [-1,-1])
-    GenJetEta = array.array('f', [-1,-1])
-    GenJetPhi = array.array('f', [-1,-1])
-    GenJetMass = array.array('f', [-1,-1])
-    GenJetMassSoftDrop = array.array('f', [-1,-1])
-    GenJetRhoRatio = array.array('f', [-1, -1])
-    FatJetPtSoftDrop = array.array('f', [-1, -1])
-    GenJetPtSoftDrop = array.array('f', [-1, -1])
+    GenJetPt = array.array('f', [-1]*5)
+    GenJetEta = array.array('f', [-1]*5)
+    GenJetPhi = array.array('f', [-1]*5)
+    GenJetMass = array.array('f', [-1]*5)
+    GenJetMassSoftDrop = array.array('f', [-1]*5)
+    GenJetRhoRatio = array.array('f', [-1]*5)
+    FatJetPtSoftDrop = array.array('f', [-1]*5)
+    GenJetPtSoftDrop = array.array('f', [-1]*5)
 
     Trig = array.array('i', [-1] )
  
@@ -246,8 +246,44 @@ for itree,t in enumerate(trees) :
             h_2DHisto_gen.Fill( GenJet.Perp(), GenJet.M(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.Perp(), GenJetSD.M(), weight)
         
-          #First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
-        for ijet in xrange( int(NFatJet[0]) ):
+
+
+
+        if NFatJet[0] < 2 :
+            continue
+        if FatJetPt[0] < 220. :
+            continue
+        
+        ptToSort = [ ]
+        for ijet in xrange(NFatJet[0]):
+            ptToSort.append( (ijet, FatJetPt[ijet] ) )
+
+        ptSorted = sorted( ptToSort, key=itemgetter(1), reverse=True)
+
+        indices = [ index[0] for index in ptSorted ]
+
+        
+        maxjet = indices[0]
+        minjet = indices[1]
+        pt0 = FatJetPt[maxjet]
+
+        if pt0 > 13000. : # Sanity check
+            continue
+        if FatJetPt[minjet] < 220. : # require both jets to be >= 200 GeV
+            continue
+
+
+        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
+        dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
+
+
+        passkin = ptasym < 0.3 and dphi > 2.0
+        if not passkin :
+            continue
+
+
+        #First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
+        for ijet in [indices[0],indices[1]] :
 
             FatJet = ROOT.TLorentzVector()
             FatJet.SetPtEtaPhiM( FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet])
