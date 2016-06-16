@@ -122,12 +122,7 @@ for ihist,histname in enumerate(hists):
         datahist.Rebin( options.rebin )
     datahists.append( datahist )
 
-    if ihist == 0 :
-        bin1 = datahist.GetXaxis().FindBin(250)
-        bin2 = datahist.GetXaxis().FindBin(3000)
-        scale = datahist.Integral(bin1,bin2) / mchist.Integral(bin1,bin2)
-        
-    mchist.Scale( scale )
+    mchist.Scale( datahist.Integral() / mchist.Integral() )
             
 
     datahist.Draw('e')
