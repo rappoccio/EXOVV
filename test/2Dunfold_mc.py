@@ -22,7 +22,7 @@ parser.add_option('--pythia6', action ='store_true', default=False, dest='pythia
 (options, args) = parser.parse_args()
 
 
-myfile = TFile('qcdmc_stitched_pdf_qcdmc.root')
+myfile = TFile('qcdmc_stitched_qcdmc.root')
 pythia6 = None
 outtext = ''
 outfile = None
@@ -43,8 +43,7 @@ reco.Scale(1./reco.Integral())
 truthSD.Scale(1./truthSD.Integral())
 recoSD.Scale(1./recoSD.Integral())
 
-
-pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 5: '650-760', 6: '760-Inf'}
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-Inf'}
 
 
 
