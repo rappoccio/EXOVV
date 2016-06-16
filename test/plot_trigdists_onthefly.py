@@ -287,7 +287,7 @@ for itree,t in enumerate(trees) :
             break
         if Trig[0] == None or Trig[0] <= 0 :
             continue
-        if FatJetPt[0] < 200. :
+        if FatJetPt[0] < 220. :
             continue
         if jentry % 100000 == 0 : 
             print '%15d / %20d = %6.2f' % (jentry, entries, float(jentry)/float(entries) )
@@ -310,7 +310,7 @@ for itree,t in enumerate(trees) :
 
         if pt0 > 13000. : # Sanity check
             continue
-        if FatJetPt[minjet] < 200. : # require both jets to be >= 200 GeV
+        if FatJetPt[minjet] < 220. : # require both jets to be >= 200 GeV
             continue
         
         ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
@@ -391,7 +391,7 @@ for itree,t in enumerate(trees) :
         
         pt0hists[trigbin].Fill( pt0, weight )
         
-        for ijet in [0,1] :
+        for ijet in [ indices[0], indices[1] ] :
             h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
             h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
             h_pt_meas.Fill( FatJetPt[ijet] , weight )

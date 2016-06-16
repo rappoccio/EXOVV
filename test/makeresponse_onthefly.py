@@ -316,6 +316,11 @@ for itree,t in enumerate(trees) :
         FatJetsSD = []
         weight = qcdWeights[itree]
 
+        if NFatJet[0] < 2 :
+            continue
+        if FatJetPt[0] < 220. :
+            continue
+        
         ptToSort = [ ]
         for ijet in xrange(NFatJet[0]):
             ptToSort.append( (ijet, FatJetPt[ijet] ) )
@@ -324,8 +329,6 @@ for itree,t in enumerate(trees) :
 
         indices = [ index[0] for index in ptSorted ]
 
-        if len(indices) < 2 :
-            continue
         
         maxjet = indices[0]
         minjet = indices[1]
@@ -333,7 +336,7 @@ for itree,t in enumerate(trees) :
 
         if pt0 > 13000. : # Sanity check
             continue
-        if FatJetPt[minjet] < 200. : # require both jets to be >= 200 GeV
+        if FatJetPt[minjet] < 220. : # require both jets to be >= 200 GeV
             continue
 
 
