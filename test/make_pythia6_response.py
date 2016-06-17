@@ -2,6 +2,7 @@
 from optparse import OptionParser
 from jettools import getJER
 from math import sqrt
+from operator import itemgetter
 
 parser = OptionParser()
 
@@ -216,7 +217,7 @@ for itree,t in enumerate(trees) :
     else :
         eventsToRun = entries
     for jentry in xrange( eventsToRun ):
-        if jentry % 100000 == 0 :
+        if jentry % 10000 == 0 :
             print 'processing ' + str(jentry)
         # get the next tree in the chain and verify
         ientry = t.GetEntry( jentry )
