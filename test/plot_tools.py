@@ -200,6 +200,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         pads_list[i][1].Update()
         canvas_list[i].Draw()
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
+        canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
 
 
 def setup(canvases_to_use, pads_to_use):
