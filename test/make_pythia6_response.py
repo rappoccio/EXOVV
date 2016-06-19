@@ -128,7 +128,7 @@ lumi = 2100
 
 
 qcdIn =[
-    ROOT.TFile("qcd_ptflat_pythia6.root")]
+    ROOT.TFile("qcd_ptflat_newjec.root")]
 
 qcdWeights =[
     1    ]
