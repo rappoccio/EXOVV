@@ -5,8 +5,8 @@ EXO VV analysis
 * Setting up :
 
 ```
-cmsrel CMSSW_7_4_4
-cd CMSSW_7_4_4/src
+cmsrel CMSSW_8_0_10_patch2
+cd CMSSW_8_0_10_patch2/src
 cmsenv
 git clone https://github.com/rappoccio/PredictedDistribution.git Analysis/PredictedDistribution
 git clone https://github.com/rappoccio/EXOVV.git Analysis/EXOVV
