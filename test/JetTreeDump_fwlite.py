@@ -177,7 +177,22 @@ def JetTreeDump_FWLite(argv) :
         'HLT_PFJet320',
         'HLT_PFJet400',
         'HLT_PFJet450',
-        'HLT_PFJet500' 
+        'HLT_PFJet500',
+        'HLT_AK8PFJet360_TrimMass30',
+        'HLT_AK8PFHT700_TrimR0p1PT0p03Mass50',
+        'HLT_AK8PFHT650_TrimR0p1PT0p03Mass50',
+        'HLT_AK8PFHT600_TrimR0p1PT0p03Mass50_BTagCSV_p20',
+        'HLT_PFHT125',
+        'HLT_PFHT200',
+        'HLT_PFHT250',
+        'HLT_PFHT300',
+        'HLT_PFHT350',
+        'HLT_PFHT400',
+        'HLT_PFHT475',
+        'HLT_PFHT600',
+        'HLT_PFHT650',
+        'HLT_PFHT800',
+        'HLT_PFHT900'
         ]
     if options.verbose :
         print 'start solving issues, its verbose time!'    
@@ -659,43 +674,43 @@ def JetTreeDump_FWLite(argv) :
 
     if options.isMC : 
         print 'Getting L3 for AK4'
-        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L3Absolute_AK4PFchs.txt");
+        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_MC_L3Absolute_AK4PFchs.txt");
         print 'Getting L2 for AK4'
-        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L2Relative_AK4PFchs.txt");## USE 50 NS CORRECTIONS BUT THE UNCERTAINTY IS FOR 25
+        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_MC_L2Relative_AK4PFchs.txt");## USE 50 NS CORRECTIONS BUT THE UNCERTAINTY IS FOR 25
         print 'Getting L1 for AK4'
-        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L1FastJet_AK4PFchs.txt");
+        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_MC_L1FastJet_AK4PFchs.txt");
 
 
         print 'Getting L3 for AK8'
-        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L3Absolute_AK8PFchs.txt");
+        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_MC_L3Absolute_AK8PFchs.txt");
         print 'Getting L2 for AK8'
-        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L2Relative_AK8PFchs.txt");
+        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_MC_L2Relative_AK8PFchs.txt");
         print 'Getting L1 for AK8'
-        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L1FastJet_AK8PFchs.txt");
+        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_MC_L1FastJet_AK8PFchs.txt");
 
 
-        jecParStrAK8 = ROOT.std.string('JECs/Summer15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
+        jecParStrAK8 = ROOT.std.string('JECs/Spring16_25nsV3_DATA_Uncertainty_AK8PFchs.txt')
         jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
 
     else :
         print 'Getting L3 for AK4'
-        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L3Absolute_AK4PFchs.txt");## same deal as above
+        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L3Absolute_AK4PFchs.txt");## same deal as above
         print 'Getting L2 for AK4'
-        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2Relative_AK4PFchs.txt");
+        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L2Relative_AK4PFchs.txt");
         print 'Getting L1 for AK4'
-        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L1FastJet_AK4PFchs.txt");
+        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L1FastJet_AK4PFchs.txt");
         # for data only :
-        ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2L3Residual_AK4PFchs.txt");
+        ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L2L3Residual_AK4PFchs.txt");
 
         print 'Getting L3 for AK8'
-        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L3Absolute_AK8PFchs.txt");
+        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L3Absolute_AK8PFchs.txt");
         print 'Getting L2 for AK8'
-        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2Relative_AK8PFchs.txt");
+        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L2Relative_AK8PFchs.txt");
         print 'Getting L1 for AK8'
-        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L1FastJet_AK8PFchs.txt");
+        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L1FastJet_AK8PFchs.txt");
         # for data only :
-        ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2L3Residual_AK8PFchs.txt");
+        ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Spring16_25nsV3_DATA_L2L3Residual_AK8PFchs.txt");
 
 
 
@@ -1133,14 +1148,13 @@ def JetTreeDump_FWLite(argv) :
                 cef = AK8cEME[i] / AK8P4Raw.E()
                 nconstituents = AK8numDaughters[i]
                 nch = AK8cMultip[i]
-                ## SR: Switch to tight jet ID
                 goodJet = \
-                  nhf < 0.90 and \
-                  nef < 0.90 and \
-                  chf > 0.00 and \
-                  cef < 0.99 and \
-                  nconstituents > 1 and \
-                  nch > 0
+                    nhf < 0.99 and \
+                    nef < 0.99 and \
+                    chf > 0.00 and \
+                    cef < 0.99 and \
+                    nconstituents > 1 and \
+                    nch > 0
 
                 ak8JetsPassID.append( goodJet )
                 AK8nhf.append( nhf )
@@ -1373,10 +1387,9 @@ def JetTreeDump_FWLite(argv) :
 
                 
                 for itrig in xrange(0, len(triggerNameStrings) ) :
-                    if "HLT_PFJet" in triggerNameStrings[itrig] : #\
-                      #or "HLT_PFHT" in triggerNameStrings[itrig] \
-                      #or "HLT_HT" in triggerNameStrings[itrig] :
-                        #print 'itrig, name, passed : ', itrig, ',', triggerNameStrings[itrig], ',', int(triggerBits[itrig])
+                    #print 'itrig, name, passed : ', itrig, ',', triggerNameStrings[itrig], ',', int(triggerBits[itrig])
+                    if "PFJet" in triggerNameStrings[itrig] \
+                      or "PFHT" in triggerNameStrings[itrig] :
                         for itrigToGet, trigToGet in enumerate(trigsToGet) : 
                             #print 'itrigToGet, trigToGet ', itrigToGet, ', ', trigToGet
                             if trigToGet in triggerNameStrings[itrig] :
@@ -1393,7 +1406,7 @@ def JetTreeDump_FWLite(argv) :
                     for itrigForWrite in xrange( len(trigsToGet) - 1, -1, -1) :
                         #print 'itrigForWrite : ', itrigForWrite
                         if trigMap[itrigForWrite] > 0 :
-                            Trig[0] += pow( 10, itrigForWrite)
+                            Trig[0] += pow( 2, itrigForWrite)
                             #print 'iterating, trig = ', Trig[0]
                     if options.verbose : 
                         print 'Trig : ', Trig[0]
