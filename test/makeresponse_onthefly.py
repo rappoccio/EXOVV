@@ -28,13 +28,14 @@ import random
 
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
-ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
+ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 13000.])
 nbinsPt = len(ptBinA) - 1
-
+mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
+nbinsm = len(mBinA) - 1
 response = ROOT.RooUnfoldResponse()
 response.SetName("2d_response")
-trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, 50, 0, 1000)
-measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, 50, 0, 1000)
+trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, nbinsm, mBinA)
+measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, nbinsm, mBinA)
 response.Setup(measVarHist, trueVarHist)
 
 response_pdfup = ROOT.RooUnfoldResponse()
@@ -122,11 +123,11 @@ response_softdrop_jmrnom = ROOT.RooUnfoldResponse()
 response_softdrop_jmrnom.SetName("2d_response_softdrop_jmrnom")
 response_softdrop_jmrnom.Setup(measVarHist, trueVarHist)
 
-h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
-h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
+h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
 
-h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
-h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
+h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
 
 
 h_pt_meas = ROOT.TH1F("h_pt_meas", ";Jet p_{T} (GeV); Number", 150, 0, 3000)
@@ -140,13 +141,13 @@ h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Number", 50, 0, ROO
 h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", 50, 0, 1.0 )
 h_rho_vs_tau_meas = ROOT.TH2F("h_rho_vs_tau21_meas", ";Jet (m/p_{T}R)^{2};Jet #tau_{2}/#tau_{1}", 100, 0, 1.0, 50, 0, 1.0 )
 
-h_massup = ROOT.TH1F("h_massup", "JMR Up Variation", 50, 0, 1000)
-h_massdn = ROOT.TH1F("h_massdn", "JMR Down Variation", 50, 0, 1000)
-h_massnom = ROOT.TH1F("h_massnom", "JMR Nominal", 50, 0, 1000)
+h_massup = ROOT.TH1F("h_massup", "JMR Up Variation", nbinsm, mBinA)
+h_massdn = ROOT.TH1F("h_massdn", "JMR Down Variation", nbinsm, mBinA)
+h_massnom = ROOT.TH1F("h_massnom", "JMR Nominal", nbinsm, mBinA)
 
-h_massup_softdrop = ROOT.TH1F("h_massup_softdrop", "JMR Up Softdrop", 50, 0, 1000)
-h_massdn_softdrop = ROOT.TH1F("h_massdn_softdrop", "JMR Down Softdrop", 50, 0, 1000)
-h_massnom_softdrop = ROOT.TH1F("h_massnom_softdrop", "JMR Nominal Softdrop", 50, 0, 1000)
+h_massup_softdrop = ROOT.TH1F("h_massup_softdrop", "JMR Up Softdrop", nbinsm, mBinA)
+h_massdn_softdrop = ROOT.TH1F("h_massdn_softdrop", "JMR Down Softdrop", nbinsm, mBinA)
+h_massnom_softdrop = ROOT.TH1F("h_massnom_softdrop", "JMR Nominal Softdrop", nbinsm, mBinA)
 
 h_mreco_mgen = ROOT.TH1F("h_mreco_mgen", "Reco Mass/Gen Mass", 1000, 0, 2)
 h_ptreco_ptgen = ROOT.TH1F("h_ptreco_ptgen", "Reco Pt/Gen Pt", 1000, 0, 2)
@@ -180,16 +181,16 @@ lumi = 40.
 
 
 qcdIn =[
-    ROOT.TFile('qcd_pt170to300_pdf_tree.root'),
-    ROOT.TFile('qcd_pt300to470_pdf_tree.root'),
-    ROOT.TFile('qcd_pt470to600_pdf_tree.root'),
-    ROOT.TFile('qcd_pt600to800_pdf_tree.root'),
-    ROOT.TFile('qcd_pt800to1000_pdf_tree.root'),
-    ROOT.TFile('qcd_pt1000to1400_pdf_tree.root'),
-    ROOT.TFile('qcd_pt1400to1800_pdf_tree.root'),
-    ROOT.TFile('qcd_pt1800to2400_pdf_tree.root'),
-    ROOT.TFile('qcd_pt2400to3200_pdf_tree.root'),
-    ROOT.TFile('qcd_pt3200toInf_pdf_tree.root'),
+    ROOT.TFile('qcd_pt170to300_newjec.root'),
+    ROOT.TFile('qcd_pt300to470_newjec.root'),
+    ROOT.TFile('qcd_pt470to600_newjec.root'),
+    ROOT.TFile('qcd_pt600to800_newjec.root'),
+    ROOT.TFile('qcd_pt800to1000_newjec.root'),
+    ROOT.TFile('qcd_pt1000to1400_newjec.root'),
+    ROOT.TFile('qcd_pt1400to1800_newjec.root'),
+    ROOT.TFile('qcd_pt1800to2400_newjec.root'),
+    ROOT.TFile('qcd_pt2400to3200_newjec.root'),
+    ROOT.TFile('qcd_pt3200toInf_newjec.root'),
     ]
 masslessSD = 0
 qcdWeights =[
@@ -219,25 +220,25 @@ for itree,t in enumerate(trees) :
     NNPDF3weight_CorrDn = array.array('f', [-1.])
     NNPDF3weight_CorrUp = array.array('f', [-1.])
 
-    FatJetPt = array.array('f', [-1,-1])
-    FatJetEta = array.array('f', [-1,-1])
-    FatJetRap = array.array('f', [-1,-1])
-    FatJetPhi = array.array('f', [-1,-1])
-    FatJetMass = array.array('f', [-1,-1])
-    FatJetMassSoftDrop = array.array('f', [-1,-1])
-    FatJetTau21 = array.array('f', [-1,-1])
-    FatJetCorrUp = array.array('f', [-1,-1])
-    FatJetCorrDn = array.array('f', [-1,-1])
-    FatJetRhoRatio = array.array('f', [-1,-1])
+    FatJetPt = array.array('f', [-1]*5)
+    FatJetEta = array.array('f', [-1]*5)
+    FatJetRap = array.array('f', [-1]*5)
+    FatJetPhi = array.array('f', [-1]*5)
+    FatJetMass = array.array('f', [-1]*5)
+    FatJetMassSoftDrop = array.array('f', [-1]*5)
+    FatJetTau21 = array.array('f', [-1]*5)
+    FatJetCorrUp = array.array('f', [-1]*5)
+    FatJetCorrDn = array.array('f', [-1]*5)
+    FatJetRhoRatio = array.array('f', [-1]*5)
     NGenJet = array.array('i', [0] )
-    GenJetPt = array.array('f', [-1,-1])
-    GenJetEta = array.array('f', [-1,-1])
-    GenJetPhi = array.array('f', [-1,-1])
-    GenJetMass = array.array('f', [-1,-1])
-    GenJetMassSoftDrop = array.array('f', [-1,-1])
-    GenJetRhoRatio = array.array('f', [-1, -1])
-    FatJetPtSoftDrop = array.array('f', [-1, -1])
-    GenJetPtSoftDrop = array.array('f', [-1, -1])
+    GenJetPt = array.array('f', [-1]*5)
+    GenJetEta = array.array('f', [-1]*5)
+    GenJetPhi = array.array('f', [-1]*5)
+    GenJetMass = array.array('f', [-1]*5)
+    GenJetMassSoftDrop = array.array('f', [-1]*5)
+    GenJetRhoRatio = array.array('f', [-1]*5)
+    FatJetPtSoftDrop = array.array('f', [-1]*5)
+    GenJetPtSoftDrop = array.array('f', [-1]*5)
     
     
     Trig = array.array('i', [-1] )
@@ -327,8 +328,8 @@ for itree,t in enumerate(trees) :
 
         pdfweight_up = NNPDF3weight_CorrUp[0]
         pdfweight_dn = NNPDF3weight_CorrDn[0]        
-        print "pdfweight up: " + str(pdfweight_up)
-        print "pdfweight down: " + str(pdfweight_dn)
+    #    print "pdfweight up: " + str(pdfweight_up)
+    #    print "pdfweight down: " + str(pdfweight_dn)
         
         if dphi > 2.0 :
             h_ptasym_meas.Fill( ptasym, weight )
