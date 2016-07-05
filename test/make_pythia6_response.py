@@ -8,7 +8,7 @@ parser = OptionParser()
 
 parser.add_option('--outlabel', type='string', action='store',
                   dest='outlabel',
-                  default = "qcdmc_stitched_pythia6",
+                  default = "qcdmc_herwig.root",
                   help='Label for plots')
 
 
@@ -31,13 +31,14 @@ import random
 
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
-ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
+ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900., 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 13000.])
 nbinsPt = len(ptBinA) - 1
-
+mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
+nbinsm = len(mBinA) - 1
 response = ROOT.RooUnfoldResponse()
 response.SetName("2d_response")
-trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, 50, 0, 1000)
-measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, 50, 0, 1000)
+trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, nbinsm, mBinA)
+measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, nbinsm, mBinA)
 response.Setup(measVarHist, trueVarHist)
 
 response_jecup = ROOT.RooUnfoldResponse()
@@ -78,20 +79,20 @@ response_softdrop_jerdn = ROOT.RooUnfoldResponse()
 response_softdrop_jerdn.SetName("2d_response_softdrop_jerdn")
 response_softdrop_jerdn.Setup(measVarHist, trueVarHist)
 
-h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
-h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
+h_2DHisto_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
 
-h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
-h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, 50, 0, 1000)
+h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
+h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsPt, ptBinA, nbinsm, mBinA)
 
-h_m_fulldist = ROOT.TH1F("PFJet_m_AK8_fulldist", "Full Spectrum Mass (GeV)", 50, 0, 1000)
+h_m_fulldist = ROOT.TH1F("PFJet_m_AK8_fulldist", "Full Spectrum Mass (GeV)", nbinsm, mBinA)
 h_pt_fulldist = ROOT.TH1F("PFJet_pt_AK8_fulldist", "Full Spectrum P_{T}", nbinsPt, ptBinA)
 h_pt_fulldist_softdrop = ROOT.TH1F("PFJet_pt_AK8SD_fulldist", "Full Spectrum P_{T}", nbinsPt, ptBinA)
 h_m_fulldist_softdrop = ROOT.TH1F("PFJet_m_AK8SD_fulldist", "Full Spectrum Mass (GeV)", 50, 0, 1000)
 
-h_m_drmatched = ROOT.TH1F("PFJet_m_AK8_drmatched", "Mass After dR Matching", 50, 0, 1000)
+h_m_drmatched = ROOT.TH1F("PFJet_m_AK8_drmatched", "Mass After dR Matching", nbinsm, mBinA)
 h_pt_drmatched = ROOT.TH1F("PFJet_pt_AK8_drmatched", "P_{T} After dR Matching", nbinsPt, ptBinA )
-h_m_softdrop_drmatched = ROOT.TH1F("PFJet_m_AK8SD_drmatched", "SoftDrop Match After dR Matching", 50, 0, 1000)
+h_m_softdrop_drmatched = ROOT.TH1F("PFJet_m_AK8SD_drmatched", "SoftDrop Match After dR Matching", nbinsm, mBinA)
 h_pt_softdrop_drmatched = ROOT.TH1F("PFJet_pt_AK8SD_drmatched", "SoftDrop P_{T} After dR Matching", nbinsPt, ptBinA)
 
 h_mreco_mgen = ROOT.TH1F("h_mreco_mgen", "Reco Mass/Gen Mass", 1000, 0, 2)
@@ -127,7 +128,7 @@ lumi = 2100
 
 
 qcdIn =[
-    ROOT.TFile("qcd_pt-15_tree.root")]
+    ROOT.TFile("herwigtree.root")]
 
 qcdWeights =[
     1    ]
@@ -142,24 +143,24 @@ fout = ROOT.TFile(options.outlabel, 'RECREATE')
 for itree,t in enumerate(trees) :
     Weight = array.array('f', [-1])
     NFatJet = array.array('i', [0] )
-    FatJetPt = array.array('f', [-1,-1])
-    FatJetEta = array.array('f', [-1,-1])
-    FatJetPhi = array.array('f', [-1,-1])
-    FatJetMass = array.array('f', [-1,-1])
-    FatJetMassSoftDrop = array.array('f', [-1,-1])
-    FatJetTau21 = array.array('f', [-1,-1])
-    FatJetCorrUp = array.array('f', [-1,-1])
-    FatJetCorrDn = array.array('f', [-1,-1])
-    FatJetRhoRatio = array.array('f', [-1,-1])
+    FatJetPt = array.array('f', [-1]*5)
+    FatJetEta = array.array('f', [-1]*5)
+    FatJetPhi = array.array('f', [-1]*5)
+    FatJetMass = array.array('f', [-1]*5)
+    FatJetMassSoftDrop = array.array('f', [-1]*5)
+    FatJetTau21 = array.array('f', [-1]*5)
+    FatJetCorrUp = array.array('f', [-1]*5)
+    FatJetCorrDn = array.array('f', [-1]*5)
+    FatJetRhoRatio = array.array('f', [-1]*5)
     NGenJet = array.array('i', [0] )
-    GenJetPt = array.array('f', [-1,-1])
-    GenJetEta = array.array('f', [-1,-1])
-    GenJetPhi = array.array('f', [-1,-1])
-    GenJetMass = array.array('f', [-1,-1])
-    GenJetMassSoftDrop = array.array('f', [-1,-1])
-    GenJetRhoRatio = array.array('f', [-1, -1])
-    FatJetPtSoftDrop = array.array('f', [-1, -1])
-    GenJetPtSoftDrop = array.array('f', [-1, -1])
+    GenJetPt = array.array('f', [-1]*5)
+    GenJetEta = array.array('f', [-1]*5)
+    GenJetPhi = array.array('f', [-1]*5)
+    GenJetMass = array.array('f', [-1]*5)
+    GenJetMassSoftDrop = array.array('f', [-1]*5)
+    GenJetRhoRatio = array.array('f', [-1]*5)
+    FatJetPtSoftDrop = array.array('f', [-1]*5)
+    GenJetPtSoftDrop = array.array('f', [-1]*5)
 
     Trig = array.array('i', [-1] )
  
@@ -232,8 +233,8 @@ for itree,t in enumerate(trees) :
         FatJetz = []
         GenJetz = []
         weight = Weight[0]
-        if 5e-7 < weight/(GenJetPt[0]+GenJetPt[1]):
-            continue
+#        if 5e-7 < weight/(FatJetPt[0]+FatJetPt[1]):
+#            continue
         #print weight
         for igen in xrange( int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()
