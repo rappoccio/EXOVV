@@ -16,17 +16,12 @@ parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
                  help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
-parser.add_option('--pythia6', action ='store_true', default=False, dest='pythia6')
 
                                 
 (options, args) = parser.parse_args()
 
 
 myfile = TFile('qcdmc_stitched_qcdmc.root')
-pythia6 = None
-outtext = ''
-outfile = None
-
 
 response = myfile.Get('2d_response' + options.extension )
 outtext = options.extension
@@ -43,7 +38,7 @@ reco.Scale(1./reco.Integral())
 truthSD.Scale(1./truthSD.Integral())
 recoSD.Scale(1./recoSD.Integral())
 
-pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-Inf'}
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
 
 
 
@@ -51,7 +46,6 @@ pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 
 unfold = RooUnfoldBayes(response, reco, 3)
 unfoldSD = RooUnfoldBayes(responseSD, recoSD, 3)
 
-#unfold= RooUnfoldSvd(response, reco, 5);
 
 reco_unfolded = unfold.Hreco()
 reco_unfoldedSD = unfoldSD.Hreco()
@@ -76,7 +70,7 @@ legendsSD = []
 namesrecoSD = []
 namesgenSD = []
 keepHists = []
-for i in range(0, 7):
+for i in range(0, 19):
     namesreco.append(None)
     namesgen.append(None)
     legends.append(TLegend(.7, .5, .9, .7))
