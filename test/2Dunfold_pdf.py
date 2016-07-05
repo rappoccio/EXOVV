@@ -10,8 +10,8 @@ from ROOT import TCanvas
 pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 5: '650-760', 6: '760-Inf'}
 
 
-pdffile = TFile('qcdmc_stitched_pdf_qcdmc.root')
-datafile = TFile('jetht_40pbinv_weighted_dataplots.root')
+pdffile = TFile('qcdmc_stitched_qcdmc.root')
+datafile = TFile('jetht_run2015B_weighted_plots.root')
 
 
 pdfup_response = pdffile.Get('2d_response_pdfup')

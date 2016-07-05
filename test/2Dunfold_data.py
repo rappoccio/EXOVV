@@ -17,8 +17,8 @@ parser.add_option('--extension', action ='store', type = 'string',
        
 (options, args) = parser.parse_args()
 
-mcfile = TFile('qcdmc_stitched_pdf_qcdmc.root')
-datafile = TFile('jetht_40pbinv_weighted_dataplots.root')
+mcfile = TFile('qcdmc_stitched_qcdmc.root')
+datafile = TFile('jetht_run2015B_weighted_plots.root')
 
 
 outfile = TFile('2DData' + options.extension + '.root', 'RECREATE')
@@ -69,7 +69,7 @@ for x in range(0, 7):
     namesgenSD.append(None)
     legends.append(TLegend(.7, .5, .9, .7))
     legendsSD.append(TLegend(.7, .5, .9, .7))
-pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 5: '650-760', 6: '760-Inf'}
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-Inf'}
 
 
 for i, canvas in enumerate(canvases) : 

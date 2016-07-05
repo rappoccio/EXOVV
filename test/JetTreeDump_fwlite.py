@@ -451,6 +451,10 @@ def JetTreeDump_FWLite(argv) :
     l_subjetsAK8Phi = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "Phi")
     h_subjetsAK8Mass = Handle( "std::vector<float>")
     l_subjetsAK8Mass = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "Mass")
+    h_subjetsAK8jecFactor0 = Handle( "std::vector<float>")
+    l_subjetsAK8jecFactor0 = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "jecFactor0")
+    h_subjetsAK8jetArea = Handle( "std::vector<float>")
+    l_subjetsAK8jetArea = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + "jetArea")
     h_subjetsAK8BDisc = Handle( "std::vector<float>")
     l_subjetsAK8BDisc = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + options.btagger)
 
@@ -537,6 +541,8 @@ def JetTreeDump_FWLite(argv) :
         FatJetSDsubjetBp4   = array('f', [-1., -1., -1., -1., -1.])
         FatJetCorrUp        = array('f', [-1., -1., -1., -1., -1.])
         FatJetCorrDn        = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDCorrUp      = array('f', [-1., -1., -1., -1., -1.])
+        FatJetSDCorrDn      = array('f', [-1., -1., -1., -1., -1.])
 
 
 
@@ -614,6 +620,8 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('FatJetSDsubjetBp4'   , FatJetSDsubjetBp4   ,  'FatJetSDsubjetBp4[NFatJet]/F'   )
         TreeEXOVV.Branch('FatJetCorrUp'        , FatJetCorrUp        ,  'FatJetCorrUp[NFatJet]/F'        )
         TreeEXOVV.Branch('FatJetCorrDn'        , FatJetCorrDn        ,  'FatJetCorrDn[NFatJet]/F'        )
+        TreeEXOVV.Branch('FatJetSDCorrUp'      , FatJetSDCorrUp      ,  'FatJetSDCorrUp[NFatJet]/F'        )
+        TreeEXOVV.Branch('FatJetSDCorrDn'      , FatJetSDCorrDn      ,  'FatJetSDCorrDn[NFatJet]/F'        )
 
 
         TreeEXOVV.Branch('NGenJet'             , NGenJet             ,  'NGenJet/I'        )
@@ -712,6 +720,21 @@ def JetTreeDump_FWLite(argv) :
 
     ak8JetCorrector = ROOT.FactorizedJetCorrector(vParJecAK8)
 
+
+
+
+
+    vParJecAK8ForMass = ROOT.vector('JetCorrectorParameters')()
+    vParJecAK8ForMass.push_back(L2JetParAK8)
+    vParJecAK8ForMass.push_back(L3JetParAK8)
+    # for data only :
+    if not options.isMC : 
+        vParJecAK8ForMass.push_back(ResJetParAK8)
+
+    ak8JetCorrectorForMass = ROOT.FactorizedJetCorrector(vParJecAK8ForMass)
+
+
+    
     #@ EVENT LOOP
 
     if options.verbose :
@@ -841,7 +864,7 @@ def JetTreeDump_FWLite(argv) :
                 hbheFilt = h_HBHEfilter.product()[0]
 
                 for itrig in xrange(0, len(filterNameStrings) ) :
-                    if options.verbose :
+                    if options.verbose > 5:
                         print 'Filter name = ' + filterNameStrings[itrig]
                         print 'Filter bit  = ' + str(filterBits[itrig])
                     if "CSC" in filterNameStrings[itrig] :
@@ -1006,6 +1029,8 @@ def JetTreeDump_FWLite(argv) :
             event.getByLabel ( l_subjetsAK8Eta, h_subjetsAK8Eta)
             event.getByLabel ( l_subjetsAK8Phi, h_subjetsAK8Phi)
             event.getByLabel ( l_subjetsAK8Mass, h_subjetsAK8Mass)
+            event.getByLabel ( l_subjetsAK8jecFactor0, h_subjetsAK8jecFactor0)
+            event.getByLabel ( l_subjetsAK8jetArea, h_subjetsAK8jetArea)
 
 
 
@@ -1013,6 +1038,8 @@ def JetTreeDump_FWLite(argv) :
             ak8JetsCorrUp = []
             ak8JetsCorrDn = []
             ak8JetsP4SoftDropCorr = []
+            ak8JetsP4SoftDropCorrUp = []
+            ak8JetsP4SoftDropCorrDn = []
             ak8JetsPassID = []
             AK8SoftDropM = []
             AK8Tau21 = []
@@ -1061,7 +1088,10 @@ def JetTreeDump_FWLite(argv) :
                 AK8SubJetsPt = h_subjetsAK8Pt.product()
                 AK8SubJetsEta = h_subjetsAK8Eta.product()
                 AK8SubJetsPhi = h_subjetsAK8Phi.product()
-                AK8SubJetsMass = h_subjetsAK8Mass.product()            
+                AK8SubJetsMass = h_subjetsAK8Mass.product()
+                AK8SubJetsJEC = h_subjetsAK8jecFactor0.product()
+                AK8SubJetsArea = h_subjetsAK8jetArea.product()
+
 
 
 
@@ -1131,8 +1161,22 @@ def JetTreeDump_FWLite(argv) :
                 ak8JetCorrector.setRho   ( rho )
                 ak8JetCorrector.setNPV   ( NPV )
                 newJEC = ak8JetCorrector.getCorrection()
-                AK8P4Corr = AK8P4Raw*newJEC
 
+                ak8JetCorrectorForMass.setJetEta( AK8P4Raw.Eta() )
+                ak8JetCorrectorForMass.setJetPt ( AK8P4Raw.Perp() )
+                ak8JetCorrectorForMass.setJetE  ( AK8P4Raw.E() )
+                ak8JetCorrectorForMass.setJetA  ( AK8Area[i] )
+                ak8JetCorrectorForMass.setRho   ( rho )
+                ak8JetCorrectorForMass.setNPV   ( NPV )
+                newJECForMass = ak8JetCorrectorForMass.getCorrection()
+                
+                AK8P4Corr = ROOT.TLorentzVector()
+                AK8P4Corr.SetPtEtaPhiM( AK8P4Raw.Perp() * newJEC, AK8P4Raw.Eta(), AK8P4Raw.Phi(), AK8P4Raw.M() * newJECForMass )
+                if options.verbose :
+                    print "Raw pt, m       = ", AK8P4Raw.Perp(), AK8P4Raw.M()
+                    print "Corrected pt, m = " , AK8P4Corr.Perp(), AK8P4Corr.M()                
+
+                
                 # Gen Jets
                 if options.isMC:
                     ak8GenJetsP4 = []
@@ -1191,8 +1235,33 @@ def JetTreeDump_FWLite(argv) :
                     seta0   = AK8SubJetsEta[ival]
                     sphi0   = AK8SubJetsPhi[ival]
                     sm0   = AK8SubJetsMass[ival]
+                    sp4raw_0 = ROOT.TLorentzVector()
+                    sjec0 = AK8SubJetsJEC[ival]
+                    sp4raw_0.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
+                    sp4raw_0 *= sjec0
+                    ak8JetCorrector.setJetEta( sp4raw_0.Eta() )
+                    ak8JetCorrector.setJetPt ( sp4raw_0.Perp() )
+                    ak8JetCorrector.setJetE  ( sp4raw_0.E() )
+                    ak8JetCorrector.setJetA  ( AK8SubJetsArea[ival] )
+                    ak8JetCorrector.setRho   ( rho )
+                    ak8JetCorrector.setNPV   ( NPV )
+                    newJEC = ak8JetCorrector.getCorrection()
+    
+                    ak8JetCorrectorForMass.setJetEta( sp4raw_0.Eta() )
+                    ak8JetCorrectorForMass.setJetPt ( sp4raw_0.Perp() )
+                    ak8JetCorrectorForMass.setJetE  ( sp4raw_0.E() )
+                    ak8JetCorrectorForMass.setJetA  ( AK8SubJetsArea[ival] )
+                    ak8JetCorrectorForMass.setRho   ( rho )
+                    ak8JetCorrectorForMass.setNPV   ( NPV )
+                    newJECForMass = ak8JetCorrectorForMass.getCorrection()
+                
                     sp4_0 = ROOT.TLorentzVector()
-                    sp4_0.SetPtEtaPhiM( spt0, seta0, sphi0, sm0 )
+                    sp4_0.SetPtEtaPhiM( sp4raw_0.Perp() * newJEC, sp4raw_0.Eta(), sp4raw_0.Phi(), sp4raw_0.M() * newJECForMass )
+                    
+                    if options.verbose :
+                        print "Raw SD0 pt, m       = ", sp4raw_0.Perp(), sp4raw_0.M()
+                        print "Corrected SD0 pt, m = " , sp4_0.Perp(), sp4_0.M()
+                        
                 ival = int(AK8vSubjetIndex1[i])
                 if options.verbose :
                     print 'subjet index 1 = ' + str(ival)
@@ -1201,9 +1270,33 @@ def JetTreeDump_FWLite(argv) :
                     seta1   = AK8SubJetsEta[ival]
                     sphi1   = AK8SubJetsPhi[ival]
                     sm1   = AK8SubJetsMass[ival]
+                    sp4raw_1 = ROOT.TLorentzVector()
+                    sjec1 = AK8SubJetsJEC[ival]
+                    sp4raw_1.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )
+                    sp4raw_1 *= sjec1
+                    ak8JetCorrector.setJetEta( sp4raw_1.Eta() )
+                    ak8JetCorrector.setJetPt ( sp4raw_1.Perp() )
+                    ak8JetCorrector.setJetE  ( sp4raw_1.E() )
+                    ak8JetCorrector.setJetA  ( AK8SubJetsArea[ival] )
+                    ak8JetCorrector.setRho   ( rho )
+                    ak8JetCorrector.setNPV   ( NPV )
+                    newJEC = ak8JetCorrector.getCorrection()
+    
+                    ak8JetCorrectorForMass.setJetEta( sp4raw_1.Eta() )
+                    ak8JetCorrectorForMass.setJetPt ( sp4raw_1.Perp() )
+                    ak8JetCorrectorForMass.setJetE  ( sp4raw_1.E() )
+                    ak8JetCorrectorForMass.setJetA  ( AK8SubJetsArea[ival] )
+                    ak8JetCorrectorForMass.setRho   ( rho )
+                    ak8JetCorrectorForMass.setNPV   ( NPV )
+                    newJECForMass = ak8JetCorrectorForMass.getCorrection()
+                
                     sp4_1 = ROOT.TLorentzVector()
-                    sp4_1.SetPtEtaPhiM( spt1, seta1, sphi1, sm1 )              
+                    sp4_1.SetPtEtaPhiM( sp4raw_1.Perp() * newJEC, sp4raw_1.Eta(), sp4raw_1.Phi(), sp4raw_1.M() * newJECForMass )         
 
+                    if options.verbose :
+                        print "Raw SD1 pt, m       = ", sp4raw_1.Perp(), sp4raw_1.M()
+                        print "Corrected SD1 pt, m = " , sp4_1.Perp(), sp4_1.M()
+                    
                 if sp4_0 == None or sp4_1 == None :
                     if options.verbose :
                         print 'Did not find subjets'
@@ -1211,6 +1304,8 @@ def JetTreeDump_FWLite(argv) :
                     AK8JetRho.append( None )
                     AK8JetZ.append( None )
                     AK8subjetDR.append( None )
+                    ak8JetsP4SoftDropCorrUp.append( None )
+                    ak8JetsP4SoftDropCorrDn.append( None ) 
                 else :
 
                     softdrop_p4 = sp4_0 + sp4_1
@@ -1228,8 +1323,18 @@ def JetTreeDump_FWLite(argv) :
                     AK8JetZ.append( jetz )
                     AK8subjetDR.append( sp4_0.DeltaR( sp4_1 ) )
 
-                    if options.verbose :
-                        print "Corrected pt = " + str(AK8P4Corr.Perp())
+                    if options.isMC  :
+                        jecUncAK8.setJetEta( softdrop_p4.Eta() )
+                        jecUncAK8.setJetPt( softdrop_p4.Perp() )
+                        ak8JetsP4SoftDropCorrUp.append( 1. + jecUncAK8.getUncertainty(1) )
+                        jecUncAK8.setJetEta( softdrop_p4.Eta() )
+                        jecUncAK8.setJetPt( softdrop_p4.Perp() )
+                        ak8JetsP4SoftDropCorrDn.append( 1. - jecUncAK8.getUncertainty(0) )
+                    else :
+                        ak8JetsP4SoftDropCorrUp.append( -1.0 )
+                        ak8JetsP4SoftDropCorrDn.append( -1.0 )                    
+
+
 
 
 
@@ -1313,8 +1418,13 @@ def JetTreeDump_FWLite(argv) :
                     if ak8JetsP4SoftDropCorr[ifatjet] != None : 
                         FatJetMassSoftDrop  [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].M()
                         FatJetPtSoftDrop    [ifatjet] = ak8JetsP4SoftDropCorr[ifatjet].Perp()
+                        FatJetSDCorrUp      [ifatjet] = ak8JetsP4SoftDropCorrUp[ifatjet]
+                        FatJetSDCorrDn      [ifatjet] = ak8JetsP4SoftDropCorrDn[ifatjet]                        
                     else :
+                        FatJetPtSoftDrop    [ifatjet] = -1.0
                         FatJetMassSoftDrop  [ifatjet] = -1.0
+                        FatJetSDCorrUp      [ifatjet] = -1.0
+                        FatJetSDCorrDn      [ifatjet] = -1.0
                     FatJetMass          [ifatjet] = jetP4.M()
                     FatJetTau1          [ifatjet] = AK8Tau1[ifatjet]
                     FatJetTau2          [ifatjet] = AK8Tau2[ifatjet]
@@ -1322,6 +1432,7 @@ def JetTreeDump_FWLite(argv) :
                     FatJetTau21         [ifatjet] = AK8Tau21[ifatjet]
                     FatJetCorrUp        [ifatjet] = ak8JetsCorrUp[ifatjet]
                     FatJetCorrDn        [ifatjet] = ak8JetsCorrDn[ifatjet]
+
 
                 if options.isMC : 
                     NGenJet             [0] = min( 5, len(ak8GenJetsP4))

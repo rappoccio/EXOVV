@@ -87,6 +87,9 @@ ROOT.gStyle.SetPadRightMargin(0.15)
 
 tlxs = []
 
+
+scale = 1.0
+
 for ihist,histname in enumerate(hists):
     canv = ROOT.TCanvas(histname + '_canv', histname +'_canv', 800, 700)
     canv.SetBottomMargin(0.0)
@@ -118,7 +121,7 @@ for ihist,histname in enumerate(hists):
     if options.rebin != None :
         datahist.Rebin( options.rebin )
     datahists.append( datahist )
-        
+
     mchist.Scale( datahist.Integral() / mchist.Integral() )
             
 

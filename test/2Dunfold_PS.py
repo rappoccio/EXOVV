@@ -7,12 +7,13 @@ from ROOT import RooUnfold
 from ROOT import RooUnfoldBayes
 from ROOT import TCanvas
 # dict used later for labels
-pt_bin = {0: '200-240', 1: '240-310', 2: '310-400', 3: '400-530', 4: '530-650', 5: '650-760', 6: '760-Inf'}
+
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-Inf'}
 
 
 pythia6file = TFile('qcdmc_stitched_pythia6.root')
-pythia8file = TFile('qcdmc_stitched_pdf_qcdmc.root')
-datafile = TFile('jetht_40pbinv_weighted_dataplots.root')
+pythia8file = TFile('qcdmc_stitched_qcdmc.root')
+datafile = TFile('jetht_run2015B_weighted_plots.root')
 
 
 pythia6_response = pythia6file.Get('2d_response')

@@ -1,8 +1,8 @@
 from CRABClient.UserUtilities import config
 config = config()
 
-config.General.requestName = 'EXOVV_JetHT_2015B'
-config.General.workArea = 'crab_2015B_76x_5jets_newjec'
+config.General.requestName = 'EXOVV_JetHT_2015C'
+config.General.workArea = 'crab_2015C_76x_5jets'
 config.General.transferOutputs = True
 config.General.transferLogs = True
 

@@ -2,6 +2,7 @@
 from optparse import OptionParser
 from jettools import getJER
 from math import sqrt
+from operator import itemgetter
 
 parser = OptionParser()
 
@@ -128,8 +129,8 @@ lumi = 2100
 
 
 qcdIn =[
-    ROOT.TFile("herwigtree.root")]
-
+    ROOT.TFile("herwigtree.root")
+]
 qcdWeights =[
     1    ]
 
@@ -217,7 +218,7 @@ for itree,t in enumerate(trees) :
     else :
         eventsToRun = entries
     for jentry in xrange( eventsToRun ):
-        if jentry % 100000 == 0 :
+        if jentry % 10000 == 0 :
             print 'processing ' + str(jentry)
         # get the next tree in the chain and verify
         ientry = t.GetEntry( jentry )
@@ -247,8 +248,44 @@ for itree,t in enumerate(trees) :
             h_2DHisto_gen.Fill( GenJet.Perp(), GenJet.M(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.Perp(), GenJetSD.M(), weight)
         
-          #First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
-        for ijet in xrange( int(NFatJet[0]) ):
+
+
+
+        if NFatJet[0] < 2 :
+            continue
+        if FatJetPt[0] < 220. :
+            continue
+        
+        ptToSort = [ ]
+        for ijet in xrange(NFatJet[0]):
+            ptToSort.append( (ijet, FatJetPt[ijet] ) )
+
+        ptSorted = sorted( ptToSort, key=itemgetter(1), reverse=True)
+
+        indices = [ index[0] for index in ptSorted ]
+
+        
+        maxjet = indices[0]
+        minjet = indices[1]
+        pt0 = FatJetPt[maxjet]
+
+        if pt0 > 13000. : # Sanity check
+            continue
+        if FatJetPt[minjet] < 220. : # require both jets to be >= 200 GeV
+            continue
+
+
+        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
+        dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
+
+
+        passkin = ptasym < 0.3 and dphi > 2.0
+        if not passkin :
+            continue
+
+
+        #First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
+        for ijet in [indices[0],indices[1]] :
 
             FatJet = ROOT.TLorentzVector()
             FatJet.SetPtEtaPhiM( FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet])

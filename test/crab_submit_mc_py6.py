@@ -34,14 +34,14 @@ def main():
 
     config.section_("General")
     #config.General.requestName = 'EXOVV_QCD_Pt_170to300'
-    config.General.workArea = 'crab_smpj_withtrig_newjec'
+    config.General.workArea = 'crab_smpj_withtrig_newjec_py6'
     config.General.transferOutputs = True
     config.General.transferLogs = True
 
     config.section_("JobType")
     config.JobType.pluginName = 'Analysis'
     config.JobType.psetName = 'PSet.py'
-    config.JobType.scriptExe = 'execute_for_crab.sh'
+    config.JobType.scriptExe = 'execute_for_crab_py6.sh'
     config.JobType.outputFiles = ['outplots.root']
     config.JobType.inputFiles = ['FrameworkJobReport.xml', 'execute_for_crab.py', 'JetTreeDump_fwlite.py', 'JECs', 'setup_lhapdf.csh' ]
 

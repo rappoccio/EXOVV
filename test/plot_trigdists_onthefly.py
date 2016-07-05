@@ -65,14 +65,13 @@ trigs = [
 
 
 scales = [
-    30000.0 *0.146887199206 ,
-    2000.0 * 0.41390688527999997,
-    65.63430 *1.723102857142857,
-    11.73224 * 0.9871328025,
-     3.96795 * 1.3415549004,
-     1.23341 * 1.9324477524,
-     1.00000 * 1.00000,
-    #1.
+    4470.10011779109,
+    812.576304821248,
+    114.125335364053,
+    11.3891892511202,
+    5.40698304071761,
+    2.38456032833827,
+    1,
     ]
 
 ## scales = [
@@ -203,7 +202,7 @@ pt0histspre = []
 pt0hists = []
 pt0histsTurnon = []
 
-ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760.])
+ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
 nbinsToPlot = len(ptBinAToPlot) - 1
 
 h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, 50, 0, 1000)
@@ -287,7 +286,7 @@ for itree,t in enumerate(trees) :
             break
         if Trig[0] == None or Trig[0] <= 0 :
             continue
-        if FatJetPt[0] < 200. :
+        if FatJetPt[0] < 220. :
             continue
         if jentry % 100000 == 0 : 
             print '%15d / %20d = %6.2f' % (jentry, entries, float(jentry)/float(entries) )
@@ -309,6 +308,8 @@ for itree,t in enumerate(trees) :
         pt0 = FatJetPt[maxjet]
 
         if pt0 > 13000. : # Sanity check
+            continue
+        if FatJetPt[minjet] < 220. : # require both jets to be >= 200 GeV
             continue
         
         ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
@@ -389,7 +390,7 @@ for itree,t in enumerate(trees) :
         
         pt0hists[trigbin].Fill( pt0, weight )
         
-        for ijet in [0,1] :
+        for ijet in [ indices[0], indices[1] ] :
             h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
             h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
             h_pt_meas.Fill( FatJetPt[ijet] , weight )
