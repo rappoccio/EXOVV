@@ -40,19 +40,19 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         nom.Scale(scales[i])
         ########################################################################################## Scale the hists for mass bins
         for ibin in xrange(1, hReco.GetNbinsX()):
-            hReco.SetBinContent(ibin, hReco.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            hReco.SetBinError(ibin, hReco.GetBinError(ibin) * 1./mbinwidths[ibin])
+            hReco.SetBinContent(ibin, hReco.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            hReco.SetBinError(ibin, hReco.GetBinError(ibin) * 1./mbinwidths[ibin-1])
 
-            jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./mbinwidths[ibin])
+            jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
 
-            jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin])
-            MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin])
+            jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
         ########################################################################################## Add JER and JES Uncertainties
         for ibin in xrange(1,hReco.GetNbinsX()):
             val = float(hReco.GetBinContent(ibin))
@@ -84,7 +84,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF = hRecoJMR.Clone()
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             temp = hRecoPDF.GetBinError(ibin)
-            hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin] ) )
+            hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
         ####################################################################################### PDF Drawn Here
         hRecoPDF.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
         hRecoPDF.SetMarkerStyle(20)
@@ -243,10 +243,10 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         pads_list[i][0].cd()
         pads_list[i][0].SetLogy()
         for ibin in xrange(1, reco_list[i].GetNbinsX()):
-            reco_list[i].SetBinContent(ibin, reco_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin])
-            reco_list[i].SetBinError(ibin, reco_list[i].GetBinError(ibin) * 1./mbinwidths[ibin])
-            gen_list[i].SetBinContent(ibin, gen_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin])
-            gen_list[i].SetBinError(ibin, gen_list[i].GetBinError(ibin) * 1./mbinwidths[ibin])
+            reco_list[i].SetBinContent(ibin, reco_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            reco_list[i].SetBinError(ibin, reco_list[i].GetBinError(ibin) * 1./mbinwidths[ibin-1])
+            gen_list[i].SetBinContent(ibin, gen_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            gen_list[i].SetBinError(ibin, gen_list[i].GetBinError(ibin) * 1./mbinwidths[ibin-1])
         reco_list[i].UseCurrentStyle()
         gen_list[i].UseCurrentStyle()
         reco_list[i].Scale(scales[i])
