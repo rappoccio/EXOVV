@@ -36,84 +36,84 @@ trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsPt, ptBinA, nbinsm, mBi
 measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsPt, ptBinA, nbinsm, mBinA)
 
 responsemod0 = ROOT.RooUnfoldResponse()
-responsemod0.SetName("2d_response")
+responsemod0.SetName("2d_response0")
 responsemod0.Setup(measVarHist, trueVarHist)
 
 responsemod1 = ROOT.RooUnfoldResponse()
-responsemod1.SetName("2d_response")
+responsemod1.SetName("2d_response1")
 responsemod1.Setup(measVarHist, trueVarHist)
 
 responsemod2 = ROOT.RooUnfoldResponse()
-responsemod2.SetName("2d_response")
+responsemod2.SetName("2d_response2")
 responsemod2.Setup(measVarHist, trueVarHist)
 
 responsemod3 = ROOT.RooUnfoldResponse()
-responsemod3.SetName("2d_response")
+responsemod3.SetName("2d_response3")
 responsemod3.Setup(measVarHist, trueVarHist)
 
 responsemod4 = ROOT.RooUnfoldResponse()
-responsemod4.SetName("2d_response")
+responsemod4.SetName("2d_response4")
 responsemod4.Setup(measVarHist, trueVarHist)
 
 responsemod5 = ROOT.RooUnfoldResponse()
-responsemod5.SetName("2d_response")
+responsemod5.SetName("2d_response5")
 responsemod5.Setup(measVarHist, trueVarHist)
 
 responsemod6 = ROOT.RooUnfoldResponse()
-responsemod6.SetName("2d_response")
+responsemod6.SetName("2d_response6")
 responsemod6.Setup(measVarHist, trueVarHist)
 
 responsemod7 = ROOT.RooUnfoldResponse()
-responsemod7.SetName("2d_response")
+responsemod7.SetName("2d_response7")
 responsemod7.Setup(measVarHist, trueVarHist)
 
 responsemod8 = ROOT.RooUnfoldResponse()
-responsemod8.SetName("2d_response")
+responsemod8.SetName("2d_response8")
 responsemod8.Setup(measVarHist, trueVarHist)
 
 responsemod9 = ROOT.RooUnfoldResponse()
-responsemod9.SetName("2d_response")
+responsemod9.SetName("2d_response9")
 responsemod9.Setup(measVarHist, trueVarHist)
 
 
 responsemod0_softdrop = ROOT.RooUnfoldResponse()
-responsemod0_softdrop.SetName("2d_response")
+responsemod0_softdrop.SetName("2d_response_softdrop0")
 responsemod0_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod1_softdrop = ROOT.RooUnfoldResponse()
-responsemod1_softdrop.SetName("2d_response")
+responsemod1_softdrop.SetName("2d_response_softdrop1")
 responsemod1_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod2_softdrop = ROOT.RooUnfoldResponse()
-responsemod2_softdrop.SetName("2d_response")
+responsemod2_softdrop.SetName("2d_response_softdrop2")
 responsemod2_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod3_softdrop = ROOT.RooUnfoldResponse()
-responsemod3_softdrop.SetName("2d_response")
+responsemod3_softdrop.SetName("2d_response_softdrop3")
 responsemod3_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod4_softdrop = ROOT.RooUnfoldResponse()
-responsemod4_softdrop.SetName("2d_response")
+responsemod4_softdrop.SetName("2d_response_softdrop4")
 responsemod4_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod5_softdrop = ROOT.RooUnfoldResponse()
-responsemod5_softdrop.SetName("2d_response")
+responsemod5_softdrop.SetName("2d_response_softdrop5")
 responsemod5_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod6_softdrop = ROOT.RooUnfoldResponse()
-responsemod6_softdrop.SetName("2d_response")
+responsemod6_softdrop.SetName("2d_response_softdrop6")
 responsemod6_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod7_softdrop = ROOT.RooUnfoldResponse()
-responsemod7_softdrop.SetName("2d_response")
+responsemod7_softdrop.SetName("2d_response_softdrop7")
 responsemod7_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod8_softdrop = ROOT.RooUnfoldResponse()
-responsemod8_softdrop.SetName("2d_response")
+responsemod8_softdrop.SetName("2d_response_softdrop8")
 responsemod8_softdrop.Setup(measVarHist, trueVarHist)
 
 responsemod9_softdrop = ROOT.RooUnfoldResponse()
-responsemod9_softdrop.SetName("2d_response")
+responsemod9_softdrop.SetName("2d_response_softdrop9")
 responsemod9_softdrop.Setup(measVarHist, trueVarHist)
 
 
@@ -299,11 +299,6 @@ for itree,t in enumerate(trees) :
     #    print "pdfweight up: " + str(pdfweight_up)
     #    print "pdfweight down: " + str(pdfweight_dn)
         
-        if dphi > 2.0 :
-            h_ptasym_meas.Fill( ptasym, weight )
-        if ptasym < 0.3 :
-            h_dphi_meas.Fill( dphi, weight )
-
         passkin = ptasym < 0.3 and dphi > 2.0
         if not passkin :
             continue
@@ -342,91 +337,91 @@ for itree,t in enumerate(trees) :
             if igen != None :  # Here we have a "Fill"
                 if jentry % 10 != 0:
                     responsemod0.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 1:
-                    responsemod1.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 2:
-                    responsemod2.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 3:
-                    responsemod3.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 4:
-                    responsemod4.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 5:
-                    responsemod5.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 6:
-                    responsemod6.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 7:    
-                    responsemod7.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 8:
-                    responsemod8.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 9:
-                    responsemod9.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                    if jentry % 10 != 1:
+                        responsemod1.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                        if jentry % 10 != 2:
+                            responsemod2.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                            if jentry % 10 != 3:
+                                responsemod3.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                if jentry % 10 != 4:
+                                    responsemod4.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                    if jentry % 10 != 5:
+                                        responsemod5.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                        if jentry % 10 != 6:
+                                            responsemod6.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                            if jentry % 10 != 7:    
+                                                responsemod7.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                                if jentry % 10 != 8:
+                                                    responsemod8.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                
+                responsemod9.Fill( FatJet.Perp(), FatJet.M(), GenJets[igen].Perp(), GenJets[igen].M(), weight )
 
                 
             else : # Here we have a "Fake"
                 if jentry % 10 != 0:
                     responsemod0.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 1:
-                    responsemod1.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 2:
-                    responsemod2.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 3:
-                    responsemod3.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 4:
-                    responsemod4.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 5:
-                    responsemod5.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 6:
-                    responsemod6.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 7:
-                    responsemod7.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 8:
-                    responsemod8.Fake( FatJet.Perp(), FatJet.M(), weight )
-                if jentry % 10 != 9:
-                    responsemod9.Fake( FatJet.Perp(), FatJet.M(), weight )
+                    if jentry % 10 != 1:
+                        responsemod1.Fake( FatJet.Perp(), FatJet.M(), weight )
+                        if jentry % 10 != 2:
+                            responsemod2.Fake( FatJet.Perp(), FatJet.M(), weight )
+                            if jentry % 10 != 3:
+                                responsemod3.Fake( FatJet.Perp(), FatJet.M(), weight )
+                                if jentry % 10 != 4:
+                                    responsemod4.Fake( FatJet.Perp(), FatJet.M(), weight )
+                                    if jentry % 10 != 5:
+                                        responsemod5.Fake( FatJet.Perp(), FatJet.M(), weight )
+                                        if jentry % 10 != 6:
+                                            responsemod6.Fake( FatJet.Perp(), FatJet.M(), weight )
+                                            if jentry % 10 != 7:
+                                                responsemod7.Fake( FatJet.Perp(), FatJet.M(), weight )
+                                                if jentry % 10 != 8:
+                                                    responsemod8.Fake( FatJet.Perp(), FatJet.M(), weight )
+                
+                responsemod9.Fake( FatJet.Perp(), FatJet.M(), weight )
 
             if igenSD != None:
                 if jentry % 10 != 0:
                     responsemod0_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight )
-                if jentry % 10 != 1:
-                    responsemod1_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 2:
-                    responsemod2_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 3:
-                    responsemod3_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 4:
-                    responsemod4_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 5:
-                    responsemod5_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 6:
-                    responsemod6_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 7:
-                    responsemod7_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 8:
-                    responsemod8_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
-                if jentry % 10 != 9:
-                    responsemod9_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                    if jentry % 10 != 1:
+                        responsemod1_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                        if jentry % 10 != 2:
+                            responsemod2_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                            if jentry % 10 != 3:
+                                responsemod3_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                                if jentry % 10 != 4:
+                                    responsemod4_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                                    if jentry % 10 != 5:
+                                        responsemod5_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                                        if jentry % 10 != 6:
+                                            responsemod6_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                                            if jentry % 10 != 7:
+                                                responsemod7_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                                                if jentry % 10 != 8:
+                                                    responsemod8_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
+                
+                responsemod9_softdrop.Fill(  FatJetSD.Perp() , FatJetSD.M(), GenJetsSD[igenSD].Perp(), GenJetsSD[igenSD].M(), weight  )
 
             else:
                 if jentry % 10 != 0:
                     responsemod0_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 1:
-                    responsemod1_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 2:
-                    responsemod2_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 3:
-                    responsemod3_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 4:
-                    responsemod4_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 5:
-                    responsemod5_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 6:
-                    responsemod6_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 7:
-                    responsemod7_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 8:
-                    responsemod8_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
-                if jentry % 10 != 9:
-                    responsemod9_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                    if jentry % 10 != 1:
+                        responsemod1_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                        if jentry % 10 != 2:
+                            responsemod2_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                            if jentry % 10 != 3:
+                                responsemod3_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                                if jentry % 10 != 4:
+                                    responsemod4_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                                    if jentry % 10 != 5:
+                                        responsemod5_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                                        if jentry % 10 != 6:
+                                            responsemod6_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                                            if jentry % 10 != 7:
+                                                responsemod7_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                                                if jentry % 10 != 8:
+                                                    responsemod8_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
+                
+                responsemod9_softdrop.Fake( FatJetSD.Perp() , FatJetSD.M(), weight )
 
         # Now get the "Misses" (i.e. we have no RECO jet)
         for igen in xrange( int(NGenJet[0]) ):
@@ -435,45 +430,45 @@ for itree,t in enumerate(trees) :
             if ijet == None :
                 if jentry % 10 != 0:
                     responsemod0.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 1:
-                    responsemod1.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 2:
-                    responsemod2.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 3:
-                    responsemod3.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 4:
-                    responsemod4.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 5:
-                    responsemod5.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 6:
-                    responsemod6.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 7:
-                    responsemod7.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 8:
-                    responsemod8.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 9:
-                    responsemod9.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                    if jentry % 10 != 1:
+                        responsemod1.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                        if jentry % 10 != 2:
+                            responsemod2.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                            if jentry % 10 != 3:
+                                responsemod3.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                if jentry % 10 != 4:
+                                    responsemod4.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                    if jentry % 10 != 5:
+                                        responsemod5.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                        if jentry % 10 != 6:
+                                            responsemod6.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                            if jentry % 10 != 7:
+                                                responsemod7.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                                if jentry % 10 != 8:
+                                                    responsemod8.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                
+                responsemod9.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
             if ijetSD == None:
                 if jentry % 10 != 0:
                     responsemod0_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 1:
-                    responsemod1_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 2:
-                    responsemod2_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 3:
-                    responsemod3_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 4:
-                    responsemod4_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 5:
-                    responsemod5_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 6:
-                    responsemod6_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 7:
-                    responsemod7_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 8:
-                    responsemod8_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
-                if jentry % 10 != 9:
-                    responsemod9_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                    if jentry % 10 != 1:
+                        responsemod1_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                        if jentry % 10 != 2:
+                            responsemod2_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                            if jentry % 10 != 3:
+                                responsemod3_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                if jentry % 10 != 4:
+                                    responsemod4_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                    if jentry % 10 != 5:
+                                        responsemod5_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                        if jentry % 10 != 6:
+                                            responsemod6_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                            if jentry % 10 != 7:
+                                                responsemod7_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                                                if jentry % 10 != 8:
+                                                    responsemod8_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
+                
+                responsemod9_softdrop.Miss( GenJets[igen].Perp(), GenJets[igen].M(), weight )
 fout.cd()
 
 responsemod0.Write()
