@@ -18,7 +18,7 @@ parser.add_option('--extension', action ='store', type = 'string',
 (options, args) = parser.parse_args()
 
 mcfile = TFile('qcdmc_stitched_qcdmc.root')
-datafile = TFile('jetht_run2015B_weighted_plots.root')
+datafile = TFile('jetht_40pbinv_weighted_dataplots.root')
 
 
 outfile = TFile('2DData' + options.extension + '.root', 'RECREATE')
@@ -40,8 +40,8 @@ truthSD.Scale(1./truthSD.Integral() )
 recoSD.Scale( 1./recoSD.Integral() )
 
 response.Draw('colz')
-unfold = RooUnfoldBayes(response, reco, 3)
-unfoldSD = RooUnfoldBayes(responseSD, recoSD, 3)
+unfold = RooUnfoldBayes(response, reco, 4)
+unfoldSD = RooUnfoldBayes(responseSD, recoSD, 4)
 
 reco_unfolded = unfold.Hreco()
 recoSD_unfolded = unfoldSD.Hreco()
@@ -60,7 +60,7 @@ namesgen = []
 namesgenSD = []
 legends = []
 legendsSD = []
-for x in range(0, 7):
+for x in range(0, 19):
     canvases.append(TCanvas("canvas" + str(x)))
     canvasesSD.append(TCanvas("canvasSD" + str(x)))
     namesreco.append(None)
@@ -69,7 +69,7 @@ for x in range(0, 7):
     namesgenSD.append(None)
     legends.append(TLegend(.7, .5, .9, .7))
     legendsSD.append(TLegend(.7, .5, .9, .7))
-pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-Inf'}
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
 
 
 for i, canvas in enumerate(canvases) : 

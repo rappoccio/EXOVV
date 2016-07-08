@@ -11,7 +11,7 @@ pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 
 
 
 pdffile = TFile('qcdmc_stitched_qcdmc.root')
-datafile = TFile('jetht_run2015B_weighted_plots.root')
+datafile = TFile('jetht_40pbinv_weighted_dataplots.root')
 
 
 pdfup_response = pdffile.Get('2d_response_pdfup')
@@ -42,7 +42,7 @@ pdf_gen.Scale(1./pdf_gen.Integral())
 pdf_gen_softdrop.Scale(1./pdf_gen_softdrop.Integral())
 
 ##################################################################################################### Unfold Pythia8 with PDF-UP
-unfold_pdfup = RooUnfoldBayes(pdfup_response, pdf_reco, 3)
+unfold_pdfup = RooUnfoldBayes(pdfup_response, pdf_reco, 4)
 unfolded_pdfup = unfold_pdfup.Hreco()
 
 canvases_up = []
@@ -64,7 +64,7 @@ for i, canvas in enumerate(canvases_up) :
     canvas.SaveAs('pdfup_preplot'+str(i)+'.png')
 
 ##################################################################################################### Unfold Pythia8 with PDF-UP for SoftDrop
-unfold_pdfup_softdrop = RooUnfoldBayes(pdfup_response_softdrop, pdf_reco_softdrop, 3)
+unfold_pdfup_softdrop = RooUnfoldBayes(pdfup_response_softdrop, pdf_reco_softdrop, 4)
 unfolded_pdfup_softdrop = unfold_pdfup_softdrop.Hreco()
 
 canvases_up_softdrop = []
@@ -86,7 +86,7 @@ for i, canvas in enumerate(canvases_up_softdrop):
     canvas.SaveAs('pdfup_softdrop_preplot'+str(i)+'.png')
 
 ##################################################################################################### Unfold Pythia8 with PDF-Down 
-unfold_pdfdn = RooUnfoldBayes(pdfdn_response, pdf_reco, 3)
+unfold_pdfdn = RooUnfoldBayes(pdfdn_response, pdf_reco, 4)
 unfolded_pdfdn = unfold_pdfdn.Hreco()
 
 canvases_dn = []
@@ -109,7 +109,7 @@ for i, canvas in enumerate(canvases_dn):
     canvas.SaveAs('pdfdn_preplot'+str(i)+'.png')
 
 ##################################################################################################### Unfold Pythia8 with PDF-Down for SoftDrop
-unfold_pdfdn_softdrop = RooUnfoldBayes(pdfdn_response_softdrop, pdf_reco_softdrop, 3)
+unfold_pdfdn_softdrop = RooUnfoldBayes(pdfdn_response_softdrop, pdf_reco_softdrop, 4)
 unfolded_pdfdn_softdrop = unfold_pdfdn_softdrop.Hreco()
 
 canvases_dn_softdrop = []
@@ -131,100 +131,95 @@ for i, canvas in enumerate(canvases_dn):
     canvas.SaveAs('pdfdn_preplot_softdrop'+str(i)+'.png')
 
 ###################################################################################################### Unfold data with PDF-UP
-#unfold_data_pdfup = RooUnfoldBayes(pdfup_response, data_reco, 3)
-#unfolded_data_pdfup = unfold_data_pdfup.Hreco()
-#
-#canvases_data_up = []
-#namesreco_data_up = []
-#
-#legends_data_up = []
-#for x in range(0, 21):
-#    canvases_data_up.append(TCanvas("canvas_data_pdfup" + str(x)))
-#    namesreco_data_up.append(None)
-#    legends_data_up.append(TLegend(.7, .5, .9, .7))
-#
-#for i, canvas in enumerate(canvases_data_up) : 
-#    canvas.cd()
-#    namesreco_data_up[i] = unfolded_data_pdfup.ProjectionY('pdf_data_up' + str(i), i+1, i+1)
-#    namesreco_data_up[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-#    namesreco_data_up[i].Draw('hist')
-#    legends_data_up[i].AddEntry(namesreco_data_up[i], 'Reco_pdfup', 'l')
-#    legends_data_up[i].Draw()
-#    canvas.SaveAs('pdfup_data_preplot'+str(i)+'.png')
-#
+unfold_data_pdfup = RooUnfoldBayes(pdfup_response, data_reco, 4)
+unfolded_data_pdfup = unfold_data_pdfup.Hreco()
+
+canvases_data_up = []
+namesreco_data_up = []
+
+legends_data_up = []
+for x in range(0, 19):
+    canvases_data_up.append(TCanvas("canvas_data_pdfup" + str(x)))
+    namesreco_data_up.append(None)
+    legends_data_up.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_up) : 
+    canvas.cd()
+    namesreco_data_up[i] = unfolded_data_pdfup.ProjectionY('pdf_data_up' + str(i), i+1, i+1)
+    namesreco_data_up[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_up[i].Draw('hist')
+    legends_data_up[i].AddEntry(namesreco_data_up[i], 'Reco_pdfup', 'l')
+    legends_data_up[i].Draw()
+    canvas.SaveAs('pdfup_data_preplot'+str(i)+'.png')
+
 #################################################################################################### Unfold data with PDF-UP for SoftDrop 
-#unfold_data_pdfup_softdrop = RooUnfoldBayes(pdfup_response_softdrop, data_reco_softdrop, 3)
-#unfolded_data_pdfup_softdrop = unfold_data_pdfup_softdrop.Hreco()
-#
-#canvases_data_up_softdrop = []
-#namesreco_data_up_softdrop = []
-#legends_data_up_softdrop = []
-#for x in range(0, 21):
-#    canvases_data_up_softdrop.append(TCanvas("canvas_data_pdfup_softdrop"+str(x)))
-#    namesreco_data_up_softdrop.append(None)
-#    legends_data_up_softdrop.append(TLegend(.7, .5, .9, .7))
-#
-#for i, canvas in enumerate(canvases_data_up_softdrop):
-#    canvas.cd()
-#    namesreco_data_up_softdrop[i] = unfolded_data_pdfup_softdrop.ProjectionY('pdf_data_up_softdrop' + str(i), i+1, i+1)
-#    namesreco_data_up_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-#    namesreco_data_up_softdrop[i].Draw('hist')
-#    legends_data_up_softdrop[i].AddEntry(namesreco_data_up_softdrop[i], 'Reco_pdfup_sd', 'l')
-#    legends_data_up_softdrop[i].Draw()
-#    canvas.SaveAs('pdfup_data_softdrop_preplot'+str(i)+'.png')
-#
+unfold_data_pdfup_softdrop = RooUnfoldBayes(pdfup_response_softdrop, data_reco_softdrop, 4)
+unfolded_data_pdfup_softdrop = unfold_data_pdfup_softdrop.Hreco()
+
+canvases_data_up_softdrop = []
+namesreco_data_up_softdrop = []
+legends_data_up_softdrop = []
+for x in range(0, 19):
+    canvases_data_up_softdrop.append(TCanvas("canvas_data_pdfup_softdrop"+str(x)))
+    namesreco_data_up_softdrop.append(None)
+    legends_data_up_softdrop.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_up_softdrop):
+    canvas.cd()
+    namesreco_data_up_softdrop[i] = unfolded_data_pdfup_softdrop.ProjectionY('pdf_data_up_softdrop' + str(i), i+1, i+1)
+    namesreco_data_up_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_up_softdrop[i].Draw('hist')
+    legends_data_up_softdrop[i].AddEntry(namesreco_data_up_softdrop[i], 'Reco_pdfup_sd', 'l')
+    legends_data_up_softdrop[i].Draw()
+    canvas.SaveAs('pdfup_data_softdrop_preplot'+str(i)+'.png')
+
 ################################################################################################### Unfold data with PDF-DOWN
-#unfold_data_pdfdn = RooUnfoldBayes(pdfdn_response, data_reco, 3)
-#unfolded_data_pdfdn = unfold_data_pdfdn.Hreco()
-#
-#canvases_data_dn = []
-#namesreco_data_dn = []
-#namesgen_data_dn = []
-#legends_data_dn = []
-#
-#for x in range(0, 21):
-#    canvases_data_dn.append(TCanvas("canvas_data_pdfdn"+str(x)))
-#    namesreco_data_dn.append(None)
-#    legends_data_dn.append(TLegend(.7, .5, .9, .7))
-#
-#for i, canvas in enumerate(canvases_data_dn):
-#    canvas.cd()
-#    namesreco_data_dn[i] = unfolded_data_pdfdn.ProjectionY('pdf_data_dn' + str(i), i+1, i+1)
-#    namesreco_data_dn[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-#    namesreco_data_dn[i].Draw('hist')
-#    legends_data_dn[i].AddEntry(namesreco_data_dn[i], 'Reco_pdfdn', 'l')
-#    legends_data_dn[i].Draw()
-#    canvas.SaveAs('pdfdn_data_preplot'+str(i)+'.png')
-#
-#
+unfold_data_pdfdn = RooUnfoldBayes(pdfdn_response, data_reco, 4)
+unfolded_data_pdfdn = unfold_data_pdfdn.Hreco()
+
+canvases_data_dn = []
+namesreco_data_dn = []
+namesgen_data_dn = []
+legends_data_dn = []
+
+for x in range(0, 19):
+    canvases_data_dn.append(TCanvas("canvas_data_pdfdn"+str(x)))
+    namesreco_data_dn.append(None)
+    legends_data_dn.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_dn):
+    canvas.cd()
+    namesreco_data_dn[i] = unfolded_data_pdfdn.ProjectionY('pdf_data_dn' + str(i), i+1, i+1)
+    namesreco_data_dn[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_dn[i].Draw('hist')
+    legends_data_dn[i].AddEntry(namesreco_data_dn[i], 'Reco_pdfdn', 'l')
+    legends_data_dn[i].Draw()
+    canvas.SaveAs('pdfdn_data_preplot'+str(i)+'.png')
+
+
 ################################################################################################## Unfold data with PDF-Down for SoftDrop
-#unfold_data_pdfdn_softdrop = RooUnfoldBayes(pdfdn_response_softdrop, data_reco_softdrop, 3)
-#unfolded_data_pdfdn_softdrop = unfold_data_pdfdn_softdrop.Hreco()
-#
-#canvases_data_dn_softdrop = []
-#namesreco_data_dn_softdrop = []
-#legends_data_dn_softdrop = []
-#
-#for x in range(0, 21):
-#    canvases_data_dn_softdrop.append(TCanvas("canvas_data_pdfdn_softdrop"+str(x)))
-#    namesreco_data_dn_softdrop.append(None)
-#    legends_data_dn_softdrop.append(TLegend(.7, .5, .9, .7))
-#
-#for i, canvas in enumerate(canvases_data_dn_softdrop):
-#    canvas.cd()
-#    namesreco_data_dn_softdrop[i] = unfolded_data_pdfdn_softdrop.ProjectionY('pdf_data_dn_softdrop' + str(i), i+1, i+1)
-#    namesreco_data_dn_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-#    namesreco_data_dn_softdrop[i].Draw('hist')
-#    legends_data_dn_softdrop[i].AddEntry(namesreco_data_dn_softdrop[i], 'Reco_pdfdn_sd', 'l')
-#    legends_data_dn_softdrop[i].Draw()
-#    canvas.SaveAs('pdfdn_data_preplot_softdrop'+str(i)+'.png')
-#
-#
-#
-#
-#
-#
-#
+unfold_data_pdfdn_softdrop = RooUnfoldBayes(pdfdn_response_softdrop, data_reco_softdrop, 4)
+unfolded_data_pdfdn_softdrop = unfold_data_pdfdn_softdrop.Hreco()
+
+canvases_data_dn_softdrop = []
+namesreco_data_dn_softdrop = []
+legends_data_dn_softdrop = []
+
+for x in range(0, 19):
+    canvases_data_dn_softdrop.append(TCanvas("canvas_data_pdfdn_softdrop"+str(x)))
+    namesreco_data_dn_softdrop.append(None)
+    legends_data_dn_softdrop.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_dn_softdrop):
+    canvas.cd()
+    namesreco_data_dn_softdrop[i] = unfolded_data_pdfdn_softdrop.ProjectionY('pdf_data_dn_softdrop' + str(i), i+1, i+1)
+    namesreco_data_dn_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_dn_softdrop[i].Draw('hist')
+    legends_data_dn_softdrop[i].AddEntry(namesreco_data_dn_softdrop[i], 'Reco_pdfdn_sd', 'l')
+    legends_data_dn_softdrop[i].Draw()
+    canvas.SaveAs('pdfdn_data_preplot_softdrop'+str(i)+'.png')
+
+
 outfile = TFile("unfoldedpdf.root", 'RECREATE')
 outfile.cd()
 for i in range(0, 19):
@@ -232,8 +227,8 @@ for i in range(0, 19):
     namesreco_up_softdrop[i].Write()
     namesreco_dn[i].Write()
     namesreco_dn_softdrop[i].Write()
-    #namesreco_data_up[i].Write()
-    #namesreco_data_up_softdrop[i].Write()
-    #namesreco_data_dn[i].Write()
-    #namesreco_data_dn_softdrop[i].Write()
+    namesreco_data_up[i].Write()
+    namesreco_data_up_softdrop[i].Write()
+    namesreco_data_dn[i].Write()
+    namesreco_data_dn_softdrop[i].Write()
 outfile.Close()

@@ -2,10 +2,11 @@
 import ROOT
 ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
-from ROOT import gRandom, TH1, TH1D, cout
+from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
-from plot_tools import plotter, setup
+from plot_tools import plotter, setup, get_ptbins
 from optparse import OptionParser
+import pickle
 parser = OptionParser()
                                  
 (options, args) = parser.parse_args()
@@ -13,9 +14,26 @@ parser = OptionParser()
 f = ROOT.TFile('2DClosure.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
+theoryfile = ROOT.TFile('theory_predictionpt550.root')
+theory_plot = []
+theory_plot.append(theoryfile.Get('hist'))
 
-scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./9240.]
+scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
 
+##### WARNING ### WARNING #####<----------------------------------------------
+### This version of pickle  ###<----------------------------------------------
+### is not secure. NEVER use###<----------------------------------------------
+### it to open binary files ###<----------------------------------------------
+### that you did not create ###<----------------------------------------------
+###############################<----------------------------------------------
+RMS_vals = pickle.load(open("ungroomedJackKnifeRMS.p", "rb"))         ########
+RMS_vals_softdrop = pickle.load(open("softdropJackKnifeRMS.p", "rb")) ########
+###############################<----------------------------------------------
+### This version of pickle  ###<----------------------------------------------
+### is not secure. NEVER use###<----------------------------------------------
+### it to open binary files ###<----------------------------------------------
+### that you did not create ###<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
 
 jecdna = []
 jecupa = []
@@ -52,7 +70,7 @@ jmrdnfile = ROOT.TFile('2DClosure_jmrdn.root')
 jmrnomfile= ROOT.TFile('2DClosure_jmrnom.root')
 
 ##################################################################### Get uncertainty hists
-for i in range(0, 7):
+for i in range(0, 19):
     jecdna.append(jecdn.Get('pythia8_mass' + str(i)))
     jecupa.append(jecup.Get('pythia8_mass' + str(i)))
     jerdna.append(jerdn.Get('pythia8_mass' + str(i)))
@@ -77,28 +95,13 @@ ROOT.gStyle.SetTitleSize(30,"XYZ")
 ROOT.gStyle.SetTitleOffset(1.0, "XY")
 ROOT.gStyle.SetLabelFont(43,"XYZ")
 ROOT.gStyle.SetLabelSize(25,"XYZ")
+datacanvasesSD = []
+datacanvases= []
 
-################################################################################# generate canvases (change to loop to condense)
-uc2 = TCanvas("cdist140", "cdist140")
-uc3 = TCanvas("cdist200", "cdist200")
-uc4 = TCanvas("cdist260", "cdist260")
-uc5 = TCanvas("cdist320", "cdist320")
-uc6 = TCanvas("cdist400", "cdist400")
-uc7 = TCanvas("cdist450", "cdist450")
-uc8 = TCanvas("cdist500", "cdist500")
-
-ucsd2 = TCanvas("cdist140SD","cdist140SD")
-ucsd3 = TCanvas("cdist200SD","cdist200SD")
-ucsd4 = TCanvas("cdist260SD","cdist260SD")
-ucsd5 = TCanvas("cdist320SD","cdist320SD")
-ucsd6 = TCanvas("cdist400SD","cdist400SD")
-ucsd7 = TCanvas("cdist450SD","cdist450SD")
-ucsd8 = TCanvas("cdist500SD","cdist500SD")
-
-datacanvasesSD = [ucsd2, ucsd3, ucsd4, ucsd5, ucsd6, ucsd7, ucsd8]
-datacanvases= [uc2, uc3, uc4, uc5, uc6, uc7, uc8]
-
-
+################################################################################# generate canvases 
+for x in range(0, 19):
+    datacanvases.append(TCanvas("cdist"+str(x), "cdist"+str(x)))
+    datacanvasesSD.append(TCanvas("cdist" + str(x) + "SD", "cdist"+str(x)+"SD"))
 
 ######################################################################################### Get Central Value hists and generate legends etc
 
@@ -113,7 +116,7 @@ alegendsSD = []
 atlxSD = []
 atlxSDpt = []
 comparisons = []
-for x in range(0, 7):
+for x in range(0, 19):
     datalistSD.append(f.Get('pythia8_massSD'+str(x)))
     datalist.append(f.Get('pythia8_mass'+str(x)))
     MCtruth.append(f.Get('genmass' + str(x)))
@@ -129,7 +132,7 @@ for x in range(0, 7):
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
 ps_differences_softdrop = []
-for i in range(0, 7):
+for i in range(0, 19):
     temp_diff = []
     temp_softdrop_diff = []
     ps.append(parton_shower.Get('pythia8_unfolded_by_pythia6'+str(i)))
@@ -161,7 +164,7 @@ comparisons_softdrop = []
 complegends = []
 complegendssd = []
 
-for i in range(0, 7):
+for i in range(0, 19):
 #    complegends.append(ROOT.TLegend(.5, .7, .85, .85))
 #    complegendssd.append(ROOT.TLegend(.5, .7, .85, .85))
 #    comparisons.append(ROOT.TCanvas('comp'+str(i)))
@@ -245,5 +248,5 @@ setup(datacanvasesSD, padsSD)
 
 histstokeep = []
 
-plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldedclosure_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, ptbins, keephists=histstokeep)
-plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, ptbins, softdrop="MMDT Beta=0", keephists=histstokeep)
+plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldedclosure_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
+plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)

@@ -1,5 +1,8 @@
+#!/usr/bin/env bash
+
 python 2Dunfold_pdf.py
 python 2Dunfold_PS.py
+python unfold_jackknife.py
 
 python 2Dunfold_data.py
 python 2Dunfold_data.py --extension _jerup

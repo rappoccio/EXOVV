@@ -43,8 +43,8 @@ pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 
 
 
 
-unfold = RooUnfoldBayes(response, reco, 3)
-unfoldSD = RooUnfoldBayes(responseSD, recoSD, 3)
+unfold = RooUnfoldBayes(response, reco, 4)
+unfoldSD = RooUnfoldBayes(responseSD, recoSD, 4)
 
 
 reco_unfolded = unfold.Hreco()

@@ -2,16 +2,38 @@
 import ROOT
 ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
-from ROOT import gRandom, TH1, TH1D, cout
+from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
-from plot_tools import plotter, setup
+from plot_tools import plotter, setup, get_ptbins
 from optparse import OptionParser
+import pickle
 parser = OptionParser()
+                                 
 (options, args) = parser.parse_args()
 
-
 f = ROOT.TFile('2DData.root')
+parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
+theoryfile = ROOT.TFile('theory_predictionpt550.root')
+theory_plot = []
+theory_plot.append(theoryfile.Get('hist'))
+
+scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
+
+##### WARNING ### WARNING #####<----------------------------------------------
+### This version of pickle  ###<----------------------------------------------
+### is not secure. NEVER use###<----------------------------------------------
+### it to open binary files ###<----------------------------------------------
+### that you did not create ###<----------------------------------------------
+###############################<----------------------------------------------
+RMS_vals = pickle.load(open("ungroomeddataJackKnifeRMS.p", "rb"))         ########
+RMS_vals_softdrop = pickle.load(open("softdropdataJackKnifeRMS.p", "rb")) ########
+###############################<----------------------------------------------
+### This version of pickle  ###<----------------------------------------------
+### is not secure. NEVER use###<----------------------------------------------
+### it to open binary files ###<----------------------------------------------
+### that you did not create ###<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
 
 jecdna = []
 jecupa = []
@@ -38,12 +60,6 @@ ps_softdrop = []
 ps_differences = []
 ps_differences_softdrop = []
 
-
-scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./9240.]
-
-
-ps_differences = []
-ps_differences_softdrop = []
 jecdn = ROOT.TFile('2DData_jecdn.root')
 jecup = ROOT.TFile('2DData_jecup.root')
 jerdn = ROOT.TFile('2DData_jerdn.root')
@@ -54,7 +70,7 @@ jmrdnfile = ROOT.TFile('2DData_jmrdn.root')
 jmrnomfile= ROOT.TFile('2DData_jmrnom.root')
 
 ##################################################################### Get uncertainty hists
-for i in range(0, 7):
+for i in range(0, 19):
     jecdna.append(jecdn.Get('mass' + str(i)))
     jecupa.append(jecup.Get('mass' + str(i)))
     jerdna.append(jerdn.Get('mass' + str(i)))
@@ -73,33 +89,19 @@ for i in range(0, 7):
     jmrdnaSD.append(jmrdnfile.Get('massSD' + str(i)))
     jmrnomaSD.append(jmrnomfile.Get('massSD' + str(i)))
 
-
 ROOT.gStyle.SetOptStat(000000)
 ROOT.gStyle.SetTitleFont(43,"XYZ")
 ROOT.gStyle.SetTitleSize(30,"XYZ")
 ROOT.gStyle.SetTitleOffset(1.0, "XY")
 ROOT.gStyle.SetLabelFont(43,"XYZ")
 ROOT.gStyle.SetLabelSize(25,"XYZ")
+datacanvasesSD = []
+datacanvases= []
 
-################################################################################# generate canvases (change to loop to condense)
-uc2 = TCanvas("cdist140", "cdist140")
-uc3 = TCanvas("cdist200", "cdist200")
-uc4 = TCanvas("cdist260", "cdist260")
-uc5 = TCanvas("cdist320", "cdist320")
-uc6 = TCanvas("cdist400", "cdist400")
-uc7 = TCanvas("cdist450", "cdist450")
-uc8 = TCanvas("cdist500", "cdist500")
-
-ucsd2 = TCanvas("cdist140SD","cdist140SD")
-ucsd3 = TCanvas("cdist200SD","cdist200SD")
-ucsd4 = TCanvas("cdist260SD","cdist260SD")
-ucsd5 = TCanvas("cdist320SD","cdist320SD")
-ucsd6 = TCanvas("cdist400SD","cdist400SD")
-ucsd7 = TCanvas("cdist450SD","cdist450SD")
-ucsd8 = TCanvas("cdist500SD","cdist500SD")
-
-datacanvasesSD = [ucsd2, ucsd3, ucsd4, ucsd5, ucsd6, ucsd7, ucsd8]
-datacanvases= [uc2, uc3, uc4, uc5, uc6, uc7, uc8]
+################################################################################# generate canvases 
+for x in range(0, 19):
+    datacanvases.append(TCanvas("ddist"+str(x), "ddist"+str(x)))
+    datacanvasesSD.append(TCanvas("ddist" + str(x) + "SD", "ddist"+str(x)+"SD"))
 
 ######################################################################################### Get Central Value hists and generate legends etc
 
@@ -114,7 +116,7 @@ alegendsSD = []
 atlxSD = []
 atlxSDpt = []
 comparisons = []
-for x in range(0, 7):
+for x in range(0, 19):
     datalistSD.append(f.Get('massSD'+str(x)))
     datalist.append(f.Get('mass'+str(x)))
     MCtruth.append(f.Get('genmass' + str(x)))
@@ -127,13 +129,10 @@ for x in range(0, 7):
     alegendsSD.append(TLegend(.5, .7, .85, .85))
     datacanvases[x].SetLeftMargin(0.15)
     datacanvasesSD[x].SetLeftMargin(0.15)
-
 ################################################################################################################# Get Parton Showering Unc.
-parton_shower = ROOT.TFile('PS_hists.root')
-compare_canvases = []
-compare_legends = []
-
-for i in range(0, 7):
+ps_differences = []
+ps_differences_softdrop = []
+for i in range(0, 19):
     temp_diff = []
     temp_softdrop_diff = []
     ps.append(parton_shower.Get('data_unfolded_by_pythia6'+str(i)))
@@ -141,10 +140,8 @@ for i in range(0, 7):
       
     temp_unc = (ps[i] - datalist[i])
     temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
-
     temp_unc.Scale(scales[i])
     temp_softdrop_unc.Scale(scales[i])
-
 #take the differences in the bins between the pythia 8 unfolded with pythia 8 and the pythia 8 unfolded with pythia 6
     for ibin in xrange(1,temp_unc.GetNbinsX()):
         temp_diff.append(abs(temp_unc.GetBinContent(ibin)))
@@ -152,7 +149,8 @@ for i in range(0, 7):
     ps_differences.append(temp_diff)
     ps_differences_softdrop.append(temp_softdrop_diff)
 
-##################################################################################################################### PDF differences and PDF differences comparisons 
+
+############################################################################## PDF differences and PDF differences comparisons 
 pdf_differences = []
 pdf_differences_softdrop = []
 
@@ -166,7 +164,7 @@ comparisons_softdrop = []
 complegends = []
 complegendssd = []
 
-for i in range(0, 7):
+for i in range(0, 19):
 #    complegends.append(ROOT.TLegend(.5, .7, .85, .85))
 #    complegendssd.append(ROOT.TLegend(.5, .7, .85, .85))
 #    comparisons.append(ROOT.TCanvas('comp'+str(i)))
@@ -213,10 +211,6 @@ for i in range(0, 7):
 #    print "softdrop now"
 #    print  temp_softdrop_pdf_diff
 
-
-
-
-
 # Canvases
 ptbins = ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} >760 GeV}']
 
@@ -254,7 +248,5 @@ setup(datacanvasesSD, padsSD)
 
 histstokeep = []
 
-
-
-plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldeddata_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, ptbins, keephists=histstokeep)
-plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldeddata_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, ptbins, softdrop="MMDT Beta=0", keephists=histstokeep)
+plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldeddata_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
+plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldeddata_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
