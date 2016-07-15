@@ -21,7 +21,7 @@ parser.add_option('--extension', action ='store', type = 'string',
 (options, args) = parser.parse_args()
 
 
-myfile = TFile('qcdmc_stitched_qcdmc.root')
+myfile = TFile('responses_otherway_qcdmc.root')
 
 response = myfile.Get('2d_response' + options.extension )
 outtext = options.extension
@@ -82,33 +82,33 @@ for i in range(0, 19):
 
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
-    ihist = namesreco[i] = reco_unfolded.ProjectionY('pythia8_mass' + str(i), i+1, i+1)
+    ihist = namesreco[i] = reco_unfolded.ProjectionX('pythia8_mass' + str(i), i+1, i+1)
     keepHists.append( ihist )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesreco[i].Draw('hist')
-    ihist = namesgen[i] = truth.ProjectionY('genmass' + str(i), i+1 , i+1)
+    ihist = namesgen[i] = truth.ProjectionX('genmass' + str(i), i+1 , i+1)
     keepHists.append( ihist) 
     namesgen[i].SetLineColor(2)
     namesgen[i].Draw('same hist')
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
     legends[i].AddEntry(namesgen[i], 'Gen', 'l')
     legends[i].Draw()
-    canvas.SaveAs('unfolded_closure_preplotter_'+pt_bin[i] + options.extension + '.png')
+    canvas.SaveAs('hists/unfolded_closure_preplotter_'+pt_bin[i] + options.extension + '.png')
 
 for i, canvas in enumerate(canvasesSD):
     canvas.cd()
-    ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionY('pythia8_massSD' + str(i), i+1, i+1)
+    ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionX('pythia8_massSD' + str(i), i+1, i+1)
     keepHists.append(ihist)
     namesrecoSD[i].SetTitle('SD Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesrecoSD[i].Draw('hist')
-    ihist = namesgenSD[i] = truthSD.ProjectionY('genmassSD' + str(i), i+1, i+1)
+    ihist = namesgenSD[i] = truthSD.ProjectionX('genmassSD' + str(i), i+1, i+1)
     keepHists.append(ihist)
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')
     legendsSD[i].AddEntry(namesrecoSD[i], 'SD Reco', 'l')
     legendsSD[i].AddEntry(namesgenSD[i], 'SD Gen', 'l')
     legendsSD[i].Draw()
-    canvas.SaveAs('unfolded_closure_softdrop_preplotter_' + pt_bin[i] + options.extension + '.png')    
+    canvas.SaveAs('hists/unfolded_closure_softdrop_preplotter_' + pt_bin[i] + options.extension + '.png')    
 
 
 outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')

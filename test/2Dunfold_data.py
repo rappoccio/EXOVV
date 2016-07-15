@@ -17,8 +17,8 @@ parser.add_option('--extension', action ='store', type = 'string',
        
 (options, args) = parser.parse_args()
 
-mcfile = TFile('qcdmc_stitched_qcdmc.root')
-datafile = TFile('jetht_40pbinv_weighted_dataplots.root')
+mcfile = TFile('responses_otherway_qcdmc.root')
+datafile = TFile('jetht_40pbinv_weighted_dataplots_otherway.root')
 
 
 outfile = TFile('2DData' + options.extension + '.root', 'RECREATE')
@@ -74,29 +74,29 @@ pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 
 
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
-    namesreco[i] = reco_unfolded.ProjectionY('mass' + str(i), i+1, i+1)
+    namesreco[i] = reco_unfolded.ProjectionX('mass' + str(i), i+1, i+1)
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco[i].Draw('hist')
-    namesgen[i] = truth.ProjectionY('genmass' + str(i), i+1, i+1)
+    namesgen[i] = truth.ProjectionX('genmass' + str(i), i+1, i+1)
     namesgen[i].SetLineColor(4)
     namesgen[i].Draw('same hist')
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
     legends[i].AddEntry(namesgen[i], 'Gen', 'l')
     legends[i].Draw()
-    canvas.SaveAs('unfolded_results_preplotter_'+ outtext +str(i)+'.png')
+    canvas.SaveAs('hists/unfolded_results_preplotter_'+ outtext +str(i)+'.png')
 
 for i, canvas in enumerate(canvasesSD) : 
     canvas.cd()
-    namesrecoSD[i] = recoSD_unfolded.ProjectionY('massSD' + str(i), i+1, i+1)
+    namesrecoSD[i] = recoSD_unfolded.ProjectionX('massSD' + str(i), i+1, i+1)
     namesrecoSD[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesrecoSD[i].Draw('hist')
-    namesgenSD[i] = truthSD.ProjectionY('genmassSD' + str(i), i+1, i+1)
+    namesgenSD[i] = truthSD.ProjectionX('genmassSD' + str(i), i+1, i+1)
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')
     legendsSD[i].AddEntry(namesrecoSD[i], 'SD Reco', 'l')
     legendsSD[i].AddEntry(namesgenSD[i], 'SD Gen', 'l')
     legendsSD[i].Draw()
-    canvas.SaveAs('unfolded_results_softdrop_preplotter_'+ outtext +str(i)+'.png')
+    canvas.SaveAs('hists/unfolded_results_softdrop_preplotter_'+ outtext +str(i)+'.png')
     
 outfile.cd()
 for hists in namesreco:
