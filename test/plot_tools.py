@@ -147,10 +147,11 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         
         ####################################################################################### Gen Drawn Here
         MC_list[i].SetLineColor(2)
+        MC_list[i].SetLineWidth(3)
         MC_list[i].Draw( "hist SAME" )
     
         ####################################################################################### Latex Drawn Here
-        latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 40 pb^{-1} (13 TeV)")
+        latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
         latexpt_list[i].DrawLatex(0.200, 0.779, ptbins_dict[i])
     
         ####################################################################################### Legends Filled
@@ -170,6 +171,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datcopy.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
         datcopy.GetYaxis().SetTitleOffset(1.0)
         datcopy.GetYaxis().SetTitleSize(30)
+        datcopy.SetMarkerStyle(0)
         # this stuff here is parton shower, bad name, ------------------------------------------> NEEDS REFACTORING
         datcopycopy = hRecoCopy.Clone()
         datcopycopy.SetName(hRecoCopy.GetName()+"_copyofcopy")
@@ -177,6 +179,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datcopycopy.GetYaxis().SetTitleOffset(1.0)
         datcopycopy.GetYaxis().SetLabelOffset(0.0001)
         datcopycopy.GetYaxis().SetTitleSize(30)
+        datcopycopy.SetMarkerStyle(0)
         
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
@@ -184,6 +187,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datPDF.GetYaxis().SetTitleOffset(1.0)
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(30)
+        datPDF.SetMarkerStyle(0)
         
         datJMR = hRecoJMR.Clone()
         datJMR.SetName(hRecoJMR.GetName()+"_jmrcopy")
@@ -191,6 +195,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datJMR.GetYaxis().SetTitleOffset(1.0)
         datJMR.GetYaxis().SetLabelOffset(0.0001)
         datJMR.GetYaxis().SetTitleSize(30)
+        datJMR.SetMarkerStyle(0)
 
         datRMS = hRMS.Clone()
         datRMS.SetName(hRecoJMR.GetName()+"_jmrcopy")
@@ -198,6 +203,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.GetYaxis().SetTitleOffset(1.0)
         datRMS.GetYaxis().SetLabelOffset(0.0001)
         datRMS.GetYaxis().SetTitleSize(30)
+        datRMS.SetMarkerStyle(0)
         
         ##################################################################################### divide error by bin content and set to unity
         keephists.append( [datcopy,trueCopy, datPDF, datJMR])
@@ -285,6 +291,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.GetXaxis().SetLabelSize(20)
         trueCopy.SetLineStyle(2)
         trueCopy.SetLineColor(2)
+        trueCopy.SetLineWidth(3)
         
         datcopy.GetXaxis().SetTitleOffset(2.5)
         datcopycopy.GetXaxis().SetTitleOffset(2.5)
