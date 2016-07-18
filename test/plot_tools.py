@@ -11,6 +11,10 @@ def get_ptbins():
 def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
+    theoryfile = ROOT.TFile("theory_predictions.root")
+    theorylist = []
+    for h in xrange(0, 18):
+        theorylist.append( theoryfile.Get("histSD1_"+str(h)))
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
         pads_list[i][0].SetLogy()
@@ -96,6 +100,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetAxisRange(1e-15, 1, "Y")
         hRecoPDF.SetFillColor(ROOT.kOrange+1)
+        hRecoPDF.Scale(1.0/hRecoPDF.Integral())
         hRecoPDF.Draw("E2 same")
         #hRecoPDF.Draw("E same")
         ####################################################################################### PS Drawn Here
@@ -107,6 +112,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy.SetMarkerStyle(20)
         hRecoCopy.SetAxisRange(1e-15, 1, "Y")
         hRecoCopy.SetFillColor(ROOT.kAzure+2)
+        hRecoCopy.Scale(1.0/hRecoCopy.Integral())
         hRecoCopy.Draw("E2 same")
         #hRecoCopy.Draw("E same")
         ####################################################################################### JMR Drawn Here
@@ -118,6 +124,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoJMR.SetMarkerStyle(20)
         hRecoJMR.SetAxisRange(1e-15, 1, "Y")
         hRecoJMR.SetFillColor(ROOT.kGreen)
+        hRecoJMR.Scale(1.0/hRecoJMR.Integral())
         hRecoJMR.Draw("E2 same")
         #hRecoJMR.Draw("E same")    
         ####################################################################################### JES and JER Drawn Here
@@ -129,6 +136,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hReco.SetMarkerStyle(20)
         hReco.SetAxisRange( 1e-15, 1, "Y")
         hReco.SetFillColor(ROOT.kYellow)
+        hReco.Scale(1.0/hReco.Integral())
         hReco.Draw("E2 same")
         hReco.Draw("E same")
         keephists.append([hReco, hRecoPDF])
@@ -141,6 +149,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRMS.SetMarkerStyle(20)
         hRMS.SetAxisRange( 1e-15, 1, "Y")
         hRMS.SetFillColor(ROOT.kMagenta + 2)
+        hRMS.Scale(1.0/hRMS.Integral())
         hRMS.Draw("E2 same")
         hRMS.Draw("E same")
         keephists.append(hRMS)
@@ -148,6 +157,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         ####################################################################################### Gen Drawn Here
         MC_list[i].SetLineColor(2)
         MC_list[i].SetLineWidth(3)
+        MC_list[i].Scale(1.0/MC_list[i].Integral())
         MC_list[i].Draw( "hist SAME" )
     
         ####################################################################################### Latex Drawn Here
@@ -162,6 +172,15 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         legends_list[i].AddEntry(hReco, 'JES+JER', 'f')
         legends_list[i].AddEntry(hRMS, 'Stat', 'f')
         legends_list[i].Draw()
+        if i < 18:
+            theory = theorylist[i]
+            theory.Scale(1.0/theory.Integral())
+            #theory.Scale(scales[i])
+            theory.SetLineColor(8)
+            theory.SetLineWidth(3)
+            theory.Draw("hist same")
+            legends_list[i].AddEntry(theory, 'Theory Prediction', 'l')
+            legends_list[i].Draw("same")
         ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
