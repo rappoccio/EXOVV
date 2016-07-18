@@ -125,8 +125,8 @@ for x in range(0, 19):
     atlxpt.append(ROOT.TLatex())
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
-    alegends.append(TLegend(.5, .25, .9, .85))
-    alegendsSD.append(TLegend(.5, .25, .9, .85))
+    alegends.append(TLegend(.6, .35, .9, .85))
+    alegendsSD.append(TLegend(.6, .35, .9, .85))
     datacanvases[x].SetLeftMargin(0.15)
     datacanvasesSD[x].SetLeftMargin(0.15)
 ################################################################################################################# Get Parton Showering Unc.
