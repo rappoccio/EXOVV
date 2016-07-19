@@ -17,7 +17,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
-        pads_list[i][0].SetLogy()
+        #pads_list[i][0].SetLogy()
         data_list[i].UseCurrentStyle()
         MC_list[i].UseCurrentStyle()
         data_list[i].Scale(scales[i])
@@ -100,7 +100,17 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kOrange+1)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral())
-        hRecoPDF.SetAxisRange(1e-5, 1, 'Y')
+#hRecoPDF.SetAxisRange(1e-5, 1, 'Y')
+        if i == 18:
+            hRecoPDF.SetAxisRange(0,2000,"X")
+        elif i > 11 and i < 18:
+            hRecoPDF.SetAxisRange(0,1200, "X")
+        elif i > 7 and i < 12:
+            hRecoPDF.SetAxisRange(0,900, "X")
+        elif i > 3 and i < 8:
+            hRecoPDF.SetAxisRange(0,600, "X")
+        elif i < 4:
+            hRecoPDF.SetAxisRange(0,400,"X")
         hRecoPDF.Draw("E2")
         #hRecoPDF.Draw("E same")
         ####################################################################################### PS Drawn Here
@@ -111,7 +121,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy.GetYaxis().SetLabelSize(20)
         hRecoCopy.SetMarkerStyle(20)
         hRecoCopy.Scale(1.0/hRecoCopy.Integral())
-        hRecoCopy.SetAxisRange(1e-5, 1, 'Y')
+#hRecoCopy.SetAxisRange(1e-5, 1, 'Y')
         hRecoCopy.SetFillColor(ROOT.kAzure+2)
         hRecoCopy.Draw("E2 same")
         #hRecoCopy.Draw("E same")
@@ -123,7 +133,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoJMR.GetYaxis().SetLabelSize(20)
         hRecoJMR.SetMarkerStyle(20)
         hRecoJMR.Scale(1.0/hRecoJMR.Integral())
-        hRecoJMR.SetAxisRange(1e-5, 1, 'Y')
+#hRecoJMR.SetAxisRange(1e-5, 1, 'Y')
         hRecoJMR.SetFillColor(ROOT.kGreen)
         hRecoJMR.Draw("E2 same")
         #hRecoJMR.Draw("E same")    
@@ -158,13 +168,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         MC_list[i].SetLineColor(2)
         MC_list[i].SetLineWidth(3)
         MC_list[i].Scale(1.0/MC_list[i].Integral())
-        MC_list[i].SetAxisRange(1e-5, 1, 'Y')
+#MC_list[i].SetAxisRange(1e-5, 1, 'Y')
         MC_list[i].Draw( "hist SAME" )
     
         ####################################################################################### Latex Drawn Here
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
         latexpt_list[i].DrawLatex(0.250, 0.820, ptbins_dict[i])
-    
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(MC_list[i], 'Pythia8'+softdrop, 'l')
         legends_list[i].AddEntry(hRecoJMR, 'JMR', 'f')
@@ -179,7 +188,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             #theory.Scale(scales[i])
             theory.SetLineColor(8)
             theory.SetLineWidth(3)
-            theory.SetAxisRange(1e-5, 1, "Y")
+            #theory.SetAxisRange(1e-5, 1, "Y")
             theory.Draw("hist same")
             legends_list[i].AddEntry(theory, 'Theory Prediction', 'l')
             legends_list[i].Draw("same")
@@ -329,7 +338,18 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
 
 
         ######################################################################## Draw and save
-        datPDF.Draw('e2') 
+
+        if i == 18:
+            datPDF.SetAxisRange(0,2000,"X")
+        elif i > 11 and i < 18:
+            datPDF.SetAxisRange(0,1200, "X")
+        elif i > 7 and i < 12:
+            datPDF.SetAxisRange(0,900, "X")
+        elif i > 3 and i < 8:
+            datPDF.SetAxisRange(0,600, "X")
+        elif i < 4:
+            datPDF.SetAxisRange(0,400,"X")
+        datPDF.Draw('e2')
         datcopycopy.Draw('e2 same')
         datJMR.Draw('e2 same')
         datcopy.Draw('e2 same')
@@ -364,7 +384,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     for i, canvas in enumerate(canvas_list):
         pads_list[i][0].cd()
-        pads_list[i][0].SetLogy()
+        #pads_list[i][0].SetLogy()
         for ibin in xrange(1, reco_list[i].GetNbinsX()):
             reco_list[i].SetBinContent(ibin, reco_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin])
             reco_list[i].SetBinError(ibin, reco_list[i].GetBinError(ibin) * 1./mbinwidths[ibin])
