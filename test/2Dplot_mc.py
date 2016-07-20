@@ -1,6 +1,6 @@
 #from ROOT import *
 import ROOT
-ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
@@ -126,7 +126,7 @@ for x in range(0, 19):
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
     alegends.append(TLegend(.5, .25, .9, .85))
-    alegendsSD.append(TLegend(.5, .25, .9, .85))
+    alegendsSD.append(TLegend(.48, .23, .9, .85))
     datacanvases[x].SetLeftMargin(0.15)
     datacanvasesSD[x].SetLeftMargin(0.15)
 ################################################################################################################# Get Parton Showering Unc.

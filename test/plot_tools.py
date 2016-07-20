@@ -18,6 +18,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
         #pads_list[i][0].SetLogy()
+        pads_list[i][0].SetLogx()
         data_list[i].UseCurrentStyle()
         MC_list[i].UseCurrentStyle()
         data_list[i].Scale(scales[i])
@@ -100,6 +101,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kOrange+1)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral())
+        hRecoPDF.Scale(1.0/(20.*hRecoPDF.GetBinContent(7)))
 #hRecoPDF.SetAxisRange(1e-5, 1, 'Y')
         if i == 18:
             hRecoPDF.SetAxisRange(0,2000,"X")
@@ -121,6 +123,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy.GetYaxis().SetLabelSize(20)
         hRecoCopy.SetMarkerStyle(20)
         hRecoCopy.Scale(1.0/hRecoCopy.Integral())
+        hRecoCopy.Scale(1.0/(20.*hRecoCopy.GetBinContent(7)))
 #hRecoCopy.SetAxisRange(1e-5, 1, 'Y')
         hRecoCopy.SetFillColor(ROOT.kAzure+2)
         hRecoCopy.Draw("E2 same")
@@ -133,6 +136,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoJMR.GetYaxis().SetLabelSize(20)
         hRecoJMR.SetMarkerStyle(20)
         hRecoJMR.Scale(1.0/hRecoJMR.Integral())
+        hRecoJMR.Scale(1.0/(20.*hRecoJMR.GetBinContent(7)))
 #hRecoJMR.SetAxisRange(1e-5, 1, 'Y')
         hRecoJMR.SetFillColor(ROOT.kGreen)
         hRecoJMR.Draw("E2 same")
@@ -146,6 +150,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hReco.SetMarkerStyle(20)
         hReco.SetFillColor(ROOT.kYellow)
         hReco.Scale(1.0/hReco.Integral())
+        hReco.Scale(1.0/(20.*hReco.GetBinContent(7)))
         hReco.SetAxisRange( 1e-5, 1, 'Y')
         hReco.Draw("E2 same")
         hReco.Draw("E same")
@@ -159,6 +164,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRMS.SetMarkerStyle(20)
         hRMS.SetFillColor(ROOT.kMagenta + 2)
         hRMS.Scale(1.0/hRMS.Integral())
+        hRMS.Scale(1.0/hRMS.Integral(7,8))
+        hRMS.Scale(1.0/(20.*hRMS.GetBinContent(7)))
         hRMS.SetAxisRange( 1e-5, 1, 'Y')
         hRMS.Draw("E2 same")
         hRMS.Draw("E same")
@@ -168,6 +175,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         MC_list[i].SetLineColor(2)
         MC_list[i].SetLineWidth(3)
         MC_list[i].Scale(1.0/MC_list[i].Integral())
+        MC_list[i].Scale(1.0/(20.*MC_list[i].GetBinContent(7)))
 #MC_list[i].SetAxisRange(1e-5, 1, 'Y')
         MC_list[i].Draw( "hist SAME" )
     
@@ -185,16 +193,21 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         if i < 18:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
+            theory.Scale(1.0/(20.*theory.GetBinContent(7)))
             #theory.Scale(scales[i])
-            theory.SetLineColor(8)
+            theory.SetLineColor(ROOT.kMagenta - 4)
             theory.SetLineWidth(3)
             #theory.SetAxisRange(1e-5, 1, "Y")
             theory.Draw("hist same")
-            legends_list[i].AddEntry(theory, 'Theory Prediction', 'l')
+            legends_list[i].AddEntry(theory, "NNLL' + LO (Frye et al)", 'l')
             legends_list[i].Draw("same")
         ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
+
+        if i < 18:
+            theorycopy = theory.Clone()
+            theorycopy.SetName( theory.GetName() + "_copy" )
         
         datcopy = hReco.Clone()
         datcopy.SetName( datcopy.GetName() + "_copy" )
@@ -257,13 +270,21 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             datRMS.SetBinContent(ibin, 1.0)
         ########################################################################################################## Take Ratio
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
+        if i < 18:
+            theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
+        pads_list[i][1].SetLogx()
         trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
         trueCopy.GetYaxis().SetTitleOffset(1.0)
-        
+        if i < 18:
+            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theorycopy.UseCurrentStyle()
+            theorycopy.GetXaxis().SetTitleOffset(2)
+            theorycopy.GetYaxis().SetTitleOffset(1.0)
+    
         datcopy.SetMinimum(0)
         datcopy.SetMaximum(2)
         datcopy.GetYaxis().SetNdivisions(2,4,0,False)
@@ -322,7 +343,11 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy.SetLineStyle(2)
         trueCopy.SetLineColor(2)
         trueCopy.SetLineWidth(3)
-        
+        if i < 18:
+            theorycopy.SetLineStyle(2)
+            theorycopy.SetLineColor(ROOT.kMagenta - 4)
+            theorycopy.SetLineWidth(3)
+    
         datcopy.GetXaxis().SetTitleOffset(2.5)
         datcopycopy.GetXaxis().SetTitleOffset(2.5)
         datPDF.GetXaxis().SetTitleOffset(2.5)
@@ -356,6 +381,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.Draw('e2 same')
         datcopy.SetMarkerStyle(0)
         trueCopy.Draw("hist same")
+        if i < 18:
+            theorycopy.Draw("hist same")
         keephists.append([datcopy, datPDF])
         pads_list[i][0].Update()
         pads_list[i][0].RedrawAxis()
