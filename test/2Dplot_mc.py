@@ -4,19 +4,22 @@ ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
-from plot_tools import plotter, setup, get_ptbins
+from plot_tools import plotter, setup, get_ptbins, plot_OneBand
 from optparse import OptionParser
 import pickle
 parser = OptionParser()
+
+parser.add_option('--oneband', action='store_true',
+                  default = False,
+                  dest='oneband',
+                  help='one band plots')
                                  
 (options, args) = parser.parse_args()
 
 f = ROOT.TFile('2DClosure.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
-theoryfile = ROOT.TFile('theory_predictionpt550.root')
-theory_plot = []
-theory_plot.append(theoryfile.Get('hist'))
+
 
 scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
 
@@ -54,6 +57,26 @@ jmrdnaSD = []
 jmrupaSD = []
 jmrnomaSD = []
 
+
+jecdnaF = []
+jecupaF = []
+jerdnaF = []
+jerupaF = []
+jernomaF = []
+jmrdnaF = []
+jmrupaF = []
+jmrnomaF = []
+
+
+jecdnaFSD = []
+jecupaFSD = []
+jerdnaFSD = []
+jerupaFSD = []
+jernomaFSD = []
+jmrdnaFSD = []
+jmrupaFSD = []
+jmrnomaFSD = []
+
 ps = []
 ps_softdrop = []
 
@@ -89,6 +112,25 @@ for i in range(0, 19):
     jmrdnaSD.append(jmrdnfile.Get('pythia8_massSD' + str(i)))
     jmrnomaSD.append(jmrnomfile.Get('pythia8_massSD' + str(i)))
 
+    jecdnaF.append(jecdn.Get('pythia8_mass'  + str(i)))
+    jecupaF.append(jecup.Get('pythia8_mass'  + str(i)))
+    jerdnaF.append(jerdn.Get('pythia8_mass'  + str(i)))
+    jerupaF.append(jerup.Get('pythia8_mass'  + str(i)))
+    jernomaF.append(jernom.Get('pythia8_mass' +str(i)))
+    jmrupaF.append(jmrupfile.Get('pythia8_mass'  + str(i)))
+    jmrdnaF.append(jmrdnfile.Get('pythia8_mass'  + str(i)))
+    jmrnomaF.append(jmrnomfile.Get('pythia8_mass'  + str(i)))
+    
+    jecdnaFSD.append(jecdn.Get('pythia8_mass'  + str(i)))
+    jecupaFSD.append(jecup.Get('pythia8_mass'  + str(i)))
+    jerdnaFSD.append(jerdn.Get('pythia8_mass'  + str(i)))
+    jerupaFSD.append(jerup.Get('pythia8_mass'  + str(i)))
+    jernomaFSD.append(jernom.Get('pythia8_mass' +str(i)))
+    jmrupaFSD.append(jmrupfile.Get('pythia8_mass'  + str(i)))
+    jmrdnaFSD.append(jmrdnfile.Get('pythia8_mass'  + str(i)))
+    jmrnomaFSD.append(jmrnomfile.Get('pythia8_mass'  + str(i)))
+
+
 ROOT.gStyle.SetOptStat(000000)
 ROOT.gStyle.SetTitleFont(43,"XYZ")
 ROOT.gStyle.SetTitleSize(30,"XYZ")
@@ -98,10 +140,11 @@ ROOT.gStyle.SetLabelSize(25,"XYZ")
 datacanvasesSD = []
 datacanvases= []
 
+datacanvases_fullband = []
+datacanvases_fullbandSD = []
+
 ################################################################################# generate canvases 
-for x in range(0, 19):
-    datacanvases.append(TCanvas("cdist"+str(x), "cdist"+str(x)))
-    datacanvasesSD.append(TCanvas("cdist" + str(x) + "SD", "cdist"+str(x)+"SD"))
+
 
 ######################################################################################### Get Central Value hists and generate legends etc
 
@@ -113,6 +156,8 @@ atlx = []
 atlxpt = []
 alegends = []
 alegendsSD = []
+alegends_fullband = []
+alegends_fullbandSD = []
 atlxSD = []
 atlxSDpt = []
 comparisons = []
@@ -125,10 +170,21 @@ for x in range(0, 19):
     atlxpt.append(ROOT.TLatex())
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
-    alegends.append(TLegend(.5, .25, .9, .85))
-    alegendsSD.append(TLegend(.48, .23, .9, .85))
-    datacanvases[x].SetLeftMargin(0.15)
-    datacanvasesSD[x].SetLeftMargin(0.15)
+    
+    alegends.append(TLegend(.6, .30, .9, .80))
+    if x == 0:
+        alegendsSD.append(TLegend(.605, .39, .89, .78))
+    elif x < 4 and x > 0:
+        alegendsSD.append(TLegend(.58, .39, .9, .78))
+    else:
+        alegendsSD.append(TLegend(.6, .30, .9, .80))
+    alegends_fullband.append(TLegend(.55, .35, .9, .80))
+    if x < 2:
+        alegends_fullbandSD.append(TLegend(.61, .43, .9, .80))
+    else:
+        alegends_fullbandSD.append(TLegend(.55, .40, .9, .80))
+
+
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
 ps_differences_softdrop = []
@@ -217,6 +273,8 @@ ptbins = ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 G
 
 pads = []
 padsSD = []
+pads_fullband = []
+pads_fullbandSD = []
 hRatioList = []
 hRatioListSD = []
 
@@ -242,11 +300,46 @@ for leg in alegends :
 for leg in alegendsSD :
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
+for leg in alegends_fullband :
+    leg.SetFillColor(0)
+    leg.SetBorderSize(0)
+for leg in alegends_fullbandSD :
+    leg.SetFillColor(0)
+    leg.SetBorderSize(0)
 
-setup(datacanvases, pads)
-setup(datacanvasesSD, padsSD)
+if options.oneband:
+    
+    for x in range(0, 19):
+        datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
+        datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+    for x in range(0, 19):
+        datacanvases_fullband[x].SetLeftMargin(0.15)
+        datacanvases_fullbandSD[x].SetLeftMargin(0.15)
 
-histstokeep = []
+    setup(datacanvases_fullband, pads_fullband)
+    setup(datacanvases_fullbandSD, pads_fullbandSD)
 
-plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldedclosure_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
-plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
+
+    histstokeep = []
+    
+    plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
+    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_fullband_softdrop_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
+    
+    del histstokeep[:]
+
+else:
+
+    for x in range(0, 19):
+        datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
+        datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+    for x in range(0, 19):
+        datacanvases[x].SetLeftMargin(0.15)
+        datacanvasesSD[x].SetLeftMargin(0.15)
+
+    setup(datacanvases, pads)
+    setup(datacanvasesSD, padsSD)
+
+    histstokeep = []
+
+    plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldedclosure_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
+    plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)

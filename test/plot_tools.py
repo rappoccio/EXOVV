@@ -88,7 +88,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             temp = hRecoCopy.GetBinError(ibin)
             hRecoCopy.SetBinError(ibin, temp + (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) )
         ######################################################################################## Add PDF Uncertainties
-        hRecoPDF = hRecoJMR.Clone()
+        hRecoPDF = hRecoCopy.Clone()
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             temp = hRecoPDF.GetBinError(ibin)
             hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
@@ -101,7 +101,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kOrange+1)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral())
-        hRecoPDF.Scale(1.0/(20.*hRecoPDF.GetBinContent(7)))
+        #hRecoPDF.Scale(1.0/(20.*hRecoPDF.GetBinContent(7)))
 #hRecoPDF.SetAxisRange(1e-5, 1, 'Y')
         if i == 18:
             hRecoPDF.SetAxisRange(0,2000,"X")
@@ -123,7 +123,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy.GetYaxis().SetLabelSize(20)
         hRecoCopy.SetMarkerStyle(20)
         hRecoCopy.Scale(1.0/hRecoCopy.Integral())
-        hRecoCopy.Scale(1.0/(20.*hRecoCopy.GetBinContent(7)))
+#hRecoCopy.Scale(1.0/(20.*hRecoCopy.GetBinContent(7)))
 #hRecoCopy.SetAxisRange(1e-5, 1, 'Y')
         hRecoCopy.SetFillColor(ROOT.kAzure+2)
         hRecoCopy.Draw("E2 same")
@@ -136,7 +136,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoJMR.GetYaxis().SetLabelSize(20)
         hRecoJMR.SetMarkerStyle(20)
         hRecoJMR.Scale(1.0/hRecoJMR.Integral())
-        hRecoJMR.Scale(1.0/(20.*hRecoJMR.GetBinContent(7)))
+#hRecoJMR.Scale(1.0/(20.*hRecoJMR.GetBinContent(7)))
 #hRecoJMR.SetAxisRange(1e-5, 1, 'Y')
         hRecoJMR.SetFillColor(ROOT.kGreen)
         hRecoJMR.Draw("E2 same")
@@ -150,7 +150,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hReco.SetMarkerStyle(20)
         hReco.SetFillColor(ROOT.kYellow)
         hReco.Scale(1.0/hReco.Integral())
-        hReco.Scale(1.0/(20.*hReco.GetBinContent(7)))
+#hReco.Scale(1.0/(20.*hReco.GetBinContent(7)))
         hReco.SetAxisRange( 1e-5, 1, 'Y')
         hReco.Draw("E2 same")
         hReco.Draw("E same")
@@ -164,8 +164,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRMS.SetMarkerStyle(20)
         hRMS.SetFillColor(ROOT.kMagenta + 2)
         hRMS.Scale(1.0/hRMS.Integral())
-        hRMS.Scale(1.0/hRMS.Integral(7,8))
-        hRMS.Scale(1.0/(20.*hRMS.GetBinContent(7)))
+#hRMS.Scale(1.0/(20.*hRMS.GetBinContent(7)))
         hRMS.SetAxisRange( 1e-5, 1, 'Y')
         hRMS.Draw("E2 same")
         hRMS.Draw("E same")
@@ -175,13 +174,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         MC_list[i].SetLineColor(2)
         MC_list[i].SetLineWidth(3)
         MC_list[i].Scale(1.0/MC_list[i].Integral())
-        MC_list[i].Scale(1.0/(20.*MC_list[i].GetBinContent(7)))
+#MC_list[i].Scale(1.0/(20.*MC_list[i].GetBinContent(7)))
 #MC_list[i].SetAxisRange(1e-5, 1, 'Y')
         MC_list[i].Draw( "hist SAME" )
     
         ####################################################################################### Latex Drawn Here
-        latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        latexpt_list[i].DrawLatex(0.250, 0.820, ptbins_dict[i])
+
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(MC_list[i], 'Pythia8'+softdrop, 'l')
         legends_list[i].AddEntry(hRecoJMR, 'JMR', 'f')
@@ -193,7 +191,9 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         if i < 18:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
-            theory.Scale(1.0/(20.*theory.GetBinContent(7)))
+            #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
+            ratio_bin = float(hReco.GetBinContent(7)/theory.GetBinContent(7))
+            theory.Scale(ratio_bin)
             #theory.Scale(scales[i])
             theory.SetLineColor(ROOT.kMagenta - 4)
             theory.SetLineWidth(3)
@@ -201,6 +201,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theory.Draw("hist same")
             legends_list[i].AddEntry(theory, "NNLL' + LO (Frye et al)", 'l')
             legends_list[i].Draw("same")
+        latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
+        latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
         ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
@@ -391,6 +393,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         canvas_list[i].Draw()
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
+    theoryfile.Close()
 
 def setup(canvases_to_use, pads_to_use):
     for icanv,canv in enumerate ( canvases_to_use ) :
@@ -405,6 +408,226 @@ def setup(canvases_to_use, pads_to_use):
         pad1.Draw()
         pad2.Draw()
         pads_to_use.append( [pad1,pad2] )
+
+def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False):
+    scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
+    mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
+    theoryfile = ROOT.TFile("theory_predictions_normalized.root")
+    theorylist = []
+    for h in xrange(0, 18):
+        theorylist.append( theoryfile.Get("histSD1_"+str(h)))
+    for i, canv in enumerate(canvas_list):
+        pads_list[i][0].cd()
+        #pads_list[i][0].SetLogy()
+        pads_list[i][0].SetLogx()
+        data_list[i].UseCurrentStyle()
+        MC_list[i].UseCurrentStyle()
+        data_list[i].Scale(scales[i])
+        MC_list[i].Scale(scales[i])
+        ########################################################################################## Get JER and JES Hists
+        hRMS = data_list[i]
+        nom = jernom_list[i]
+        jesUP  = jecup_list[i]
+        jeOWN = jecdn_list[i]
+        jerUP  = jerup_list[i]
+        jerDOWN = jerdn_list[i]
+        ########################################################################################## Get JMR hists
+        jmrup = jmrup_list[i]
+        jmrdn = jmrdn_list[i]
+        jmrnom = jmrnom_list[i]
+        ########################################################################################## Scale the hists for Pt bins
+        jmrup.Scale(scales[i])
+        jmrdn.Scale(scales[i])
+        jmrnom.Scale(scales[i])
+        jesUP.Scale(scales[i])
+        jeOWN.Scale(scales[i])
+        jerUP.Scale(scales[i])
+        jerDOWN.Scale(scales[i])
+        nom.Scale(scales[i])
+        for ibin in xrange(1, hRMS.GetNbinsX()):
+            hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
+            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
+            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) + ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) )
+        hReco = hRMS.Clone()
+        ########################################################################################## Scale the hists for mass bins
+        for ibin in xrange(1, hReco.GetNbinsX()):
+            jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            
+            jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+########################################################################################## Add JER and JES Uncertainties
+        for ibin in xrange(1,hReco.GetNbinsX()):
+            val = float(hReco.GetBinContent(ibin))
+            err1 = float(hReco.GetBinError(ibin))
+            upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+            downjes = float(abs(nom.GetBinContent(ibin) - jeOWN.GetBinContent(ibin)))
+            sys = float(((upjes + downjes)/2.))
+            upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+            downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
+            sys2 = float(((upjer + downjer )/2.))
+            err = sqrt(sys*sys + sys2*sys2) + err1
+            hReco.SetBinError(ibin, err)
+        ####################################################################################### Add Jet Mass Resolution Band
+        hRecoJMR = hReco.Clone()
+        for ibin in xrange(1, hRecoJMR.GetNbinsX()):
+            val = float(hRecoJMR.GetBinContent(ibin))
+            err1 = float(hRecoJMR.GetBinError(ibin))
+            upjmr = float(abs(jmrup.GetBinContent(ibin) - jmrnom.GetBinContent(ibin)))
+            downjmr = float(abs(jmrnom.GetBinContent(ibin) - jmrdn.GetBinContent(ibin)))
+            sys = float(((upjmr + downjmr)/2.))
+            err = err1 + sys
+            hRecoJMR.SetBinError(ibin, err)
+    ######################################################################################## Add Parton Shower Uncertainties
+        hRecoCopy = hRecoJMR.Clone()
+        for ibin in xrange(1, hRecoCopy.GetNbinsX()):
+            temp = hRecoCopy.GetBinError(ibin)
+            hRecoCopy.SetBinError(ibin, temp + (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) )
+######################################################################################## Add PDF Uncertainties
+        hRecoPDF = hRecoCopy.Clone()
+        for ibin in xrange(1, hRecoPDF.GetNbinsX()):
+            temp = hRecoPDF.GetBinError(ibin)
+            hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
+        ####################################################################################### PDF Drawn Here
+        hReco.Scale(1.0/hReco.Integral())
+        hRecoPDF.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
+        hRecoPDF.GetYaxis().SetTitleSize(30)
+        hRecoPDF.GetYaxis().SetTitleOffset(1.0)
+        hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
+        hRecoPDF.GetYaxis().SetLabelSize(20)
+        hRecoPDF.SetMarkerStyle(20)
+        hRecoPDF.SetFillColor(ROOT.kGray)
+        hRecoPDF.Scale(1.0/hRecoPDF.Integral())
+        if i == 18:
+            hRecoPDF.SetAxisRange(1,2000,"X")
+        elif i > 11 and i < 18:
+            hRecoPDF.SetAxisRange(1,1200, "X")
+        elif i > 7 and i < 12:
+            hRecoPDF.SetAxisRange(1,900, "X")
+        elif i > 3 and i < 8:
+            hRecoPDF.SetAxisRange(1,600, "X")
+        elif i < 4:
+            hRecoPDF.SetAxisRange(1,400,"X")
+        hRecoPDF.Draw("E2")
+        keephists.append([hRecoPDF])
+        ####################################################################################### Gen Drawn Here
+        MC_list[i].SetLineColor(2)
+        MC_list[i].SetLineWidth(3)
+        MC_list[i].Scale(1.0/MC_list[i].Integral())
+        MC_list[i].Draw( "hist SAME" )
+        ####################################################################################### Latex Drawn Here
+
+        ####################################################################################### Legends Filled
+        legends_list[i].AddEntry(MC_list[i], 'Pythia8'+softdrop, 'l')
+        legends_list[i].AddEntry(hRecoPDF, 'Theoretical + Experimental', 'f')
+        legends_list[i].Draw()
+        if i < 18:
+            theory = theorylist[i]
+            theory.Scale(1.0/theory.Integral())
+            ratio_bin = float(hRecoPDF.GetBinContent(7)/theory.GetBinContent(7))
+            theory.Scale(float(ratio_bin))
+            theory.SetLineColor(ROOT.kMagenta - 4)
+            theory.SetLineWidth(3)
+            theory.Draw("hist same")
+            legends_list[i].AddEntry(theory, "NNLL' + LO (Frye et al)", 'l')
+            legends_list[i].Draw("same")
+        latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
+        latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+####################################################################################### Hists Cloned and formatted for ratios
+        trueCopy = MC_list[i].Clone()
+        trueCopy.SetName( trueCopy.GetName() + "_copy")
+        
+        if i < 18:
+            theorycopy = theory.Clone()
+            theorycopy.SetName( theory.GetName() + "_copy" )
+
+        datPDF = hRecoPDF.Clone()
+        datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
+        datPDF.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datPDF.GetYaxis().SetTitleOffset(1.0)
+        datPDF.GetYaxis().SetLabelOffset(0.0001)
+        datPDF.GetYaxis().SetTitleSize(30)
+        datPDF.SetMarkerStyle(0)
+        
+        ##################################################################################### divide error by bin content and set to unity
+        keephists.append( [trueCopy, datPDF])
+        for ibin in xrange(1,datPDF.GetNbinsX()):
+            if datPDF.GetBinContent(ibin) > 0:
+                datPDF.SetBinError(ibin, datPDF.GetBinError(ibin)/datPDF.GetBinContent(ibin))
+            else:
+                datPDF.SetBinError(ibin, 0)
+            datPDF.SetBinContent(ibin, 1.0)
+########################################################################################################## Take Ratio
+        trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
+        if i < 18:
+            theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
+        ########################################################################################################## change pad and set axis range
+        pads_list[i][1].cd()
+        pads_list[i][1].SetLogx()
+        trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+        trueCopy.UseCurrentStyle()
+        trueCopy.GetXaxis().SetTitleOffset(2)
+        trueCopy.GetYaxis().SetTitleOffset(1.0)
+        if i < 18:
+            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theorycopy.UseCurrentStyle()
+            theorycopy.GetXaxis().SetTitleOffset(2)
+            theorycopy.GetYaxis().SetTitleOffset(1.0)
+
+        datPDF.SetMinimum(0)
+        datPDF.SetMaximum(2)
+        datPDF.GetYaxis().SetNdivisions(2,4,0,False)
+        datPDF.SetFillColor(ROOT.kGray)
+        
+        datPDF.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datPDF.GetYaxis().SetTitleSize(30)
+        datPDF.GetYaxis().SetTitleOffset(1.0)
+        datPDF.GetYaxis().SetLabelOffset(0.01)
+        datPDF.GetYaxis().SetLabelSize(20)
+        datPDF.GetXaxis().SetLabelSize(20)
+        trueCopy.SetLineStyle(2)
+        trueCopy.SetLineColor(2)
+        trueCopy.SetLineWidth(3)
+        if i < 18:
+            theorycopy.SetLineStyle(2)
+            theorycopy.SetLineColor(ROOT.kMagenta - 4)
+            theorycopy.SetLineWidth(3)
+
+        datPDF.GetXaxis().SetTitleOffset(2.5)
+    
+        datPDF.GetXaxis().SetTitle("Jet Mass (GeV)")
+        ######################################################################## Draw and save
+        
+        if i == 18:
+            datPDF.SetAxisRange(0,2000,"X")
+        elif i > 11 and i < 18:
+            datPDF.SetAxisRange(0,1200, "X")
+        elif i > 7 and i < 12:
+            datPDF.SetAxisRange(0,900, "X")
+        elif i > 3 and i < 8:
+            datPDF.SetAxisRange(0,600, "X")
+        elif i < 4:
+            datPDF.SetAxisRange(0,400,"X")
+        datPDF.Draw('e2')
+        datPDF.SetMarkerStyle(0)
+        trueCopy.Draw("hist same")
+        if i < 18:
+            theorycopy.Draw("hist same")
+        keephists.append([datPDF])
+        pads_list[i][0].Update()
+        pads_list[i][0].RedrawAxis()
+        pads_list[i][1].Update()
+        pads_list[i][1].RedrawAxis()
+        canvas_list[i].Draw()
+        canvas_list[i].SaveAs(outname_str + str(i) + ".png")
+        canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
+    theoryfile.Close()
+
 
 def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegname_str, genlegname_str, outname_str, latex_list, latexpt_list, ptbins_dict):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
