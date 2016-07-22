@@ -18,6 +18,12 @@ parser.add_option('--oneband', action='store_true',
                   help='one band plots')
 
 
+parser.add_option('--isSoftDrop', action='store_true',
+                  default = False,
+                  dest='isSoftDrop',
+                  help='theory curves on plots')
+
+
 (options, args) = parser.parse_args()
 
 f = ROOT.TFile('2DData.root')
@@ -172,9 +178,9 @@ for x in range(0, 19):
     atlxpt.append(ROOT.TLatex())
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
-    alegends.append(TLegend(.6, .35, .9, .80))
+    alegends.append(TLegend(.25, .35, .45, .80))
     alegendsSD.append(TLegend(.61, .35, .9, .80))
-    alegends_fullband.append(TLegend(.55, .35, .9, .80))
+    alegends_fullband.append(TLegend(.18, .45, .51, .80))
     if x == 0:
         alegends_fullbandSD.append(TLegend(.55, .40, .9, .80))
     else:
@@ -320,7 +326,7 @@ if options.oneband:
     histstokeep = []
 
     plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldeddata_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
-    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldeddata_fullband_softdrop_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
+    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldeddata_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
 
     del histstokeep[:]
 
