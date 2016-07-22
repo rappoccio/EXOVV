@@ -172,8 +172,8 @@ for x in range(0, 19):
     atlxpt.append(ROOT.TLatex())
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
-    alegends.append(TLegend(.6, .35, .9, .85))
-    alegendsSD.append(TLegend(.6, .35, .9, .85))
+    alegends.append(TLegend(.6, .35, .9, .80))
+    alegendsSD.append(TLegend(.61, .35, .9, .80))
     alegends_fullband.append(TLegend(.55, .35, .9, .80))
     if x == 0:
         alegends_fullbandSD.append(TLegend(.55, .40, .9, .80))
