@@ -3,6 +3,19 @@ ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option('--oneband', action='store_true',
+                  default = False,
+                  dest='oneband',
+                  help='one band plots')
+
+
+parser.add_option('--isSoftDrop', action='store_true',
+                  default = False,
+                  dest='isSoftDrop',
+                  help='theory curves on plots')
+(options, args) = parser.parse_args()
 
 def get_ptbins():
     return ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} 760-900 GeV}', '#bf{p_{T} 900-1000 GeV}', '#bf{p_{T} 1000-1100 GeV}','#bf{p_{T} 1100-1200 GeV}',
@@ -188,7 +201,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         legends_list[i].AddEntry(hReco, 'JES+JER', 'f')
         legends_list[i].AddEntry(hRMS, 'Stat', 'f')
         legends_list[i].Draw()
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
@@ -202,12 +215,15 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             legends_list[i].AddEntry(theory, "NNLL + LO (Frye et al)", 'l')
             legends_list[i].Draw("same")
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+        if options.isSoftDrop:
+            latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+        else:
+            latexpt_list[i].DrawLatex(0.20, 0.820, ptbins_dict[i])
         ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
 
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy = theory.Clone()
             theorycopy.SetName( theory.GetName() + "_copy" )
         
@@ -272,7 +288,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             datRMS.SetBinContent(ibin, 1.0)
         ########################################################################################################## Take Ratio
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
@@ -281,7 +297,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
         trueCopy.GetYaxis().SetTitleOffset(1.0)
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             theorycopy.UseCurrentStyle()
             theorycopy.GetXaxis().SetTitleOffset(2)
@@ -345,7 +361,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy.SetLineStyle(2)
         trueCopy.SetLineColor(2)
         trueCopy.SetLineWidth(3)
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.SetLineStyle(2)
             theorycopy.SetLineColor(ROOT.kMagenta - 4)
             theorycopy.SetLineWidth(3)
@@ -383,7 +399,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.Draw('e2 same')
         datcopy.SetMarkerStyle(0)
         trueCopy.Draw("hist same")
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.Draw("hist same")
         keephists.append([datcopy, datPDF])
         pads_list[i][0].Update()
@@ -526,7 +542,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         legends_list[i].AddEntry(MC_list[i], 'Pythia8'+softdrop, 'l')
         legends_list[i].AddEntry(hRecoPDF, 'Theoretical + Experimental', 'f')
         legends_list[i].Draw()
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
             ratio_bin = float(hRecoPDF.GetBinContent(7)/theory.GetBinContent(7))
@@ -537,12 +553,15 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             legends_list[i].AddEntry(theory, "NNLL + LO (Frye et al)", 'l')
             legends_list[i].Draw("same")
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+        if options.isSoftDrop:
+            latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+        else:
+            latexpt_list[i].DrawLatex(0.20, 0.820, ptbins_dict[i])
 ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
         
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy = theory.Clone()
             theorycopy.SetName( theory.GetName() + "_copy" )
 
@@ -564,7 +583,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             datPDF.SetBinContent(ibin, 1.0)
 ########################################################################################################## Take Ratio
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
@@ -573,7 +592,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
         trueCopy.GetYaxis().SetTitleOffset(1.0)
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             theorycopy.UseCurrentStyle()
             theorycopy.GetXaxis().SetTitleOffset(2)
@@ -593,7 +612,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         trueCopy.SetLineStyle(2)
         trueCopy.SetLineColor(2)
         trueCopy.SetLineWidth(3)
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.SetLineStyle(2)
             theorycopy.SetLineColor(ROOT.kMagenta - 4)
             theorycopy.SetLineWidth(3)
@@ -616,7 +635,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.Draw('e2')
         datPDF.SetMarkerStyle(0)
         trueCopy.Draw("hist same")
-        if i < 18:
+        if i < 18 and options.isSoftDrop:
             theorycopy.Draw("hist same")
         keephists.append([datPDF])
         pads_list[i][0].Update()

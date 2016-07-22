@@ -13,6 +13,13 @@ parser.add_option('--oneband', action='store_true',
                   default = False,
                   dest='oneband',
                   help='one band plots')
+
+parser.add_option('--isSoftDrop', action='store_true',
+                  default = False,
+                  dest='isSoftDrop',
+                  help='theory curves on plots')
+
+
                                  
 (options, args) = parser.parse_args()
 
@@ -171,14 +178,14 @@ for x in range(0, 19):
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
     
-    alegends.append(TLegend(.6, .30, .9, .80))
+    alegends.append(TLegend(.25, .35, .45, .80))
     if x == 0:
         alegendsSD.append(TLegend(.605, .39, .89, .78))
     elif x < 4 and x > 0:
         alegendsSD.append(TLegend(.58, .39, .9, .78))
     else:
         alegendsSD.append(TLegend(.6, .30, .9, .80))
-    alegends_fullband.append(TLegend(.55, .35, .9, .80))
+    alegends_fullband.append(TLegend(.18, .45, .51, .80))
     if x < 2:
         alegends_fullbandSD.append(TLegend(.61, .43, .9, .80))
     else:
@@ -323,7 +330,7 @@ if options.oneband:
     histstokeep = []
     
     plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
-    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_fullband_softdrop_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
+    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
     
     del histstokeep[:]
 
