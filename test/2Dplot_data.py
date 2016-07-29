@@ -325,8 +325,8 @@ if options.oneband:
 
     histstokeep = []
 
-    plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldeddata_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
-    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldeddata_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
+    plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldeddata_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=True)
+    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldeddata_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=True)
 
     del histstokeep[:]
 
@@ -345,7 +345,7 @@ else:
 
     histstokeep = []
 
-    plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldeddata_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
-    plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldeddata_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
+    plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldeddata_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=True)
+    plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldeddata_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=True)
 
 
