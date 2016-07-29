@@ -206,7 +206,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         if options.isSoftDrop and isData:
             latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
         else:
-            latexpt_list[i].DrawLatex(0.20, 0.820, ptbins_dict[i])
+            latexpt_list[i].DrawLatex(0.60, 0.820, ptbins_dict[i])
         ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
@@ -544,7 +544,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         if options.isSoftDrop and isData:
             latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
         else:
-            latexpt_list[i].DrawLatex(0.20, 0.820, ptbins_dict[i])
+            latexpt_list[i].DrawLatex(0.60, 0.820, ptbins_dict[i])
 ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
@@ -651,7 +651,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gen_list[i].UseCurrentStyle()
         reco_list[i].Scale(scales[i])
         gen_list[i].Scale(scales[i])
-        reco_list[i].SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{20GeV^{2}})")
+        reco_list[i].SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dm/dp_{T}} (#frac{1}{20GeV^{2}})")
         reco_list[i].GetYaxis().SetTitleSize(30)
         reco_list[i].SetLineColor(2)
         reco_list[i].SetAxisRange(1e-11, 1, "Y")
