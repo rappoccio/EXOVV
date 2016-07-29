@@ -106,7 +106,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             temp = hRecoPDF.GetBinError(ibin)
             hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
         ####################################################################################### PDF Drawn Here
-        hRecoPDF.SetTitle(";;#frac{1}{#sigma} #frac{d#sigma}{dmdp_{T}} (#frac{1}{GeV^{2}})")
+        hRecoPDF.SetTitle(";;#frac{1}{d#sigmadp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV^{2}})")
         hRecoPDF.GetYaxis().SetTitleSize(30)
         hRecoPDF.GetYaxis().SetTitleOffset(1.0)
         hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
