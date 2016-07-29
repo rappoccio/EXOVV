@@ -106,7 +106,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             temp = hRecoPDF.GetBinError(ibin)
             hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
         ####################################################################################### PDF Drawn Here
-        hRecoPDF.SetTitle(";;#frac{1}{d#sigmadp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV^{2}})")
+        hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV})")
         hRecoPDF.GetYaxis().SetTitleSize(30)
         hRecoPDF.GetYaxis().SetTitleOffset(1.0)
         hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
@@ -127,7 +127,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF.Draw("E2")
         #hRecoPDF.Draw("E same")
         ####################################################################################### PS Drawn Here
-        hRecoCopy.SetTitle(";;#frac{1}{d#sigmadp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV^{2}})")
+        hRecoCopy.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV})")
         hRecoCopy.GetYaxis().SetTitleSize(30)
         hRecoCopy.GetYaxis().SetTitleOffset(1.0)
         hRecoCopy.GetYaxis().SetLabelOffset(0.0001)
@@ -137,7 +137,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy.SetFillColor(ROOT.kAzure+2)
         hRecoCopy.Draw("E2 same")
         ####################################################################################### JMR Drawn Here
-        hRecoJMR.SetTitle(";;#frac{1}{d#sigmadp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV^{2}})")
+        hRecoJMR.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV})")
         hRecoJMR.GetYaxis().SetTitleSize(30)
         hRecoJMR.GetYaxis().SetTitleOffset(1.0)
         hRecoJMR.GetYaxis().SetLabelOffset(0.0001)
@@ -147,7 +147,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoJMR.SetFillColor(ROOT.kGreen)
         hRecoJMR.Draw("E2 same")    
         ####################################################################################### JES and JER Drawn Here
-        hReco.SetTitle(";;#frac{1}{d#sigmadp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV^{2}})")
+        hReco.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV})")
         hReco.GetYaxis().SetTitleSize(30)
         hReco.GetYaxis().SetTitleOffset(1.0)
         hReco.GetYaxis().SetLabelOffset(0.0001)
@@ -160,7 +160,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hReco.Draw("E same")
         keephists.append([hReco, hRecoPDF])
         ####################################################################################### Stat Drawn Here
-        hRMS.SetTitle(";;#frac{1}{d#sigmadp_{T}} #frac{d#sigma}{dm}} (#frac{1}{GeV^{2}})")
+        hRMS.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm}} (#frac{1}{GeV})")
         hRMS.GetYaxis().SetTitleSize(30)
         hRMS.GetYaxis().SetTitleOffset(1.0)
         hRMS.GetYaxis().SetLabelOffset(0.0001)
@@ -499,7 +499,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
         ####################################################################################### PDF Drawn Here
         hReco.Scale(1.0/hReco.Integral())
-        hRecoPDF.SetTitle(";;#frac{1}{d#sigmadp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV^{2}})")
+        hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV})")
         hRecoPDF.GetYaxis().SetTitleSize(30)
         hRecoPDF.GetYaxis().SetTitleOffset(1.0)
         hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
