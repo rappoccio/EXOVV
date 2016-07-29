@@ -1,6 +1,6 @@
 #from ROOT import *
 import ROOT
-ROOT.gSystem.Load("../libRooUnfold")
+ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
