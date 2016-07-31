@@ -39,6 +39,7 @@ argv = []
 import math
 import ROOT
 import sys
+from ROOT import TCanvas
 ROOT.gROOT.Macro("rootlogon.C")
 
 import array
@@ -194,7 +195,7 @@ palette = [0, 2]
 
 
 var = 'FatJetPt'
-title = ';AK8 Jet p_{T} (GeV);Number'
+title = ';AK8 Jet p_{T} (GeV);Events per bin'
 
 ROOT.gStyle.SetPadRightMargin(0.15)
 
@@ -213,15 +214,33 @@ nbinsm = len(mBinA) - 1
 h_2DHisto_meas = ROOT.TH2F('PFJet_pt_m_AK8', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, nbinsm, mBinA)
 h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsToPlot, ptBinAToPlot, nbinsm, mBinA)
 
-h_pt_meas = ROOT.TH1F("h_pt_meas", ";Jet p_{T} (GeV); Number", 150, 0, 3000)
-h_y_meas = ROOT.TH1F("h_y_meas", ";Jet Rapidity; Number", 50, -2.5, 2.5 )
-h_phi_meas = ROOT.TH1F("h_phi_meas", ";Jet #phi (radians); Number", 50, -ROOT.TMath.Pi(), ROOT.TMath.Pi() )
-h_m_meas = ROOT.TH1F("h_m_meas", ";Jet Mass (GeV); Number", 50, 0, 500 )
-h_msd_meas = ROOT.TH1F("h_msd_meas", ";Jet Soft Drop Mass (GeV); Number", 50, 0, 500 )
-h_rho_meas = ROOT.TH1F("h_rho_meas", ";Jet (m/p_{T}R)^{2}; Number", 100, 0, 1.0 )
-h_tau21_meas = ROOT.TH1F("h_tau21_meas", ";Jet #tau_{2}/#tau_{1}; Number", 50, 0, 1.0 )
-h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Number", 50, 0, ROOT.TMath.TwoPi() )
-h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", 50, 0, 1.0 )
+h_m_meas = []
+h_msd_meas = []
+h_pt_meas = []
+h_y_meas = []
+h_dphi_meas = []
+h_tau21_meas = []
+h_ptasym_meas = []
+
+for j in xrange(0,19):
+    h_m_meas.append( ROOT.TH1F("h_m_meas"+str(j), ";Jet Mass (GeV); Events per bin", 50, 0, 500 ))
+    h_msd_meas.append( ROOT.TH1F("h_msd_meas"+str(j), ";Jet Soft Drop Mass (GeV); Events per bin", 50, 0, 500 ))
+    h_pt_meas.append( ROOT.TH1F("h_pt_meas"+str(j), ";Jet p_{T} (GeV); Events per bin", 150, 0, 3000))
+    h_y_meas.append( ROOT.TH1F("h_y_meas"+str(j), ";Jet Rapidity; Events per bin", 50, -2.5, 2.5 ))
+    h_dphi_meas.append( ROOT.TH1F("h_dphi_meas"+str(j), ";Jet #phi (radians); Events per bin", 50, 0, ROOT.TMath.TwoPi() ))
+    h_tau21_meas.append( ROOT.TH1F("h_tau21_meas"+str(j), ";Jet #tau_{2}/#tau_{1}; Events per bin", 50, 0, 1.0 ))
+    h_ptasym_meas.append( ROOT.TH1F("h_ptasym_meas"+str(j), ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Events per bin", 50, 0, 1.0 ))
+
+
+#h_pt_meas = ROOT.TH1F("h_pt_meas", ";Jet p_{T} (GeV); Events per bin", 150, 0, 3000)
+#h_y_meas = ROOT.TH1F("h_y_meas", ";Jet Rapidity; Events per bin", 50, -2.5, 2.5 )
+h_phi_meas = ROOT.TH1F("h_phi_meas", ";Jet #phi (radians); Events per bin", 50, -ROOT.TMath.Pi(), ROOT.TMath.Pi() )
+#h_m_meas = ROOT.TH1F("h_m_meas", ";Jet Mass (GeV); Events per bin", 50, 0, 500 )
+#h_msd_meas = ROOT.TH1F("h_msd_meas", ";Jet Soft Drop Mass (GeV); Events per bin", 50, 0, 500 )
+h_rho_meas = ROOT.TH1F("h_rho_meas", ";Jet (m/p_{T}R)^{2}; Events per bin", 100, 0, 1.0 )
+#h_tau21_meas = ROOT.TH1F("h_tau21_meas", ";Jet #tau_{2}/#tau_{1}; Events per bin", 50, 0, 1.0 )
+#h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Events per bin", 50, 0, ROOT.TMath.TwoPi() )
+#h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Events per bin", 50, 0, 1.0 )
 h_rho_vs_tau_meas = ROOT.TH2F("h_rho_vs_tau21_meas", ";Jet (m/p_{T}R)^{2};Jet #tau_{2}/#tau_{1}", 100, 0, 1.0, 50, 0, 1.0 )
 
 for itrig,trig in enumerate(trigs) :
@@ -329,9 +348,88 @@ for itree,t in enumerate(trees) :
 
                         
         if dphi > 1.57 :
-            h_ptasym_meas.Fill( ptasym, weight )
+            #h_ptasym_meas.Fill( ptasym, weight )
+            if FatJetPt[maxjet] >= 200 and FatJetPt[maxjet] < 260 :
+                h_ptasym_meas[0].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 260 and FatJetPt[maxjet] < 350 :
+                h_ptasym_meas[1].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 350 and FatJetPt[maxjet] < 460 :
+                h_ptasym_meas[2].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 460 and FatJetPt[maxjet] < 550 :
+                h_ptasym_meas[3].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 550 and FatJetPt[maxjet] < 650 :
+                h_ptasym_meas[4].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 650 and FatJetPt[maxjet] < 760 :
+                h_ptasym_meas[5].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 760 and FatJetPt[maxjet] < 900 :
+                h_ptasym_meas[6].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 900 and FatJetPt[maxjet] < 1000 :
+                h_ptasym_meas[7].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1000 and FatJetPt[maxjet] < 1100 :
+                h_ptasym_meas[8].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1100 and FatJetPt[maxjet] < 1200 :
+                h_ptasym_meas[9].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1200 and FatJetPt[maxjet] < 1300 :
+                h_ptasym_meas[10].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1300 and FatJetPt[maxjet] < 1400 :
+                h_ptasym_meas[11].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1400 and FatJetPt[maxjet] < 1500 :
+                h_ptasym_meas[12].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1500 and FatJetPt[maxjet] < 1600 :
+                h_ptasym_meas[13].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1600 and FatJetPt[maxjet] < 1700 :
+                h_ptasym_meas[14].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1700 and FatJetPt[maxjet] < 1800 :
+                h_ptasym_meas[15].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1800 and FatJetPt[maxjet] < 1900 :
+                h_ptasym_meas[16].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 1900 and FatJetPt[maxjet] < 2000 :
+                h_ptasym_meas[17].Fill( ptasym, weight )
+            elif FatJetPt[maxjet] >= 2000 :
+                h_ptasym_meas[18].Fill( ptasym, weight )
+    
+
         if ptasym < 0.3 :
-            h_dphi_meas.Fill( dphi, weight )
+            #h_dphi_meas.Fill( dphi, weight )
+            if FatJetPt[maxjet] >= 200 and FatJetPt[maxjet] < 260 :
+                h_dphi_meas[0].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 260 and FatJetPt[maxjet] < 350 :
+                h_dphi_meas[1].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 350 and FatJetPt[maxjet] < 460 :
+                h_dphi_meas[2].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 460 and FatJetPt[maxjet] < 550 :
+                h_dphi_meas[3].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 550 and FatJetPt[maxjet] < 650 :
+                h_dphi_meas[4].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 650 and FatJetPt[maxjet] < 760 :
+                h_dphi_meas[5].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 760 and FatJetPt[maxjet] < 900 :
+                h_dphi_meas[6].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 900 and FatJetPt[maxjet] < 1000 :
+                h_dphi_meas[7].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1000 and FatJetPt[maxjet] < 1100 :
+                h_dphi_meas[8].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1100 and FatJetPt[maxjet] < 1200 :
+                h_dphi_meas[9].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1200 and FatJetPt[maxjet] < 1300 :
+                h_dphi_meas[10].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1300 and FatJetPt[maxjet] < 1400 :
+                h_dphi_meas[11].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1400 and FatJetPt[maxjet] < 1500 :
+                h_dphi_meas[12].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1500 and FatJetPt[maxjet] < 1600 :
+                h_dphi_meas[13].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1600 and FatJetPt[maxjet] < 1700 :
+                h_dphi_meas[14].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1700 and FatJetPt[maxjet] < 1800 :
+                h_dphi_meas[15].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1800 and FatJetPt[maxjet] < 1900 :
+                h_dphi_meas[16].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 1900 and FatJetPt[maxjet] < 2000 :
+                h_dphi_meas[17].Fill( dphi, weight )
+            elif FatJetPt[maxjet] >= 2000 :
+                h_dphi_meas[18].Fill( dphi, weight )
+
 
         passkin = ptasym < 0.5 and dphi > 1.57
         if not passkin :
@@ -398,13 +496,129 @@ for itree,t in enumerate(trees) :
         for ijet in [ indices[0], indices[1] ] :
             h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
             h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
-            h_pt_meas.Fill( FatJetPt[ijet] , weight )
-            h_y_meas.Fill( FatJetRap[ijet] , weight )
+            #h_pt_meas.Fill( FatJetPt[ijet] , weight )
+            #h_y_meas.Fill( FatJetRap[ijet] , weight )
             h_phi_meas.Fill( FatJetPhi[ijet] , weight )
-            h_m_meas.Fill( FatJetMass[ijet] , weight )
-            h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
+            #h_m_meas.Fill( FatJetMass[ijet] , weight )
+            #h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
+            if FatJetPt[ijet] >= 200 and FatJetPt[ijet] < 260 :
+                h_msd_meas[0].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[0].Fill( FatJetMass[ijet] , weight )
+                h_tau21_meas[0].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[0].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[0].Fill( FatJetPt[ijet] , weight )
+            elif FatJetPt[ijet] >= 260 and FatJetPt[ijet] < 350 :
+                h_tau21_meas[1].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[1].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[1].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[1].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[1].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 350 and FatJetPt[ijet] < 460 :
+                h_tau21_meas[2].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[2].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[2].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[2].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[2].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 460 and FatJetPt[ijet] < 550 :
+                h_tau21_meas[3].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[3].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[3].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[3].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[3].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 550 and FatJetPt[ijet] < 650 :
+                h_tau21_meas[4].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[4].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[4].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[4].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[4].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 650 and FatJetPt[ijet] < 760 :
+                h_tau21_meas[5].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[5].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[5].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[5].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[5].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 760 and FatJetPt[ijet] < 900 :
+                h_tau21_meas[6].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[6].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[6].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[6].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[6].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 900 and FatJetPt[ijet] < 1000 :
+                h_tau21_meas[7].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[7].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[7].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[7].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[7].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1000 and FatJetPt[ijet] < 1100 :
+                h_tau21_meas[8].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[8].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[8].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[8].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[8].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1100 and FatJetPt[ijet] < 1200 :
+                h_tau21_meas[9].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[9].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[9].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[9].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[9].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1200 and FatJetPt[ijet] < 1300 :
+                h_tau21_meas[10].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[10].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[10].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[10].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[10].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1300 and FatJetPt[ijet] < 1400 :
+                h_tau21_meas[11].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[11].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[11].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[11].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[11].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1400 and FatJetPt[ijet] < 1500 :
+                h_tau21_meas[12].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[12].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[12].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[12].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[12].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1500 and FatJetPt[ijet] < 1600 :
+                h_tau21_meas[13].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[13].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[13].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[13].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[13].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1600 and FatJetPt[ijet] < 1700 :
+                h_tau21_meas[14].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[14].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[14].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[14].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[14].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1700 and FatJetPt[ijet] < 1800 :
+                h_tau21_meas[15].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[15].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[15].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[15].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[15].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1800 and FatJetPt[ijet] < 1900 :
+                h_tau21_meas[16].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[16].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[16].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[16].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[16].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 1900 and FatJetPt[ijet] < 2000 :
+                h_tau21_meas[17].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[17].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[17].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[17].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[17].Fill( FatJetMass[ijet] , weight )
+            elif FatJetPt[ijet] >= 2000 :
+                h_tau21_meas[18].Fill( FatJetTau21[ijet] , weight )
+                h_y_meas[18].Fill( FatJetRap[ijet] , weight )
+                h_pt_meas[18].Fill( FatJetPt[ijet] , weight )
+                h_msd_meas[18].Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_m_meas[18].Fill( FatJetMass[ijet] , weight )
+        
+
             h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
-            h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
+            #h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
             h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
     
 leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
@@ -463,17 +677,25 @@ for itrig, trig in enumerate(trigs):
     turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + '.pdf', 'pdf')
     pt0histsTurnon[itrig].Write()
 
+for jhist, hist in enumerate(h_m_meas):
+    hist.Write()
+    h_msd_meas[jhist].Write()
+    h_y_meas[jhist].Write()
+    h_pt_meas[jhist].Write()
+    h_tau21_meas[jhist].Write()
+    h_dphi_meas[jhist].Write()
+    h_ptasym_meas[jhist].Write()
 
 h_2DHisto_meas.Write()
 h_2DHisto_measSD.Write()
-h_pt_meas.Write()
-h_y_meas.Write()
+#h_pt_meas.Write()
+#h_y_meas.Write()
 h_phi_meas.Write()
-h_m_meas.Write()
-h_msd_meas.Write()
+#h_m_meas.Write()
+#h_msd_meas.Write()
 h_rho_meas.Write()
-h_tau21_meas.Write()
-h_dphi_meas.Write()
-h_ptasym_meas.Write()
+#h_tau21_meas.Write()
+#h_dphi_meas.Write()
+#h_ptasym_meas.Write()
 h_rho_vs_tau_meas.Write()
 fout.Close()
