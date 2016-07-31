@@ -50,8 +50,12 @@ ROOT.gStyle.SetLabelSize(25,"XYZ")
 #### Data
 f = ROOT.TFile(options.file)
 
+
+
 #Assuming MC File is already stitched together
 fmc = ROOT.TFile( options.mcfile )
+
+
 
 
 logy =  [ True,       False,      True,       True,         True,           False,          True ]
@@ -87,82 +91,101 @@ ROOT.gStyle.SetPadRightMargin(0.15)
 
 tlxs = []
 
+ptbins = ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} 760-900 GeV}', '#bf{p_{T} 900-1000 GeV}', '#bf{p_{T} 1000-1100 GeV}','#bf{p_{T} 1100-1200 GeV}',
+ '#bf{p_{T} 1200-1300 GeV}', '#bf{p_{T} 1300-1400 GeV}', '#bf{p_{T} 1400-1500 GeV}', '#bf{p_{T} 1500-1600 GeV}', '#bf{p_{T} 1600-1700 GeV}', '#bf{p_{T} 1700-1800 GeV}', '#bf{p_{T} 1800-1900 GeV}', '#bf{p_{T} 1900-2000 GeV}', '#bf{p_{T} > 2000 GeV}']
 
-scale = 1.0
+atlxpt = []
+for x in range(0, 19):
+    atlxpt.append(ROOT.TLatex())
 
-for ihist,histname in enumerate(hists):
-    canv = ROOT.TCanvas(histname + '_canv', histname +'_canv', 800, 700)
-    canv.SetBottomMargin(0.0)
-    pad0 = ROOT.TPad( histname + '_pad0', 'pad0', 0.0, 2./7., 1.0, 1.0 )
-    pad1 = ROOT.TPad( histname + '_pad1', 'pad1', 0.0, 0.0, 1.0, 2./7. )
-    pads.append( [pad0,pad1] )
-    pad0.SetBottomMargin(0.)
-    pad1.SetTopMargin(0.)
-    pad1.SetBottomMargin(0.4)
-    pad0.Draw()
-    pad1.Draw()
+for g in atlxpt:
+    g.SetNDC()
+    g.SetTextFont(43)
+    g.SetTextSize(25)
 
+for j in xrange(0, 19):
+
+    for ihist,histname in enumerate(hists):
     
-    
-    pad0.cd()
-    leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
-    leg.SetFillColor(0)
-    leg.SetBorderSize(0)
-    mchist = fmc.Get( histname )
-    mchist.Sumw2()
-    mchist.SetLineColor(1)
-    if options.rebin != None :
-        mchist.Rebin( options.rebin )
-    mchists.append( mchist )
+        canv = ROOT.TCanvas(histname + str(j) + '_canv', histname + str(j) +'_canv', 800, 700)
+        canv.SetBottomMargin(0.0)
+        pad0 = ROOT.TPad( histname + str(j) + '_pad0', 'pad0', 0.0, 2./7., 1.0, 1.0 )
+        pad1 = ROOT.TPad( histname + str(j) + '_pad1', 'pad1', 0.0, 0.0, 1.0, 2./7. )
+        pads.append( [pad0,pad1] )
+        pad0.SetBottomMargin(0.)
+        pad1.SetTopMargin(0.)
+        pad1.SetBottomMargin(0.4)
+        pad0.Draw()
+        pad1.Draw()
 
-
-    datahist = f.Get( histname )
-    datahist.Sumw2()
-    if options.rebin != None :
-        datahist.Rebin( options.rebin )
-    datahists.append( datahist )
-
-    mchist.Scale( datahist.Integral() / mchist.Integral() )
+        pad0.cd()
+        pad0.SetLogx()
+        leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
+        leg.SetFillColor(0)
+        leg.SetBorderSize(0)
+        mchist = fmc.Get( histname + str(j) )
+        mchist.Sumw2()
+        mchist.SetLineColor(1)
+        if options.rebin != None :
+            mchist.Rebin( options.rebin )
+        mchists.append( mchist )
             
-
-    datahist.Draw('e')
-    mchist.Draw('hist same')
-    datahist.Draw('e same')
-    datahist.UseCurrentStyle()
-    mchist.UseCurrentStyle()
+        datahist = f.Get( histname + str(j) )
+        datahist.Sumw2()
+        datahist.SetMarkerStyle(20)
+        #datahist.SetMarkerSize(12)
+        if options.rebin != None :
+            datahist.Rebin( options.rebin )
+        datahists.append( datahist )
     
-    if logy[ihist] : 
-        pad0.SetLogy()
-        datahist.SetMinimum(0.1)
-    #leg.Draw()
-    canv.Update()
-    canvs.append(canv)
-    legs.append(leg)
+        mchist.Scale( datahist.Integral() / mchist.Integral() )
+        
+        datahist.Draw('e')
 
-    tlx = ROOT.TLatex()
-    tlx.SetNDC()
-    tlx.SetTextFont(43)
-    tlx.SetTextSize(24)
-    tlx.DrawLatex(0.4, 0.905, "CMS Preliminary #sqrt{s}=13 TeV, 40 pb^{-1}")
+        mchist.Draw('hist same')
+        datahist.Draw('e same')
+        datahist.UseCurrentStyle()
+        if ihist == 1 or ihist == 5:
+            datahist.GetYaxis().SetLabelSize(15)
+        mchist.UseCurrentStyle()
+
+        if logy[ihist] :
+            pad0.SetLogy()
+            datahist.SetMinimum(0.1)
+        #leg.Draw()
+        canv.Update()
+        canvs.append(canv)
+        legs.append(leg)
+
+        tlx = ROOT.TLatex()
+        tlx.SetNDC()
+        tlx.SetTextFont(43)
+        tlx.SetTextSize(24)
+        tlx.DrawLatex(0.4, 0.905, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
+        if ihist == 1 or ihist == 3 or ihist == 6 :
+            atlxpt[j].DrawLatex(0.585, 0.830, ptbins[j])
+        else :
+            atlxpt[j].DrawLatex(0.170, 0.830, ptbins[j])
 
         
-    pad1.cd()
-    iratio = mchist.Clone()
-    iratio.SetName( 'iratio_' + histname )
-    iratio.GetYaxis().SetTitle('MC/Data')
-    iratio.Divide( datahist )
-    iratio.Draw('e')
-    iratio.SetMinimum(0.0)
-    iratio.SetMaximum(2.0)
-    iratio.GetYaxis().SetNdivisions(2,4,0,False)
-    iratio.GetYaxis().SetTitleOffset(1.0)
-    iratio.GetXaxis().SetTitleOffset(3.0)    
-    ratios.append(iratio)
-    canv.cd()
+        pad1.cd()
+        pad1.SetLogx()
+        iratio = mchist.Clone()
+        iratio.SetName( 'iratio_' + histname +str(j) )
+        iratio.GetYaxis().SetTitle('MC/Data')
+        iratio.Divide( datahist )
+        iratio.Draw('e')
+        iratio.SetMinimum(0.0)
+        iratio.SetMaximum(3.0)
+        iratio.GetYaxis().SetNdivisions(2,4,0,False)
+        iratio.GetYaxis().SetTitleOffset(1.0)
+        iratio.GetXaxis().SetTitleOffset(3.0)
+        ratios.append(iratio)
+        canv.cd()
 
 
 
     
-    canv.Update()
-    canv.Print( 'jetplots_' + histname + options.outname + '.png', 'png')
-    canv.Print( 'jetplots_' + histname + options.outname + '.pdf', 'pdf')
+        canv.Update()
+        canv.Print( 'jetplots_' + histname +str(j)+ options.outname + '.png', 'png')
+        canv.Print( 'jetplots_' + histname +str(j)+ options.outname + '.pdf', 'pdf')
