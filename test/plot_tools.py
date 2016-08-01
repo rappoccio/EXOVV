@@ -32,6 +32,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         pads_list[i][0].cd()
         #pads_list[i][0].SetLogy()
         pads_list[i][0].SetLogx()
+        pads_list[i][0].SetLogy()
         data_list[i].UseCurrentStyle()
         MC_list[i].UseCurrentStyle()
         data_list[i].Scale(scales[i])
