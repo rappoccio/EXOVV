@@ -48,7 +48,11 @@ unfoldSD = RooUnfoldBayes(responseSD, recoSD, 4)
 
 
 reco_unfolded = unfold.Hreco()
+span = reco_unfolded.ProjectionX()
+span.SetName('pyth8_spanmass')
 reco_unfoldedSD = unfoldSD.Hreco()
+sdspan = reco_unfoldedSD.ProjectionX()
+sdspan.SetName('pyth8_spanmassSD')
 
 reco_unfolded.Draw()
 
@@ -121,5 +125,7 @@ for morestuff in namesrecoSD:
     morestuff.Write()
 for evenmore in namesgenSD:
     evenmore.Write()
+span.Write()
+sdspan.Write()
 outfile.Write()
 outfile.Close()
