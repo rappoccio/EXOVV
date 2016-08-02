@@ -1,6 +1,6 @@
 #from ROOT import *
 import ROOT
-ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
@@ -177,19 +177,18 @@ for x in range(0, 19):
     atlxpt.append(ROOT.TLatex())
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
-    
-    alegends.append(TLegend(.25, .35, .45, .80))
-    if x == 0:
-        alegendsSD.append(TLegend(.605, .39, .89, .78))
-    elif x < 4 and x > 0:
-        alegendsSD.append(TLegend(.58, .39, .9, .78))
+    if x > 13:
+        alegends.append(TLegend(.18, .35, .37, .80))
     else:
-        alegendsSD.append(TLegend(.6, .30, .9, .80))
-    alegends_fullband.append(TLegend(.18, .45, .51, .80))
-    if x < 2:
-        alegends_fullbandSD.append(TLegend(.61, .43, .9, .80))
+        alegends.append(TLegend(.52, .06, .75, .47))
+
+    alegendsSD.append(TLegend(.36, .10, .75, .450))
+    if x > 13:
+        alegends_fullband.append(TLegend(.18, .60, .40, .80))
     else:
-        alegends_fullbandSD.append(TLegend(.55, .40, .9, .80))
+        alegends_fullband.append(TLegend(.52, .09, .75, .44))
+
+    alegends_fullbandSD.append(TLegend(.36, .10, .75, .450))
 
 
 ################################################################################################################# Get Parton Showering Unc.

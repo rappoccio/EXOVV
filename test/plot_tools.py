@@ -204,10 +204,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             legends_list[i].AddEntry(theory, "NNLL + LO (Frye et al)", 'l')
             legends_list[i].Draw("same")
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        if options.isSoftDrop and isData:
-            latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+            #if options.isSoftDrop and isData:
+#latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+        if options.isSoftDrop:
+            latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
         else:
-            latexpt_list[i].DrawLatex(0.60, 0.820, ptbins_dict[i])
+            latexpt_list[i].DrawLatex(0.170, 0.830, ptbins_dict[i])
         ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
@@ -423,7 +425,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
-        #pads_list[i][0].SetLogy()
+        pads_list[i][0].SetLogy()
         pads_list[i][0].SetLogx()
         data_list[i].UseCurrentStyle()
         MC_list[i].UseCurrentStyle()
@@ -542,10 +544,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             legends_list[i].AddEntry(theory, "NNLL + LO (Frye et al)", 'l')
             legends_list[i].Draw("same")
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        if options.isSoftDrop and isData:
-            latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
+        if options.isSoftDrop:
+            latexpt_list[i].DrawLatex(0.38, 0.470, ptbins_dict[i])
         else:
-            latexpt_list[i].DrawLatex(0.60, 0.820, ptbins_dict[i])
+            latexpt_list[i].DrawLatex(0.180, 0.830, ptbins_dict[i])
 ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
