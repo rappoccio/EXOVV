@@ -94,6 +94,8 @@ ROOT.gStyle.SetPadRightMargin(0.15)
 
 tlxs = []
 
+resultbinwidths = [1., 4., 5., 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
+
 ptbins = ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} 760-900 GeV}', '#bf{p_{T} 900-1000 GeV}', '#bf{p_{T} 1000-1100 GeV}','#bf{p_{T} 1100-1200 GeV}',
  '#bf{p_{T} 1200-1300 GeV}', '#bf{p_{T} 1300-1400 GeV}', '#bf{p_{T} 1400-1500 GeV}', '#bf{p_{T} 1500-1600 GeV}', '#bf{p_{T} 1600-1700 GeV}', '#bf{p_{T} 1700-1800 GeV}', '#bf{p_{T} 1800-1900 GeV}', '#bf{p_{T} 1900-2000 GeV}', '#bf{p_{T} > 2000 GeV}']
 
@@ -128,6 +130,11 @@ for j in xrange(0, 19):
         leg.SetFillColor(0)
         leg.SetBorderSize(0)
         mchist = fmc.Get( histname + str(j) )
+        if ihist ==2 or ihist ==3:
+            for ibin in xrange(1, mchist.GetNbinsX()+1):
+                mchist.SetBinContent(ibin, mchist.GetBinContent(ibin) * 1./resultbinwidths[ibin-1])
+                mchist.SetBinError(ibin, mchist.GetBinError(ibin) * 1./resultbinwidths[ibin-1])
+
         mchist.Sumw2()
         mchist.SetLineColor(1)
         if options.rebin != None :
@@ -135,6 +142,10 @@ for j in xrange(0, 19):
         mchists.append( mchist )
             
         datahist = f.Get( histname + str(j) )
+        if ihist == 2 or ihist == 3:
+            for ibin in xrange(1, datahist.GetNbinsX()+1):
+                datahist.SetBinContent(ibin, datahist.GetBinContent(ibin) * 1./resultbinwidths[ibin-1])
+                datahist.SetBinError(ibin, datahist.GetBinError(ibin) * 1./resultbinwidths[ibin-1])
         datahist.Sumw2()
         datahist.SetMarkerStyle(20)
         #datahist.SetMarkerSize(12)
@@ -166,13 +177,8 @@ for j in xrange(0, 19):
         tlx.SetTextFont(43)
         tlx.SetTextSize(24)
         tlx.DrawLatex(0.4, 0.905, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        if ihist == 6 or ihist == 0:
+        if ihist == 6 or ihist == 0 or ihist ==3:
             atlxpt[j].DrawLatex(0.585, 0.830, ptbins[j])
-        elif ihist == 3:
-            if j < 7:
-                atlxpt[j].DrawLatex(0.610, 0.845, ptbins[j])
-            else:
-                atlxpt[j].DrawLatex(0.585, 0.830, ptbins[j])
         else :
             atlxpt[j].DrawLatex(0.170, 0.830, ptbins[j])
 
