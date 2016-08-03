@@ -1,3 +1,4 @@
+
 #! /usr/bin/env python
 
 ##################
@@ -61,6 +62,8 @@ fmc = ROOT.TFile( options.mcfile )
 logy =  [ True,       False,      True,       True,         True,           False,          True ]
 hists = ['h_pt_meas', 'h_y_meas', 'h_m_meas', 'h_msd_meas', 'h_tau21_meas', 'h_dphi_meas', 'h_ptasym_meas']
 
+
+
 ## titles = [
 ##     'AK8 p_{T};p_{T} (GeV)',
 ##     'AK8 Rapidity;y',
@@ -119,7 +122,8 @@ for j in xrange(0, 19):
         pad1.Draw()
 
         pad0.cd()
-        pad0.SetLogx()
+        if ihist ==2 or ihist ==3:
+            pad0.SetLogx()
         leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
         leg.SetFillColor(0)
         leg.SetBorderSize(0)
@@ -162,21 +166,27 @@ for j in xrange(0, 19):
         tlx.SetTextFont(43)
         tlx.SetTextSize(24)
         tlx.DrawLatex(0.4, 0.905, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        if ihist == 1 or ihist == 3 or ihist == 6 :
+        if ihist == 6 or ihist == 0:
             atlxpt[j].DrawLatex(0.585, 0.830, ptbins[j])
+        elif ihist == 3:
+            if j < 7:
+                atlxpt[j].DrawLatex(0.610, 0.845, ptbins[j])
+            else:
+                atlxpt[j].DrawLatex(0.585, 0.830, ptbins[j])
         else :
             atlxpt[j].DrawLatex(0.170, 0.830, ptbins[j])
 
         
         pad1.cd()
-        pad1.SetLogx()
+        if ihist ==2 or ihist ==3:
+            pad1.SetLogx()
         iratio = mchist.Clone()
         iratio.SetName( 'iratio_' + histname +str(j) )
         iratio.GetYaxis().SetTitle('MC/Data')
         iratio.Divide( datahist )
         iratio.Draw('e')
         iratio.SetMinimum(0.0)
-        iratio.SetMaximum(3.0)
+        iratio.SetMaximum(2.0)
         iratio.GetYaxis().SetNdivisions(2,4,0,False)
         iratio.GetYaxis().SetTitleOffset(1.0)
         iratio.GetXaxis().SetTitleOffset(3.0)
