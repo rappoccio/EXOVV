@@ -223,8 +223,8 @@ h_tau21_meas = []
 h_ptasym_meas = []
 
 for j in xrange(0,19):
-    h_m_meas.append( ROOT.TH1F("h_m_meas"+str(j), ";Jet Mass (GeV); Events per bin", 50, 0, 500 ))
-    h_msd_meas.append( ROOT.TH1F("h_msd_meas"+str(j), ";Jet Soft Drop Mass (GeV); Events per bin", 50, 0, 500 ))
+    h_m_meas.append( ROOT.TH1F("h_m_meas"+str(j), ";Jet Mass (GeV); Events per bin", nbinsm, mBinA ))
+    h_msd_meas.append( ROOT.TH1F("h_msd_meas"+str(j), ";Jet Soft Drop Mass (GeV); Events per bin", nbinsm, mBinA ))
     h_pt_meas.append( ROOT.TH1F("h_pt_meas"+str(j), ";Jet p_{T} (GeV); Events per bin", 150, 0, 3000))
     h_y_meas.append( ROOT.TH1F("h_y_meas"+str(j), ";Jet Rapidity; Events per bin", 50, -2.5, 2.5 ))
     h_dphi_meas.append( ROOT.TH1F("h_dphi_meas"+str(j), ";Jet #phi (radians); Events per bin", 50, 0, ROOT.TMath.TwoPi() ))
