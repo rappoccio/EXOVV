@@ -176,6 +176,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         
         ####################################################################################### Gen Drawn Here
         MC_list[i].SetLineColor(2)
+        MC_list[i].SetLineStyle(3)
         MC_list[i].SetLineWidth(3)
         MC_list[i].Scale(1.0/MC_list[i].Integral())
         MC_list[i].Draw( "hist SAME" )
@@ -197,7 +198,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             ratio_bin = float(hReco.GetBinContent(7)/theory.GetBinContent(7))
             theory.Scale(ratio_bin)
             #theory.Scale(scales[i])
-            theory.SetLineColor(ROOT.kMagenta - 4)
+            theory.SetLineStyle(2)
+            theory.SetLineColor(ROOT.kBlue)
             theory.SetLineWidth(3)
             #theory.SetAxisRange(1e-5, 1, "Y")
             theory.Draw("hist same")
@@ -354,7 +356,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy.SetLineWidth(3)
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.SetLineStyle(2)
-            theorycopy.SetLineColor(ROOT.kMagenta - 4)
+            theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
     
         datcopy.GetXaxis().SetTitleOffset(2.5)
@@ -524,6 +526,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         keephists.append([hRecoPDF])
         ####################################################################################### Gen Drawn Here
         MC_list[i].SetLineColor(2)
+        MC_list[i].SetLineStyle(3)
         MC_list[i].SetLineWidth(3)
         MC_list[i].Scale(1.0/MC_list[i].Integral())
         MC_list[i].Draw( "hist SAME" )
@@ -538,7 +541,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory.Scale(1.0/theory.Integral())
             ratio_bin = float(hRecoPDF.GetBinContent(7)/theory.GetBinContent(7))
             theory.Scale(float(ratio_bin))
-            theory.SetLineColor(ROOT.kMagenta - 4)
+            theory.SetLineColor(ROOT.kBlue)
+            theory.SetLineStyle(2)
             theory.SetLineWidth(3)
             theory.Draw("hist same")
             legends_list[i].AddEntry(theory, "NNLL + LO (Frye et al)", 'l')
@@ -600,12 +604,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetYaxis().SetLabelOffset(0.01)
         datPDF.GetYaxis().SetLabelSize(20)
         datPDF.GetXaxis().SetLabelSize(20)
-        trueCopy.SetLineStyle(2)
+        trueCopy.SetLineStyle(3)
         trueCopy.SetLineColor(2)
         trueCopy.SetLineWidth(3)
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.SetLineStyle(2)
-            theorycopy.SetLineColor(ROOT.kMagenta - 4)
+            theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
 
         datPDF.GetXaxis().SetTitleOffset(2.5)
