@@ -239,7 +239,7 @@ for itree,t in enumerate(trees) :
         if FatJetPt[0] < FatJetPt[1]:
             maxjet = 1
             minjet = 0
-        ptasym = ( FatJetPt[maxjet] - FatJetPt[minjet] / (FatJetPt[maxjet] + FatJetPt[minjet])   )
+        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet]) / (FatJetPt[maxjet] + FatJetPt[minjet])
         dphi = ROOT.TVector2.Phi_0_2pi(FatJetPhi[maxjet]-FatJetPhi[minjet])
         passkin = ptasym < 0.3 and dphi > 1.57 and dphi < 4.71
         if not passkin:
