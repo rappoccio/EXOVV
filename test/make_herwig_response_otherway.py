@@ -233,6 +233,18 @@ for itree,t in enumerate(trees) :
         FatJetz = []
         GenJetz = []
         weight = Weight[0]
+        
+        maxjet = 0
+        minjet = 1
+        if FatJetPt[0] < FatJetPt[1]:
+            maxjet = 1
+            minjet = 0
+        ptasym = (FatJetPt[maxjet] - FatJetPt[minjet]) / (FatJetPt[maxjet] + FatJetPt[minjet])
+        dphi = ROOT.TVector2.Phi_0_2pi(FatJetPhi[maxjet]-FatJetPhi[minjet])
+        passkin = ptasym < 0.3 and dphi > 1.57 and dphi < 4.71
+        if not passkin:
+            continue
+
         if 5e-6 < weight/(FatJetPt[0]+FatJetPt[1]):
             continue
         #print weight
