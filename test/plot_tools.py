@@ -26,8 +26,20 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions_normalized.root")
     theorylist = []
+    
+    powhegfile = ROOT.TFile("CMS_SMP_16_010.root")
+    powheglist = []
+    powheglistSD = []
+    for h in xrange(1, 10):
+        powheglist.append( powhegfile.Get("CMS_SMP_16_010/d0"+str(h)+"-x01-y01"))
+    for h in xrange(10, 19):
+        powheglist.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
+    for h in xrange(19,37):
+        powheglistSD.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
+
     for h in xrange(0, 18):
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
+
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
         #pads_list[i][0].SetLogy()
@@ -57,6 +69,9 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         jerUP.Scale(scales[i])
         jerDOWN.Scale(scales[i])
         nom.Scale(scales[i])
+        
+
+
         for ibin in xrange(1, hRMS.GetNbinsX()):
             hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
@@ -74,6 +89,9 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            if i < 18:
+                powheglist[i].SetBinContent(ibin, powheglist[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+                powheglistSD[i].SetBinContent(ibin, powheglistSD[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
         ########################################################################################## Add JER and JES Uncertainties
         for ibin in xrange(1,hReco.GetNbinsX()):
             val = float(hReco.GetBinContent(ibin))
@@ -191,6 +209,23 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         legends_list[i].AddEntry(hReco, 'JES+JER', 'f')
         legends_list[i].AddEntry(hRMS, 'Stat', 'f')
         legends_list[i].Draw()
+        powheg = None
+        if i < 18:
+            if options.isSoftDrop:
+                powheg = powheglistSD[i]
+            else:
+                powheg = powheglist[i]
+            powheg.Scale(1.0/powheg.Integral())
+            powheg.SetLineStyle(3)
+            powheg.SetLineColor(ROOT.kGreen - 4)
+            powheg.SetLineWidth(3)
+            powheg.Draw("hist same")
+            legends_list[i].AddEntry(powheg, "POWHEG", 'l')
+            legends_list[i].Draw("same")
+            powhegcopy = powheg.Clone()
+            powhegcopy.SetName( powheg.GetName()+"_copy")
+
+
         if i < 18 and options.isSoftDrop and isData:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
@@ -283,6 +318,9 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
+
+        if i < 18:
+            powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0, "B")
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
@@ -295,6 +333,11 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.UseCurrentStyle()
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.0)
+        if i < 18:
+            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            powhegcopy.UseCurrentStyle()
+            powhegcopy.GetXaxis().SetTitleOffset(2)
+            powhegcopy.GetYaxis().SetTitleOffset(1.0)
     
         datcopy.SetMinimum(0)
         datcopy.SetMaximum(2)
@@ -358,7 +401,11 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.SetLineStyle(2)
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
-    
+        if i < 18:
+            powhegcopy.SetLineStyle(3)
+            powhegcopy.SetLineColor(ROOT.kGreen - 4)
+            powhegcopy.SetLineWidth(3)
+
         datcopy.GetXaxis().SetTitleOffset(2.5)
         datcopycopy.GetXaxis().SetTitleOffset(2.5)
         datPDF.GetXaxis().SetTitleOffset(2.5)
@@ -394,6 +441,9 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy.Draw("hist same")
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Draw("hist same")
+        if i < 18:
+            powhegcopy.Draw("hist same")
+    
         keephists.append([datcopy, datPDF])
         pads_list[i][0].Update()
         pads_list[i][0].RedrawAxis()
@@ -403,6 +453,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
     theoryfile.Close()
+    powhegfile.Close()
 
 def setup(canvases_to_use, pads_to_use):
     for icanv,canv in enumerate ( canvases_to_use ) :
@@ -423,6 +474,17 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions_normalized.root")
     theorylist = []
+    
+    powhegfile = ROOT.TFile("CMS_SMP_16_010.root")
+    powheglist = []
+    powheglistSD = []
+    for h in xrange(1, 10):
+        powheglist.append( powhegfile.Get("CMS_SMP_16_010.root/d0"+str(h)+"-x01-y01"))
+    for h in xrange(10, 18):
+        powheglist.append( powhegfile.Get("CMS_SMP_16_010.root/d"+str(h)+"-x01-y01"))
+    for h in xrange(18,37):
+        powheglistSD.append( powhegfile.Get("CMS_SMP_16_010.root/d"+str(h)+"-x01-y01"))
+
     for h in xrange(0, 18):
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
     for i, canv in enumerate(canvas_list):
@@ -470,6 +532,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            if i < 18:
+                powheglist[i].SetBinContent(ibin, powheglist[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+                powheglistSD[i].SetBinContent(ibin, powheglistSD[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
 ########################################################################################## Add JER and JES Uncertainties
         for ibin in xrange(1,hReco.GetNbinsX()):
             val = float(hReco.GetBinContent(ibin))
@@ -536,6 +601,22 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         legends_list[i].AddEntry(MC_list[i], 'Pythia8'+softdrop, 'l')
         legends_list[i].AddEntry(hRecoPDF, 'Theoretical + Experimental', 'f')
         legends_list[i].Draw()
+        powheg = None
+        if i < 18:
+            if options.isSoftDrop:
+                powheg = powheglistSD[i]
+            else:
+                powheg = powheglist[i]
+            powheg.Scale(1.0/powheg.Integral())
+            powheg.SetLineStyle(3)
+            powheg.SetLineColor(ROOT.kGreen - 4)
+            powheg.SetLineWidth(3)
+            powheg.Draw("hist same")
+            legends_list[i].AddEntry(powheg, "POWHEG", 'l')
+            legends_list[i].Draw("same")
+            powhegcopy = powheg.Clone()
+            powhegcopy.SetName( powheg.GetName()+"_copy")
+
         if i < 18 and options.isSoftDrop and isData:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
@@ -580,6 +661,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
+        if i < 18:
+            powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0, "B")
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
@@ -592,6 +675,11 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.UseCurrentStyle()
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.0)
+        if i < 18:
+            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            powhegcopy.UseCurrentStyle()
+            powhegcopy.GetXaxis().SetTitleOffset(2)
+            powhegcopy.GetYaxis().SetTitleOffset(1.0)
 
         datPDF.SetMinimum(0)
         datPDF.SetMaximum(2)
@@ -611,6 +699,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.SetLineStyle(2)
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
+        if i < 18:
+            powhegcopy.SetLineStyle(3)
+            powhegcopy.SetLineColor(ROOT.kGreen - 4)
+            powhegcopy.SetLineWidth(3)
 
         datPDF.GetXaxis().SetTitleOffset(2.5)
     
@@ -632,6 +724,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         trueCopy.Draw("hist same")
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Draw("hist same")
+        if i < 18:
+            powhegcopy.Draw("hist same")
         keephists.append([datPDF])
         pads_list[i][0].Update()
         pads_list[i][0].RedrawAxis()
@@ -641,7 +735,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
     theoryfile.Close()
-
+    powhegfile.Close()
 
 def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegname_str, genlegname_str, outname_str, latex_list, latexpt_list, ptbins_dict):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
