@@ -1,6 +1,6 @@
 #from ROOT import *
 import ROOT
-ROOT.gSystem.Load("../libRooUnfold")
+ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
@@ -223,8 +223,8 @@ ps_differences_softdrop = []
 for i in range(0, 19):
     temp_diff = []
     temp_softdrop_diff = []
-    ps.append(parton_shower.Get('data_unfolded_by_pythia6'+str(i)))
-    ps_softdrop.append(parton_shower.Get('data_unfolded_by_pythia6_softdrop'+str(i)))
+    ps.append(parton_shower.Get('data_unfolded_by_herwig'+str(i)))
+    ps_softdrop.append(parton_shower.Get('data_unfolded_by_herwig_softdrop'+str(i)))
       
     temp_unc = (ps[i] - datalist[i])
     temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
@@ -414,7 +414,7 @@ for leg in ratioLegSD2 :
 PlotRatios( ratiocanvasesSD,  datalistSD, MClistSD, preunfolded_datalistSD, preunfolded_MClistSD, ratioLegSD, get_ptbins(), atlxSD, atlxSDpt, "ratio_SD_", MCtruthSD, ratiocanvasesSD2, ratioLegSD2, softdrop="MMDT Beta=0")
 PlotRatios( ratiocanvases,  datalist, MClist, preunfolded_datalist, preunfolded_MClist, ratioLeg, get_ptbins(), atlx, atlxpt, "ratio_", MCtruth,  ratiocanvases2, ratioLeg2 )
 
-'''
+
 ####################################################################
 if options.logy:
     if options.oneband:
@@ -499,5 +499,5 @@ else:
         else:
             plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldeddata_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=True)
 
-'''
+
 
