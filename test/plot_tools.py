@@ -718,3 +718,94 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         pads_list[i][1].RedrawAxis()
         canvas_list[i].Draw()
         canvas_list[i].SaveAs(outname_str+str(i)+".png")
+
+
+def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, pre_MC_list, legends_list, ptbins_dict, latex_list, latexpt_list, outname_str, genMC_list, manyratios_canvas_list, legends_list2, softdrop= ""):
+    mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
+    
+    for i, canvas in enumerate(ratio_canvas_list):
+
+############## unfolded/preunfolded data, MC
+        
+        preMC = pre_MC_list[i].Clone()
+        preMC.SetName( preMC.GetName()+"_copy" )
+        preMC.Scale(1.0/preMC.Integral())
+        postMC = post_MC_list[i].Clone()
+        postMC.SetName( postMC.GetName()+"_copy" )
+        postMC.Scale(1.0/postMC.Integral())
+        preData = pre_data_list[i].Clone()
+        preData.SetName( preData.GetName()+"_copy" )
+        preData.Scale(1.0/preData.Integral())
+        postData = post_data_list[i].Clone()
+        postData.SetName( postData.GetName()+"_copy" )
+        postData.Scale(1.0/postData.Integral())
+        for ibin in xrange(1, preMC.GetNbinsX()):
+            preMC.SetBinContent(ibin, preMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            postMC.SetBinContent(ibin, postMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            preData.SetBinContent(ibin, preData.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            postData.SetBinContent(ibin, postData.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+
+        
+        postMC.Divide( postMC, preMC, 1.0, 1.0, "B" )
+        postData.Divide( postData, preData, 1.0, 1.0, "B" )
+
+        canvas.cd()
+
+        leg = legends_list[i]
+
+        postMC.SetLineColor(2)
+        postMC.SetTitle(";Jet Mass (GeV);Ratio of Unfolded to Preunfolded")
+        postMC.Draw("hist")
+        postData.SetLineColor(4)
+        postData.Draw("hist same")
+        legends_list[i].AddEntry(postMC, 'Ratio of Unfolded to PreUnfolded Monte Carlo '+softdrop, 'l')
+        legends_list[i].AddEntry(postData, 'Ratio of Unfolded to PreUnfolded Data '+softdrop, 'l')
+        legends_list[i].Draw()
+        if i == 18:
+            latexpt_list[i].DrawLatex(0.40, 0.830, ptbins_dict[i])
+        else:
+            latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
+        latex_list[i].DrawLatex(0.331, 0.924, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
+        canvas.SaveAs(outname_str + str(i) + ".pdf")
+
+
+################# (gen level / unfolded data) / (reco MC / reco data)
+
+        genMC = genMC_list[i].Clone()
+        genMC.SetName( genMC.GetName()+"_copy" )
+        genMC.Scale(1.0/genMC.Integral())
+        preMC2 = pre_MC_list[i].Clone()
+        preMC2.SetName( preMC2.GetName()+"_copy2" )
+        preMC2.Scale(1.0/preMC2.Integral())
+        preData2 = pre_data_list[i].Clone()
+        preData2.SetName( preData2.GetName()+"_copy2" )
+        preData2.Scale(1.0/preData2.Integral())
+        postData2 = post_data_list[i].Clone()
+        postData2.SetName( postData2.GetName()+"_copy2" )
+        postData2.Scale(1.0/postData2.Integral())
+        
+        for ibin in xrange(1, preMC.GetNbinsX()):
+            preMC2.SetBinContent(ibin, preMC2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            genMC.SetBinContent(ibin, genMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            preData2.SetBinContent(ibin, preData2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            postData2.SetBinContent(ibin, postData2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+
+        genMC.Divide( genMC, postData2, 1.0, 1.0, "B" )
+        preMC2.Divide( preMC2, preData2, 1.0, 1.0, "B" )
+        genMC.Divide( genMC, preMC2, 1.0, 1.0, "B" )
+        
+        canvas2 = manyratios_canvas_list[i]
+        canvas2.cd()
+
+        genMC.Draw("hist")
+        leg2 = legends_list2[i]
+        legends_list2[i].AddEntry(genMC, '(gen level/unfolded data)/(reco MC/reco data) '+softdrop, 'l')
+        legends_list2[i].Draw()
+        latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
+        latex_list[i].DrawLatex(0.331, 0.924, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
+        genMC.SetTitle(";Jet Mass (GeV);(Gen/Unfolded Data)/(Preunfolded MC/Preunfolded Data)")
+        canvas2.SaveAs("gen"+ outname_str + str(i) + ".pdf")
+
+
+
+
