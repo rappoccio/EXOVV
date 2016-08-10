@@ -332,12 +332,12 @@ for itree,t in enumerate(trees) :
             weight = 0.0
 
                         
-        if dphi > 1.57 and dphi < 4.71:
+        if dphi > 1.57:
             h_ptasym_meas.Fill( ptasym, weight )
         if ptasym < 0.3 :
             h_dphi_meas.Fill( dphi, weight )
 
-        passkin = ptasym < 0.5 and dphi > 1.57
+        passkin = ptasym < 0.3 and dphi > 1.57 and dphi < 4.71
         if not passkin :
             continue
 
