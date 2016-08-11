@@ -205,17 +205,22 @@ for x in range(0, 19):
                 
     else:
 
-        alegends.append(TLegend(.18, .35, .37, .80))
-        if x == 0:
-            alegendsSD.append(TLegend(.60, .40, .90, .80))
+        if x > 13:
+            alegends.append(TLegend(.18, .35, .37, .80))
         else:
-            alegendsSD.append(TLegend(.58, .30, .90, .80))
-        alegends_fullband.append(TLegend(.18, .55, .47, .80))
+            alegends.append(TLegend(.52, .09, .75, .52))
         if x == 0:
-            alegends_fullbandSD.append(TLegend(.60, .50, .90, .80))
+            alegendsSD.append(TLegend(.36, .1, .65, .45))
         else:
-            alegends_fullbandSD.append(TLegend(.58, .30, .90, .80))
-
+            alegendsSD.append(TLegend(.36, .1, .75, .45))
+        if x > 13:
+            alegends_fullband.append(TLegend(.18, .65, .37, .80))
+        else:
+            alegends_fullband.append(TLegend(.48, .09, .75, .42))
+        if x == 0:
+            alegends_fullbandSD.append(TLegend(.36, .1, .65, .45))
+        else:
+            alegends_fullbandSD.append(TLegend(.36, .1, .75, .45))
 
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
