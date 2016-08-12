@@ -1,6 +1,6 @@
 #from ROOT import *
 import ROOT
-ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
@@ -19,6 +19,12 @@ parser.add_option('--isSoftDrop', action='store_true',
                   dest='isSoftDrop',
                   help='theory curves on plots')
 
+
+
+parser.add_option('--logy', action='store_true',
+                  default = False,
+                  dest='logy',
+                  help='plots in log y')
 
                                  
 (options, args) = parser.parse_args()
@@ -177,19 +183,46 @@ for x in range(0, 19):
     atlxpt.append(ROOT.TLatex())
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
-    if x > 13:
+    if options.logy:
+        
+        if x > 13:
+            
+            alegends.append(TLegend(.18, .35, .37, .80))
+        elif x == 11:
+            alegends.append(TLegend(.55, .06, .75, .44))
+        else:
+            
+            alegends.append(TLegend(.54, .06, .75, .46))
+        
+        if x > 12:
+            alegendsSD.append(TLegend(.34, .10, .55, .450))
+
+        else:
+            alegendsSD.append(TLegend(.36, .10, .75, .450))
+        
+        if x > 13:
+            
+            alegends_fullband.append(TLegend(.18, .60, .40, .80))
+                
+        else:
+                    
+            alegends_fullband.append(TLegend(.52, .09, .75, .44))
+
+
+        alegends_fullbandSD.append(TLegend(.34, .10, .55, .450))
+
+    else:
         alegends.append(TLegend(.18, .35, .37, .80))
-    else:
-        alegends.append(TLegend(.52, .06, .75, .47))
-
-    alegendsSD.append(TLegend(.36, .10, .75, .450))
-    if x > 13:
-        alegends_fullband.append(TLegend(.18, .60, .40, .80))
-    else:
-        alegends_fullband.append(TLegend(.52, .09, .75, .44))
-
-    alegends_fullbandSD.append(TLegend(.36, .10, .75, .450))
-
+        if x < 4:
+            alegendsSD.append(TLegend(.60, .40, .90, .80))
+        else:
+            alegendsSD.append(TLegend(.58, .30, .90, .80))
+        alegends_fullband.append(TLegend(.18, .55, .47, .80))
+        
+        if x < 5:
+            alegends_fullbandSD.append(TLegend(.60, .50, .90, .80))
+        else:
+            alegends_fullbandSD.append(TLegend(.58, .30, .90, .80))
 
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
@@ -197,8 +230,8 @@ ps_differences_softdrop = []
 for i in range(0, 19):
     temp_diff = []
     temp_softdrop_diff = []
-    ps.append(parton_shower.Get('pythia8_unfolded_by_pythia6'+str(i)))
-    ps_softdrop.append(parton_shower.Get('pythia8_unfolded_by_pythia6_softdrop'+str(i)))
+    ps.append(parton_shower.Get('pythia8_unfolded_by_herwig'+str(i)))
+    ps_softdrop.append(parton_shower.Get('pythia8_unfolded_by_herwig_softdrop'+str(i)))
       
     temp_unc = (ps[i] - datalist[i])
     temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
@@ -313,39 +346,88 @@ for leg in alegends_fullbandSD :
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
 
-if options.oneband:
+if options.logy:
+    if options.oneband:
+        
+        for x in range(0, 19):
+            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
+            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+        for x in range(0, 19):
+            datacanvases_fullband[x].SetLeftMargin(0.15)
+            datacanvases_fullbandSD[x].SetLeftMargin(0.15)
     
-    for x in range(0, 19):
-        datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
-        datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
-    for x in range(0, 19):
-        datacanvases_fullband[x].SetLeftMargin(0.15)
-        datacanvases_fullbandSD[x].SetLeftMargin(0.15)
-
-    setup(datacanvases_fullband, pads_fullband)
-    setup(datacanvases_fullbandSD, pads_fullbandSD)
-
-
-    histstokeep = []
+        setup(datacanvases_fullband, pads_fullband)
+        setup(datacanvases_fullbandSD, pads_fullbandSD)
+        
+        
+        histstokeep = []
+        if options.isSoftDrop:
+            plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_softdrop_fullband_logy_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
+        else:
+            plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_logy_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
+        del histstokeep[:]
     
-    plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
-    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)
+    else:
+        
+        for x in range(0, 19):
+            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
+            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+        for x in range(0, 19):
+            datacanvases[x].SetLeftMargin(0.15)
+            datacanvasesSD[x].SetLeftMargin(0.15)
     
-    del histstokeep[:]
+    
+        setup(datacanvases, pads)
+        setup(datacanvasesSD, padsSD)
+        
+        histstokeep = []
+        if options.isSoftDrop:
+            plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_logy_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
+
+        else:
+            plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldedclosure_logy_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
 
 else:
+    if options.oneband:
+        
+        for x in range(0, 19):
+            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
+            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+        for x in range(0, 19):
+            datacanvases_fullband[x].SetLeftMargin(0.15)
+            datacanvases_fullbandSD[x].SetLeftMargin(0.15)
+        
+        setup(datacanvases_fullband, pads_fullband)
+        setup(datacanvases_fullbandSD, pads_fullbandSD)
+        
+        
+        histstokeep = []
+        
+        if options.isSoftDrop:
+            plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
+        else:
+            plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
+        del histstokeep[:]
 
-    for x in range(0, 19):
-        datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
-        datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
-    for x in range(0, 19):
-        datacanvases[x].SetLeftMargin(0.15)
-        datacanvasesSD[x].SetLeftMargin(0.15)
+    else:
+        
+        for x in range(0, 19):
+            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
+            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+        for x in range(0, 19):
+            datacanvases[x].SetLeftMargin(0.15)
+            datacanvasesSD[x].SetLeftMargin(0.15)
+        
+        
+        setup(datacanvases, pads)
+        setup(datacanvasesSD, padsSD)
+        
+        histstokeep = []
+        
+        if options.isSoftDrop:
+            plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
+        else:
+            plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldedclosure_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
 
-    setup(datacanvases, pads)
-    setup(datacanvasesSD, padsSD)
 
-    histstokeep = []
 
-    plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "unfoldedclosure_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals)
-    plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop)

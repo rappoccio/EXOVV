@@ -253,12 +253,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             #if options.isSoftDrop and isData:
 #latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
         if options.logy:
-            if options.isSoftDrop and i > 15:
-                latexpt_list[i].DrawLatex(0.33, 0.490, ptbins_dict[i])
-            elif options.isSoftDrop:
-                latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
-            else:
-                latexpt_list[i].DrawLatex(0.180, 0.830, ptbins_dict[i])
+            #if options.isSoftDrop and i > 15:
+            #latexpt_list[i].DrawLatex(0.33, 0.490, ptbins_dict[i])
+#elif options.isSoftDrop:
+#latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
+#else:
+            latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
         else:
             if options.isSoftDrop:
                 latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
@@ -648,10 +648,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             legends_list[i].Draw("same")
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
         if options.logy:
-            if options.isSoftDrop and i > 15:
-                latexpt_list[i].DrawLatex(0.33, 0.490, ptbins_dict[i])
-            elif options.isSoftDrop:
-                latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
+            if options.isSoftDrop:
+                latexpt_list[i].DrawLatex(0.3, 0.490, ptbins_dict[i])
+                #elif options.isSoftDrop:
+                #latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
             else:
                 latexpt_list[i].DrawLatex(0.180, 0.830, ptbins_dict[i])
         else:
