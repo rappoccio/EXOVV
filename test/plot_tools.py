@@ -15,7 +15,15 @@ parser.add_option('--isSoftDrop', action='store_true',
                   default = False,
                   dest='isSoftDrop',
                   help='theory curves on plots')
+
+parser.add_option('--logy', action='store_true',
+                  default = False,
+                  dest='logy',
+                  help='plots in log y')
+
 (options, args) = parser.parse_args()
+
+
 
 def get_ptbins():
     return ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} 760-900 GeV}', '#bf{p_{T} 900-1000 GeV}', '#bf{p_{T} 1000-1100 GeV}','#bf{p_{T} 1100-1200 GeV}',
@@ -44,7 +52,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         pads_list[i][0].cd()
         #pads_list[i][0].SetLogy()
         pads_list[i][0].SetLogx()
-        pads_list[i][0].SetLogy()
+        if options.logy:
+            pads_list[i][0].SetLogy()
         data_list[i].UseCurrentStyle()
         MC_list[i].UseCurrentStyle()
         data_list[i].Scale(scales[i])
@@ -216,8 +225,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             else:
                 powheg = powheglist[i]
             powheg.Scale(1.0/powheg.Integral())
-            powheg.SetLineStyle(3)
-            powheg.SetLineColor(ROOT.kGreen - 4)
+            powheg.SetLineStyle(4)
+            powheg.SetLineColor(ROOT.kGreen + 3)
             powheg.SetLineWidth(3)
             powheg.Draw("hist same")
             legends_list[i].AddEntry(powheg, "POWHEG", 'l')
@@ -243,10 +252,18 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
             #if options.isSoftDrop and isData:
 #latexpt_list[i].DrawLatex(0.6, 0.820, ptbins_dict[i])
-        if options.isSoftDrop:
-            latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
+        if options.logy:
+            #if options.isSoftDrop and i > 15:
+            #latexpt_list[i].DrawLatex(0.33, 0.490, ptbins_dict[i])
+#elif options.isSoftDrop:
+#latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
+#else:
+            latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
         else:
-            latexpt_list[i].DrawLatex(0.170, 0.830, ptbins_dict[i])
+            if options.isSoftDrop:
+                latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
+            else:
+                latexpt_list[i].DrawLatex(0.180, 0.830, ptbins_dict[i])
         ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
@@ -394,7 +411,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.GetYaxis().SetLabelOffset(0.01)
         datRMS.GetYaxis().SetLabelSize(20)
         datRMS.GetXaxis().SetLabelSize(20)
-        trueCopy.SetLineStyle(2)
+        trueCopy.SetLineStyle(3)
         trueCopy.SetLineColor(2)
         trueCopy.SetLineWidth(3)
         if i < 18 and options.isSoftDrop and isData:
@@ -402,8 +419,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
         if i < 18:
-            powhegcopy.SetLineStyle(3)
-            powhegcopy.SetLineColor(ROOT.kGreen - 4)
+            powhegcopy.SetLineStyle(4)
+            powhegcopy.SetLineColor(ROOT.kGreen + 3)
             powhegcopy.SetLineWidth(3)
 
         datcopy.GetXaxis().SetTitleOffset(2.5)
@@ -479,17 +496,18 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     powheglist = []
     powheglistSD = []
     for h in xrange(1, 10):
-        powheglist.append( powhegfile.Get("CMS_SMP_16_010.root/d0"+str(h)+"-x01-y01"))
-    for h in xrange(10, 18):
-        powheglist.append( powhegfile.Get("CMS_SMP_16_010.root/d"+str(h)+"-x01-y01"))
-    for h in xrange(18,37):
-        powheglistSD.append( powhegfile.Get("CMS_SMP_16_010.root/d"+str(h)+"-x01-y01"))
+        powheglist.append( powhegfile.Get("CMS_SMP_16_010/d0"+str(h)+"-x01-y01"))
+    for h in xrange(10, 19):
+        powheglist.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
+    for h in xrange(19,37):
+        powheglistSD.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
 
     for h in xrange(0, 18):
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
-        pads_list[i][0].SetLogy()
+        if options.logy:
+            pads_list[i][0].SetLogy()
         pads_list[i][0].SetLogx()
         data_list[i].UseCurrentStyle()
         MC_list[i].UseCurrentStyle()
@@ -608,8 +626,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             else:
                 powheg = powheglist[i]
             powheg.Scale(1.0/powheg.Integral())
-            powheg.SetLineStyle(3)
-            powheg.SetLineColor(ROOT.kGreen - 4)
+            powheg.SetLineStyle(4)
+            powheg.SetLineColor(ROOT.kGreen + 3)
             powheg.SetLineWidth(3)
             powheg.Draw("hist same")
             legends_list[i].AddEntry(powheg, "POWHEG", 'l')
@@ -629,10 +647,18 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             legends_list[i].AddEntry(theory, "NNLL + LO (Frye et al)", 'l')
             legends_list[i].Draw("same")
         latex_list[i].DrawLatex(0.131, 0.926, "CMS preliminary, 2.3 fb^{-1} (13 TeV)")
-        if options.isSoftDrop:
-            latexpt_list[i].DrawLatex(0.38, 0.470, ptbins_dict[i])
+        if options.logy:
+            if options.isSoftDrop:
+                latexpt_list[i].DrawLatex(0.3, 0.490, ptbins_dict[i])
+                #elif options.isSoftDrop:
+                #latexpt_list[i].DrawLatex(0.38, 0.490, ptbins_dict[i])
+            else:
+                latexpt_list[i].DrawLatex(0.180, 0.830, ptbins_dict[i])
         else:
-            latexpt_list[i].DrawLatex(0.180, 0.830, ptbins_dict[i])
+            if options.isSoftDrop:
+                latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
+            else:
+                latexpt_list[i].DrawLatex(0.180, 0.830, ptbins_dict[i])
 ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
@@ -700,8 +726,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
         if i < 18:
-            powhegcopy.SetLineStyle(3)
-            powhegcopy.SetLineColor(ROOT.kGreen - 4)
+            powhegcopy.SetLineStyle(4)
+            powhegcopy.SetLineColor(ROOT.kGreen + 3)
             powhegcopy.SetLineWidth(3)
 
         datPDF.GetXaxis().SetTitleOffset(2.5)

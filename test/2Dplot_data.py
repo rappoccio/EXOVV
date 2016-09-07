@@ -1,6 +1,6 @@
 #from ROOT import *
 import ROOT
-ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
@@ -188,18 +188,22 @@ for x in range(0, 19):
         if x > 13:
             alegends.append(TLegend(.18, .35, .37, .80))
         else:
-            alegends.append(TLegend(.52, .09, .75, .52))
+            alegends.append(TLegend(.52, .07, .75, .50))
         if x == 0:
             alegendsSD.append(TLegend(.36, .10, .65, .450))
+        elif x > 15:
+            alegendsSD.append(TLegend(.33, .10, .58, .450))
         else:
             alegendsSD.append(TLegend(.36, .10, .75, .450))
         if x > 13:
             alegends_fullband.append(TLegend(.18, .65, .37, .80))
         else:
-            alegends_fullband.append(TLegend(.48, .09, .75, .42))
+            alegends_fullband.append(TLegend(.51, .09, .75, .42))
 
         if x == 0:
             alegends_fullbandSD.append(TLegend(.36, .10, .65, .450))
+        elif x > 15:
+            alegends_fullbandSD.append(TLegend(.33, .10, .58, .450))
         else:
             alegends_fullbandSD.append(TLegend(.36, .10, .75, .450))
                 
@@ -208,19 +212,19 @@ for x in range(0, 19):
         if x > 13:
             alegends.append(TLegend(.18, .35, .37, .80))
         else:
-            alegends.append(TLegend(.52, .09, .75, .52))
-        if x == 0:
-            alegendsSD.append(TLegend(.36, .1, .65, .45))
+            alegends.append(TLegend(.18, .35, .37, .80))
+        if x < 4:
+            alegendsSD.append(TLegend(.60, .40, .90, .80))
         else:
-            alegendsSD.append(TLegend(.36, .1, .75, .45))
+            alegendsSD.append(TLegend(.58, .30, .90, .80))
         if x > 13:
-            alegends_fullband.append(TLegend(.18, .65, .37, .80))
+            alegends_fullband.append(TLegend(.18, .55, .47, .80))
         else:
-            alegends_fullband.append(TLegend(.48, .09, .75, .42))
+            alegends_fullband.append(TLegend(.18, .55, .47, .80))
         if x == 0:
-            alegends_fullbandSD.append(TLegend(.36, .1, .65, .45))
+            alegends_fullbandSD.append(TLegend(.60, .50, .90, .80))
         else:
-            alegends_fullbandSD.append(TLegend(.36, .1, .75, .45))
+            alegends_fullbandSD.append(TLegend(.58, .30, .90, .80))
 
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
@@ -345,7 +349,7 @@ for leg in alegends_fullbandSD :
     leg.SetBorderSize(0)
 
 ##############################################################
-
+'''
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
 #### Bring in post-unfolded MC and store in lists
 MCfile = ROOT.TFile('2DClosure.root')
@@ -419,7 +423,7 @@ for leg in ratioLegSD2 :
 PlotRatios( ratiocanvasesSD,  datalistSD, MClistSD, preunfolded_datalistSD, preunfolded_MClistSD, ratioLegSD, get_ptbins(), atlxSD, atlxSDpt, "ratio_SD_", MCtruthSD, ratiocanvasesSD2, ratioLegSD2, softdrop="MMDT Beta=0")
 PlotRatios( ratiocanvases,  datalist, MClist, preunfolded_datalist, preunfolded_MClist, ratioLeg, get_ptbins(), atlx, atlxpt, "ratio_", MCtruth,  ratiocanvases2, ratioLeg2 )
 
-
+'''
 ####################################################################
 if options.logy:
     if options.oneband:
