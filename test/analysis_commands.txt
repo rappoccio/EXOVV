@@ -2,7 +2,10 @@
 
 python 2Dunfold_pdf.py
 python 2Dunfold_PS.py
-python unfold_jackknife.py
+python unfold_jackknife_otherway.py
+python calc_purity_stability_2d_fancy.py
+
+
 
 python 2Dunfold_data.py
 python 2Dunfold_data.py --extension _jerup
