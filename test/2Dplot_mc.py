@@ -1,6 +1,6 @@
 #from ROOT import *
 import ROOT
-ROOT.gSystem.Load("../libRooUnfold")
+ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
@@ -233,8 +233,8 @@ for i in range(0, 19):
     ps.append(parton_shower.Get('pythia8_unfolded_by_herwig'+str(i)))
     ps_softdrop.append(parton_shower.Get('pythia8_unfolded_by_herwig_softdrop'+str(i)))
       
-    temp_unc = (ps[i] - datalist[i])
-    temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
+    temp_unc = 0.5 * (ps[i] - datalist[i])
+    temp_softdrop_unc = 0.5 * (ps_softdrop[i] - datalistSD[i])
     temp_unc.Scale(scales[i])
     temp_softdrop_unc.Scale(scales[i])
 #take the differences in the bins between the pythia 8 unfolded with pythia 8 and the pythia 8 unfolded with pythia 6
