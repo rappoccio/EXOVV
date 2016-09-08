@@ -186,7 +186,7 @@ for x in range(0, 19):
     
     if options.logy:
         if x > 13:
-            alegends.append(TLegend(.18, .35, .37, .80))
+            alegends.append(TLegend(.22, .35, .37, .80))
         else:
             alegends.append(TLegend(.52, .07, .75, .50))
         if x == 0:
@@ -196,7 +196,7 @@ for x in range(0, 19):
         else:
             alegendsSD.append(TLegend(.36, .10, .75, .450))
         if x > 13:
-            alegends_fullband.append(TLegend(.18, .65, .37, .80))
+            alegends_fullband.append(TLegend(.22, .65, .37, .80))
         else:
             alegends_fullband.append(TLegend(.51, .09, .75, .42))
 
@@ -210,17 +210,17 @@ for x in range(0, 19):
     else:
 
         if x > 13:
-            alegends.append(TLegend(.18, .35, .37, .80))
+            alegends.append(TLegend(.22, .35, .37, .80))
         else:
-            alegends.append(TLegend(.18, .35, .37, .80))
+            alegends.append(TLegend(.22, .35, .37, .80))
         if x < 4:
             alegendsSD.append(TLegend(.60, .40, .90, .80))
         else:
             alegendsSD.append(TLegend(.58, .30, .90, .80))
         if x > 13:
-            alegends_fullband.append(TLegend(.18, .55, .47, .80))
+            alegends_fullband.append(TLegend(.22, .55, .47, .80))
         else:
-            alegends_fullband.append(TLegend(.18, .55, .47, .80))
+            alegends_fullband.append(TLegend(.22, .55, .47, .80))
         if x == 0:
             alegends_fullbandSD.append(TLegend(.60, .50, .90, .80))
         else:
@@ -429,8 +429,8 @@ if options.logy:
     if options.oneband:
     
         for x in range(0, 19):
-            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
-            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
+            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 600, 800))
         for x in range(0, 19):
             datacanvases_fullband[x].SetLeftMargin(0.15)
             datacanvases_fullbandSD[x].SetLeftMargin(0.15)
@@ -449,8 +449,8 @@ if options.logy:
     else:
     
         for x in range(0, 19):
-            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
-            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
+            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"), 600, 800)
         for x in range(0, 19):
             datacanvases[x].SetLeftMargin(0.15)
             datacanvasesSD[x].SetLeftMargin(0.15)
@@ -470,8 +470,8 @@ else:
     if options.oneband:
         
         for x in range(0, 19):
-            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
-            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
+            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"), 600, 800)
         for x in range(0, 19):
             datacanvases_fullband[x].SetLeftMargin(0.15)
             datacanvases_fullbandSD[x].SetLeftMargin(0.15)
@@ -491,8 +491,8 @@ else:
     else:
     
         for x in range(0, 19):
-            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)))
-            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"))
+            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
+            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"), 600, 800)
         for x in range(0, 19):
             datacanvases[x].SetLeftMargin(0.15)
             datacanvasesSD[x].SetLeftMargin(0.15)
