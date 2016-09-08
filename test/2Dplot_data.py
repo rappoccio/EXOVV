@@ -429,8 +429,8 @@ if options.logy:
     if options.oneband:
     
         for x in range(0, 19):
-            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
-            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 600, 800))
+            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
+            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
         for x in range(0, 19):
             datacanvases_fullband[x].SetLeftMargin(0.15)
             datacanvases_fullbandSD[x].SetLeftMargin(0.15)
@@ -449,8 +449,8 @@ if options.logy:
     else:
     
         for x in range(0, 19):
-            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
-            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"), 600, 800)
+            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
+            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
         for x in range(0, 19):
             datacanvases[x].SetLeftMargin(0.15)
             datacanvasesSD[x].SetLeftMargin(0.15)
@@ -470,8 +470,8 @@ else:
     if options.oneband:
         
         for x in range(0, 19):
-            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
-            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"), 600, 800)
+            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
+            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
         for x in range(0, 19):
             datacanvases_fullband[x].SetLeftMargin(0.15)
             datacanvases_fullbandSD[x].SetLeftMargin(0.15)
@@ -491,8 +491,8 @@ else:
     else:
     
         for x in range(0, 19):
-            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x)), 600, 800)
-            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"), 600, 800)
+            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
+            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
         for x in range(0, 19):
             datacanvases[x].SetLeftMargin(0.15)
             datacanvasesSD[x].SetLeftMargin(0.15)
