@@ -24,6 +24,11 @@ parser.add_option('--logy', action='store_true',
 (options, args) = parser.parse_args()
 
 
+def add_quadrature( a ):
+    sumit = 0
+    for ia in a: sumit += ia**2
+    return sqrt( sumit )
+
 
 def get_ptbins():
     return ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} 760-900 GeV}', '#bf{p_{T} 900-1000 GeV}', '#bf{p_{T} 1000-1100 GeV}','#bf{p_{T} 1100-1200 GeV}',
@@ -84,7 +89,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         for ibin in xrange(1, hRMS.GetNbinsX()):
             hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
-            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) + ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) )
+            hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin), ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) ]) )
         hReco = hRMS.Clone()
         ########################################################################################## Scale the hists for mass bins
         for ibin in xrange(1, hReco.GetNbinsX()):
@@ -111,7 +116,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
             downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
             sys2 = float(((upjer + downjer )/2.))
-            err = sqrt(sys*sys + sys2*sys2) + err1  
+            err = add_quadrature( [sys, sys2, err1] )
             hReco.SetBinError(ibin, err)
         ####################################################################################### Add Jet Mass Resolution Band
         hRecoJMR = hReco.Clone()
@@ -121,18 +126,18 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             upjmr = float(abs(jmrup.GetBinContent(ibin) - jmrnom.GetBinContent(ibin)))
             downjmr = float(abs(jmrnom.GetBinContent(ibin) - jmrdn.GetBinContent(ibin)))
             sys = float(((upjmr + downjmr)/2.))
-            err = err1 + sys
+            err = add_quadrature( [err1 , sys] )
             hRecoJMR.SetBinError(ibin, err)
         ######################################################################################## Add Parton Shower Uncertainties
         hRecoCopy = hRecoJMR.Clone()
         for ibin in xrange(1, hRecoCopy.GetNbinsX()):
             temp = hRecoCopy.GetBinError(ibin)
-            hRecoCopy.SetBinError(ibin, temp + (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) )
+            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) ]) )
         ######################################################################################## Add PDF Uncertainties
         hRecoPDF = hRecoCopy.Clone()
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             temp = hRecoPDF.GetBinError(ibin)
-            hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
+            hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] )] ))
         ####################################################################################### PDF Drawn Here
         hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV})")
         hRecoPDF.GetYaxis().SetTitleSize(30)
@@ -536,7 +541,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         for ibin in xrange(1, hRMS.GetNbinsX()):
             hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
-            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) + ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) )
+            hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin) , ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) ]) )
         hReco = hRMS.Clone()
         ########################################################################################## Scale the hists for mass bins
         for ibin in xrange(1, hReco.GetNbinsX()):
@@ -563,7 +568,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
             downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
             sys2 = float(((upjer + downjer )/2.))
-            err = sqrt(sys*sys + sys2*sys2) + err1
+            err = add_quadrature([sys, sys2, err1])
             hReco.SetBinError(ibin, err)
         ####################################################################################### Add Jet Mass Resolution Band
         hRecoJMR = hReco.Clone()
@@ -573,18 +578,18 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             upjmr = float(abs(jmrup.GetBinContent(ibin) - jmrnom.GetBinContent(ibin)))
             downjmr = float(abs(jmrnom.GetBinContent(ibin) - jmrdn.GetBinContent(ibin)))
             sys = float(((upjmr + downjmr)/2.))
-            err = err1 + sys
+            err = add_quadrature( [err1 , sys] )
             hRecoJMR.SetBinError(ibin, err)
     ######################################################################################## Add Parton Shower Uncertainties
         hRecoCopy = hRecoJMR.Clone()
         for ibin in xrange(1, hRecoCopy.GetNbinsX()):
             temp = hRecoCopy.GetBinError(ibin)
-            hRecoCopy.SetBinError(ibin, temp + (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) )
+            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) ]))
 ######################################################################################## Add PDF Uncertainties
         hRecoPDF = hRecoCopy.Clone()
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             temp = hRecoPDF.GetBinError(ibin)
-            hRecoPDF.SetBinError(ibin, temp + (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
+            hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) ]))
         ####################################################################################### PDF Drawn Here
         hReco.Scale(1.0/hReco.Integral())
         hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d#sigma}{dm} (#frac{1}{GeV})")
