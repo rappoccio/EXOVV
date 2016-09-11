@@ -544,9 +544,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         jerUP.Scale(scales[i])
         jerDOWN.Scale(scales[i])
         nom.Scale(scales[i])
+        hStat = hRMS.Clone()		
         for ibin in xrange(1, hRMS.GetNbinsX()):
             hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
+            hStat.SetBinContent(ibin, hStat.GetBinContent(ibin)* 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
+            hStat.SetBinError(ibin, hStat.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin) , ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) ]) )
         hReco = hRMS.Clone()
         ########################################################################################## Scale the hists for mass bins
@@ -606,18 +609,32 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kGray)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral())
+        hStat.SetTitle(";;Fractional Cross Section")
+        hStat.GetYaxis().SetTitleSize(34)
+        hStat.GetYaxis().SetTitleOffset(1.2)
+        hStat.GetYaxis().SetLabelOffset(0.0001)
+        hStat.GetYaxis().SetLabelSize(28)
+        hStat.SetMarkerStyle(28)
+        hStat.SetFillColor(ROOT.kGray+1)
+        hStat.Scale(1./hStat.Integral())
         if i == 18:
             hRecoPDF.SetAxisRange(1,2000,"X")
+            hStat.SetAxisRange(1, 2000, "X")
         elif i > 11 and i < 18:
             hRecoPDF.SetAxisRange(1,1200, "X")
+            hStat.SetAxisRange(1, 1200, "X")
         elif i > 7 and i < 12:
             hRecoPDF.SetAxisRange(1,900, "X")
+            hStat.SetAxisRange(1, 900, "X")
         elif i > 3 and i < 8:
             hRecoPDF.SetAxisRange(1,600, "X")
+            hStat.SetAxisRange(1, 600, "X")
         elif i < 4:
             hRecoPDF.SetAxisRange(1,400,"X")
+            hStat.SetAxisRange(1, 400, "X")
         hRecoPDF.Draw("E2")
-        keephists.append([hRecoPDF])
+        hStat.Draw("E2 same")
+        keephists.append([hRecoPDF, hStat])
         ####################################################################################### Gen Drawn Here
         MC_list[i].SetLineColor(2)
         MC_list[i].SetLineStyle(3)
@@ -628,6 +645,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(hRecoPDF, 'Data', 'fp')
+        legends_list[i].AddEntry(hStat, 'Stat', 'f')
         legends_list[i].AddEntry(MC_list[i], 'Pythia8', 'l')
         #legends_list[i].Draw()
         powheg = None
@@ -687,15 +705,24 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(34)
         datPDF.SetMarkerStyle(0)
-        
+        datStat = hStat.Clone()
+        datStat.SetName(hStat.GetName()+"copy")
+        datStat.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datStat.GetYaxis().SetTitleOffset(1.2)
+        datStat.GetYaxis().SetLabelOffset(0.0001)
+        datStat.GetYaxis().SetTitleSize(34)
+        datStat.SetMarkerStyle(0)
         ##################################################################################### divide error by bin content and set to unity
-        keephists.append( [trueCopy, datPDF])
+        keephists.append( [trueCopy, datPDF, datStat])
         for ibin in xrange(1,datPDF.GetNbinsX()):
             if datPDF.GetBinContent(ibin) > 0:
                 datPDF.SetBinError(ibin, datPDF.GetBinError(ibin)/datPDF.GetBinContent(ibin))
+                datStat.SetBinError(ibin, datStat.GetBinError(ibin)/datStat.GetBinContent(ibin))
             else:
                 datPDF.SetBinError(ibin, 0)
+                datStat.SetBinError(ibin, 0)
             datPDF.SetBinContent(ibin, 1.0)
+            datStat.SetBinContent(ibin, 1.0)
 ########################################################################################################## Take Ratio
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
         if i < 18 and options.isSoftDrop and isData:
@@ -731,6 +758,19 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetYaxis().SetLabelOffset(0.01)
         datPDF.GetYaxis().SetLabelSize(28)
         datPDF.GetXaxis().SetLabelSize(28)
+		
+        datStat.SetMinimum(0)
+        datStat.SetMaximum(2)
+        datStat.GetYaxis().SetNdivisions(2, 4, 0, False)
+        datStat.SetFillColor(ROOT.kGray+1)
+        datStat.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datStat.GetYaxis().SetTitleSize(34)
+        datStat.GetYaxis().SetTitleOffset(1.2)
+        datStat.GetYaxis().SetLabelOffset(0.01)
+        datStat.GetYaxis().SetLabelSize(28)
+        datStat.GetXaxis().SetLabelSize(28)
+		
+		
         trueCopy.SetLineStyle(3)
         trueCopy.SetLineColor(2)
         trueCopy.SetLineWidth(3)
@@ -746,20 +786,29 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetXaxis().SetTitleOffset(3.5)
     
         datPDF.GetXaxis().SetTitle("Jet Mass (GeV)")
+		
+        datStat.GetXaxis().SetTitleOffset(3.5)
+        datStat.GetXaxis().SetTitle("Jet Mass (GeV)")
+
         ######################################################################## Draw and save
         
         if i == 18:
             datPDF.SetAxisRange(0,2000,"X")
+            datStat.SetAxisRange(0, 2000, "X")
         elif i > 11 and i < 18:
             datPDF.SetAxisRange(0,1200, "X")
+            datStat.SetAxisRange(0, 1200, "X")
         elif i > 7 and i < 12:
             datPDF.SetAxisRange(0,900, "X")
+            datStat.SetAxisRange(0, 900, "X")
         elif i > 3 and i < 8:
             datPDF.SetAxisRange(0,600, "X")
+            datStat.SetAxisRange(0, 600, "X")
         elif i < 4:
             datPDF.SetAxisRange(0,400,"X")
+            datStat.SetAxisRange(0, 400, "X")
         datPDF.Draw('e2')
-        datPDF.SetMarkerStyle(0)
+        datStat.Draw('e2 same')
         trueCopy.Draw("hist same")
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Draw("hist same")
