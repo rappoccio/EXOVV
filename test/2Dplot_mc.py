@@ -184,46 +184,46 @@ for x in range(0, 19):
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
     if options.logy:
-        
         if x > 13:
-            
-            alegends.append(TLegend(.18, .35, .37, .80))
-        elif x == 11:
-            alegends.append(TLegend(.55, .06, .75, .44))
+            alegends.append(TLegend(.22, .35, .37, .80))
         else:
-            
-            alegends.append(TLegend(.54, .06, .75, .46))
-        
-        if x > 12:
-            alegendsSD.append(TLegend(.34, .10, .55, .450))
-
+            alegends.append(TLegend(.52, .07, .75, .50))
+        if x == 0:
+            alegendsSD.append(TLegend(.36, .10, .65, .450))
+        elif x > 15:
+            alegendsSD.append(TLegend(.33, .10, .58, .450))
         else:
             alegendsSD.append(TLegend(.36, .10, .75, .450))
-        
         if x > 13:
-            
-            alegends_fullband.append(TLegend(.18, .60, .40, .80))
-                
+            alegends_fullband.append(TLegend(.22, .65, .37, .80))
         else:
-                    
-            alegends_fullband.append(TLegend(.52, .09, .75, .44))
+            alegends_fullband.append(TLegend(.51, .09, .75, .42))
 
-
-        alegends_fullbandSD.append(TLegend(.34, .10, .55, .450))
-
+        if x == 0:
+            alegends_fullbandSD.append(TLegend(.36, .10, .65, .450))
+        elif x > 15:
+            alegends_fullbandSD.append(TLegend(.33, .10, .58, .450))
+        else:
+            alegends_fullbandSD.append(TLegend(.36, .10, .75, .450))
+                
     else:
-        alegends.append(TLegend(.18, .35, .37, .80))
+
+        if x > 13:
+            alegends.append(TLegend(.22, .35, .37, .80))
+        else:
+            alegends.append(TLegend(.22, .35, .37, .80))
         if x < 4:
             alegendsSD.append(TLegend(.60, .40, .90, .80))
         else:
             alegendsSD.append(TLegend(.58, .30, .90, .80))
-        alegends_fullband.append(TLegend(.18, .55, .47, .80))
-        
-        if x < 5:
+        if x > 13:
+            alegends_fullband.append(TLegend(.22, .55, .47, .80))
+        else:
+            alegends_fullband.append(TLegend(.22, .55, .47, .80))
+        if x == 0:
             alegends_fullbandSD.append(TLegend(.60, .50, .90, .80))
         else:
             alegends_fullbandSD.append(TLegend(.58, .30, .90, .80))
-
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
 ps_differences_softdrop = []
