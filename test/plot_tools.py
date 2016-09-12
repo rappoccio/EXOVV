@@ -644,8 +644,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         ####################################################################################### Latex Drawn Here
 
         ####################################################################################### Legends Filled
-        legends_list[i].AddEntry(hRecoPDF, 'Data', 'fp')
-        legends_list[i].AddEntry(hStat, 'Stat', 'f')
+        legends_list[i].AddEntry(hRecoPDF, 'Data', 'p')
+        legends_list[i].AddEntry(hRecoPDF, 'Stat. + Sys. Unc.', 'f')
+        legends_list[i].AddEntry(hStat, 'Stat Unc.', 'f')
         legends_list[i].AddEntry(MC_list[i], 'Pythia8', 'l')
         #legends_list[i].Draw()
         powheg = None
