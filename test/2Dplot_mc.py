@@ -413,7 +413,7 @@ else:
         
         for x in range(0, 19):
             datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
-            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD"), 800, 600)
+            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
         for x in range(0, 19):
             datacanvases[x].SetLeftMargin(0.15)
             datacanvasesSD[x].SetLeftMargin(0.15)
