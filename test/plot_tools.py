@@ -169,6 +169,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         elif i < 4:
             hRecoPDF.SetAxisRange(0,400,"X")
         hRecoPDF.Draw("E2")
+        hRecoPDF.GetXaxis().SetTickLength(0.05)
         #hRecoPDF.Draw("E same")
         ####################################################################################### PS Drawn Here
         #hRecoCopy.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
@@ -247,7 +248,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         herwig_gen.SetLineColor(ROOT.kMagenta + 3)
         herwig_gen.SetLineWidth(3)
         herwig_gen.Draw("hist same")
-        legends_list[i].AddEntry(herwig_gen, "HERWIG", 'l')
+        legends_list[i].AddEntry(herwig_gen, "Herwig", 'l')
         herwigCopy = herwig_gen.Clone()
         herwigCopy.SetName( herwigCopy.GetName() + "_copy")
 
@@ -495,6 +496,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         elif i < 4:
             datPDF.SetAxisRange(0,400,"X")
         datPDF.Draw('e2')
+        datPDF.GetXaxis().SetTickLength(0.05)
         datcopycopy.Draw('e2 same')
         datJMR.Draw('e2 same')
         datcopy.Draw('e2 same')
@@ -678,6 +680,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRecoPDF.SetAxisRange(1,400,"X")
             hStat.SetAxisRange(1, 400, "X")
         hRecoPDF.Draw("E2")
+        hRecoPDF.GetXaxis().SetTickLength(0.05)
         hStat.Draw("E2 same")
         keephists.append([hRecoPDF, hStat])
         ####################################################################################### Gen Drawn Here
@@ -704,7 +707,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         herwig_gen.SetLineColor(ROOT.kMagenta + 3)
         herwig_gen.SetLineWidth(3)
         herwig_gen.Draw("hist same")
-        legends_list[i].AddEntry(herwig_gen, "HERWIG", 'l')
+        legends_list[i].AddEntry(herwig_gen, "Herwig", 'l')
         herwigCopy = herwig_gen.Clone()
         herwigCopy.SetName( herwigCopy.GetName() + "_copy")
 
@@ -878,6 +881,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             datPDF.SetAxisRange(0,400,"X")
             datStat.SetAxisRange(0, 400, "X")
         datPDF.Draw('e2')
+        datPDF.GetXaxis().SetTickLength(0.05)
         datStat.Draw('e2 same')
         trueCopy.Draw("hist same")
         herwigCopy.Draw("hist same")
