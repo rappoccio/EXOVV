@@ -39,6 +39,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions_normalized.root")
     theorylist = []
+    theoryfile2 = ROOT.TFile("theory_predictions_marzani.root")
+    theorylist2 = []
     
     herwig_genfile = ROOT.TFile("PS_hists.root")
     herwig_genlist = []
@@ -59,6 +61,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
 
     for h in xrange(0, 18):
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
+        theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)))
 
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
@@ -283,6 +286,17 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theory.Draw("hist same")
             legends_list[i].AddEntry(theory, "Frye et al", 'l')
             #legends_list[i].Draw("same")
+            
+            theory2 = theorylist2[i]
+            theory2.Scale(1.0/theory2.Integral())
+            ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
+            theory2.Scale(ratio_bin2)
+            theory2.SetLineStyle(10)
+            theory2.SetLineColor(ROOT.kOrange)
+            theory2.SetLineWidth(3)
+            theory2.Draw("hist same")
+            legends_list[i].AddEntry(theory2, "Marzani et al", 'l')
+        
         legends_list[i].Draw()
         latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
@@ -307,6 +321,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         if i < 18 and options.isSoftDrop and isData:
             theorycopy = theory.Clone()
             theorycopy.SetName( theory.GetName() + "_copy" )
+            theory2copy = theory2.Clone()
+            theory2copy.SetName( theory2.GetName() + "_copy" )
         
         datcopy = hReco.Clone()
         datcopy.SetName( datcopy.GetName() + "_copy" )
@@ -372,6 +388,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0, "B" )
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
+            theory2copy.Divide( theory2copy, hReco, 1.0, 1.0, "B" )
 
         if i < 18:
             powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0, "B")
@@ -392,6 +409,10 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.UseCurrentStyle()
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
+            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theory2copy.UseCurrentStyle()
+            theory2copy.GetXaxis().SetTitleOffset(2)
+            theory2copy.GetYaxis().SetTitleOffset(1.2)
         if i < 18:
             powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             powhegcopy.UseCurrentStyle()
@@ -464,6 +485,9 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.SetLineStyle(2)
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
+            theory2copy.SetLineStyle(10)
+            theory2copy.SetLineColor(ROOT.kOrange)
+            theory2copy.SetLineWidth(3)
         if i < 18:
             powhegcopy.SetLineStyle(4)
             powhegcopy.SetLineColor(ROOT.kGreen + 3)
@@ -506,6 +530,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         herwigCopy.Draw("hist same")
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Draw("hist same")
+            theory2copy.Draw("hist same")
         if i < 18:
             powhegcopy.Draw("hist same")
     
@@ -518,6 +543,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
     theoryfile.Close()
+    theoryfile2.Close()
     powhegfile.Close()
     herwig_genfile.Close()
 
@@ -540,6 +566,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions_normalized.root")
     theorylist = []
+    theoryfile2 = ROOT.TFile("theory_predictions_marzani.root")
+    theorylist2 = []
     herwig_genfile = ROOT.TFile("PS_hists.root")
     herwig_genlist = []
     herwig_genlistSD = []
@@ -559,6 +587,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
     for h in xrange(0, 18):
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
+        theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)))
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
         if options.logy:
@@ -738,6 +767,15 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory.Draw("hist same")
             legends_list[i].AddEntry(theory, "Frye et al", 'l')
             #legends_list[i].Draw("same")
+            theory2 = theorylist2[i]
+            theory2.Scale(1.0/theory2.Integral())
+            ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
+            theory2.Scale(ratio_bin2)
+            theory2.SetLineStyle(10)
+            theory2.SetLineColor(ROOT.kOrange)
+            theory2.SetLineWidth(3)
+            theory2.Draw("hist same")
+            legends_list[i].AddEntry(theory2, "Marzani et al", 'l')
         legends_list[i].Draw()
         latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
@@ -760,6 +798,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         if i < 18 and options.isSoftDrop and isData:
             theorycopy = theory.Clone()
             theorycopy.SetName( theory.GetName() + "_copy" )
+            theory2copy = theory2.Clone()
+            theory2copy.SetName( theory2.GetName() + "_copy" )
 
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
@@ -791,6 +831,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0, "B" )
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
+            theory2copy.Divide( theory2copy, hReco, 1.0, 1.0, "B" )
         if i < 18:
             powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0, "B")
         ########################################################################################################## change pad and set axis range
@@ -809,6 +850,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.UseCurrentStyle()
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
+            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theory2copy.UseCurrentStyle()
+            theory2copy.GetXaxis().SetTitleOffset(2)
+            theory2copy.GetYaxis().SetTitleOffset(1.2)
         if i < 18:
             powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             powhegcopy.UseCurrentStyle()
@@ -851,6 +896,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.SetLineStyle(2)
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
+            theory2copy.SetLineStyle(10)
+            theory2copy.SetLineColor(ROOT.kOrange)
+            theory2copy.SetLineWidth(3)
         if i < 18:
             powhegcopy.SetLineStyle(4)
             powhegcopy.SetLineColor(ROOT.kGreen + 3)
@@ -887,6 +935,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         herwigCopy.Draw("hist same")
         if i < 18 and options.isSoftDrop and isData:
             theorycopy.Draw("hist same")
+            theory2copy.Draw("hist same")
         if i < 18:
             powhegcopy.Draw("hist same")
         keephists.append([datPDF])
@@ -898,6 +947,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
     theoryfile.Close()
+    theoryfile2.Close()
     powhegfile.Close()
     herwig_genfile.Close()
 
