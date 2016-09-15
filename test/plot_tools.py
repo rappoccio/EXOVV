@@ -37,7 +37,7 @@ def get_ptbins():
 def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
-    theoryfile = ROOT.TFile("theory_predictions_normalized.root")
+    theoryfile = ROOT.TFile("theory_predictions.root")
     theorylist = []
     theoryfile2 = ROOT.TFile("theory_predictions_marzani.root")
     theorylist2 = []
@@ -172,6 +172,14 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         elif i < 4:
             hRecoPDF.SetAxisRange(0,400,"X")
         hRecoPDF.Draw("E2")
+        hRecoBarePdf = hRecoPDF.Clone()
+        hRecoBarePdf.SetName( hRecoPDF.GetName() + "_bare" )
+        for ibin in xrange( hRecoBarePdf.GetXaxis().GetNbins() ) :
+            hRecoBarePdf.SetBinError( ibin, 0.000000000001 )
+        hRecoBarePdf.SetMarkerStyle(20)
+#hRecoBarePdf.SetLineColor( hStat.GetLineColor() )
+        hRecoBarePdf.SetFillStyle(0)
+        hRecoBarePdf.Draw("e x0 same")
         hRecoPDF.GetXaxis().SetTickLength(0.05)
         #hRecoPDF.Draw("E same")
         ####################################################################################### PS Drawn Here
@@ -184,7 +192,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy.SetMarkerStyle(20)
         hRecoCopy.Scale(1.0/hRecoCopy.Integral())
         hRecoCopy.SetFillColor(ROOT.kAzure+2)
-        hRecoCopy.Draw("E2 same")
+        hRecoCopy.Draw(" E2 same")
         ####################################################################################### JMR Drawn Here
         hRecoJMR.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
         hRecoJMR.SetTitle(";;Fractional Cross Section")
@@ -207,8 +215,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hReco.SetFillColor(ROOT.kYellow)
         hReco.Scale(1.0/hReco.Integral())
         hReco.SetAxisRange( 1e-5, 1, 'Y')
-        hReco.Draw("E2 same")
-        hReco.Draw("E same")
+        hReco.Draw("same")
+#hReco.Draw("E same")
         keephists.append([hReco, hRecoPDF])
         ####################################################################################### Stat Drawn Here
         hRMS.SetTitle(";;Fractional Cross Section")
@@ -221,7 +229,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRMS.Scale(1.0/hRMS.Integral())
         hRMS.SetAxisRange( 1e-5, 1, 'Y')
         hRMS.Draw("E2 same")
-        hRMS.Draw("E same")
+        hRMS.Draw(" E same")
         keephists.append(hRMS)
         
         ####################################################################################### Gen Drawn Here
@@ -279,20 +287,21 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             ratio_bin = float(hReco.GetBinContent(7)/theory.GetBinContent(7))
             theory.Scale(ratio_bin)
             #theory.Scale(scales[i])
-            theory.SetLineStyle(2)
-            theory.SetLineColor(ROOT.kBlue)
+            theory.SetFillStyle(3003)
+            theory.SetFillColor(ROOT.kBlue)
             theory.SetLineWidth(3)
             #theory.SetAxisRange(1e-5, 1, "Y")
-            theory.Draw("hist same")
+            theory.Draw("E2 same")
             legends_list[i].AddEntry(theory, "Frye et al", 'l')
             #legends_list[i].Draw("same")
             
             theory2 = theorylist2[i]
             theory2.Scale(1.0/theory2.Integral())
-            ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
-            theory2.Scale(ratio_bin2)
+            #ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
+            #theory2.Scale(ratio_bin2)
+            #theory2.Scale(1.0/hRecoPDF.Integral())
             theory2.SetLineStyle(10)
-            theory2.SetLineColor(ROOT.kOrange)
+            theory2.SetLineColor(ROOT.kOrange+7)
             theory2.SetLineWidth(3)
             theory2.Draw("hist same")
             legends_list[i].AddEntry(theory2, "Marzani et al", 'l')
@@ -486,7 +495,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
             theory2copy.SetLineStyle(10)
-            theory2copy.SetLineColor(ROOT.kOrange)
+            theory2copy.SetLineColor(ROOT.kOrange+7)
             theory2copy.SetLineWidth(3)
         if i < 18:
             powhegcopy.SetLineStyle(4)
@@ -708,10 +717,20 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         elif i < 4:
             hRecoPDF.SetAxisRange(1,400,"X")
             hStat.SetAxisRange(1, 400, "X")
+
         hRecoPDF.Draw("E2")
-        hRecoPDF.GetXaxis().SetTickLength(0.05)
         hStat.Draw("E2 same")
-        keephists.append([hRecoPDF, hStat])
+        hRecoBarePdf = hRecoPDF.Clone()
+        hRecoBarePdf.SetName( hRecoPDF.GetName() + "_bare" )
+        for ibin in xrange( hRecoBarePdf.GetXaxis().GetNbins() ) :
+            hRecoBarePdf.SetBinError( ibin, 0.000000000001 )
+        hRecoBarePdf.SetMarkerStyle(20)
+        hRecoBarePdf.SetLineColor( hStat.GetLineColor() )
+        hRecoBarePdf.SetFillStyle(0)
+        hRecoBarePdf.Draw("e x0 same")
+        hRecoPDF.GetXaxis().SetTickLength(0.05)
+
+        keephists.append([hRecoPDF, hStat, hRecoBarePdf])
         ####################################################################################### Gen Drawn Here
         MC_list[i].SetLineColor(2)
         MC_list[i].SetLineStyle(3)
@@ -761,22 +780,23 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory.Scale(1.0/theory.Integral())
             ratio_bin = float(hRecoPDF.GetBinContent(7)/theory.GetBinContent(7))
             theory.Scale(float(ratio_bin))
-            theory.SetLineColor(ROOT.kBlue)
-            theory.SetLineStyle(2)
-            theory.SetLineWidth(3)
-            theory.Draw("hist same")
+            theory.SetFillColor(ROOT.kBlue)
+            theory.SetFillStyle(3003)
+            #theory.SetLineWidth(3)
+            theory.Draw("E2 same")
             legends_list[i].AddEntry(theory, "Frye et al", 'l')
             #legends_list[i].Draw("same")
             theory2 = theorylist2[i]
             theory2.Scale(1.0/theory2.Integral())
-            ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
-            theory2.Scale(ratio_bin2)
+            #ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
+            #theory2.Scale(ratio_bin2)
+            #theory2.Scale(1.0/hRecoPDF.Integral())
             theory2.SetLineStyle(10)
-            theory2.SetLineColor(ROOT.kOrange)
+            theory2.SetLineColor(ROOT.kOrange+7)
             theory2.SetLineWidth(3)
             theory2.Draw("hist same")
             legends_list[i].AddEntry(theory2, "Marzani et al", 'l')
-        hRecoPDF.Draw("same")
+#hRecoPDF.Draw("same")
         legends_list[i].Draw()
         latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
@@ -898,7 +918,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
             theory2copy.SetLineStyle(10)
-            theory2copy.SetLineColor(ROOT.kOrange)
+            theory2copy.SetLineColor(ROOT.kOrange+7)
             theory2copy.SetLineWidth(3)
         if i < 18:
             powhegcopy.SetLineStyle(4)
