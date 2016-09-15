@@ -296,7 +296,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theory2.SetLineWidth(3)
             theory2.Draw("hist same")
             legends_list[i].AddEntry(theory2, "Marzani et al", 'l')
-        
+        hRecoPDF.Draw("same")
         legends_list[i].Draw()
         latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
@@ -690,7 +690,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hStat.GetYaxis().SetTitleOffset(1.2)
         hStat.GetYaxis().SetLabelOffset(0.0001)
         hStat.GetYaxis().SetLabelSize(28)
-        hStat.SetMarkerStyle(28)
+#hStat.SetMarkerStyle(28)
         hStat.SetFillColor(ROOT.kGray+1)
         hStat.Scale(1./hStat.Integral())
         if i == 18:
@@ -776,6 +776,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory2.SetLineWidth(3)
             theory2.Draw("hist same")
             legends_list[i].AddEntry(theory2, "Marzani et al", 'l')
+        hRecoPDF.Draw("same")
         legends_list[i].Draw()
         latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
