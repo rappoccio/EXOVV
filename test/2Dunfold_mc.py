@@ -40,7 +40,8 @@ recoSD.Scale(1./recoSD.Integral())
 
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
 
-
+ROOT.gStyle.SetOptStat(000000)
+ROOT.gStyle.SetPalette(ROOT.kDarkBodyRadiator)
 
 
 unfold = RooUnfoldBayes(response, reco, 4)
@@ -63,6 +64,73 @@ reco_unfoldedSD.Draw()
 truth.SetLineColor(4)
 
 truth.Draw('SAME')
+
+
+
+################### New Correlation matrix stuff
+cov = unfold.Ereco()
+covSD = unfoldSD.Ereco()
+
+nb= cov.GetNrows()
+import math
+cor = ROOT.TH2F("cor", "", nb, 0, nb, nb, 0, nb)
+corSD = ROOT.TH2F("corSD", "", nb, 0, nb, nb, 0, nb)
+
+
+for i in xrange(0,nb) :
+    for j in xrange(0,nb) :
+        Viijj = cov[i][i] * cov[j][j]
+        if Viijj>0.0 :
+            cor.SetBinContent(i+1, j+1, cov[i][j]/math.sqrt(Viijj))
+        
+for i in xrange(0,nb) :
+    for j in xrange(0,nb) :
+        Viijj = covSD[i][i] * covSD[j][j]
+        if Viijj>0.0 :
+            corSD.SetBinContent(i+1,j+1, covSD[i][j]/math.sqrt(Viijj) )
+
+
+
+cov_canvas=TCanvas("cov canvas", "cov canvas")
+cov_canvas.cd()
+cor.SetMinimum(-1.0)
+cor.SetMaximum(1.0)
+cor.SetTitle(';Reconstructed bin;Generated bin')
+cor.Draw("colz")
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(43)
+tlx.SetTextSize(30)
+tlx.DrawLatex(0.14, 0.910, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.910, "2.3 fb^{-1} (13 TeV)")
+tlx.SetTextSize(22)
+tlx.DrawLatex(0.2, 0.6, "Ungroomed Jets")
+cov_canvas.Update()
+cov_canvas.Print("CovarianceMatrix.png", "png")
+cov_canvas.Print("CovarianceMatrix.pdf", "pdf")
+
+covSD_canvas=TCanvas("covSDcanvas", "covSDcanvas")
+covSD_canvas.cd()
+corSD.SetMinimum(-1.0)
+corSD.SetMaximum(1.0)
+corSD.SetTitle(';Reconstructed bin;Generated bin')
+corSD.Draw("colz")
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(43)
+tlx.SetTextSize(30)
+tlx.DrawLatex(0.14, 0.910, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.910, "2.3 fb^{-1} (13 TeV)")
+tlx.SetTextSize(22)
+tlx.DrawLatex(0.2, 0.6, "Soft Drop Jets")
+
+covSD_canvas.Update()
+covSD_canvas.Print("CovarianceMatrixSD.png", "png")
+covSD_canvas.Print("CovarianceMatrixSD.pdf", "pdf")
+###################
+
+
+
 
 
 canvases = []

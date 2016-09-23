@@ -32,10 +32,11 @@ ROOT.gStyle.SetOptStat(000000)
 f = ROOT.TFile(options.file)
 r = f.Get(options.hist)
 h2 = r.Hresponse()
+h2pretty = h2.Clone("h2pretty")
 
 title = 'Ungroomed'
 if "softdrop" in options.hist :
-    title = "Soft drop"
+    title = "Soft Drop"
 # Make the histograms
 purity = ROOT.TH1F("purity", title + ";Bin;Fraction", h2.GetNbinsX(), 0, h2.GetNbinsX())
 stability = ROOT.TH1F("stability", title + ";Fraction;Bin", h2.GetNbinsX(), 0, h2.GetNbinsX())
@@ -49,6 +50,16 @@ ptbins =[  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300
 mbins = [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000]
 
 
+for xbin in xrange( h2pretty.GetNbinsX() ) :
+    tot = 0.
+    for ybin in xrange( h2pretty.GetNbinsX() ):
+        tot += h2pretty.GetBinContent( xbin, ybin )
+    for ybin in xrange( h2pretty.GetNbinsX() ):
+        frac = 0.
+        if tot > 0.0 :
+            frac = h2pretty.GetBinContent( xbin, ybin ) / tot
+        h2pretty.SetBinContent( xbin, ybin, frac )
+        
 
 for irecopt in xrange( len(ptbins) ):
     for irecom in xrange( len(mbins) ):
@@ -99,9 +110,20 @@ for igenpt in xrange( len(ptbins) ):
 print 'Purity: ', purity.Integral()
 print 'Stability: ', stability.Integral()
 
+
+ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 c0 = ROOT.TCanvas("c0", "response")
-h2.SetTitle(title + ';Reconstructed bin;Generated bin')
-h2.Draw("colz")
+h2pretty.SetTitle(';Reconstructed bin;Generated bin')
+h2pretty.Draw("colz")
+c0.SetLogz()
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(43)
+tlx.SetTextSize(30)
+tlx.DrawLatex(0.14, 0.910, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.910, "2.3 fb^{-1} (13 TeV)")
+tlx.SetTextSize(22)
+tlx.DrawLatex(0.2, 0.6, title + " Jets")
 c0.Update()
 c0.Print("response_" + options.hist + ".pdf", "pdf")
 c0.Print("response_" + options.hist + ".png", "png")
