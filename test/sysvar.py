@@ -1,5 +1,5 @@
 import ROOT
-ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
@@ -131,9 +131,9 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRMSup.SetLineStyle(2)
         hRMSdn.SetLineStyle(2)
         hRMSup.SetLineColor(1)
-        hRMSdn.SetLineWidth(2)
+        hRMSdn.SetLineWidth(3)
         hRMSdn.SetLineColor(1)
-        hRMSup.SetLineWidth(2)
+        hRMSup.SetLineWidth(3)
         hRMSup.GetXaxis().SetTitleSize(30)
         hRMSup.GetXaxis().SetTitleOffset(.72)
         hRMSup.GetYaxis().SetLabelSize(10)
@@ -143,29 +143,29 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRecodn.SetLineStyle(3)
         hRecoup.SetLineColor(2)
         hRecodn.SetLineColor(2)
-        hRecoup.SetLineWidth(2)
-        hRecodn.SetLineWidth(2)
+        hRecoup.SetLineWidth(3)
+        hRecodn.SetLineWidth(3)
 
         hRecoCopyup.SetLineStyle(4)
         hRecoCopydn.SetLineStyle(4)
-        hRecoCopyup.SetLineColor(3)
-        hRecoCopydn.SetLineColor(3)
-        hRecoCopyup.SetLineWidth(2)
-        hRecoCopydn.SetLineWidth(2)
+        hRecoCopyup.SetLineColor(ROOT.kGreen+2)
+        hRecoCopydn.SetLineColor(ROOT.kGreen+2)
+        hRecoCopyup.SetLineWidth(3)
+        hRecoCopydn.SetLineWidth(3)
 
         hRecoJMRup.SetLineStyle(5)
         hRecoJMRdn.SetLineStyle(5)
         hRecoJMRup.SetLineColor(4)
         hRecoJMRdn.SetLineColor(4)
-        hRecoJMRdn.SetLineWidth(2)
-        hRecoJMRup.SetLineWidth(2)
+        hRecoJMRdn.SetLineWidth(3)
+        hRecoJMRup.SetLineWidth(3)
 
         hRecoPDFup.SetLineStyle(6)
         hRecoPDFdn.SetLineStyle(6)
         hRecoPDFup.SetLineColor(6)
         hRecoPDFdn.SetLineColor(6)
-        hRecoPDFup.SetLineWidth(2)
-        hRecoPDFdn.SetLineWidth(2)
+        hRecoPDFup.SetLineWidth(3)
+        hRecoPDFdn.SetLineWidth(3)
 
         canvas_list[i].cd()
         hRMSup.GetYaxis().SetTitle("Variation")
