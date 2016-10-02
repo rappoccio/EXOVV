@@ -162,6 +162,8 @@ def JetTreeDump_FWLite(argv) :
         try : 
             import lhapdf
             nnpdfs = lhapdf.mkPDFs("NNPDF30_lo_as_0130")
+            cteqs = lhapdf.mkPDFs("CT14lo")
+            mstws = lhapdf.mkPDFs("MMHT2014lo68cl")
         except :
             print 'LHAPDF is not working, did you do "source setup_lhapdf.csh"?'
 
@@ -508,9 +510,20 @@ def JetTreeDump_FWLite(argv) :
         Trig        = array('i', [0]  )
         Weight      = array('f', [0.] )
 
+        NNPDF3weight_Central     = array('f', [-1.])
         NNPDF3weight_CorrDn     = array('f', [-1.])
         NNPDF3weight_CorrUp     = array('f', [-1.])    
 
+        MSTWweight_Central     = array('f', [-1.])
+        MSTWweight_CorrDn     = array('f', [-1.])
+        MSTWweight_CorrUp     = array('f', [-1.])    
+
+        CTEQweight_Central     = array('f', [-1.])
+        CTEQweight_CorrDn     = array('f', [-1.])
+        CTEQweight_CorrUp     = array('f', [-1.])    
+        
+
+        
         NFatJet             = array('i', [0] )
         FatJetPt            = array('f', [-1., -1., -1., -1., -1.])
         FatJetEta           = array('f', [-1., -1., -1., -1., -1.])
@@ -585,11 +598,19 @@ def JetTreeDump_FWLite(argv) :
 
         TreeEXOVV.Branch('Trig'                , Trig                ,  'Trig/I'        )
         TreeEXOVV.Branch('Weight'              , Weight              ,  'Weight/F'      )
-
+        
+        TreeEXOVV.Branch('NNPDF3weight_Central'   ,  NNPDF3weight_Central       ,  'NNPDF3weight_Central/F'          )
         TreeEXOVV.Branch('NNPDF3weight_CorrDn'   ,  NNPDF3weight_CorrDn       ,  'NNPDF3weight_CorrDn/F'          )
         TreeEXOVV.Branch('NNPDF3weight_CorrUp'   ,  NNPDF3weight_CorrUp       ,  'NNPDF3weight_CorrUp/F'          )
 
-
+        TreeEXOVV.Branch('MSTWweight_Central'   ,  MSTWweight_Central       ,  'MSTWweight_Central/F'          )
+        TreeEXOVV.Branch('MSTWweight_CorrDn'   ,  MSTWweight_CorrDn       ,  'MSTWweight_CorrDn/F'          )
+        TreeEXOVV.Branch('MSTWweight_CorrUp'   ,  MSTWweight_CorrUp       ,  'MSTWweight_CorrUp/F'          )
+        
+        TreeEXOVV.Branch('CTEQweight_Central'   ,  CTEQweight_Central       ,  'CTEQweight_Central/F'          )
+        TreeEXOVV.Branch('CTEQweight_CorrDn'   ,  CTEQweight_CorrDn       ,  'CTEQweight_CorrDn/F'          )
+        TreeEXOVV.Branch('CTEQweight_CorrUp'   ,  CTEQweight_CorrUp       ,  'CTEQweight_CorrUp/F'          )
+        
         TreeEXOVV.Branch('NFatJet'             , NFatJet             ,  'NFatJet/I'        )
         TreeEXOVV.Branch('FatJetPt'            , FatJetPt            ,  'FatJetPt[NFatJet]/F'            )
         TreeEXOVV.Branch('FatJetEta'           , FatJetEta           ,  'FatJetEta[NFatJet]/F'           )
@@ -805,12 +826,18 @@ def JetTreeDump_FWLite(argv) :
             gotAK8 = event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt )
 
             if gotAK8 == False :
+                if options.verbose :
+                    print 'No AK8 jet product found.'
                 continue
             jetPtAK8 = h_jetsAK8Pt.product()
             if len( jetPtAK8) < 1 :
+                if options.verbose :
+                    print 'Zero AK8 jets.'
                 continue
             if options.speedyPtMin != None : 
                 if jetPtAK8[0] < options.speedyPtMin :
+                    if options.verbose :
+                        print 'Leading jet is below speedy pt threshold'                    
                     continue
 
 
@@ -915,6 +942,7 @@ def JetTreeDump_FWLite(argv) :
                     #@Event weight errors
 
 
+                    ## NNPDF is a pain and just HAASS to be different. Grumble grumble. 
                     if h_generator.product().hasPDF() :
                         pdf = h_generator.product().pdf()
 
@@ -922,36 +950,112 @@ def JetTreeDump_FWLite(argv) :
                         pdfval2_nom = nnpdfs[0].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
 
                         weights = []
+                        weightavg = 0.
                         for ipdf in xrange(1, len(nnpdfs)) :
                             w1 = nnpdfs[ipdf].xfxQ(pdf.id.first, pdf.x.first, pdf.scalePDF) 
                             w2 = nnpdfs[ipdf].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
                             weight = w1/pdfval1_nom * w2/pdfval2_nom
                             weights.append( weight )
-                        weightup = 0.
-                        for iup in xrange(1, len(nnpdfs), 2):
-                            weightup += (1.0 - weights[iup])**2
-                        weightup = weightup / (len(nnpdfs) * 0.5)
-                        weightup = 1 + math.sqrt(weightup)
+                            weightavg += weight
+                        weightavg /= len(nnpdfs)
+
+                        weightrms = 0.
+                        for iweight in weights :
+                            weightrms += (weight - weightavg)**2
+                        weightrms = math.sqrt(weightrms / 99.)
 
 
-                        weightdn = 0.
-                        for idn in xrange(2, len(nnpdfs)-1, 2):
-                            weightdn += (1.0 - weights[idn])**2
-                        weightdn = weightdn / (len(nnpdfs) * 0.5)
-                        weightdn = 1 - math.sqrt(weightdn)
-
-                        nnpdfval1 = weightup
-                        nnpdfval2 = weightdn            
+                        weightup = weightavg + weightrms
+                        weightdn = weightavg - weightrms
                         if options.verbose :
-                            print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f nnpdf1=%6.2f nnpdf2=%6.2f' % (pdf.id.first,pdf.id.second,
+                            print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f nnpdf=%6.2f up=%6.2f dn=%6.2f' % (pdf.id.first,pdf.id.second,
                                                                                                                                     pdf.x.first, pdf.x.second,
                                                                                                                                     pdf.xPDF.first, pdf.xPDF.second,
-                                                                                                                                    pdf.scalePDF, nnpdfval1, nnpdfval2)
-
+                                                                                                                                    pdf.scalePDF, weightavg, weightup, weightdn)
+                        NNPDF3weight_Central           [0] = weightavg
                         NNPDF3weight_CorrDn            [0] = weightdn
                         NNPDF3weight_CorrUp            [0] = weightup   
 
 
+
+
+                        
+                        ## MSTW isn't really MSTW anymore. 
+                        mstwweight = 0.
+                        mstwweights = []
+                        for ipdf in xrange(0, len(mstws)) :
+                            w1 = mstws[ipdf].xfxQ(pdf.id.first, pdf.x.first, pdf.scalePDF) 
+                            w2 = mstws[ipdf].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
+                            imstwweight = w1/pdfval1_nom * w2/pdfval2_nom
+                            if ipdf == 0 :
+                                mstwweight = imstwweight
+                            else : 
+                                mstwweights.append( imstwweight )
+                            
+                        mstwweightup = 0.
+                        for iup in xrange(1, len(mstws), 2):
+                            mstwweightup += (mstwweight - mstwweights[iup])**2
+                        mstwweightup = mstwweightup / (len(mstws) * 0.5)
+                        mstwweightup = mstwweight + math.sqrt(mstwweightup)
+
+
+                        mstwweightdn = 0.
+                        for idn in xrange(2, len(mstws)-1, 2):
+                            mstwweightdn += (mstwweight - mstwweights[idn])**2
+                        mstwweightdn = mstwweightdn / (len(mstws) * 0.5)
+                        mstwweightdn = mstwweight - math.sqrt(mstwweightdn)
+
+                        if options.verbose :
+                            print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f  mstw=%6.2f up=%6.2f dn=%6.2f' % (pdf.id.first,pdf.id.second,
+                                                                                                                                    pdf.x.first, pdf.x.second,
+                                                                                                                                    pdf.xPDF.first, pdf.xPDF.second,
+                                                                                                                                    pdf.scalePDF, mstwweight, mstwweightup, mstwweightdn)
+
+                        MSTWweight_Central            [0] = mstwweight
+                        MSTWweight_CorrDn            [0] = mstwweightdn
+                        MSTWweight_CorrUp            [0] = mstwweightup   
+
+
+
+
+                        ## CTEQ: You can always count on us! 
+                        cteqweight = 0.
+                        cteqweights = []
+                        for ipdf in xrange(0, len(cteqs)) :
+                            w1 = cteqs[ipdf].xfxQ(pdf.id.first, pdf.x.first, pdf.scalePDF) 
+                            w2 = cteqs[ipdf].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
+                            icteqweight = w1/pdfval1_nom * w2/pdfval2_nom
+                            if ipdf == 0 :
+                                cteqweight = icteqweight
+                            else : 
+                                cteqweights.append( icteqweight )
+                            
+                        cteqweightup = 0.
+                        for iup in xrange(1, len(cteqs), 2):
+                            cteqweightup += (cteqweight - cteqweights[iup])**2
+                        cteqweightup = cteqweightup / (len(cteqs) * 0.5)
+                        cteqweightup = cteqweight + math.sqrt(cteqweightup)
+
+
+                        cteqweightdn = 0.
+                        for idn in xrange(2, len(cteqs)-1, 2):
+                            cteqweightdn += (cteqweight - cteqweights[idn])**2
+                        cteqweightdn = cteqweightdn / (len(cteqs) * 0.5)
+                        cteqweightdn = cteqweight - math.sqrt(cteqweightdn)
+
+                        if options.verbose :
+                            print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f  cteq=%6.2f up=%6.2f dn=%6.2f' % (pdf.id.first,pdf.id.second,
+                                                                                                                                    pdf.x.first, pdf.x.second,
+                                                                                                                                    pdf.xPDF.first, pdf.xPDF.second,
+                                                                                                                                    pdf.scalePDF, cteqweight, cteqweightup, cteqweightdn)
+
+                        CTEQweight_Central            [0] = cteqweight
+                        CTEQweight_CorrDn            [0] = cteqweightdn
+                        CTEQweight_CorrUp            [0] = cteqweightup
+                        
+
+
+                        
 
             if options.weightQCDSample != None :
                 evWeight = evWeight * options.weightQCDSample
