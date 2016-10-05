@@ -8,7 +8,7 @@ parser = OptionParser()
 
 parser.add_option('--outlabel', type='string', action='store',
                   dest='outlabel',
-                  default = "jackknife_otherway.root",
+                  default = "jackknife_otherway_repdf.root",
                   help='Label for plots')
 
 
@@ -28,7 +28,7 @@ import random
 
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
-ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 13000.])
+ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 13000.])
 nbinsPt = len(ptBinA) - 1
 mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
 nbinsm = len(mBinA) - 1
@@ -149,16 +149,16 @@ ROOT.gStyle.SetLabelSize(24, "XYZ")
 lumi = 40.
 
 qcdIn =[
-    ROOT.TFile('qcd_pt170to300_newjec.root'),
-    ROOT.TFile('qcd_pt300to470_newjec.root'),
-    ROOT.TFile('qcd_pt470to600_newjec.root'),
-    ROOT.TFile('qcd_pt600to800_newjec.root'),
-    ROOT.TFile('qcd_pt800to1000_newjec.root'),
-    ROOT.TFile('qcd_pt1000to1400_newjec.root'),
-    ROOT.TFile('qcd_pt1400to1800_newjec.root'),
-    ROOT.TFile('qcd_pt1800to2400_newjec.root'),
-    ROOT.TFile('qcd_pt2400to3200_newjec.root'),
-    ROOT.TFile('qcd_pt3200toInf_newjec.root'),
+    ROOT.TFile('qcdpy8_170to300_repdf.root'),
+    ROOT.TFile('qcdpy8_300to470_repdf.root'),
+    ROOT.TFile('qcdpy8_470to600_repdf.root'),
+    ROOT.TFile('qcdpy8_600to800_repdf.root'),
+    ROOT.TFile('qcdpy8_800to1000_repdf.root'),
+    ROOT.TFile('qcdpy8_1000to1400_repdf.root'),
+    ROOT.TFile('qcdpy8_1400to1800_repdf.root'),
+    ROOT.TFile('qcdpy8_1800to2400_repdf.root'),
+    ROOT.TFile('qcdpy8_2400to3200_repdf.root'),
+    ROOT.TFile('qcdpy8_3200toInf_repdf.root'),
     ]
 masslessSD = 0
 qcdWeights =[

@@ -9,13 +9,13 @@ parser = OptionParser()
 
 parser.add_option('--file', type='string', action='store',
                   dest='file',
-                  default = 'jetht.root',
+                  default = 'jetht_run2015B_newjec.root',
                   help='Input file')
 
 
 parser.add_option('--outname', type='string', action='store',
                   dest='outname',
-                  default = "jetht_40pbinv_weighted_dataplots_otherway.root",
+                  default = "jetht_weighted_dataplots_otherway_repdf.root",
                   help='Output string for output file')
 
 parser.add_option('--dir', type='string', action='store',
@@ -205,7 +205,7 @@ pt0histsTurnon = []
 #ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
 #nbinsToPlot = len(ptBinAToPlot) - 1
 #new binnings make trighelper unhappy so you need to make sure to give them a name that indicates they're to be plotted
-ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 13000.])
+ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 13000.])
 nbinsToPlot = len(ptBinAToPlot) - 1
 mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
 nbinsm = len(mBinA) - 1
