@@ -411,37 +411,43 @@ for itree,t in enumerate(trees) :
                 recopt = FatJet.Perp()
                 genpt = GenJets[igen].Perp()
                 deltapt = (recopt-genpt)*(valup-1.0)
-                smearup = max(0.0, (recopt+deltapt)/recopt)
+                if abs(recopt) > 0.0 : smearup = max(0.0, (recopt+deltapt)/recopt)
+                else : smearup = 0.0
                 
                 valdn = getJER(FatJet.Eta(), -1) #JER nominal=0, dn=+1, down=-1
                 recopt = FatJet.Perp()
                 genpt = GenJets[igen].Perp()
                 deltapt = (recopt-genpt)*(valdn-1.0)
-                smeardn = max(0.0, (recopt+deltapt)/recopt)
+                if abs(recopt) > 0.0 : smeardn = max(0.0, (recopt+deltapt)/recopt)
+                else : smeardn = 0.0
                                                 
                 valnom = getJER(FatJet.Eta(), 0)
                 recopt = FatJet.Perp()
                 genpt = GenJets[igen].Perp()
                 deltapt = (recopt-genpt)*(valnom-1.0)
-                smearnom = max(0.0, (recopt+deltapt)/recopt)
+                if abs(recopt) > 0.0 : smearnom = max(0.0, (recopt+deltapt)/recopt)
+                else : smearnom = 0.
                 
                 jmrvalup = 1.2
                 recomass = FatJet.M()
                 genmass = GenJets[igen].M()
                 deltamass = (recomass-genmass)*(jmrvalup-1.0)
-                jmrup = max(0.0, (recomass+deltamass)/recomass) 
+                if abs(recomass) > 0.0 : jmrup = max(0.0, (recomass+deltamass)/recomass)
+                else : jmrup = 0.
                 
                 jmrvaldn = 1.0
                 recomass = FatJet.M()
                 genmass = GenJets[igen].M()
                 deltamass = (recomass-genmass)*(jmrvaldn-1.0)
-                jmrdn = max(0.0, (recomass+deltamass)/recomass)
+                if abs(recomass) > 0.0 : jmrdn = max(0.0, (recomass+deltamass)/recomass)
+                else : jmrdn = 0.
 
                 jmrvalnom = 1.1
                 recomass = FatJet.M()
                 genmass = GenJets[igen].M()
                 deltamass = (recomass-genmass)*(jmrvalnom-1.0)
-                jmrnom = max(0.0, (recomass+deltamass)/recomass)
+                if abs(recomass) > 0.0 : jmrnom = max(0.0, (recomass+deltamass)/recomass)
+                else : jmrnom = 0.
 
 
                 response.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight )
@@ -526,37 +532,43 @@ for itree,t in enumerate(trees) :
                 recoptSD = FatJetSD.Perp()
                 genptSD = GenJetsSD[igenSD].Perp()
                 deltaptSD = (recoptSD-genptSD)*(valupSD-1.0)
-                smearupSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+                if abs(recoptSD) > 0.0 : smearupSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+                else : smearupSD = 0.
         
                 valdnSD = getJER(FatJetSD.Eta(), -1)
                 recoptSD = FatJetSD.Perp()
                 genptSD = GenJetsSD[igenSD].Perp()
                 deltaptSD = (recoptSD-genptSD)*(valdnSD-1.0)
-                smeardnSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+                if abs(recoptSD) > 0.0 : smeardnSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+                else : smeardnSD = 0.
 
                 valnomSD = getJER(FatJetSD.Eta(), 0)
                 recoptSD = FatJetSD.Perp()
                 genptSD = GenJetsSD[igenSD].Perp()
                 deltaptSD = (recoptSD-genptSD)*(valnomSD-1.0)
-                smearnomSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+                if abs(recoptSD) > 0.0 : smearnomSD = max(0.0, (recoptSD+deltaptSD)/recoptSD)
+                else : smearnomSD = 0.
         
                 jmrvalnomSD = 1.1
                 recomassSD = FatJetSD.M()
                 genmassSD = GenJetsSD[igenSD].M()
                 deltamassSD = (recomassSD-genmassSD)*(jmrvalnomSD-1.0)
-                jmrnomSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
+                if abs(recomassSD) > 0.0 : jmrnomSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
+                else : jmrnomSD = 0.
   
                 jmrvalupSD = 1.2
                 recomassSD = FatJetSD.M()
                 genmassSD = GenJetsSD[igenSD].M()
                 deltamassSD = (recomassSD-genmassSD)*(jmrvalupSD-1.0)
-                jmrupSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
+                if abs(recomassSD) > 0.0 : jmrupSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
+                else : jmrupSD = 0.
 
                 jmrvaldnSD = 1.0
                 recomassSD = FatJetSD.M()
                 genmassSD = GenJetsSD[igenSD].M()
                 deltamassSD = (recomassSD-genmassSD)*(jmrvaldnSD-1.0)
-                jmrdnSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
+                if abs(recomassSD) > 0.0 : jmrdnSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
+                else : jmrdnSD = 0.
 
                 response_softdrop.Fill( FatJetSD.M() , FatJetSD.Perp(), GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecup.Fill( FatJetSD.M()  * FatJetCorrUp[ijet], FatJetSD.Perp() * FatJetCorrUp[ijet], GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
