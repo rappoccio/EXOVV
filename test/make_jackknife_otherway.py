@@ -158,7 +158,7 @@ qcdIn =[
     ROOT.TFile('qcdpy8_1400to1800_repdf.root'),
     ROOT.TFile('qcdpy8_1800to2400_repdf.root'),
     ROOT.TFile('qcdpy8_2400to3200_repdf.root'),
-    ROOT.TFile('qcdpy8_3200toInf_repdf.root'),
+    ROOT.TFile('qcdpy8_3200toinf_repdf.root'),
     ]
 masslessSD = 0
 qcdWeights =[
