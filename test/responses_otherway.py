@@ -17,6 +17,10 @@ parser.add_option('--maxEvents', type='int', action='store',
                   default = None,
                   help='Max events')
 
+parser.add_option('--herwigFlat', action='store_true',
+                  dest='herwigFlat',
+                  default = False,
+                  help='Max events')
 
 (options, args) = parser.parse_args()
 argv = []
@@ -194,35 +198,44 @@ ROOT.gStyle.SetTitleSize(30, "XYZ")
 ROOT.gStyle.SetLabelFont(43, "XYZ")
 ROOT.gStyle.SetLabelSize(24, "XYZ")
 
-lumi = 40.
 
 
 
-qcdIn =[
-    ROOT.TFile('qcdpy8_170to300_repdf.root'),
-    ROOT.TFile('qcdpy8_300to470_repdf.root'),
-    ROOT.TFile('qcdpy8_470to600_repdf.root'),
-    ROOT.TFile('qcdpy8_600to800_repdf.root'),
-    ROOT.TFile('qcdpy8_800to1000_repdf.root'),
-    ROOT.TFile('qcdpy8_1000to1400_repdf.root'),
-    ROOT.TFile('qcdpy8_1400to1800_repdf.root'),
-    ROOT.TFile('qcdpy8_1800to2400_repdf.root'),
-    ROOT.TFile('qcdpy8_2400to3200_repdf.root'),
-    ROOT.TFile('qcdpy8_3200toinf_repdf.root'),
-    ]
+if not options.herwigFlat : 
+    qcdIn =[
+        ROOT.TFile('qcdpy8_170to300_repdf.root'),
+        ROOT.TFile('qcdpy8_300to470_repdf.root'),
+        ROOT.TFile('qcdpy8_470to600_repdf.root'),
+        ROOT.TFile('qcdpy8_600to800_repdf.root'),
+        ROOT.TFile('qcdpy8_800to1000_repdf.root'),
+        ROOT.TFile('qcdpy8_1000to1400_repdf.root'),
+        ROOT.TFile('qcdpy8_1400to1800_repdf.root'),
+        ROOT.TFile('qcdpy8_1800to2400_repdf.root'),
+        ROOT.TFile('qcdpy8_2400to3200_repdf.root'),
+        ROOT.TFile('qcdpy8_3200toinf_repdf.root'),
+        ]
+    qcdWeights =[
+        117276.      / 6918748.,  #170to300    
+        7823.        / 5968960.,  #300to470    
+        648.2        / 3977770.,  #470to600    
+        186.9        / 3979884.,  #600to800    
+        32.293       / 3973224.,  #800to1000   
+        9.4183       / 2953982.,  #1000to1400  
+        0.84265      / 395725. ,  #1400to1800  
+        0.114943     / 393760. ,  #1800to2400  
+        0.00682981   / 398452. ,  #2400to3200  
+        0.000165445  / 391108. ,  #3200toInf   
+        ]
+else : 
+    qcdIn =[
+        ROOT.TFile('qcd_ptflat_herwig.root'),
+        ]
+    qcdWeights =[
+        1.0
+        ]
+    deweightFlat = True
+        
 masslessSD = 0
-qcdWeights =[
-    117276.      / 6918748.,  #170to300    
-    7823.        / 5968960.,  #300to470    
-    648.2        / 3977770.,  #470to600    
-    186.9        / 3979884.,  #600to800    
-    32.293       / 3973224.,  #800to1000   
-    9.4183       / 2953982.,  #1000to1400  
-    0.84265      / 395725. ,  #1400to1800  
-    0.114943     / 393760. ,  #1800to2400  
-    0.00682981   / 398452. ,  #2400to3200  
-    0.000165445  / 391108. ,  #3200toInf   
-    ]
 
 
 trees = []
@@ -233,6 +246,7 @@ fout = ROOT.TFile(options.outlabel + '_qcdmc.root', 'RECREATE')
 
 
 for itree,t in enumerate(trees) :
+    Weight = array.array('f', [-1])    
     NFatJet = array.array('i', [0] )
     
     NNPDF3weight_CorrDn = array.array('f', [-1.])
@@ -267,6 +281,7 @@ for itree,t in enumerate(trees) :
     Trig = array.array('i', [-1] )
     
     t.SetBranchStatus ('*', 0)
+    t.SetBranchStatus ('Weight', 1)
     t.SetBranchStatus ('NFatJet', 1)
     t.SetBranchStatus ('NGenJet', 1)
     t.SetBranchStatus ('FatJetPt', 1)
@@ -299,6 +314,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress ('NNPDF3weight_CorrUp', NNPDF3weight_CorrUp)
     t.SetBranchAddress ('CTEQweight_Central', CTEQweight_Central)
     t.SetBranchAddress ('MSTWweight_Central', MSTWweight_Central)
+    t.SetBranchAddress ('Weight', Weight)
     t.SetBranchAddress ('NFatJet', NFatJet)
     t.SetBranchAddress ('NGenJet', NGenJet)
     t.SetBranchAddress ('FatJetPt', FatJetPt)
@@ -344,6 +360,7 @@ for itree,t in enumerate(trees) :
         FatJetsSD = []
         weight = qcdWeights[itree]
 
+
         maxjet = 0
         minjet = 1
         if FatJetPt[0] < FatJetPt[1] :
@@ -354,6 +371,15 @@ for itree,t in enumerate(trees) :
         ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
         dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
 
+
+        if deweightFlat != None and deweightFlat :
+            weight *= Weight[0]
+
+            if 5e-6 < weight/(FatJetPt[maxjet]+FatJetPt[minjet]):
+                continue
+            
+
+        
         pdfweight_up = NNPDF3weight_CorrUp[0]
         pdfweight_dn = NNPDF3weight_CorrDn[0]
         cteqweight = CTEQweight_Central[0]

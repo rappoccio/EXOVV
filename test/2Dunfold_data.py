@@ -17,8 +17,8 @@ parser.add_option('--extension', action ='store', type = 'string',
        
 (options, args) = parser.parse_args()
 
-mcfile = TFile('responses_otherway_qcdmc.root')
-datafile = TFile('jetht_40pbinv_weighted_dataplots_otherway.root')
+mcfile = TFile('responses_repdf_otherway_qcdmc.root')
+datafile = TFile('jetht_weighted_dataplots_otherway_repdf.root')
 
 
 outfile = TFile('2DData' + options.extension + '.root', 'RECREATE')
@@ -52,6 +52,10 @@ truth.SetLineColor(4)
 
 truth.Draw('SAME')
 
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
+nptbin = 11
+
+
 canvases = []
 canvasesSD = []
 namesreco = []
@@ -60,7 +64,7 @@ namesgen = []
 namesgenSD = []
 legends = []
 legendsSD = []
-for x in range(0, 19):
+for x in range(0, nptbin):
     canvases.append(TCanvas("canvas" + str(x)))
     canvasesSD.append(TCanvas("canvasSD" + str(x)))
     namesreco.append(None)
@@ -69,7 +73,6 @@ for x in range(0, 19):
     namesgenSD.append(None)
     legends.append(TLegend(.7, .5, .9, .7))
     legendsSD.append(TLegend(.7, .5, .9, .7))
-pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
 
 
 for i, canvas in enumerate(canvases) : 

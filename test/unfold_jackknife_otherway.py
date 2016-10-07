@@ -14,9 +14,9 @@ import pickle
 ############################################################################
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
 
-jackknife_mc = ROOT.TFile('jackknife_otherway.root')
-supplementaryMC = ROOT.TFile('responses_otherway_qcdmc.root')
-datafile = ROOT.TFile('jetht_40pbinv_weighted_dataplots_otherway.root')
+jackknife_mc = ROOT.TFile('jackknife_otherway_repdf.root')
+supplementaryMC = ROOT.TFile('responses_repdf_otherway_qcdmc.root')
+datafile = ROOT.TFile('jetht_weighted_dataplots_otherway_repdf.root')
 responses = []
 unfolded = []
 

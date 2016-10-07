@@ -8,12 +8,12 @@ from ROOT import RooUnfoldBayes
 from ROOT import TCanvas
 # dict used later for labels
 
-pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
+nptbin = 11
 
-
-herwigfile = TFile('qcdmc_herwig_otherway.root')
-pythia8file = TFile('responses_otherway_qcdmc.root')
-datafile = TFile('jetht_40pbinv_weighted_dataplots_otherway.root')
+herwigfile = TFile('qcdmc_herwig_otherway_repdf.root')
+pythia8file = TFile('responses_repdf_otherway_qcdmc.root')
+datafile = TFile('jetht_weighted_dataplots_otherway_repdf.root')
 
 
 herwig_response = herwigfile.Get('2d_response')
@@ -61,7 +61,7 @@ canvases = []
 namesreco = []
 namesgen = []
 legends = []
-for x in range(0, 19):
+for x in range(0, nptbin):
     canvases.append(TCanvas("canvas" + str(x)))
     namesreco.append(None)
     namesgen.append(None)
@@ -93,7 +93,7 @@ namesreco_softdrop = []
 namesgen_softdrop = []
 legends_softdrop = []
 
-for x in range(0, 19):
+for x in range(0, nptbin):
     canvases_softdrop.append(TCanvas("canvas_softdrop" + str(x)))
     namesreco_softdrop.append(None)
     namesgen_softdrop.append(None)
@@ -122,7 +122,7 @@ canvases_data = []
 namesreco_data = []
 namesgen_data = []
 legends_data = []
-for x in range(0, 19):
+for x in range(0, nptbin):
     canvases_data.append(TCanvas("canvas_data" + str(x)))
     legends_data.append(TLegend(.7, .5, .9, .7))
 for i, canvas in enumerate(canvases_data) : 
@@ -146,7 +146,7 @@ canvases_data_softdrop = []
 namesreco_data_softdrop = []
 legends_data_softdrop = []
 
-for x in range(0, 19):
+for x in range(0, nptbin):
     canvases_data_softdrop.append(TCanvas("canvas_data_softdrop" + str(x)))
     legends_data_softdrop.append(TLegend(.7, .5, .9, .7))
 
@@ -167,7 +167,7 @@ canvases_bias = []
 namesreco_bias = []
 namesgen_bias = []
 legends_bias = []
-for x in range(0, 19):
+for x in range(0, nptbin):
     canvases_bias.append(TCanvas("canvas_bias" + str(x)))
     namesreco_bias.append(None)
     namesgen_bias.append(None)
@@ -196,7 +196,7 @@ namesreco_bias_softdrop = []
 namesgen_bias_softdrop = []
 legends_bias_softdrop = []
 
-for x in range(0, 19):
+for x in range(0, nptbin):
     canvases_bias_softdrop.append(TCanvas("canvas_bias_softdrop" + str(x)))
     namesreco_bias_softdrop.append(None)
     namesgen_bias_softdrop.append(None)
@@ -219,7 +219,7 @@ for i, canvas in enumerate(canvases_bias_softdrop) :
 outfile = TFile('PS_hists.root', 'RECREATE')
 outfile.cd()
 
-for i in range(0, 19):
+for i in range(0, nptbin):
     namesreco[i].Write()
     namesreco_softdrop[i].Write()
     namesreco_data[i].Write()
