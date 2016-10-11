@@ -699,6 +699,7 @@ for itree,t in enumerate(trees) :
                 
         # Now get the "Misses" (i.e. we have no RECO jet)
         for igen in xrange( int(NGenJet[0]) ):
+            igenSD = getMatched( GenJets[igen], GenJetsSD )
             ijet = getMatched( GenJets[igen], FatJets )
             ijetSD = getMatched( GenJetsSD[igen], FatJetsSD, dRMax=0.5 )
             if ijet == None or FatJets[ijet].Perp() < options.ptMin or not passkinloose :
