@@ -402,18 +402,23 @@ for itree,t in enumerate(trees) :
 
 
 
+
+        passkinloose = ptasym < 0.3 and dphi > 1.57 and dphi < 4.71
+
         # We want two kinematic selections:
         # 1. "Loose" selection for the response matrix to handle migration effects.
         # 2. Full selection for the filled histograms for data/MC comparisons and unfolding closure, etc.
-        passkinfull = FatJetPt[minjet] > 220. 
+        passkinfull = FatJetPt[minjet] > 220.
+
                 
         if dphi > 1.57 and passkinfull :
             h_ptasym_meas.Fill( ptasym, weight )
         if ptasym < 0.3 and passkinfull :
             h_dphi_meas.Fill( dphi, weight )
 
-        passkinloose = ptasym < 0.3 and dphi > 1.57 and dphi < 4.71
-        if not passkinloose :
+        
+        
+        if not ( passkinloose and passkinfull) :
             continue
 
 
@@ -440,9 +445,8 @@ for itree,t in enumerate(trees) :
             FatJetsSD.append(FatJetSD)
             FatJets.append(FatJet)
 
-            if passkinfull : 
-                h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
-                h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetSD.Perp(),  weight)
+            h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
+            h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetSD.Perp(),  weight)
 
             igen = getMatched( FatJet, GenJets )
             igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.5)
@@ -505,10 +509,9 @@ for itree,t in enumerate(trees) :
                 response_jmrdn.Fill( FatJet.M(), FatJet.Perp()*jmrdn, GenJets[igen].M(), GenJets[igen].Perp(), weight)
                 response_jmrnom.Fill(FatJet.M(), FatJet.Perp()*jmrnom, GenJets[igen].M(), GenJets[igen].Perp(), weight)
 
-                if passkinfull : 
-                    h_massup.Fill(FatJet.M()*jmrup, weight)
-                    h_massdn.Fill(FatJet.M()*jmrdn, weight)
-                    h_massnom.Fill(FatJet.M()*jmrnom, weight)
+                h_massup.Fill(FatJet.M()*jmrup, weight)
+                h_massdn.Fill(FatJet.M()*jmrdn, weight)
+                h_massnom.Fill(FatJet.M()*jmrnom, weight)
 
                 if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                     pass
@@ -530,20 +533,19 @@ for itree,t in enumerate(trees) :
                 # Make some data-to-MC plots
 
                 #                h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
-                if passkinfull : 
 
-                    h_pt_meas.Fill( FatJetPt[ijet] , weight )
-                    h_y_meas.Fill( FatJetRap[ijet] , weight )
-                    h_phi_meas.Fill( FatJetPhi[ijet] , weight )
-                    h_m_meas.Fill( FatJetMass[ijet] , weight )
-                    h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
-                    h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
-                    h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
-                    if GenJets[igen].M() != 0:
-                        h_mreco_mgen.Fill(FatJet.M()/GenJets[igen].M(), weight)
-                    else:
-                        h_mreco_mgen.Fill(FatJet.M()/0.140, weight)
-                    h_ptreco_ptgen.Fill(FatJet.Perp()/GenJets[igen].Perp(), weight)        
+                h_pt_meas.Fill( FatJetPt[ijet] , weight )
+                h_y_meas.Fill( FatJetRap[ijet] , weight )
+                h_phi_meas.Fill( FatJetPhi[ijet] , weight )
+                h_m_meas.Fill( FatJetMass[ijet] , weight )
+                h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
+                h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
+                h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
+                if GenJets[igen].M() != 0:
+                    h_mreco_mgen.Fill(FatJet.M()/GenJets[igen].M(), weight)
+                else:
+                    h_mreco_mgen.Fill(FatJet.M()/0.140, weight)
+                h_ptreco_ptgen.Fill(FatJet.Perp()/GenJets[igen].Perp(), weight)        
             else : # Here we have a "Fake"
                 response.Fake( FatJet.M(), FatJet.Perp(), weight )
                 response_jecup.Fake( FatJet.M() * FatJetCorrUp[ijet], FatJet.Perp()* FatJetCorrUp[ijet], weight )
@@ -627,16 +629,15 @@ for itree,t in enumerate(trees) :
                 response_softdrop_jmrup.Fill(FatJetSD.M(), FatJetSD.Perp()*jmrupSD, GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight)
                 response_softdrop_jmrdn.Fill(FatJetSD.M(), FatJetSD.Perp()*jmrdnSD, GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight)
 
-                if passkinfull : 
-                    h_massup_softdrop.Fill(FatJetSD.M()*jmrupSD, weight)
-                    h_massdn_softdrop.Fill(FatJetSD.M()*jmrdnSD, weight)
-                    h_massnom_softdrop.Fill(FatJetSD.M()*jmrnomSD, weight)
-                    if GenJetsSD[igenSD].M() != 0:
-                        h_mreco_mgen_softdrop.Fill(FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
-                    else:
-                        h_mreco_mgen_softdrop.Fill(FatJetSD.M()/0.14, weight)
-                        masslessSD += 1
-                    h_ptreco_ptgen_softdrop.Fill(FatJetSD.Perp()/GenJetsSD[igenSD].Perp(), weight)
+                h_massup_softdrop.Fill(FatJetSD.M()*jmrupSD, weight)
+                h_massdn_softdrop.Fill(FatJetSD.M()*jmrdnSD, weight)
+                h_massnom_softdrop.Fill(FatJetSD.M()*jmrnomSD, weight)
+                if GenJetsSD[igenSD].M() != 0:
+                    h_mreco_mgen_softdrop.Fill(FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
+                else:
+                    h_mreco_mgen_softdrop.Fill(FatJetSD.M()/0.14, weight)
+                    masslessSD += 1
+                h_ptreco_ptgen_softdrop.Fill(FatJetSD.Perp()/GenJetsSD[igenSD].Perp(), weight)
                 if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                     pass
                 else:
@@ -655,8 +656,7 @@ for itree,t in enumerate(trees) :
                     response_softdrop_mstw.Fill( FatJetSD.M(), FatJetSD.Perp(), GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight*mstwweight)
 
 
-                if passkinfull: 
-                    h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
  #               h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
             else:
                 response_softdrop.Fake( FatJetSD.M() , FatJetSD.Perp(), weight )
