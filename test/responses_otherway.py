@@ -414,18 +414,16 @@ for itree,t in enumerate(trees) :
         # We want two kinematic selections:
         # 1. "Loose" selection for the response matrix to handle migration effects.
         # 2. Full selection for the filled histograms for data/MC comparisons and unfolding closure, etc.
-        passkinfull = FatJetPt[minjet] > options.ptMin
-
+        passkinfull = abs(FatJetEta[maxjet]) < 2.4 and abs(FatJetEta[minjet] < 2.4 and FatJetPt[minjet] > options.ptMin
                 
         if dphi > 1.57 and passkinfull :
             h_ptasym_meas.Fill( ptasym, weight )
         if ptasym < 0.3 and passkinfull :
             h_dphi_meas.Fill( dphi, weight )
 
+
         
         
-        if not ( passkinloose and passkinfull) :
-            continue
 
 
         
@@ -439,8 +437,15 @@ for itree,t in enumerate(trees) :
             GenJetsMassSD.append( GenJetMassSoftDrop[igen] )            
             h_2DHisto_gen.Fill( GenJet.M(), GenJet.Perp(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.M(), GenJetSD.Perp(), weight)
+
+
+        
+            
         # First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
         for ijet in [maxjet, minjet]:
+            if not ( passkinloose and passkinfull ) :
+                continue 
+
             
             FatJet = ROOT.TLorentzVector()
             FatJet.SetPtEtaPhiM( FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet])
@@ -696,7 +701,7 @@ for itree,t in enumerate(trees) :
         for igen in xrange( int(NGenJet[0]) ):
             ijet = getMatched( GenJets[igen], FatJets )
             ijetSD = getMatched( GenJetsSD[igen], FatJetsSD, dRMax=0.5 )
-            if ijet == None or FatJets[ijet].Perp() < options.ptMin :
+            if ijet == None or FatJets[ijet].Perp() < options.ptMin or not passkinloose :
                 response.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecup.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecdn.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
@@ -725,7 +730,7 @@ for itree,t in enumerate(trees) :
 
 
                     
-            if (ijetSD == None or FatJets[ijetSD].Perp() < options.ptMin) and igenSD != None :
+            if (ijetSD == None or FatJets[ijetSD].Perp() < options.ptMin or not passkinloose ) and igenSD != None :
                 response_softdrop.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecup.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecdn.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
