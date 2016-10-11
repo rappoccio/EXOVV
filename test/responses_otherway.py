@@ -702,7 +702,7 @@ for itree,t in enumerate(trees) :
             igenSD = getMatched( GenJets[igen], GenJetsSD )
             ijet = getMatched( GenJets[igen], FatJets )
             ijetSD = getMatched( GenJetsSD[igen], FatJetsSD, dRMax=0.5 )
-            if ijet == None or FatJets[ijet].Perp() < options.ptMin or not passkinloose :
+            if ijet == None or FatJets[ijet].Perp() < options.ptMin or abs(FatJets[ijet].Eta()) > 2.4 or not passkinloose :
                 response.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecup.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecdn.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
@@ -731,7 +731,7 @@ for itree,t in enumerate(trees) :
 
 
                     
-            if (ijetSD == None or FatJets[ijetSD].Perp() < options.ptMin or not passkinloose ) and igenSD != None :
+            if (ijetSD == None or FatJetsSD[ijetSD].Perp() < options.ptMin or abs(FatJetsSD[ijetSD]) > 2.4 or not passkinloose ) and igenSD != None :
                 response_softdrop.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecup.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecdn.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
