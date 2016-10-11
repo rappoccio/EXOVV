@@ -731,7 +731,7 @@ for itree,t in enumerate(trees) :
 
 
                     
-            if (ijetSD == None or FatJetsSD[ijetSD].Perp() < options.ptMin or abs(FatJetsSD[ijetSD]) > 2.4 or not passkinloose ) and igenSD != None :
+            if (ijetSD == None or FatJetsSD[ijetSD].Perp() < options.ptMin or abs(FatJetsSD[ijetSD].Eta()) > 2.4 or not passkinloose ) and igenSD != None :
                 response_softdrop.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecup.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecdn.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
