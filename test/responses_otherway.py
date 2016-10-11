@@ -414,9 +414,9 @@ for itree,t in enumerate(trees) :
         # We want two kinematic selections:
         # 1. "Loose" selection for the response matrix to handle migration effects.
         # 2. Full selection for the filled histograms for data/MC comparisons and unfolding closure, etc.
-        passkinfull = abs(FatJetEta[maxjet]) < 2.4 and abs(FatJetEta[minjet] < 2.4 and FatJetPt[minjet] > options.ptMin
+        passkinfull = abs(FatJetEta[maxjet]) < 2.4 and abs(FatJetEta[minjet]) < 2.4 and FatJetPt[minjet] > options.ptMin
                 
-        if dphi > 1.57 and passkinfull :
+        if dphi > 1.57 and passkinfull: 
             h_ptasym_meas.Fill( ptasym, weight )
         if ptasym < 0.3 and passkinfull :
             h_dphi_meas.Fill( dphi, weight )
