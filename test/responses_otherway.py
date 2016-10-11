@@ -17,6 +17,12 @@ parser.add_option('--maxEvents', type='int', action='store',
                   default = None,
                   help='Max events')
 
+
+parser.add_option('--ptMin', type='float', action='store',
+                  dest='ptMin',
+                  default = 220.,
+                  help='Max events')
+
 parser.add_option('--herwigFlat', action='store_true',
                   dest='herwigFlat',
                   default = False,
@@ -408,7 +414,7 @@ for itree,t in enumerate(trees) :
         # We want two kinematic selections:
         # 1. "Loose" selection for the response matrix to handle migration effects.
         # 2. Full selection for the filled histograms for data/MC comparisons and unfolding closure, etc.
-        passkinfull = FatJetPt[minjet] > 220.
+        passkinfull = FatJetPt[minjet] > options.ptMin
 
                 
         if dphi > 1.57 and passkinfull :
@@ -690,7 +696,7 @@ for itree,t in enumerate(trees) :
         for igen in xrange( int(NGenJet[0]) ):
             ijet = getMatched( GenJets[igen], FatJets )
             ijetSD = getMatched( GenJetsSD[igen], FatJetsSD, dRMax=0.5 )
-            if ijet == None :
+            if ijet == None or FatJets[ijet].Perp() < options.ptMin :
                 response.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecup.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecdn.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
@@ -719,7 +725,7 @@ for itree,t in enumerate(trees) :
 
 
                     
-            if ijetSD == None and igenSD != None :
+            if (ijetSD == None or FatJets[ijetSD].Perp() < options.ptMin) and igenSD != None :
                 response_softdrop.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecup.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecdn.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
