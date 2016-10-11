@@ -361,11 +361,22 @@ for itree,t in enumerate(trees) :
         weight = qcdWeights[itree]
 
 
-        maxjet = 0
-        minjet = 1
-        if FatJetPt[0] < FatJetPt[1] :
-            maxjet = 1
-            minjet = 0
+        if NFatJet[0] < 2 : 
+            continue
+
+        pttuple = [ ]
+        for ijet in xrange( NFatJet[0] ) : 
+            pttuple.append( [ijet, FatJetPt[ijet] ] )
+
+
+        pttuplesorted = sorted(pttuple, key=lambda ptsort : ptsort[1], reverse=True )
+                           
+
+        maxjet = pttuplesorted[0][0]
+        minjet = pttuplesorted[1][0]
+
+        #print pttuplesorted
+        #print maxjet, ' ', minjet
 
 
         ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
@@ -418,7 +429,7 @@ for itree,t in enumerate(trees) :
             h_2DHisto_gen.Fill( GenJet.M(), GenJet.Perp(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.M(), GenJetSD.Perp(), weight)
         # First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
-        for ijet in xrange( int(NFatJet[0]) ):
+        for ijet in [maxjet, minjet]:
             
             FatJet = ROOT.TLorentzVector()
             FatJet.SetPtEtaPhiM( FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet])
