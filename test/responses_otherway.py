@@ -183,6 +183,33 @@ h_mreco_mgen_softdrop = ROOT.TH1F("h_mreco_mgen_softdrop", "Reco Mass/Gen Mass S
 h_ptreco_ptgen_softdrop = ROOT.TH1F("h_ptreco_ptgen_softdrop", "Reco Pt/Gen Pt Softdrop", 1000, 0, 2)
 
 
+
+
+h2_y_meas = ROOT.TH2F("h2_y_meas", ";Jet Rapidity; Number", nbinsPt, ptBinA, 50, -2.5, 2.5 )
+h2_phi_meas = ROOT.TH2F("h2_phi_meas", ";Jet #phi (radians); Number", nbinsPt, ptBinA, 50, -ROOT.TMath.Pi(), ROOT.TMath.Pi() )
+h2_m_meas = ROOT.TH2F("h2_m_meas", ";Jet Mass (GeV); Number", nbinsPt, ptBinA, 50, 0, 500 )
+h2_msd_meas = ROOT.TH2F("h2_msd_meas", ";Jet Soft Drop Mass (GeV); Number", nbinsPt, ptBinA, 50, 0, 500 )
+h2_rho_meas = ROOT.TH2F("h2_rho_meas", ";Jet (m/p_{T}R)^{2}; Number", nbinsPt, ptBinA, 100, 0, 1.0 )
+h2_tau21_meas = ROOT.TH2F("h2_tau21_meas", ";Jet #tau_{2}/#tau_{1}; Number", nbinsPt, ptBinA, 50, 0, 1.0 )
+h2_dphi_meas = ROOT.TH2F("h2_dphi_meas", ";Jet #phi (radians); Number", nbinsPt, ptBinA, 50, 0, ROOT.TMath.TwoPi() )
+h2_ptasym_meas = ROOT.TH2F("h2_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", nbinsPt, ptBinA, 50, 0, 1.0 )
+
+h2_massup = ROOT.TH2F("h2_massup", "JMR Up Variation", nbinsPt, ptBinA, nbinsm, mBinA)
+h2_massdn = ROOT.TH2F("h2_massdn", "JMR Down Variation", nbinsPt, ptBinA, nbinsm, mBinA)
+h2_massnom = ROOT.TH2F("h2_massnom", "JMR Nominal", nbinsPt, ptBinA, nbinsm, mBinA)
+
+h2_massup_softdrop = ROOT.TH2F("h2_massup_softdrop", "JMR Up Softdrop", nbinsPt, ptBinA, nbinsm, mBinA)
+h2_massdn_softdrop = ROOT.TH2F("h2_massdn_softdrop", "JMR Down Softdrop", nbinsPt, ptBinA, nbinsm, mBinA)
+h2_massnom_softdrop = ROOT.TH2F("h2_massnom_softdrop", "JMR Nominal Softdrop", nbinsPt, ptBinA, nbinsm, mBinA)
+
+h2_mreco_mgen = ROOT.TH2F("h2_mreco_mgen", "Reco Mass/Gen Mass", nbinsPt, ptBinA, 1000, 0, 2)
+h2_ptreco_ptgen = ROOT.TH2F("h2_ptreco_ptgen", "Reco Pt/Gen Pt", nbinsPt, ptBinA, 1000, 0, 2)
+h2_mreco_mgen_softdrop = ROOT.TH2F("h2_mreco_mgen_softdrop", "Reco Mass/Gen Mass Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
+h2_ptreco_ptgen_softdrop = ROOT.TH2F("h2_ptreco_ptgen_softdrop", "Reco Pt/Gen Pt Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
+
+
+
+
 def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None : 
         for i,c in enumerate(coll):
@@ -248,7 +275,7 @@ trees = []
 # Append the actual TTrees
 for iq in qcdIn:
     trees.append( iq.Get("TreeEXOVV") )
-fout = ROOT.TFile(options.outlabel + '_qcdmc.root', 'RECREATE')
+fout = ROOT.TFile(options.outlabel, 'RECREATE')
 
 
 for itree,t in enumerate(trees) :
@@ -524,6 +551,11 @@ for itree,t in enumerate(trees) :
                 h_massdn.Fill(FatJet.M()*jmrdn, weight)
                 h_massnom.Fill(FatJet.M()*jmrnom, weight)
 
+                h2_massup.Fill(FatJet.Perp(), FatJet.M()*jmrup, weight)
+                h2_massdn.Fill(FatJet.Perp(), FatJet.M()*jmrdn, weight)
+                h2_massnom.Fill(FatJet.Perp(), FatJet.M()*jmrnom, weight)
+
+                
                 if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                     pass
                 else:
@@ -545,6 +577,7 @@ for itree,t in enumerate(trees) :
 
                 #                h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
 
+
                 h_pt_meas.Fill( FatJetPt[ijet] , weight )
                 h_y_meas.Fill( FatJetRap[ijet] , weight )
                 h_phi_meas.Fill( FatJetPhi[ijet] , weight )
@@ -557,6 +590,18 @@ for itree,t in enumerate(trees) :
                 else:
                     h_mreco_mgen.Fill(FatJet.M()/0.140, weight)
                 h_ptreco_ptgen.Fill(FatJet.Perp()/GenJets[igen].Perp(), weight)        
+
+                
+                h2_y_meas.Fill( FatJet.Perp(), FatJetRap[ijet] , weight )
+                h2_phi_meas.Fill( FatJet.Perp(), FatJetPhi[ijet] , weight )
+                h2_m_meas.Fill( FatJet.Perp(), FatJetMass[ijet] , weight )
+                h2_rho_meas.Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight )
+                h2_tau21_meas.Fill( FatJet.Perp(), FatJetTau21[ijet] , weight )
+                if GenJets[igen].M() != 0:
+                    h2_mreco_mgen.Fill(FatJet.Perp(), FatJet.M()/GenJets[igen].M(), weight)
+                else:
+                    h2_mreco_mgen.Fill(FatJet.Perp(), FatJet.M()/0.140, weight)
+                h2_ptreco_ptgen.Fill(FatJet.Perp(), FatJet.Perp()/GenJets[igen].Perp(), weight)        
             else : # Here we have a "Fake"
                 response.Fake( FatJet.M(), FatJet.Perp(), weight )
                 response_jecup.Fake( FatJet.M() * FatJetCorrUp[ijet], FatJet.Perp()* FatJetCorrUp[ijet], weight )
