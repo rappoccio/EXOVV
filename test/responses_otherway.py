@@ -28,6 +28,14 @@ parser.add_option('--herwigFlat', action='store_true',
                   default = False,
                   help='Max events')
 
+
+
+parser.add_option('--verbose', action='store_true',
+                  dest='verbose',
+                  default = False,
+                  help='Verbosity')
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -378,8 +386,8 @@ for itree,t in enumerate(trees) :
     else :
         eventsToRun = entries
     for jentry in xrange( eventsToRun ):
-        if jentry % 10000 == 0 :
-            print 'processing ' + str(jentry)
+        if jentry % 10000 == 0 or options.verbose :
+            print '======================== processing ' + str(jentry)
         # get the next tree in the chain and verify
         ientry = t.GetEntry( jentry )
         if ientry < 0:
@@ -394,12 +402,21 @@ for itree,t in enumerate(trees) :
         weight = qcdWeights[itree]
 
 
-        if NFatJet[0] < 2 : 
+        if NFatJet[0] < 2 :
+            if options.verbose : print 'NFatJet is too small, ', NFatJet[0]
             continue
 
+
+
+        
         pttuple = [ ]
+        if options.verbose : print '---------- Reco Jets-----------'
         for ijet in xrange( NFatJet[0] ) : 
             pttuple.append( [ijet, FatJetPt[ijet] ] )
+            if options.verbose :
+                print '  ungroomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f, ' % ( ijet, FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet] )
+                print '    groomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f, ' % ( ijet, FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet] )
+            
 
 
         pttuplesorted = sorted(pttuple, key=lambda ptsort : ptsort[1], reverse=True )
@@ -408,18 +425,28 @@ for itree,t in enumerate(trees) :
         maxjet = pttuplesorted[0][0]
         minjet = pttuplesorted[1][0]
 
-        #print pttuplesorted
-        #print maxjet, ' ', minjet
+        if options.verbose :
+            print 'Sorted pt bins:'
+            print pttuplesorted,
+            print ', maxjet = ', maxjet, ', minjet = ', minjet
 
 
         ptasym = (FatJetPt[maxjet] - FatJetPt[minjet])/(FatJetPt[maxjet] + FatJetPt[minjet])
         dphi = ROOT.TVector2.Phi_0_2pi( FatJetPhi[maxjet] - FatJetPhi[minjet] )
+        haveTwoSoftDrop = FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin
+        
 
+
+        if options.verbose:
+            print 'ptasym = ', ptasym, ' dphi = ', dphi
 
         if deweightFlat != None and deweightFlat :
             weight *= Weight[0]
+            if options.verbose :
+                print 'Deweighting flat tree, weight = ', weight
 
             if 5e-6 < weight/(FatJetPt[maxjet]+FatJetPt[minjet]):
+                if options.verbose : print 'Weight is outside bounds, skipping'
                 continue
             
 
@@ -453,7 +480,8 @@ for itree,t in enumerate(trees) :
         
 
 
-        
+        if options.verbose :
+            print '--------- Gen Jets -----------'
         for igen in xrange( int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()
             GenJet.SetPtEtaPhiM( GenJetPt[igen], GenJetEta[igen], GenJetPhi[igen], GenJetMass[igen])
@@ -464,6 +492,9 @@ for itree,t in enumerate(trees) :
             GenJetsMassSD.append( GenJetMassSoftDrop[igen] )            
             h_2DHisto_gen.Fill( GenJet.M(), GenJet.Perp(), weight )
             h_2DHisto_genSD.Fill( GenJetSD.M(), GenJetSD.Perp(), weight)
+            if options.verbose :
+                print '  ungroomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( igen, GenJet.Perp(), GenJet.Eta(), GenJet.Phi(), GenJet.M() )
+                print '    groomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( igen, GenJetSD.Perp(), GenJetSD.Eta(), GenJetSD.Phi(), GenJetSD.M() )
 
 
         
@@ -471,6 +502,7 @@ for itree,t in enumerate(trees) :
         # First get the "Fills" and "Fakes" (i.e. we at least have a RECO jet)
         for ijet in [maxjet, minjet]:
             if not ( passkinloose and passkinfull ) :
+                if options.verbose : print 'Skipping event, kin loose or kin full failed'                    
                 continue 
 
             
@@ -486,11 +518,14 @@ for itree,t in enumerate(trees) :
             h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
             h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetSD.Perp(),  weight)
 
+
             igen = getMatched( FatJet, GenJets )
             igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.5)
             
+            
           
-            if igen != None :  # Here we have a "Fill"
+            if FatJetPt[ijet] > options.ptMin and abs(FatJetEta[ijet]) < 2.4 and igen != None :  # Here we have a "Fill"
+                if options.verbose : print ' reco   %6d --> gen   %6d' % ( ijet, igen )
 
                 
                 valup = getJER(FatJet.Eta(), +1) #JER nominal=0, up=+1, down=-1
@@ -603,6 +638,8 @@ for itree,t in enumerate(trees) :
                     h2_mreco_mgen.Fill(FatJet.Perp(), FatJet.M()/0.140, weight)
                 h2_ptreco_ptgen.Fill(FatJet.Perp(), FatJet.Perp()/GenJets[igen].Perp(), weight)        
             else : # Here we have a "Fake"
+
+                if options.verbose : 'Fake ungroomed jet'
                 response.Fake( FatJet.M(), FatJet.Perp(), weight )
                 response_jecup.Fake( FatJet.M() * FatJetCorrUp[ijet], FatJet.Perp()* FatJetCorrUp[ijet], weight )
                 response_jecdn.Fake( FatJet.M() * FatJetCorrDn[ijet], FatJet.Perp()* FatJetCorrDn[ijet], weight )
@@ -630,8 +667,9 @@ for itree,t in enumerate(trees) :
                     response_mstw.Fake( FatJet.M(), FatJet.Perp(), weight*mstwweight)
 
 
-            if igenSD != None:
-                
+            if haveTwoSoftDrop and FatJetPtSoftDrop[ijet] > options.ptMin and abs(FatJetEta[ijet]) < 2.4 and igenSD != None:
+                if options.verbose : print ' recoSD %6d --> genSD %6d' % ( ijet, igenSD )
+                                    
                 #### be less conservative, define jes and jer for SD now
                 valupSD = getJER(FatJetSD.Eta(), +1)
                 recoptSD = FatJetSD.Perp()
@@ -715,6 +753,7 @@ for itree,t in enumerate(trees) :
                 h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
  #               h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
             else:
+                if options.verbose : 'Fake groomed jet'
                 response_softdrop.Fake( FatJetSD.M() , FatJetSD.Perp(), weight )
                 response_softdrop_jecup.Fake( FatJetSD.M()  * FatJetCorrUp[ijet], FatJetSD.Perp() * FatJetCorrUp[ijet], weight )
                 response_softdrop_jecdn.Fake( FatJetSD.M()  * FatJetCorrDn[ijet], FatJetSD.Perp() * FatJetCorrDn[ijet], weight )
@@ -743,11 +782,13 @@ for itree,t in enumerate(trees) :
 
                 
         # Now get the "Misses" (i.e. we have no RECO jet)
-        for igen in xrange( int(NGenJet[0]) ):
+        for igen in xrange( 2 ):
             igenSD = getMatched( GenJets[igen], GenJetsSD )
             ijet = getMatched( GenJets[igen], FatJets )
             ijetSD = getMatched( GenJetsSD[igen], FatJetsSD, dRMax=0.5 )
             if ijet == None or FatJets[ijet].Perp() < options.ptMin or abs(FatJets[ijet].Eta()) > 2.4 or not passkinloose :
+                if options.verbose :
+                    print 'Missed ungroomed gen jet: ', igen, 'ijet = ', ijet, ', passkinloose = ', passkinloose
                 response.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecup.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 response_jecdn.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
@@ -776,7 +817,9 @@ for itree,t in enumerate(trees) :
 
 
                     
-            if (ijetSD == None or FatJetsSD[ijetSD].Perp() < options.ptMin or abs(FatJetsSD[ijetSD].Eta()) > 2.4 or not passkinloose ) and igenSD != None :
+            if not haveTwoSoftDrop or (ijetSD == None or FatJetsSD[ijetSD].Perp() < options.ptMin or abs(FatJetsSD[ijetSD].Eta()) > 2.4 or not passkinloose ) and igenSD != None :
+                if options.verbose :
+                    print 'Missed   groomed gen jet: ', igenSD, 'ijet = ', ijetSD, ', passkinloose = ', passkinloose
                 response_softdrop.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecup.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
                 response_softdrop_jecdn.Miss( GenJetsSD[igenSD].M(), GenJetsSD[igenSD].Perp(), weight )
