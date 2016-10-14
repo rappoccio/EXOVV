@@ -412,6 +412,14 @@ for itree,t in enumerate(trees) :
         #print 'mstw weight: ' + str(mstwweight)
 
 
+        if deweightFlat != None and deweightFlat :
+            weight *= Weight[0]
+            if options.verbose :
+                print 'Deweighting flat tree, weight = ', weight
+
+            if NGenJet[0] < 2 or 5e-6 < weight/(GenJetPt[0]+GenJetPt[1]):
+                if options.verbose : print 'Weight is outside bounds, skipping'
+                continue
 
 
         # First get the generator level jets. If there are at least two,
@@ -440,14 +448,6 @@ for itree,t in enumerate(trees) :
                 print '    groomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( igen, GenJetSD.Perp(), GenJetSD.Eta(), GenJetSD.Phi(), GenJetSD.M() )
 
 
-        if deweightFlat != None and deweightFlat :
-            weight *= Weight[0]
-            if options.verbose :
-                print 'Deweighting flat tree, weight = ', weight
-
-            if NGenJet[0] < 2 or 5e-6 < weight/(GenJetPt[0]+GenJetPt[1]):
-                if options.verbose : print 'Weight is outside bounds, skipping'
-                continue
 
                 
         # Next get the reco level jets. If there are at least two
