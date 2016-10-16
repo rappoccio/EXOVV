@@ -482,7 +482,7 @@ for itree,t in enumerate(trees) :
             passptasym = ptasym < 0.3
             passkinloose = passptasym and passdphi
             passkinfull = abs(FatJetEta[maxjet]) < 2.4 and abs(FatJetEta[minjet]) < 2.4 and FatJetPt[maxjet] > options.ptMin and FatJetPt[minjet] > options.ptMin
-            passkinfullsoftdrop = passkinfull and FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin and FatJetPtSoftDrop[maxjet] <= FatJetPt[maxjet] and FatJetPtSoftDrop[minjet] <= FatJetPt[minjet]
+            passkinfullsoftdrop = passkinfull and FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin #and FatJetPtSoftDrop[maxjet] <= FatJetPt[maxjet] and FatJetPtSoftDrop[minjet] <= FatJetPt[minjet]
 
             # "N-1" plots for the dphi and pt asymmetry cuts. 
             if passdphi and passkinfull: 
