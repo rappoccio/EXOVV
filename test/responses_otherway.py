@@ -658,7 +658,7 @@ for itree,t in enumerate(trees) :
                 FatJetSD.SetPtEtaPhiM( FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet]  )            
                 FatJetsSD.append(FatJetSD)
                 h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetSD.Perp(),  weight)
-                igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.1)
+                igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.3)
 
                 if  igenSD != None and ngenSD >= 2 :
                     if options.verbose : print ' recoSD %6d --> genSD %6d' % ( ijet, igenSD )
