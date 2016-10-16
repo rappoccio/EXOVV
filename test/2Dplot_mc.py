@@ -34,8 +34,8 @@ parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 
 
-scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
-
+scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.]
+nptbin = 11
 ##### WARNING ### WARNING #####<----------------------------------------------
 ### This version of pickle  ###<----------------------------------------------
 ### is not secure. NEVER use###<----------------------------------------------
@@ -106,7 +106,7 @@ jmrdnfile = ROOT.TFile('2DClosure_jmrdn.root')
 jmrnomfile= ROOT.TFile('2DClosure_jmrnom.root')
 
 ##################################################################### Get uncertainty hists
-for i in range(0, 19):
+for i in range(0, nptbin):
     jecdna.append(jecdn.Get('pythia8_mass' + str(i)))
     jecupa.append(jecup.Get('pythia8_mass' + str(i)))
     jerdna.append(jerdn.Get('pythia8_mass' + str(i)))
@@ -174,7 +174,7 @@ alegends_fullbandSD = []
 atlxSD = []
 atlxSDpt = []
 comparisons = []
-for x in range(0, 19):
+for x in range(0, nptbin):
     datalistSD.append(f.Get('pythia8_massSD'+str(x)))
     datalist.append(f.Get('pythia8_mass'+str(x)))
     MCtruth.append(f.Get('genmass' + str(x)))
@@ -227,7 +227,7 @@ for x in range(0, 19):
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
 ps_differences_softdrop = []
-for i in range(0, 19):
+for i in range(0, nptbin):
     temp_diff = []
     temp_softdrop_diff = []
     ps.append(parton_shower.Get('pythia8_unfolded_by_herwig'+str(i)))
@@ -259,7 +259,7 @@ comparisons_softdrop = []
 complegends = []
 complegendssd = []
 
-for i in range(0, 19):
+for i in range(0, nptbin):
 #    complegends.append(ROOT.TLegend(.5, .7, .85, .85))
 #    complegendssd.append(ROOT.TLegend(.5, .7, .85, .85))
 #    comparisons.append(ROOT.TCanvas('comp'+str(i)))
@@ -349,10 +349,10 @@ for leg in alegends_fullbandSD :
 if options.logy:
     if options.oneband:
         
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
             datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases_fullband[x].SetLeftMargin(0.15)
             datacanvases_fullbandSD[x].SetLeftMargin(0.15)
     
@@ -369,10 +369,10 @@ if options.logy:
     
     else:
         
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
             datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases[x].SetLeftMargin(0.15)
             datacanvasesSD[x].SetLeftMargin(0.15)
     
@@ -390,10 +390,10 @@ if options.logy:
 else:
     if options.oneband:
         
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
             datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases_fullband[x].SetLeftMargin(0.15)
             datacanvases_fullbandSD[x].SetLeftMargin(0.15)
         
@@ -411,10 +411,10 @@ else:
 
     else:
         
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
             datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, 19):
+        for x in range(0, nptbin):
             datacanvases[x].SetLeftMargin(0.15)
             datacanvasesSD[x].SetLeftMargin(0.15)
         

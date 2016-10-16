@@ -1,0 +1,8 @@
+*.png
+*.pdf
+*.pyc
+RooUnfold
+*DS_Store*
+../.DS_Store
+*.tgz
+*~

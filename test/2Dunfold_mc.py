@@ -20,8 +20,8 @@ parser.add_option('--extension', action ='store', type = 'string',
                                 
 (options, args) = parser.parse_args()
 
+myfile = TFile('responses_repdf_otherway_qcdmc_2dplots.root')
 
-myfile = TFile('responses_otherway_qcdmc.root')
 
 response = myfile.Get('2d_response' + options.extension )
 outtext = options.extension
@@ -38,10 +38,10 @@ reco.Scale(1./reco.Integral())
 truthSD.Scale(1./truthSD.Integral())
 recoSD.Scale(1./recoSD.Integral())
 
-pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
-
+pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
+nptbin = 11
 ROOT.gStyle.SetOptStat(000000)
-ROOT.gStyle.SetPalette(ROOT.kDarkBodyRadiator)
+
 
 
 unfold = RooUnfoldBayes(response, reco, 4)
@@ -89,38 +89,74 @@ for i in xrange(0,nb) :
         if Viijj>0.0 :
             corSD.SetBinContent(i+1,j+1, covSD[i][j]/math.sqrt(Viijj) )
 
+import array
+Number = 3
+Red    = array.array("d", [ 0.00, 1.00, 1.00] );
+Green  = array.array("d", [ 0.00, 1.00, 140/255.] );
+Blue   = array.array("d", [ 1.00, 1.00, 0.00] );
+Length = array.array("d", [ 0.00, 0.51, 1.00] );
+nb = 10
+ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
 
+#colors = array.array("i", [ROOT.kBlue, ROOT.kWhite, ROOT.kOrange + 7] )
 
-cov_canvas=TCanvas("cov canvas", "cov canvas")
-cov_canvas.cd()
+#ROOT.gStyle.SetPalette(ROOT.kDarkBodyRadiator)
+#ROOT.gStyle.SetPalette(3, colors)#
+
+ptbins =[  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300]
+
+axislabels = ROOT.TH2F("axes", ";Reconstructed Bin;Generated Bin", len(ptbins), 0, cor.GetNbinsX(), len(ptbins), 0, cor.GetNbinsX() )
+for ibin in xrange(len(ptbins)):
+    axislabels.GetXaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
+    axislabels.GetYaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
+
+cov_canvas = ROOT.TCanvas("cov_canvas", "response", 800, 800)
+cov_canvas.SetRightMargin(0.15)
+cov_canvas.SetLeftMargin(0.15)
+cov_canvas.SetBottomMargin(0.15)
+cov_canvas.SetTopMargin(0.15)
+cov_canvas.SetGrid()
+axislabels.GetYaxis().SetTitleOffset(1.5)
+axislabels.SetTitle(';Response Matrix Reconstructed p_{T} Bins (GeV);Response Matrix Generated p_{T} Bins (GeV)')
+axislabels.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetXaxis().SetTitleOffset(1.5)
+axislabels.GetYaxis().SetTitleOffset(1.5)
+axislabels.Draw("axis")
 cor.SetMinimum(-1.0)
 cor.SetMaximum(1.0)
 cor.SetTitle(';Reconstructed bin;Generated bin')
-cor.Draw("colz")
+cor.Draw("colz same")
 tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
 tlx.SetTextSize(30)
-tlx.DrawLatex(0.14, 0.910, "CMS preliminary")
-tlx.DrawLatex(0.7, 0.910, "2.3 fb^{-1} (13 TeV)")
+tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
 tlx.SetTextSize(22)
 tlx.DrawLatex(0.2, 0.6, "Ungroomed Jets")
 cov_canvas.Update()
 cov_canvas.Print("CovarianceMatrix.png", "png")
 cov_canvas.Print("CovarianceMatrix.pdf", "pdf")
 
-covSD_canvas=TCanvas("covSDcanvas", "covSDcanvas")
+covSD_canvas=TCanvas("covSDcanvas", "covSDcanvas", 800, 800)
+covSD_canvas.SetRightMargin(0.15)
+covSD_canvas.SetLeftMargin(0.15)
+covSD_canvas.SetBottomMargin(0.15)
+covSD_canvas.SetTopMargin(0.15)
+covSD_canvas.SetGrid()
 covSD_canvas.cd()
+axislabels.Draw("axis")
 corSD.SetMinimum(-1.0)
 corSD.SetMaximum(1.0)
 corSD.SetTitle(';Reconstructed bin;Generated bin')
-corSD.Draw("colz")
+corSD.Draw("colz same")
 tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
 tlx.SetTextSize(30)
-tlx.DrawLatex(0.14, 0.910, "CMS preliminary")
-tlx.DrawLatex(0.7, 0.910, "2.3 fb^{-1} (13 TeV)")
+tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
 tlx.SetTextSize(22)
 tlx.DrawLatex(0.2, 0.6, "Soft Drop Jets")
 
@@ -142,7 +178,7 @@ legendsSD = []
 namesrecoSD = []
 namesgenSD = []
 keepHists = []
-for i in range(0, 19):
+for i in range(0, nptbin):
     namesreco.append(None)
     namesgen.append(None)
     legends.append(TLegend(.7, .5, .9, .7))

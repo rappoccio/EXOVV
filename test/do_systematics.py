@@ -16,9 +16,9 @@ f = ROOT.TFile('2DClosure.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 bins = ['p_{T} 200-260 GeV','p_{T} 260-350 GeV','p_{T} 350-460 GeV','p_{T} 460-550 GeV','p_{T} 550-650 GeV','p_{T} 650-760 GeV', 'p_{T} 760-900 GeV', 'p_{T} 900-1000 GeV', 'p_{T} 1000-1100 GeV','p_{T} 1100-1200 GeV',
-    'p_{T} 1200-1300 GeV', 'p_{T} 1300-1400 GeV', 'p_{T} 1400-1500 GeV', 'p_{T} 1500-1600 GeV', 'p_{T} 1600-1700 GeV', 'p_{T} 1700-1800 GeV', 'p_{T} 1800-1900 GeV', 'p_{T} 1900-2000 GeV', 'p_{T} > 2000 GeV']
-scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
-
+    'p_{T} 1200-1300 GeV', 'p_{T} > 1300 GeV']
+scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
+nptbins = 11
 ##### WARNING ### WARNING #####<----------------------------------------------
 ### This version of pickle  ###<----------------------------------------------
 ### is not secure. NEVER use###<----------------------------------------------
@@ -69,7 +69,7 @@ jmrdnfile = ROOT.TFile('2DClosure_jmrdn.root')
 jmrnomfile= ROOT.TFile('2DClosure_jmrnom.root')
 
 ##################################################################### Get uncertainty hists
-for i in range(0, 19):
+for i in range(0, nptbins):
     jecdna.append(jecdn.Get('pythia8_mass' + str(i)))
     jecupa.append(jecup.Get('pythia8_mass' + str(i)))
     jerdna.append(jerdn.Get('pythia8_mass' + str(i)))
@@ -98,7 +98,7 @@ datacanvasesSD = []
 datacanvases= []
 
 ################################################################################# generate canvases 
-for x in range(0, 19):
+for x in range(0, nptbins):
     datacanvases.append(TCanvas("cdist"+str(x), "cdist"+str(x)))
     datacanvasesSD.append(TCanvas("cdist" + str(x) + "SD", "cdist"+str(x)+"SD"))
 
@@ -115,7 +115,7 @@ alegendsSD = []
 atlxSD = []
 atlxSDpt = []
 comparisons = []
-for x in range(0, 19):
+for x in range(0, nptbins):
     datalistSD.append(f.Get('pythia8_massSD'+str(x)))
     datalist.append(f.Get('pythia8_mass'+str(x)))
     MCtruth.append(f.Get('genmass' + str(x)))
@@ -131,7 +131,7 @@ for x in range(0, 19):
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
 ps_differences_softdrop = []
-for i in range(0, 19):
+for i in range(0, nptbins):
     temp_diff = []
     temp_softdrop_diff = []
     ps.append(parton_shower.Get('pythia8_unfolded_by_herwig'+str(i)))
@@ -161,7 +161,7 @@ comparisons_softdrop = []
 complegends = []
 complegendssd = []
 
-for i in range(0, 19):
+for i in range(0, nptbins):
     temp_pdf_diff = []
     temp_softdrop_pdf_diff = []
     pdf_up.append(pdfs.Get('pdf_up'+str(i)))
