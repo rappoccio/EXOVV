@@ -17,7 +17,7 @@ parser.add_option('--extension', action ='store', type = 'string',
        
 (options, args) = parser.parse_args()
 
-mcfile = TFile('responses_repdf_otherway_qcdmc.root')
+mcfile = TFile('responses_repdf_otherway_qcdmc_2dplots.root')
 datafile = TFile('jetht_weighted_dataplots_otherway_repdf.root')
 
 
