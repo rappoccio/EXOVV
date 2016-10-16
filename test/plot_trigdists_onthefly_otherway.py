@@ -249,6 +249,7 @@ for itree,t in enumerate(trees) :
     NFatJet = array.array('i', [0] )
     FatJetPt = array.array('f', [-1]*5)
     FatJetRap = array.array('f', [-1]*5)
+    FatJetEta = array.array('f', [-1]*5)
     FatJetPhi = array.array('f', [-1]*5)
     FatJetMass = array.array('f', [-1]*5)
     FatJetMassSoftDrop = array.array('f', [-1]*5)
@@ -264,6 +265,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus('NFatJet', 1)
     t.SetBranchStatus('FatJetPt', 1)
     t.SetBranchStatus('FatJetRap', 1)
+    t.SetBranchStatus('FatJetEta', 1)
     t.SetBranchStatus('FatJetPhi', 1)
     t.SetBranchStatus('FatJetMass', 1)
     t.SetBranchStatus('FatJetMassSoftDrop', 1)
@@ -277,6 +279,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress('NFatJet', NFatJet)
     t.SetBranchAddress('FatJetPt', FatJetPt)
     t.SetBranchAddress('FatJetRap', FatJetRap)
+    t.SetBranchAddress('FatJetEta', FatJetEta)
     t.SetBranchAddress('FatJetPhi', FatJetPhi)
     t.SetBranchAddress('FatJetMass', FatJetMass)
     t.SetBranchAddress('FatJetMassSoftDrop', FatJetMassSoftDrop)
@@ -332,7 +335,7 @@ for itree,t in enumerate(trees) :
             weight = 0.0
 
                         
-        if dphi > 1.57:
+        if dphi > 1.57 and dphi < 4.71:
             h_ptasym_meas.Fill( ptasym, weight )
         if ptasym < 0.3 :
             h_dphi_meas.Fill( dphi, weight )
@@ -400,16 +403,18 @@ for itree,t in enumerate(trees) :
         pt0hists[trigbin].Fill( pt0, weight )
         
         for ijet in [ indices[0], indices[1] ] :
-            h_2DHisto_meas.Fill( FatJetMass[ijet], FatJetPt[ijet], weight )
-            h_2DHisto_measSD.Fill( FatJetMassSoftDrop[ijet], FatJetPtSoftDrop[ijet], weight )
-            h_pt_meas.Fill( FatJetPt[ijet] , weight )
-            h_y_meas.Fill( FatJetRap[ijet] , weight )
-            h_phi_meas.Fill( FatJetPhi[ijet] , weight )
-            h_m_meas.Fill( FatJetMass[ijet] , weight )
-            h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
-            h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
-            h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
-            h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
+            if abs(FatJetEta[ijet]) < 2.4 : 
+                h_2DHisto_meas.Fill( FatJetMass[ijet], FatJetPt[ijet], weight )
+                if FatJetPtSoftDrop[ijet] < FatJetPt[ijet] : 
+                    h_2DHisto_measSD.Fill( FatJetMassSoftDrop[ijet], FatJetPtSoftDrop[ijet], weight )
+                h_pt_meas.Fill( FatJetPt[ijet] , weight )
+                h_y_meas.Fill( FatJetRap[ijet] , weight )
+                h_phi_meas.Fill( FatJetPhi[ijet] , weight )
+                h_m_meas.Fill( FatJetMass[ijet] , weight )
+                h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
+                h_rho_meas.Fill( FatJetRhoRatio[ijet] , weight )
+                h_tau21_meas.Fill( FatJetTau21[ijet] , weight )
+                h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
     
 leg = ROOT.TLegend(0.86, 0.3, 1.0, 0.8)
 leg.SetFillColor(0)
