@@ -482,7 +482,7 @@ for itree,t in enumerate(trees) :
             passptasym = ptasym < 0.3
             passkinloose = passptasym and passdphi
             passkinfull = abs(FatJetEta[maxjet]) < 2.4 and abs(FatJetEta[minjet]) < 2.4 and FatJetPt[maxjet] > options.ptMin and FatJetPt[minjet] > options.ptMin
-            passkinfullsoftdrop = passkinfull and FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin and FatJetPtSoftDrop[maxjet] < FatJetPt[maxjet] and FatJetPtSoftDrop[minjet] < FatJetPtSoftDrop[minjet]
+            passkinfullsoftdrop = passkinfull and FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin and FatJetPtSoftDrop[maxjet] <= FatJetPt[maxjet] and FatJetPtSoftDrop[minjet] <= FatJetPt[minjet]
 
             # "N-1" plots for the dphi and pt asymmetry cuts. 
             if passdphi and passkinfull: 
@@ -658,7 +658,7 @@ for itree,t in enumerate(trees) :
                 FatJetSD.SetPtEtaPhiM( FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet]  )            
                 FatJetsSD.append(FatJetSD)
                 h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetSD.Perp(),  weight)
-                igenSD = getMatched(FatJetSD, GenJetsSD)
+                igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.1)
 
                 if  igenSD != None and ngenSD >= 2 :
                     if options.verbose : print ' recoSD %6d --> genSD %6d' % ( ijet, igenSD )
@@ -744,7 +744,7 @@ for itree,t in enumerate(trees) :
 
                         
 
-                    if ( GenJetsSD[igenSD].M() > 0.000001 and ( abs(FatJetSD.M() / GenJetsSD[igenSD].M()) > 2.0 or abs(FatJetSD.M() / GenJetsSD[igenSD].M()) < 0.5) and FatJetSD.Perp() > 1300. and FatJetSD.M() > 400 ) :
+                    if ( FatJetSD.Perp() > 1300. and FatJetSD.M() > 800 and GenJetsSD[igenSD].M() < 500 ) :
                         print '<<<<<<<<<<<<<<<< Something screwy >>>>>>>>>>>>>>>>'
                         print 'ijet = ', ijet, ' igenSD = ', igenSD
                         print '--------- Gen Jets -----------'
