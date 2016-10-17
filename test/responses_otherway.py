@@ -215,6 +215,39 @@ h2_ptreco_ptgen = ROOT.TH2F("h2_ptreco_ptgen", "Reco Pt/Gen Pt", nbinsPt, ptBinA
 h2_mreco_mgen_softdrop = ROOT.TH2F("h2_mreco_mgen_softdrop", "Reco Mass/Gen Mass Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
 h2_ptreco_ptgen_softdrop = ROOT.TH2F("h2_ptreco_ptgen_softdrop", "Reco Pt/Gen Pt Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
 
+sysvarstr = ['jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'pdfup', 'pdfdn', 'cteq', 'mstw' ]
+jecup_ndx = sysvarstr.index('jecup')
+jecdn_ndx = sysvarstr.index('jecdn')
+jerup_ndx = sysvarstr.index('jerup')
+jerdn_ndx = sysvarstr.index('jerdn')
+jmrup_ndx = sysvarstr.index('jmrup')
+jmrdn_ndx = sysvarstr.index('jmrdn')
+pdfup_ndx = sysvarstr.index('pdfup')
+pdfdn_ndx = sysvarstr.index('pdfdn')
+cteq_ndx  = sysvarstr.index('cteq')
+mstw_ndx  = sysvarstr.index('mstw')
+
+h2_y_meas_sys      = []
+h2_phi_meas_sys    = []
+h2_m_meas_sys      = []
+h2_msd_meas_sys    = []
+h2_rho_meas_sys    = []
+h2_tau21_meas_sys  = []
+h2_dphi_meas_sys   = []
+h2_ptasym_meas_sys = []
+
+for isys in sysvarstr : 
+    h2_y_meas_sys      .append(  ROOT.TH2F("h2_y_meas_sys" + isys, ";Jet Rapidity; Number", nbinsPt, ptBinA, 50, -2.5, 2.5 ))
+    h2_phi_meas_sys    .append(  ROOT.TH2F("h2_phi_meas_sys" + isys, ";Jet #phi (radians); Number", nbinsPt, ptBinA, 50, -ROOT.TMath.Pi(), ROOT.TMath.Pi()) )
+    h2_m_meas_sys      .append(  ROOT.TH2F("h2_m_meas_sys" + isys, ";Jet Mass (GeV); Number", nbinsPt, ptBinA, 50, 0, 500 ))
+    h2_msd_meas_sys    .append(  ROOT.TH2F("h2_msd_meas_sys" + isys, ";Jet Soft Drop Mass (GeV); Number", nbinsPt, ptBinA, 50, 0, 500 ))
+    h2_rho_meas_sys    .append(  ROOT.TH2F("h2_rho_meas_sys" + isys, ";Jet (m/p_{T}R))^{2}; Number", nbinsPt, ptBinA, 100, 0, 1.0 ))
+    h2_tau21_meas_sys  .append(  ROOT.TH2F("h2_tau21_meas_sys" + isys, ";Jet #tau_{2}/#tau_{1}; Number", nbinsPt, ptBinA, 50, 0, 1.0 ))
+    h2_dphi_meas_sys   .append(  ROOT.TH2F("h2_dphi_meas_sys" + isys, ";Jet #phi (radians); Number", nbinsPt, ptBinA, 50, 0, ROOT.TMath.TwoPi()) )
+    h2_ptasym_meas_sys .append(  ROOT.TH2F("h2_ptasym_meas_sys" + isys, ";Jet (p_{T1} - p_{T2})) / (p_{T1} + p_{T2}); Number", nbinsPt, ptBinA, 50, 0, 1.0 ))
+
+
+
 
 
 
@@ -611,13 +644,89 @@ for itree,t in enumerate(trees) :
                     h2_y_meas.Fill( FatJet.Perp(), FatJetRap[ijet] , weight )
                     h2_phi_meas.Fill( FatJet.Perp(), FatJetPhi[ijet] , weight )
                     h2_m_meas.Fill( FatJet.Perp(), FatJetMass[ijet] , weight )
+                    h2_msd_meas.Fill( FatJet.Perp(), FatJetMassSoftDrop[ijet] , weight )
                     h2_rho_meas.Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight )
                     h2_tau21_meas.Fill( FatJet.Perp(), FatJetTau21[ijet] , weight )
                     if GenJets[igen].M() != 0:
                         h2_mreco_mgen.Fill(FatJet.Perp(), FatJet.M()/GenJets[igen].M(), weight)
                     else:
                         h2_mreco_mgen.Fill(FatJet.Perp(), FatJet.M()/0.140, weight)
-                    h2_ptreco_ptgen.Fill(FatJet.Perp(), FatJet.Perp()/GenJets[igen].Perp(), weight)        
+                    h2_ptreco_ptgen.Fill(FatJet.Perp(), FatJet.Perp()/GenJets[igen].Perp(), weight)
+
+
+                    h2_y_meas_sys    [jecup_ndx].Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJetRap[ijet] , weight )
+                    h2_phi_meas_sys  [jecup_ndx].Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJetPhi[ijet] , weight )
+                    h2_m_meas_sys    [jecup_ndx].Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJetMass[ijet] , weight )
+                    h2_msd_meas_sys  [jecup_ndx].Fill( FatJetPtSoftDrop[ijet] * FatJetCorrUp[ijet], FatJetMassSoftDrop[ijet] * FatJetCorrUp[ijet], weight )
+                    h2_rho_meas_sys  [jecup_ndx].Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJetRhoRatio[ijet] , weight )
+                    h2_tau21_meas_sys[jecup_ndx].Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJetTau21[ijet] , weight )
+                    
+                    h2_y_meas_sys    [jecdn_ndx].Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJetRap[ijet] , weight )
+                    h2_phi_meas_sys  [jecdn_ndx].Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJetPhi[ijet] , weight )
+                    h2_m_meas_sys    [jecdn_ndx].Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJetMass[ijet] , weight )
+                    h2_msd_meas_sys  [jecdn_ndx].Fill( FatJetPtSoftDrop[ijet] * FatJetCorrDn[ijet], FatJetMassSoftDrop[ijet] * FatJetCorrDn[ijet], weight )
+                    h2_rho_meas_sys  [jecdn_ndx].Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJetRhoRatio[ijet] , weight )
+                    h2_tau21_meas_sys[jecdn_ndx].Fill( FatJet.Perp() * FatJetCorrDn[ijet], FatJetTau21[ijet] , weight )
+
+                    h2_y_meas_sys    [jerup_ndx].Fill( FatJet.Perp() * smearup, FatJetRap[ijet] , weight )
+                    h2_phi_meas_sys  [jerup_ndx].Fill( FatJet.Perp() * smearup, FatJetPhi[ijet] , weight )
+                    h2_m_meas_sys    [jerup_ndx].Fill( FatJet.Perp() * smearup, FatJetMass[ijet] , weight )
+                    h2_msd_meas_sys  [jerup_ndx].Fill( FatJetPtSoftDrop[ijet] * smearup, FatJetMassSoftDrop[ijet] * smearup, weight )
+                    h2_rho_meas_sys  [jerup_ndx].Fill( FatJet.Perp() * smearup, FatJetRhoRatio[ijet] , weight )
+                    h2_tau21_meas_sys[jerup_ndx].Fill( FatJet.Perp() * smearup, FatJetTau21[ijet] , weight )
+
+                    h2_y_meas_sys    [jerdn_ndx].Fill( FatJet.Perp() * smeardn, FatJetRap[ijet] , weight )
+                    h2_phi_meas_sys  [jerdn_ndx].Fill( FatJet.Perp() * smeardn, FatJetPhi[ijet] , weight )
+                    h2_m_meas_sys    [jerdn_ndx].Fill( FatJet.Perp() * smeardn, FatJetMass[ijet] , weight )
+                    h2_msd_meas_sys  [jerdn_ndx].Fill( FatJetPtSoftDrop[ijet] * smeardn, FatJetMassSoftDrop[ijet] * smeardn, weight )
+                    h2_rho_meas_sys  [jerdn_ndx].Fill( FatJet.Perp() * smeardn, FatJetRhoRatio[ijet] , weight )
+                    h2_tau21_meas_sys[jerdn_ndx].Fill( FatJet.Perp() * smeardn, FatJetTau21[ijet] , weight )
+
+                    h2_y_meas_sys    [jmrup_ndx].Fill( FatJet.Perp() * jmrup, FatJetRap[ijet] , weight )
+                    h2_phi_meas_sys  [jmrup_ndx].Fill( FatJet.Perp() * jmrup, FatJetPhi[ijet] , weight )
+                    h2_m_meas_sys    [jmrup_ndx].Fill( FatJet.Perp() * jmrup, FatJetMass[ijet] , weight )
+                    h2_msd_meas_sys  [jmrup_ndx].Fill( FatJetPtSoftDrop[ijet] * jmrup, FatJetMassSoftDrop[ijet] * jmrup, weight )
+                    h2_rho_meas_sys  [jmrup_ndx].Fill( FatJet.Perp() * jmrup, FatJetRhoRatio[ijet] , weight )
+                    h2_tau21_meas_sys[jmrup_ndx].Fill( FatJet.Perp() * jmrup, FatJetTau21[ijet] , weight )
+
+                    h2_y_meas_sys    [jmrdn_ndx].Fill( FatJet.Perp() * jmrdn, FatJetRap[ijet] , weight )
+                    h2_phi_meas_sys  [jmrdn_ndx].Fill( FatJet.Perp() * jmrdn, FatJetPhi[ijet] , weight )
+                    h2_m_meas_sys    [jmrdn_ndx].Fill( FatJet.Perp() * jmrdn, FatJetMass[ijet] , weight )
+                    h2_msd_meas_sys  [jmrdn_ndx].Fill( FatJetPtSoftDrop[ijet] * jmrdn, FatJetMassSoftDrop[ijet] * jmrdn, weight )
+                    h2_rho_meas_sys  [jmrdn_ndx].Fill( FatJet.Perp() * jmrdn, FatJetRhoRatio[ijet] , weight )
+                    h2_tau21_meas_sys[jmrdn_ndx].Fill( FatJet.Perp() * jmrdn, FatJetTau21[ijet] , weight )
+
+                    h2_y_meas_sys    [pdfup_ndx].Fill( FatJet.Perp(), FatJetRap[ijet] , weight*pdfweight_up )
+                    h2_phi_meas_sys  [pdfup_ndx].Fill( FatJet.Perp(), FatJetPhi[ijet] , weight*pdfweight_up )
+                    h2_m_meas_sys    [pdfup_ndx].Fill( FatJet.Perp(), FatJetMass[ijet] , weight*pdfweight_up )
+                    h2_msd_meas_sys  [pdfup_ndx].Fill( FatJetPtSoftDrop[ijet], FatJetMassSoftDrop[ijet], weight*pdfweight_up )
+                    h2_rho_meas_sys  [pdfup_ndx].Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight*pdfweight_up )
+                    h2_tau21_meas_sys[pdfup_ndx].Fill( FatJet.Perp(), FatJetTau21[ijet] , weight*pdfweight_up )                    
+
+                    h2_y_meas_sys    [pdfdn_ndx].Fill( FatJet.Perp(), FatJetRap[ijet] , weight*pdfweight_dn )
+                    h2_phi_meas_sys  [pdfdn_ndx].Fill( FatJet.Perp(), FatJetPhi[ijet] , weight*pdfweight_dn )
+                    h2_m_meas_sys    [pdfdn_ndx].Fill( FatJet.Perp(), FatJetMass[ijet] , weight*pdfweight_dn )
+                    h2_msd_meas_sys  [pdfdn_ndx].Fill( FatJetPtSoftDrop[ijet], FatJetMassSoftDrop[ijet], weight*pdfweight_dn )
+                    h2_rho_meas_sys  [pdfdn_ndx].Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight*pdfweight_dn )
+                    h2_tau21_meas_sys[pdfdn_ndx].Fill( FatJet.Perp(), FatJetTau21[ijet] , weight*pdfweight_dn )
+
+                    h2_y_meas_sys    [cteq_ndx].Fill( FatJet.Perp(), FatJetRap[ijet] , weight*cteqweight )
+                    h2_phi_meas_sys  [cteq_ndx].Fill( FatJet.Perp(), FatJetPhi[ijet] , weight*cteqweight )
+                    h2_m_meas_sys    [cteq_ndx].Fill( FatJet.Perp(), FatJetMass[ijet] , weight*cteqweight )
+                    h2_msd_meas_sys  [cteq_ndx].Fill( FatJetPtSoftDrop[ijet], FatJetMassSoftDrop[ijet], weight*cteqweight )
+                    h2_rho_meas_sys  [cteq_ndx].Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight*cteqweight )
+                    h2_tau21_meas_sys[cteq_ndx].Fill( FatJet.Perp(), FatJetTau21[ijet] , weight*cteqweight )
+
+                    h2_y_meas_sys    [mstw_ndx].Fill( FatJet.Perp(), FatJetRap[ijet] , weight*mstwweight )
+                    h2_phi_meas_sys  [mstw_ndx].Fill( FatJet.Perp(), FatJetPhi[ijet] , weight*mstwweight )
+                    h2_m_meas_sys    [mstw_ndx].Fill( FatJet.Perp(), FatJetMass[ijet] , weight*mstwweight )
+                    h2_msd_meas_sys  [mstw_ndx].Fill( FatJetPtSoftDrop[ijet], FatJetMassSoftDrop[ijet], weight*mstwweight )
+                    h2_rho_meas_sys  [mstw_ndx].Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight*mstwweight )
+                    h2_tau21_meas_sys[mstw_ndx].Fill( FatJet.Perp(), FatJetTau21[ijet] , weight*mstwweight )
+
+                    
+                                        
+                                        
                 else : # Here we have a "Fake", i.e. fewer than 2 gen jets matched to 2 reco jets
 
                     if options.verbose : 'Fake ungroomed jet'
@@ -914,5 +1023,29 @@ h_tau21_meas.Write()
 h_dphi_meas.Write()
 h_ptasym_meas.Write()
 h_rho_vs_tau_meas.Write()
+
+
+h2_y_meas.Write()
+h2_phi_meas.Write()
+h2_m_meas.Write()
+h2_msd_meas.Write()
+h2_rho_meas.Write()
+h2_tau21_meas.Write()
+h2_dphi_meas.Write()
+h2_ptasym_meas.Write()
+h2_mreco_mgen.Write()
+h2_ptreco_ptgen.Write()
+h2_mreco_mgen_softdrop.Write()
+h2_ptreco_ptgen_softdrop.Write()
+
+for isys in xrange( len(sysvarstr) ) : 
+    h2_y_meas_sys[isys].Write()
+    h2_phi_meas_sys[isys].Write()
+    h2_m_meas_sys[isys].Write()
+    h2_msd_meas_sys[isys].Write()
+    h2_rho_meas_sys[isys].Write()
+    h2_tau21_meas_sys[isys].Write()
+    h2_dphi_meas_sys[isys].Write()
+    h2_ptasym_meas_sys[isys].Write()
 
 fout.Close()
