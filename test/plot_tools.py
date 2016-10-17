@@ -573,7 +573,8 @@ def setup(canvases_to_use, pads_to_use):
 def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     the_stack = THStack("stack", "")
     build_the_stack = []
-    stack_canvas = TCanvas("sc", "sc")
+    stack_canvas = TCanvas("sc", "sc", 800, 600)
+    stack_canvas.SetLeftMargin(0.15)
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions_normalized.root")
@@ -599,7 +600,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
     for h in xrange(0, 18):
         theorylist.append( theoryfile.Get("histSD1_"+str(h)))
-        theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)))
+        theorylist2.append( theoryfile2.Get("histSD_"+str(h)+"_ours"))
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
         if options.logy:
@@ -1016,8 +1017,21 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         the_stack.Add(hist)
     the_stack.Draw("nostack")
     the_stack.GetXaxis().SetRangeUser(0, 1000)
+    if(not options.isSoftDrop):
+        the_stack.SetTitle("Jet Mass for all P_{T}")
+    else:
+        the_stack.SetTitle("Soft Drop Jet Mass for all P_{T}")
+    the_stack.GetXaxis().SetTitle("Jet Mass (GeV)")
+    the_stack.GetYaxis().SetTitle("Scaled Fractional Cross Section")
+    the_stack.GetYaxis().SetTitleSize(34)
+    the_stack.GetYaxis().SetTitleOffset(1.2)
+    the_stack.GetYaxis().SetLabelOffset(0.0001)
+    the_stack.GetYaxis().SetLabelSize(28)
     stack_canvas.Update()
-    stack_canvas.SaveAs("fullstack.png")
+    if(not options.isSoftDrop):
+        stack_canvas.SaveAs("fullstack.png")
+    else:
+        stack_canvas.SaveAs("fullstacksoftdrop.png")
     # Close the files
     theoryfile.Close()
     theoryfile2.Close()
