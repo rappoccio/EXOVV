@@ -886,9 +886,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         pdfc.SetLineStyle(1)
         #pdfc.UseCurrentStyle()
         
-
-        build_the_stack.append(mcc)
         build_the_stack.append(pdfc)
+        build_the_stack.append(pdfc)
+        build_the_stack.append(mcc)
         #build_the_stack.append(barepdfc)
         #build_the_stack.append(herwigc)
 ####################################################################################### Hists Cloned and formatted for ratios
@@ -1057,10 +1057,13 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     stack_canvas.SetLogy()
     stack_canvas.SetLogx()
     #for hist in build_the_stack_band:
-    #    hist.Draw('same E5')
-    for hist in build_the_stack:
-        the_stack.Add(hist)
-    the_stack.Draw("nostack same")
+    #    the_stack.Add(hist, "e3")
+    for index, hist in enumerate(build_the_stack):
+        if index%3 ==0:
+            the_stack.Add(hist, "E5")
+        else:
+            the_stack.Add(hist)
+    the_stack.Draw("nostack")
     the_stack.GetXaxis().SetRangeUser(0, 1000)
     if(not options.isSoftDrop):
         the_stack.SetTitle("Jet Mass for all P_{T}")
