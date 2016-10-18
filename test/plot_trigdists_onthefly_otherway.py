@@ -201,6 +201,9 @@ ROOT.gStyle.SetPadRightMargin(0.15)
 pt0histspre = []
 pt0hists = []
 pt0histsTurnon = []
+ptsd0histspre = []
+ptsd0hists = []
+ptsd0histsTurnon = []
 
 #ptBinAToPlot = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 13000.])
 #nbinsToPlot = len(ptBinAToPlot) - 1
@@ -238,7 +241,24 @@ for itrig,trig in enumerate(trigs) :
     pt0histTurnon = ROOT.TH1F(var + "_" + trig + "_turnon", var + "_" + trig + "_turnon", 200, 0, 2000)
     pt0histTurnon.SetMarkerColor( colors[itrig] )
     pt0histsTurnon.append(pt0histTurnon)
+
+
+    ptsd0histpre = ROOT.TH1F(var + "sd_" + trig + "_pre", var + "sd_" + trig + "_pre", 200, 0, 2000)
+    ptsd0histpre.SetMarkerStyle(markers[itrig])
+    ptsd0histpre.SetMarkerColor(mcolors[itrig])
+    ptsd0histspre.append(ptsd0histpre)
+
     
+    ptsd0hist = ROOT.TH1F(var + "sd_" + trig, var + "sd_" + trig, 200, 0, 2000)
+    ptsd0hist.SetFillColor( colors[itrig] )
+    ptsd0hists.append(ptsd0hist)
+
+    ptsd0histTurnon = ROOT.TH1F(var + "sd_" + trig + "_turnon", var + "sd_" + trig + "_turnon", 200, 0, 2000)
+    ptsd0histTurnon.SetMarkerColor( colors[itrig] )
+    ptsd0histsTurnon.append(ptsd0histTurnon)
+
+
+        
     
 stack = ROOT.THStack(var + '_stack', title)
 canv = ROOT.TCanvas(var + '_stackcanv', var +'_stackcanv')
@@ -318,6 +338,7 @@ for itree,t in enumerate(trees) :
         maxjet = indices[0]
         minjet = indices[1]
         pt0 = FatJetPt[maxjet]
+        ptsd0 = FatJetPtSoftDrop[maxjet]
 
         if pt0 > 13000. : # Sanity check
             continue
@@ -347,44 +368,57 @@ for itree,t in enumerate(trees) :
 
         if isPFJet450( Trig[0] ) :
             pt0histspre[6].Fill( pt0 )
+            ptsd0histspre[6].Fill( ptsd0 )
 
             
         if isPFJet400( Trig[0] )  :
             pt0histspre[5].Fill( pt0 )
+            ptsd0histspre[5].Fill( ptsd0 )
             if isPFJet450( Trig[0] ) :
                 pt0histsTurnon[5].Fill( pt0 )
+                ptsd0histsTurnon[5].Fill( ptsd0 )
 
 
             
         if isPFJet320( Trig[0] )  :
             pt0histspre[4].Fill( pt0 )
+            ptsd0histspre[4].Fill( ptsd0 )
             if isPFJet400( Trig[0] ) :
                 pt0histsTurnon[4].Fill( pt0 )
+                ptsd0histsTurnon[4].Fill( ptsd0 )
 
 
             
         if isPFJet260( Trig[0] )  :
             pt0histspre[3].Fill( pt0 )
+            ptsd0histspre[3].Fill( ptsd0 )
             if isPFJet320( Trig[0] ) :
                 pt0histsTurnon[3].Fill( pt0 )
+                ptsd0histsTurnon[3].Fill( ptsd0 )
 
             
         if isPFJet200( Trig[0] )  :
             pt0histspre[2].Fill( pt0 )
+            ptsd0histspre[2].Fill( ptsd0 )
             if isPFJet260( Trig[0] ) :
                 pt0histsTurnon[2].Fill( pt0 )
+                ptsd0histsTurnon[2].Fill( ptsd0 )
 
             
         if isPFJet140( Trig[0] ) :
             pt0histspre[1].Fill( pt0 )
+            ptsd0histspre[1].Fill( ptsd0 )
             if isPFJet200( Trig[0] ) :
                 pt0histsTurnon[1].Fill( pt0 )
+                ptsd0histsTurnon[1].Fill( ptsd0 )
 
                         
         if isPFJet80( Trig[0] ) :
             pt0histspre[0].Fill( pt0 )
+            ptsd0histspre[0].Fill( ptsd0 )
             if isPFJet140( Trig[0] ) :
                 pt0histsTurnon[0].Fill( pt0 )
+                ptsd0histsTurnon[0].Fill( ptsd0 )
 
                 
 
@@ -471,6 +505,17 @@ for itrig, trig in enumerate(trigs):
     turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + '.pdf', 'pdf')
     pt0histsTurnon[itrig].Write()
 
+    ptsd0histsTurnon[itrig].Sumw2()
+    ptsd0histsTurnon[itrig].Divide( ptsd0histspre[itrig] )
+    turnoncanv = ROOT.TCanvas("cturnonsd" + str(itrig), "cturnonsd" + str(itrig) )
+    ptsd0histsTurnon[itrig].Draw('e')
+    ptsd0histsTurnon[itrig].SetMinimum(0.0)
+    ptsd0histsTurnon[itrig].SetMaximum(1.1)    
+    turnoncanvs.append(turnoncanv)
+    turnoncanv.Print( 'trigplots_turnon_' + var + 'sd_' + str(itrig) + '.png', 'png')
+    turnoncanv.Print( 'trigplots_turnon_' + var + 'sd_' + str(itrig) + '.pdf', 'pdf')
+    ptsd0histsTurnon[itrig].Write()
+    
 
 h_2DHisto_meas.Write()
 h_2DHisto_measSD.Write()
