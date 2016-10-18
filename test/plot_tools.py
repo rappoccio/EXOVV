@@ -1095,8 +1095,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     stack_canvas.Update()
     if(not options.isSoftDrop):
         stack_canvas.SaveAs("fullstack.png")
+        stack_canvas.SaveAs("fullstack.pdf")
     else:
         stack_canvas.SaveAs("fullstacksoftdrop.png")
+        stack_canvas.SaveAs("fullstacksoftdrop.pdf")
     # Close the files
     theoryfile.Close()
     theoryfile2.Close()
