@@ -898,7 +898,6 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         pdfc.SetLineStyle(1)
         #pdfc.UseCurrentStyle()
         
-
         stackleg.AddEntry( pdfc, get_ptbins_std()[i], 'p')
         pdfc.SetFillColor(ROOT.kGray)
         pdfc.SetFillStyle(3001)
