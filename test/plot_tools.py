@@ -29,10 +29,18 @@ def add_quadrature( a ):
     for ia in a: sumit += ia**2
     return sqrt( sumit )
 
+def get_ptbins_std():
+    return ['200-260 GeV #times 10^{0}','260-350 GeV #times 10^{1}','350-460 GeV #times 10^{2}','460-550 GeV #times 10^{3}','550-650 GeV #times 10^{4}','650-760 GeV #times 10^{5}', '760-900 GeV #times 10^{6}', '900-1000 GeV #times 10^{7}', '1000-1100 GeV #times 10^{8}','1100-1200 GeV #times 10^{9}',
+    '1200-1300 GeV', '> 1300 GeV']
+
+def get_markers() :
+    return [ 20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28  ]
 
 def get_ptbins():
     return ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} 760-900 GeV}', '#bf{p_{T} 900-1000 GeV}', '#bf{p_{T} 1000-1100 GeV}','#bf{p_{T} 1100-1200 GeV}',
     '#bf{p_{T} 1200-1300 GeV}', '#bf{p_{T} > 1300 GeV}']
+
+
 def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
@@ -589,10 +597,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     
     the_stack = THStack("stack", "")
     build_the_stack = []
+    stackleg = ROOT.TLegend(0.2, 0.7, 0.85, 0.85)
+    stackleg.SetNColumns(4)
+    stackleg.SetFillColor(0)
+    stackleg.SetBorderSize(0)
 
     #uncertainties on the stacks :D
     build_the_stack_band = []
-    stack_canvas = TCanvas("sc", "sc", 800, 600)
+    stack_canvas = TCanvas("sc", "sc", 800, 800)
     stack_canvas.SetLeftMargin(0.15)
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
@@ -887,8 +899,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         #pdfc.UseCurrentStyle()
         
 
-        build_the_stack.append(mcc)
-        build_the_stack.append(pdfc)
+        stackleg.AddEntry( pdfc, get_ptbins_std()[i], 'p')
+        pdfc.SetFillColor(ROOT.kGray)
+        pdfc.SetFillStyle(3001)
+        pdfc.SetMarkerStyle( get_markers()[i] )
+        build_the_stack.append( [mcc, 'hist'] )
+        build_the_stack.append( [pdfc, 'e2'] )
         #build_the_stack.append(barepdfc)
         #build_the_stack.append(herwigc)
 ####################################################################################### Hists Cloned and formatted for ratios
@@ -1059,15 +1075,20 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     #for hist in build_the_stack_band:
     #    hist.Draw('same E5')
     for hist in build_the_stack:
-        the_stack.Add(hist)
-    the_stack.Draw("nostack same")
-    the_stack.GetXaxis().SetRangeUser(0, 1000)
+        the_stack.Add(hist[0], hist[1])
+    the_stack.Draw("nostack")
+    the_stack.GetXaxis().SetRangeUser(1, 1000)
+    the_stack.SetMinimum(1e-14)
+    the_stack.SetMaximum(1e6)
+    stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
+    stackleg.Draw()
     if(not options.isSoftDrop):
-        the_stack.SetTitle("Jet Mass for all P_{T}")
+        the_stack.SetTitle(";Soft Drop Jet Mass(GeV);Fractional Cross Section")
     else:
-        the_stack.SetTitle("Soft Drop Jet Mass for all P_{T}")
-    the_stack.GetXaxis().SetTitle("Jet Mass (GeV)")
-    the_stack.GetYaxis().SetTitle("Scaled Fractional Cross Section")
+        the_stack.SetTitle(";Jet Mass(GeV);Fractional Cross Section")
+    latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
+    latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
+
     the_stack.GetYaxis().SetTitleSize(34)
     the_stack.GetYaxis().SetTitleOffset(1.2)
     the_stack.GetYaxis().SetLabelOffset(0.0001)
