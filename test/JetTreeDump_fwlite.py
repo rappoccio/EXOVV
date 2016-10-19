@@ -680,43 +680,43 @@ def JetTreeDump_FWLite(argv) :
 
     if options.isMC : 
         print 'Getting L3 for AK4'
-        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L3Absolute_AK4PFchs.txt");
+        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L3Absolute_AK4PFchs.txt");
         print 'Getting L2 for AK4'
-        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L2Relative_AK4PFchs.txt");## USE 50 NS CORRECTIONS BUT THE UNCERTAINTY IS FOR 25
+        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L2Relative_AK4PFchs.txt");## USE 50 NS CORRECTIONS BUT THE UNCERTAINTY IS FOR 25
         print 'Getting L1 for AK4'
-        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L1FastJet_AK4PFchs.txt");
+        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L1FastJet_AK4PFchs.txt");
 
 
         print 'Getting L3 for AK8'
-        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L3Absolute_AK8PFchs.txt");
+        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L3Absolute_AK8PFchs.txt");
         print 'Getting L2 for AK8'
-        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L2Relative_AK8PFchs.txt");
+        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L2Relative_AK8PFchs.txt");
         print 'Getting L1 for AK8'
-        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_MC_L1FastJet_AK8PFchs.txt");
+        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L1FastJet_AK8PFchs.txt");
 
 
-        jecParStrAK8 = ROOT.std.string('JECs/Summer15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
+        jecParStrAK8 = ROOT.std.string('JECs/Fall15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
         jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
 
     else :
         print 'Getting L3 for AK4'
-        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L3Absolute_AK4PFchs.txt");## same deal as above
+        L3JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L3Absolute_AK4PFchs.txt");## same deal as above
         print 'Getting L2 for AK4'
-        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2Relative_AK4PFchs.txt");
+        L2JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2Relative_AK4PFchs.txt");
         print 'Getting L1 for AK4'
-        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L1FastJet_AK4PFchs.txt");
+        L1JetParAK4  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L1FastJet_AK4PFchs.txt");
         # for data only :
-        ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2L3Residual_AK4PFchs.txt");
+        ResJetParAK4 = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2L3Residual_AK4PFchs.txt");
 
         print 'Getting L3 for AK8'
-        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L3Absolute_AK8PFchs.txt");
+        L3JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L3Absolute_AK8PFchs.txt");
         print 'Getting L2 for AK8'
-        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2Relative_AK8PFchs.txt");
+        L2JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2Relative_AK8PFchs.txt");
         print 'Getting L1 for AK8'
-        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L1FastJet_AK8PFchs.txt");
+        L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L1FastJet_AK8PFchs.txt");
         # for data only :
-        ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Summer15_50nsV5_DATA_L2L3Residual_AK8PFchs.txt");
+        ResJetParAK8 = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_DATA_L2L3Residual_AK8PFchs.txt");
 
 
 
