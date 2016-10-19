@@ -695,7 +695,7 @@ def JetTreeDump_FWLite(argv) :
         L1JetParAK8  = ROOT.JetCorrectorParameters("JECs/Fall15_25nsV2_MC_L1FastJet_AK8PFchs.txt");
 
 
-        jecParStrAK8 = ROOT.std.string('JECs/Fall15_25nsV5_DATA_Uncertainty_AK8PFchs.txt')
+        jecParStrAK8 = ROOT.std.string('JECs/Fall15_25nsV2_DATA_Uncertainty_AK8PFchs.txt')
         jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
 
 
