@@ -79,9 +79,9 @@ datahists = []
 pyhists = []
 hwhists = []
 
-fdata = ROOT.TFile("jetht_weighted_dataplots_otherway_repdf.root")
-fpythia8 = ROOT.TFile("responses_repdf_otherway_qcdmc_2dplots.root")
-fherwig = ROOT.TFile("qcdmc_herwig_otherway_repdf_2dplots.root")
+fdata = ROOT.TFile("jetht_weighted_dataplots_otherway_rejec.root")
+fpythia8 = ROOT.TFile("responses_rejec_otherway_qcdmc_2dplots.root")
+fherwig = ROOT.TFile("qcdmc_herwig_otherway_rejec_2dplots.root")
 
 systs = [
     'jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'pdfup', 'pdfdn'
@@ -162,7 +162,7 @@ for iptbin in xrange( len(dataprojs) ) :
             jmr = (jmrup - jmrdn) * 0.5 / val
             pdf = (pdfup - pdfdn) * 0.5 / val
             psunc = (hwval - val) * 0.5 / val
-            errtot += jec**2 + jer**2 + jmr**2 + pdf**2 + psunc**2
+            errtot += jec**2 + jer**2 + jmr**2 + pdf**2# + psunc**2
             errtot = sqrt(errtot) * val
         pyprojs[iptbin].SetBinError( imbin, errtot )
     pyprojs[iptbin].SetFillStyle(3001)
