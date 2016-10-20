@@ -933,6 +933,9 @@ def JetTreeDump_FWLite(argv) :
                     if h_generator.product().hasBinningValues() :
                         pthat = h_generator.product().binningValues()[0]
                         evWeight = evWeight * 1/pow(pthat/15.,4.5)
+                    else :
+                        print 'Misconfiguration! This generator has no binning values!'
+                        sys.exit(1)
                     if options.verbose :
                         print 'Event weight = ' + str( evWeight )
                         print 'pthat = ' + str(pthat)
