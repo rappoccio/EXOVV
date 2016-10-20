@@ -34,7 +34,7 @@ def main():
 
     config.section_("General")
     #config.General.requestName = 'EXOVV_QCD_Pt_170to300'
-    config.General.workArea = 'crab_smpj_76x_repdf'
+    config.General.workArea = 'crab_smpj_76x_rejec'
     config.General.transferOutputs = True
     config.General.transferLogs = True
 

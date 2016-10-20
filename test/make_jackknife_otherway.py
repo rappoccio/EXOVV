@@ -149,16 +149,16 @@ ROOT.gStyle.SetLabelSize(24, "XYZ")
 lumi = 40.
 
 qcdIn =[
-    ROOT.TFile('qcdpy8_170to300_repdf.root'),
-    ROOT.TFile('qcdpy8_300to470_repdf.root'),
-    ROOT.TFile('qcdpy8_470to600_repdf.root'),
-    ROOT.TFile('qcdpy8_600to800_repdf.root'),
-    ROOT.TFile('qcdpy8_800to1000_repdf.root'),
-    ROOT.TFile('qcdpy8_1000to1400_repdf.root'),
-    ROOT.TFile('qcdpy8_1400to1800_repdf.root'),
-    ROOT.TFile('qcdpy8_1800to2400_repdf.root'),
-    ROOT.TFile('qcdpy8_2400to3200_repdf.root'),
-    ROOT.TFile('qcdpy8_3200toinf_repdf.root'),
+    ROOT.TFile('qcdpy8_170to300_rejec.root'),
+    ROOT.TFile('qcdpy8_300to470_rejec.root'),
+    ROOT.TFile('qcdpy8_470to600_rejec.root'),
+    ROOT.TFile('qcdpy8_600to800_rejec.root'),
+    ROOT.TFile('qcdpy8_800to1000_rejec.root'),
+    ROOT.TFile('qcdpy8_1000to1400_rejec.root'),
+    ROOT.TFile('qcdpy8_1400to1800_rejec.root'),
+    ROOT.TFile('qcdpy8_1800to2400_rejec.root'),
+    ROOT.TFile('qcdpy8_2400to3200_rejec.root'),
+    ROOT.TFile('qcdpy8_3200toinf_rejec.root'),
     ]
 masslessSD = 0
 qcdWeights =[

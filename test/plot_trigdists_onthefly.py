@@ -9,7 +9,7 @@ parser = OptionParser()
 
 parser.add_option('--file', type='string', action='store',
                   dest='file',
-                  default = 'jetht.root',
+                  default = 'jetht_2015_rejec.root',
                   help='Input file')
 
 
