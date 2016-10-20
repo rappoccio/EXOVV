@@ -432,10 +432,18 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         if i < 11 and options.isSoftDrop and isData:
             theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             theorycopy.UseCurrentStyle()
+            theorycopy.SetFillStyle(3003)
+            theorycopy.SetFillColor(ROOT.kBlue)
+            theorycopy.SetLineColor(ROOT.kBlue)
+            theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
             theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             theory2copy.UseCurrentStyle()
+            theory2copy.SetFillStyle(3006)
+            theory2copy.SetFillColor(ROOT.kOrange+7)
+            theory2copy.SetLineColor(ROOT.kOrange+7)
+            theory2copy.SetLineWidth(3)
             theory2copy.GetXaxis().SetTitleOffset(2)
             theory2copy.GetYaxis().SetTitleOffset(1.2)
         if i < 11:
@@ -961,14 +969,24 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         herwigCopy.GetXaxis().SetTitleOffset(2)
         herwigCopy.GetYaxis().SetTitleOffset(1.2)
         if i < 11 and options.isSoftDrop and isData:
+
             theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             theorycopy.UseCurrentStyle()
+            theorycopy.SetFillStyle(3003)
+            theorycopy.SetFillColor(ROOT.kBlue)
+            theorycopy.SetLineColor(ROOT.kBlue)
+            theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
             theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             theory2copy.UseCurrentStyle()
+            theory2copy.SetFillStyle(3006)
+            theory2copy.SetFillColor(ROOT.kOrange+7)            
+            theory2copy.SetLineColor(ROOT.kOrange+7)
+            theory2copy.SetLineWidth(3)
             theory2copy.GetXaxis().SetTitleOffset(2)
             theory2copy.GetYaxis().SetTitleOffset(1.2)
+
         if i < 11:
             powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
             powhegcopy.UseCurrentStyle()

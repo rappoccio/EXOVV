@@ -162,7 +162,7 @@ for iptbin in xrange( len(dataprojs) ) :
             jmr = (jmrup - jmrdn) * 0.5 / val
             pdf = (pdfup - pdfdn) * 0.5 / val
             psunc = (hwval - val) * 0.5 / val
-            errtot += jec**2 + jer**2 + jmr**2 + pdf**2# + psunc**2
+            errtot += jec**2 + jer**2 + jmr**2 + pdf**2 + psunc**2
             errtot = sqrt(errtot) * val
         pyprojs[iptbin].SetBinError( imbin, errtot )
     pyprojs[iptbin].SetFillStyle(3001)
