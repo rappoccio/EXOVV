@@ -38,3 +38,6 @@ python 2Dplot_mc.py --isSoftDrop
 
 
 python do_systematics.py 
+
+python plotsys_rawhists.py --hist PFJet_pt_m_AK8
+python plotsys_rawhists.py --hist PFJet_pt_m_AK8SD
