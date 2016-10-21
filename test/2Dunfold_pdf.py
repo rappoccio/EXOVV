@@ -21,6 +21,15 @@ pdfup_response_softdrop = pdffile.Get('2d_response_softdrop_pdfup')
 pdfdn_response = pdffile.Get('2d_response_pdfdn')
 pdfdn_response_softdrop = pdffile.Get('2d_response_softdrop_pdfdn')
 
+
+pdfcteq_response = pdffile.Get('2d_response_cteq')
+pdfcteq_response_softdrop = pdffile.Get('2d_response_softdrop_cteq')
+
+pdfmstw_response = pdffile.Get('2d_response_mstw')
+pdfmstw_response_softdrop = pdffile.Get('2d_response_softdrop_mstw')
+
+
+
 # Get data hists and normalize
 data_reco = datafile.Get('PFJet_pt_m_AK8')
 data_reco_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
@@ -220,6 +229,197 @@ for i, canvas in enumerate(canvases_data_dn_softdrop):
     canvas.SaveAs('hists/pdfdn_data_preplot_softdrop'+str(i)+'.png')
 
 
+
+
+
+
+##################################################################################################### Unfold Pythia8 with PDF-CTEQ
+unfold_pdfcteq = RooUnfoldBayes(pdfcteq_response, pdf_reco, 4)
+unfolded_pdfcteq = unfold_pdfcteq.Hreco()
+
+canvases_cteq = []
+namesreco_cteq = []
+
+legends_cteq = []
+for x in range(0, nptbin):
+    canvases_cteq.append(TCanvas("canvas_pdfcteq" + str(x)))
+    namesreco_cteq.append(None)
+    legends_cteq.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_cteq) : 
+    canvas.cd()
+    namesreco_cteq[i] = unfolded_pdfcteq.ProjectionX('pdf_cteq' + str(i), i+1, i+1)
+    namesreco_cteq[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_cteq[i].Draw('hist')
+    legends_cteq[i].AddEntry(namesreco_cteq[i], 'Reco_pdfcteq', 'l')
+    legends_cteq[i].Draw()
+    canvas.SaveAs('hists/pdfcteq_preplot'+str(i)+'.png')
+
+##################################################################################################### Unfold Pythia8 with PDF-CTEQ for SoftDrop
+unfold_pdfcteq_softdrop = RooUnfoldBayes(pdfcteq_response_softdrop, pdf_reco_softdrop, 4)
+unfolded_pdfcteq_softdrop = unfold_pdfcteq_softdrop.Hreco()
+
+canvases_cteq_softdrop = []
+namesreco_cteq_softdrop = []
+legends_cteq_softdrop = []
+
+for x in range(0, nptbin):
+    canvases_cteq_softdrop.append(TCanvas("canvas_pdfcteq_softdrop"+str(x)))
+    namesreco_cteq_softdrop.append(None)
+    legends_cteq_softdrop.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_cteq_softdrop):
+    canvas.cd()
+    namesreco_cteq_softdrop[i] = unfolded_pdfcteq_softdrop.ProjectionX('pdf_cteq_softdrop' + str(i), i+1, i+1)
+    namesreco_cteq_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_cteq_softdrop[i].Draw('hist')
+    legends_cteq_softdrop[i].AddEntry(namesreco_cteq_softdrop[i], 'Reco_pdfcteq_sd', 'l')
+    legends_cteq_softdrop[i].Draw()
+    canvas.SaveAs('hists/pdfcteq_softdrop_preplot'+str(i)+'.png')
+
+
+
+
+
+##################################################################################################### Unfold Pythia8 with PDF-MSTW
+unfold_pdfmstw = RooUnfoldBayes(pdfmstw_response, pdf_reco, 4)
+unfolded_pdfmstw = unfold_pdfmstw.Hreco()
+
+canvases_mstw = []
+namesreco_mstw = []
+
+legends_mstw = []
+for x in range(0, nptbin):
+    canvases_mstw.append(TCanvas("canvas_pdfmstw" + str(x)))
+    namesreco_mstw.append(None)
+    legends_mstw.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_mstw) : 
+    canvas.cd()
+    namesreco_mstw[i] = unfolded_pdfmstw.ProjectionX('pdf_mstw' + str(i), i+1, i+1)
+    namesreco_mstw[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_mstw[i].Draw('hist')
+    legends_mstw[i].AddEntry(namesreco_mstw[i], 'Reco_pdfmstw', 'l')
+    legends_mstw[i].Draw()
+    canvas.SaveAs('hists/pdfmstw_preplot'+str(i)+'.png')
+
+##################################################################################################### Unfold Pythia8 with PDF-MSTW for SoftDrop
+unfold_pdfmstw_softdrop = RooUnfoldBayes(pdfmstw_response_softdrop, pdf_reco_softdrop, 4)
+unfolded_pdfmstw_softdrop = unfold_pdfmstw_softdrop.Hreco()
+
+canvases_mstw_softdrop = []
+namesreco_mstw_softdrop = []
+legends_mstw_softdrop = []
+
+for x in range(0, nptbin):
+    canvases_mstw_softdrop.append(TCanvas("canvas_pdfmstw_softdrop"+str(x)))
+    namesreco_mstw_softdrop.append(None)
+    legends_mstw_softdrop.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_mstw_softdrop):
+    canvas.cd()
+    namesreco_mstw_softdrop[i] = unfolded_pdfmstw_softdrop.ProjectionX('pdf_mstw_softdrop' + str(i), i+1, i+1)
+    namesreco_mstw_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_mstw_softdrop[i].Draw('hist')
+    legends_mstw_softdrop[i].AddEntry(namesreco_mstw_softdrop[i], 'Reco_pdfmstw_sd', 'l')
+    legends_mstw_softdrop[i].Draw()
+    canvas.SaveAs('hists/pdfmstw_softdrop_preplot'+str(i)+'.png')
+
+
+
+
+
+###################################################################################################### Unfold data with PDF-CTEQ
+unfold_data_pdfcteq = RooUnfoldBayes(pdfcteq_response, data_reco, 4)
+unfolded_data_pdfcteq = unfold_data_pdfcteq.Hreco()
+
+canvases_data_cteq = []
+namesreco_data_cteq = []
+
+legends_data_cteq = []
+for x in range(0, nptbin):
+    canvases_data_cteq.append(TCanvas("canvas_data_pdfcteq" + str(x)))
+    namesreco_data_cteq.append(None)
+    legends_data_cteq.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_cteq) : 
+    canvas.cd()
+    namesreco_data_cteq[i] = unfolded_data_pdfcteq.ProjectionX('pdf_data_cteq' + str(i), i+1, i+1)
+    namesreco_data_cteq[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_cteq[i].Draw('hist')
+    legends_data_cteq[i].AddEntry(namesreco_data_cteq[i], 'Reco_pdfcteq', 'l')
+    legends_data_cteq[i].Draw()
+    canvas.SaveAs('hists/pdfcteq_data_preplot'+str(i)+'.png')
+
+#################################################################################################### Unfold data with PDF-CTEQ for SoftDrop 
+unfold_data_pdfcteq_softdrop = RooUnfoldBayes(pdfcteq_response_softdrop, data_reco_softdrop, 4)
+unfolded_data_pdfcteq_softdrop = unfold_data_pdfcteq_softdrop.Hreco()
+
+canvases_data_cteq_softdrop = []
+namesreco_data_cteq_softdrop = []
+legends_data_cteq_softdrop = []
+for x in range(0, nptbin):
+    canvases_data_cteq_softdrop.append(TCanvas("canvas_data_pdfcteq_softdrop"+str(x)))
+    namesreco_data_cteq_softdrop.append(None)
+    legends_data_cteq_softdrop.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_cteq_softdrop):
+    canvas.cd()
+    namesreco_data_cteq_softdrop[i] = unfolded_data_pdfcteq_softdrop.ProjectionX('pdf_data_cteq_softdrop' + str(i), i+1, i+1)
+    namesreco_data_cteq_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_cteq_softdrop[i].Draw('hist')
+    legends_data_cteq_softdrop[i].AddEntry(namesreco_data_cteq_softdrop[i], 'Reco_pdfcteq_sd', 'l')
+    legends_data_cteq_softdrop[i].Draw()
+    canvas.SaveAs('hists/pdfcteq_data_softdrop_preplot'+str(i)+'.png')
+    
+
+
+###################################################################################################### Unfold data with PDF-MSTW
+unfold_data_pdfmstw = RooUnfoldBayes(pdfmstw_response, data_reco, 4)
+unfolded_data_pdfmstw = unfold_data_pdfmstw.Hreco()
+
+canvases_data_mstw = []
+namesreco_data_mstw = []
+
+legends_data_mstw = []
+for x in range(0, nptbin):
+    canvases_data_mstw.append(TCanvas("canvas_data_pdfmstw" + str(x)))
+    namesreco_data_mstw.append(None)
+    legends_data_mstw.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_mstw) : 
+    canvas.cd()
+    namesreco_data_mstw[i] = unfolded_data_pdfmstw.ProjectionX('pdf_data_mstw' + str(i), i+1, i+1)
+    namesreco_data_mstw[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_mstw[i].Draw('hist')
+    legends_data_mstw[i].AddEntry(namesreco_data_mstw[i], 'Reco_pdfmstw', 'l')
+    legends_data_mstw[i].Draw()
+    canvas.SaveAs('hists/pdfmstw_data_preplot'+str(i)+'.png')
+
+#################################################################################################### Unfold data with PDF-MSTW for SoftDrop 
+unfold_data_pdfmstw_softdrop = RooUnfoldBayes(pdfmstw_response_softdrop, data_reco_softdrop, 4)
+unfolded_data_pdfmstw_softdrop = unfold_data_pdfmstw_softdrop.Hreco()
+
+canvases_data_mstw_softdrop = []
+namesreco_data_mstw_softdrop = []
+legends_data_mstw_softdrop = []
+for x in range(0, nptbin):
+    canvases_data_mstw_softdrop.append(TCanvas("canvas_data_pdfmstw_softdrop"+str(x)))
+    namesreco_data_mstw_softdrop.append(None)
+    legends_data_mstw_softdrop.append(TLegend(.7, .5, .9, .7))
+
+for i, canvas in enumerate(canvases_data_mstw_softdrop):
+    canvas.cd()
+    namesreco_data_mstw_softdrop[i] = unfolded_data_pdfmstw_softdrop.ProjectionX('pdf_data_mstw_softdrop' + str(i), i+1, i+1)
+    namesreco_data_mstw_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
+    namesreco_data_mstw_softdrop[i].Draw('hist')
+    legends_data_mstw_softdrop[i].AddEntry(namesreco_data_mstw_softdrop[i], 'Reco_pdfmstw_sd', 'l')
+    legends_data_mstw_softdrop[i].Draw()
+    canvas.SaveAs('hists/pdfmstw_data_softdrop_preplot'+str(i)+'.png')
+    
+
+
+    
 outfile = TFile("unfoldedpdf.root", 'RECREATE')
 outfile.cd()
 for i in range(0, nptbin):
@@ -231,4 +431,15 @@ for i in range(0, nptbin):
     namesreco_data_up_softdrop[i].Write()
     namesreco_data_dn[i].Write()
     namesreco_data_dn_softdrop[i].Write()
+
+
+    namesreco_cteq[i].Write()
+    namesreco_cteq_softdrop[i].Write()
+    namesreco_mstw[i].Write()
+    namesreco_mstw_softdrop[i].Write()
+    namesreco_data_cteq[i].Write()
+    namesreco_data_cteq_softdrop[i].Write()
+    namesreco_data_mstw[i].Write()
+    namesreco_data_mstw_softdrop[i].Write()
+    
 outfile.Close()
