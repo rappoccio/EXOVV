@@ -79,9 +79,9 @@ datahists = []
 pyhists = []
 hwhists = []
 
-fdata = ROOT.TFile("jetht_weighted_dataplots_otherway_repdf.root")
-fpythia8 = ROOT.TFile("responses_repdf_otherway_qcdmc_2dplots.root")
-fherwig = ROOT.TFile("qcdmc_herwig_otherway_repdf_2dplots.root")
+fdata = ROOT.TFile("jetht_weighted_dataplots_otherway_rejec.root")
+fpythia8 = ROOT.TFile("responses_rejec_otherway_qcdmc_2dplots.root")
+fherwig = ROOT.TFile("qcdmc_herwig_otherway_rejec_2dplots.root")
 
 systs = [
     'jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'pdfup', 'pdfdn'

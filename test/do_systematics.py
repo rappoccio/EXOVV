@@ -158,6 +158,12 @@ pdf_upsd = []
 pdf_dnsd = []
 comparisons_softdrop = []
 
+pdf_cteq = []
+pdf_mstw = []
+
+pdf_cteqsd = []
+pdf_mstwsd = []
+
 complegends = []
 complegendssd = []
 
@@ -168,14 +174,31 @@ for i in range(0, nptbins):
     pdf_dn.append(pdfs.Get('pdf_dn'+str(i)))
     pdf_upsd.append(pdfs.Get('pdf_up_softdrop'+str(i)))
     pdf_dnsd.append(pdfs.Get('pdf_dn_softdrop'+str(i)))
-     
+
+    pdf_cteq.append(pdfs.Get('pdf_cteq'+str(i)))
+    pdf_mstw.append(pdfs.Get('pdf_mstw'+str(i)))
+    pdf_cteqsd.append(pdfs.Get('pdf_cteq_softdrop'+str(i)))
+    pdf_mstwsd.append(pdfs.Get('pdf_mstw_softdrop'+str(i)))
+         
     temp_unc = (pdf_up[i] - pdf_dn[i])
     temp_unc_softdrop = (pdf_upsd[i] - pdf_dnsd[i])
+    temp_unc2 = (pdf_cteq[i] - datalist[i])
+    temp_unc2_softdrop = (pdf_cteqsd[i] - datalistSD[i])
+    temp_unc3 = (pdf_mstw[i] - datalist[i])
+    temp_unc3_softdrop = (pdf_mstwsd[i] - datalistSD[i])
+    
     temp_unc.Scale(scales[i])
     temp_unc_softdrop.Scale(scales[i])
+    temp_unc2.Scale(scales[i])
+    temp_unc2_softdrop.Scale(scales[i])
+    temp_unc3.Scale(scales[i])
+    temp_unc3_softdrop.Scale(scales[i])
+    
     for ibin in xrange(1, temp_unc.GetNbinsX()):
-        temp_pdf_diff.append(abs(temp_unc.GetBinContent(ibin)))
-        temp_softdrop_pdf_diff.append(abs(temp_unc_softdrop.GetBinContent(ibin)))
+        val_ungroomed = (temp_unc.GetBinContent(ibin))**2 + (temp_unc2.GetBinContent(ibin))**2 + (temp_unc3.GetBinContent(ibin))**2
+        val_groomed = (temp_unc_softdrop.GetBinContent(ibin))**2 + (temp_unc2_softdrop.GetBinContent(ibin))**2 + (temp_unc3_softdrop.GetBinContent(ibin))**2
+        temp_pdf_diff.append(sqrt(val_ungroomed))
+        temp_softdrop_pdf_diff.append( sqrt(val_groomed) )
     pdf_differences.append(temp_pdf_diff)
     pdf_differences_softdrop.append(temp_softdrop_pdf_diff)
 
