@@ -652,9 +652,9 @@ for itree,t in enumerate(trees) :
                     h2_rho_meas.Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight )
                     h2_tau21_meas.Fill( FatJet.Perp(), FatJetTau21[ijet] , weight )
                     if GenJets[igen].M() != 0:
-                        h2_mreco_mgen.Fill(FatJet.Perp(), FatJet.M()/GenJets[igen].M(), weight)
+                        h2_mreco_mgen.Fill(GenJets[igen].Perp(), FatJet.M()/GenJets[igen].M(), weight)
                     else:
-                        h2_mreco_mgen.Fill(FatJet.Perp(), FatJet.M()/0.140, weight)
+                        h2_mreco_mgen.Fill(GenJets[igen].Perp(), FatJet.M()/0.140, weight)
                     h2_ptreco_ptgen.Fill(FatJet.Perp(), FatJet.Perp()/GenJets[igen].Perp(), weight)
 
 
@@ -855,10 +855,13 @@ for itree,t in enumerate(trees) :
                     h_massnom_softdrop.Fill(FatJetSD.M()*jmrnomSD, weight)
                     if GenJetsSD[igenSD].M() != 0:
                         h_mreco_mgen_softdrop.Fill(FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
+                        h2_mreco_mgen_softdrop.Fill(GenJetsSD[igenSD].Perp(), FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
                     else:
                         h_mreco_mgen_softdrop.Fill(FatJetSD.M()/0.14, weight)
+                        h2_mreco_mgen_softdrop.Fill(GenJetsSD[igenSD].Perp(), FatJetSD.M()/0.140, weight)
                         masslessSD += 1
                     h_ptreco_ptgen_softdrop.Fill(FatJetSD.Perp()/GenJetsSD[igenSD].Perp(), weight)
+                    h2_ptreco_ptgen_softdrop.Fill(GenJetsSD[igenSD].Perp(), FatJetSD.Perp()/GenJetsSD[igenSD].Perp(), weight)
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
                     else:
