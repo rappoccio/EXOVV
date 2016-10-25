@@ -209,7 +209,7 @@ for iptbin in xrange( len(dataprojs) ) :
     ratio.GetYaxis().SetRangeUser(0,2)
     ratio.SetMarkerStyle(0)
     ratio.SetMarkerSize(0)
-    ratio.Draw("e6")
+    ratio.Draw("e2")
     ratios.append(ratio)
     pads[0].Update()
     pads[1].Update()
