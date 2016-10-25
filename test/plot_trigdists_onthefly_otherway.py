@@ -439,7 +439,7 @@ for itree,t in enumerate(trees) :
         for ijet in [ indices[0], indices[1] ] :
             if abs(FatJetEta[ijet]) < 2.4 : 
                 h_2DHisto_meas.Fill( FatJetMass[ijet], FatJetPt[ijet], weight )
-                h_2DHisto_measSD.Fill( FatJetMassSoftDrop[ijet], FatJetPtSoftDrop[ijet], weight )
+                h_2DHisto_measSD.Fill( FatJetMassSoftDrop[ijet], FatJetPt[ijet], weight )
                 h_pt_meas.Fill( FatJetPt[ijet] , weight )
                 h_y_meas.Fill( FatJetRap[ijet] , weight )
                 h_phi_meas.Fill( FatJetPhi[ijet] , weight )
