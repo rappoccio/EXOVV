@@ -17,9 +17,6 @@ python 2Dunfold_data.py --extension _jmrnom
 python 2Dunfold_data.py --extension _jmrup
 python 2Dunfold_data.py --extension _jmrdn
 
-python 2Dplot_data.py --oneband
-python 2Dplot_data.py --oneband --isSoftDrop
-
 python 2Dunfold_mc.py
 python 2Dunfold_mc.py --extension _jerup
 python 2Dunfold_mc.py --extension _jerdn
@@ -29,6 +26,9 @@ python 2Dunfold_mc.py --extension _jecdn
 python 2Dunfold_mc.py --extension _jmrup
 python 2Dunfold_mc.py --extension _jmrdn
 python 2Dunfold_mc.py --extension _jmrnom
+
+python 2Dplot_data.py --oneband
+python 2Dplot_data.py --oneband --isSoftDrop
 
 
 python 2Dplot_mc.py --oneband

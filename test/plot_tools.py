@@ -170,15 +170,15 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF.SetFillColor(ROOT.kOrange+1)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral())
         if i == 11:
-            hRecoPDF.SetAxisRange(0,2000,"X")
+            hRecoPDF.SetAxisRange(1,2000,"X")
         elif i > 11 and i < 18:
-            hRecoPDF.SetAxisRange(0,1200, "X")
+            hRecoPDF.SetAxisRange(1,1200, "X")
         elif i > 7 and i < 11:
-            hRecoPDF.SetAxisRange(0,900, "X")
+            hRecoPDF.SetAxisRange(1,900, "X")
         elif i > 3 and i < 8:
-            hRecoPDF.SetAxisRange(0,600, "X")
+            hRecoPDF.SetAxisRange(1,600, "X")
         elif i < 4:
-            hRecoPDF.SetAxisRange(0,400,"X")
+            hRecoPDF.SetAxisRange(1,400,"X")
         hRecoPDF.Draw("E2")
         hRecoBarePdf = hRecoPDF.Clone()
         hRecoBarePdf.SetName( hRecoPDF.GetName() + "_bare" )
@@ -543,15 +543,15 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         ######################################################################## Draw and save
 
         if i == 18:
-            datPDF.SetAxisRange(0,2000,"X")
+            datPDF.SetAxisRange(1,2000,"X")
         elif i > 11 and i < 18:
-            datPDF.SetAxisRange(0,1200, "X")
+            datPDF.SetAxisRange(1,1200, "X")
         elif i > 7 and i < 12:
-            datPDF.SetAxisRange(0,900, "X")
+            datPDF.SetAxisRange(1,900, "X")
         elif i > 3 and i < 8:
-            datPDF.SetAxisRange(0,600, "X")
+            datPDF.SetAxisRange(1,600, "X")
         elif i < 4:
-            datPDF.SetAxisRange(0,400,"X")
+            datPDF.SetAxisRange(1,400,"X")
         datPDF.Draw('e2')
         datPDF.GetXaxis().SetTickLength(0.05)
         datcopycopy.Draw('e2 same')
@@ -1047,20 +1047,20 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         ######################################################################## Draw and save
         
         if i == 11:
-            datPDF.SetAxisRange(0,2000,"X")
-            datStat.SetAxisRange(0, 2000, "X")
+            datPDF.SetAxisRange(1,2000,"X")
+            datStat.SetAxisRange(1, 2000, "X")
         elif i > 11 and i < 18:
-            datPDF.SetAxisRange(0,1200, "X")
-            datStat.SetAxisRange(0, 1200, "X")
+            datPDF.SetAxisRange(1,1200, "X")
+            datStat.SetAxisRange(1, 1200, "X")
         elif i > 7 and i < 11:
-            datPDF.SetAxisRange(0,900, "X")
-            datStat.SetAxisRange(0, 900, "X")
+            datPDF.SetAxisRange(1,900, "X")
+            datStat.SetAxisRange(1, 900, "X")
         elif i > 3 and i < 8:
-            datPDF.SetAxisRange(0,600, "X")
-            datStat.SetAxisRange(0, 600, "X")
+            datPDF.SetAxisRange(1,600, "X")
+            datStat.SetAxisRange(1, 600, "X")
         elif i < 4:
-            datPDF.SetAxisRange(0,400,"X")
-            datStat.SetAxisRange(0, 400, "X")
+            datPDF.SetAxisRange(1,400,"X")
+            datStat.SetAxisRange(1, 400, "X")
         datPDF.Draw('e2')
         datPDF.GetXaxis().SetTickLength(0.05)
         datStat.Draw('e2 same')
