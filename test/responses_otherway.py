@@ -792,7 +792,9 @@ for itree,t in enumerate(trees) :
                 FatJetSD.SetPtEtaPhiM( FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet]  )            
                 FatJetsSD.append(FatJetSD)
                 h_2DHisto_measSD.Fill( FatJetSD.M(), FatJet.Perp(),  weight)
-                igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.3)
+                igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.1)
+                igen = getMatched(FatJetSD, GenJets, dRMax=0.1)
+
 
                 if  igenSD != None and ngenSD >= 2 :
                     if options.verbose : print ' recoSD %6d --> genSD %6d' % ( ijet, igenSD )
@@ -881,7 +883,16 @@ for itree,t in enumerate(trees) :
 
                         
 
-                    if ( FatJetPt[ijet] > 1300. and FatJetSD.M() > 800 and GenJetsSD[igenSD].M() < 500 ) :
+                    #if ( FatJetPt[ijet] > 1300. and FatJetSD.M() > 800 and GenJetsSD[igenSD].M() < 500 ) :
+                    if ( FatJetPt[ijet]/GenJetPt[igenSD] > 1.1 ) :
+
+                        if igen != igenSD :
+                            print '#'
+                            print '#'
+                            print '#==========> This is very, very wrong <============'
+                            print '#'
+                            print '#'
+                        
                         print '<<<<<<<<<<<<<<<< Something screwy >>>>>>>>>>>>>>>>'
                         print 'ijet = ', ijet, ' igenSD = ', igenSD
                         print '--------- Gen Jets -----------'
