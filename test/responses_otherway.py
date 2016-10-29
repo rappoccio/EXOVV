@@ -835,22 +835,22 @@ for itree,t in enumerate(trees) :
                     else : smearnomSD = 0.
 
                     jmrvalnomSD = 1.1
-                    recomassSD = FatJetSD.M()
-                    genmassSD = GenJetsSD[igenSD].M()
+                    recomassSD = FatJetM[ijet]
+                    genmassSD = GenJets[igen].M()
                     deltamassSD = (recomassSD-genmassSD)*(jmrvalnomSD-1.0)
                     if abs(recomassSD) > 0.0 : jmrnomSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
                     else : jmrnomSD = 0.
 
                     jmrvalupSD = 1.2
-                    recomassSD = FatJetSD.M()
-                    genmassSD = GenJetsSD[igenSD].M()
+                    recomassSD = FatJetM[ijet]
+                    genmassSD = GenJets[igen].M()
                     deltamassSD = (recomassSD-genmassSD)*(jmrvalupSD-1.0)
                     if abs(recomassSD) > 0.0 : jmrupSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
                     else : jmrupSD = 0.
 
                     jmrvaldnSD = 1.0
-                    recomassSD = FatJetSD.M()
-                    genmassSD = GenJetsSD[igenSD].M()
+                    recomassSD = FatJetM[ijet]
+                    genmassSD = GenJets[igen].M()
                     deltamassSD = (recomassSD-genmassSD)*(jmrvaldnSD-1.0)
                     if abs(recomassSD) > 0.0 : jmrdnSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
                     else : jmrdnSD = 0.
