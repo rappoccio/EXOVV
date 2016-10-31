@@ -36,6 +36,14 @@ parser.add_option('--verbose', action='store_true',
                   help='Verbosity')
 
 
+
+
+parser.add_option('--split', type='int', action='store',
+                  dest='split',
+                  default = None,
+                  help='Split section')
+
+
 (options, args) = parser.parse_args()
 argv = []
 
@@ -177,6 +185,13 @@ h_2DHisto_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD', 'HLT Binned Mass and P_{T}; P_{
 h_2DHisto_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsm, mBinA, nbinsPt, ptBinA)
 
 
+h_2DHisto_nomnom_meas = ROOT.TH2F('PFJet_pt_m_AK8_nomnom', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsm, mBinA, nbinsPt, ptBinA)
+h_2DHisto_nomnom_gen = ROOT.TH2F('PFJet_pt_m_AK8Gen_nomnom', 'Generator Mass vs. P_{T}; P_{T} (GeV); Mass (GeV)', nbinsm, mBinA, nbinsPt, ptBinA)
+
+h_2DHisto_nomnom_measSD = ROOT.TH2F('PFJet_pt_m_AK8SD_nomnom', 'HLT Binned Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsm, mBinA, nbinsPt, ptBinA)
+h_2DHisto_nomnom_genSD = ROOT.TH2F('PFJet_pt_m_AK8SDgen_nomnom', 'Generator Mass and P_{T}; P_{T} (GeV); Mass (GeV)', nbinsm, mBinA, nbinsPt, ptBinA)
+
+
 h_pt_meas = ROOT.TH1F("h_pt_meas", ";Jet p_{T} (GeV); Number", 150, 0, 3000)
 h_y_meas = ROOT.TH1F("h_y_meas", ";Jet Rapidity; Number", 50, -2.5, 2.5 )
 h_phi_meas = ROOT.TH1F("h_phi_meas", ";Jet #phi (radians); Number", 50, -ROOT.TMath.Pi(), ROOT.TMath.Pi() )
@@ -201,6 +216,10 @@ h_ptreco_ptgen = ROOT.TH1F("h_ptreco_ptgen", "Reco Pt/Gen Pt", 1000, 0, 2)
 h_mreco_mgen_softdrop = ROOT.TH1F("h_mreco_mgen_softdrop", "Reco Mass/Gen Mass Softdrop", 1000, 0, 2)
 h_ptreco_ptgen_softdrop = ROOT.TH1F("h_ptreco_ptgen_softdrop", "Reco Pt/Gen Pt Softdrop", 1000, 0, 2)
 
+h_mreco_mgen_nomnom = ROOT.TH1F("h_mreco_mgen_nomnom", "Reco Mass/Gen Mass", 1000, 0, 2)
+h_ptreco_ptgen_nomnom = ROOT.TH1F("h_ptreco_ptgen_nomnom", "Reco Pt/Gen Pt", 1000, 0, 2)
+h_mreco_mgen_softdrop_nomnom = ROOT.TH1F("h_mreco_mgen_softdrop_nomnom", "Reco Mass/Gen Mass Softdrop", 1000, 0, 2)
+h_ptreco_ptgen_softdrop_nomnom = ROOT.TH1F("h_ptreco_ptgen_softdrop_nomnom", "Reco Pt/Gen Pt Softdrop", 1000, 0, 2)
 
 
 
@@ -225,6 +244,13 @@ h2_mreco_mgen = ROOT.TH2F("h2_mreco_mgen", "Reco Mass/Gen Mass", nbinsPt, ptBinA
 h2_ptreco_ptgen = ROOT.TH2F("h2_ptreco_ptgen", "Reco Pt/Gen Pt", nbinsPt, ptBinA, 1000, 0, 2)
 h2_mreco_mgen_softdrop = ROOT.TH2F("h2_mreco_mgen_softdrop", "Reco Mass/Gen Mass Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
 h2_ptreco_ptgen_softdrop = ROOT.TH2F("h2_ptreco_ptgen_softdrop", "Reco Pt/Gen Pt Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
+
+h2_mreco_mgen_nomnom = ROOT.TH2F("h2_mreco_mgen_nomnom", "Reco Mass/Gen Mass", nbinsPt, ptBinA, 1000, 0, 2)
+h2_ptreco_ptgen_nomnom = ROOT.TH2F("h2_ptreco_ptgen_nomnom", "Reco Pt/Gen Pt", nbinsPt, ptBinA, 1000, 0, 2)
+h2_mreco_mgen_softdrop_nomnom = ROOT.TH2F("h2_mreco_mgen_softdrop_nomnom", "Reco Mass/Gen Mass Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
+h2_ptreco_ptgen_softdrop_nomnom = ROOT.TH2F("h2_ptreco_ptgen_softdrop_nomnom", "Reco Pt/Gen Pt Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
+
+
 
 sysvarstr = ['jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'pdfup', 'pdfdn', 'cteq', 'mstw' ]
 jecup_ndx = sysvarstr.index('jecup')
@@ -329,10 +355,16 @@ masslessSD = 0
 
 trees = []
 # Append the actual TTrees
-for iq in qcdIn:
-    trees.append( iq.Get("TreeEXOVV") )
-fout = ROOT.TFile(options.outlabel, 'RECREATE')
-
+if options.split == None : 
+    for iq in qcdIn:
+        trees.append( iq.Get("TreeEXOVV") )
+else : 
+    trees.append( qcdIn[options.split].Get("TreeEXOVV") )
+    
+if options.split != None : 
+    fout = ROOT.TFile(options.outlabel +'_' + str(options.split), 'RECREATE')
+else : 
+    fout = ROOT.TFile(options.outlabel, 'RECREATE')
 
 for itree,t in enumerate(trees) :
     Weight = array.array('f', [-1])    
@@ -598,7 +630,12 @@ for itree,t in enumerate(trees) :
                     if abs(recomass) > 0.0 : jmrnom = max(0.0, (recomass+deltamass)/recomass)
                     else : jmrnom = 0.
 
-                    h_2DHisto_meas.Fill( FatJet.M()*jmrnom*smearnom, FatJet.Perp()*smearnom,  weight )
+                    h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
+                    h_2DHisto_nomnom_meas.Fill( FatJet.M()*jmrnom*smearnom, FatJet.Perp()*smearnom,  weight )
+                    
+
+                    if options.verbose :
+                        print '     smearnom,jmrnom = %6.3f, %6.3f', smearnom, jmrnom
 
                     response.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight )
                     response_jecup.Fill( FatJet.M() * FatJetCorrUp[ijet], FatJet.Perp()* FatJetCorrUp[ijet], GenJets[igen].M(), GenJets[igen].Perp(), weight )
@@ -653,9 +690,11 @@ for itree,t in enumerate(trees) :
                     h_rho_vs_tau_meas.Fill( FatJetRhoRatio[ijet], FatJetTau21[ijet] , weight )
                     if GenJets[igen].M() != 0:
                         h_mreco_mgen.Fill(FatJet.M()/GenJets[igen].M(), weight)
+                        h_mreco_mgen_nomnom.Fill(FatJet.M() * smearnom * jmrnom/GenJets[igen].M(), weight)
                     else:
-                        h_mreco_mgen.Fill(FatJet.M()/0.140, weight)
-                    h_ptreco_ptgen.Fill(FatJet.Perp()/GenJets[igen].Perp(), weight)        
+                        h_mreco_mgen.Fill(FatJet.M() * smearnom * jmrnom/0.140, weight)
+                    h_ptreco_ptgen.Fill(FatJet.Perp()/GenJets[igen].Perp(), weight)
+                    h_ptreco_ptgen.Fill(FatJet.Perp() * smearnom /GenJets[igen].Perp(), weight)        
 
 
                     h2_y_meas.Fill( FatJet.Perp(), FatJetRap[ijet] , weight )
@@ -666,9 +705,12 @@ for itree,t in enumerate(trees) :
                     h2_tau21_meas.Fill( FatJet.Perp(), FatJetTau21[ijet] , weight )
                     if GenJets[igen].M() != 0:
                         h2_mreco_mgen.Fill(GenJets[igen].Perp(), FatJet.M()/GenJets[igen].M(), weight)
+                        h2_mreco_mgen_nomnom.Fill(GenJets[igen].Perp(), FatJet.M() * smearnom * jmrnom/GenJets[igen].M(), weight)
                     else:
                         h2_mreco_mgen.Fill(GenJets[igen].Perp(), FatJet.M()/0.140, weight)
+                        h2_mreco_mgen_nomnom.Fill(GenJets[igen].Perp()* smearnom * jmrnom, FatJet.M()/0.140, weight)
                     h2_ptreco_ptgen.Fill(FatJet.Perp(), FatJet.Perp()/GenJets[igen].Perp(), weight)
+                    h2_ptreco_ptgen_nomnom.Fill(FatJet.Perp(), FatJet.Perp() * smearnom/GenJets[igen].Perp(), weight)
 
 
                     h2_y_meas_sys    [jecup_ndx].Fill( FatJet.Perp() * FatJetCorrUp[ijet], FatJetRap[ijet] , weight )
@@ -769,6 +811,7 @@ for itree,t in enumerate(trees) :
 
                     if options.verbose : print 'Fake ungroomed jet'
                     h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
+                    h_2DHisto_nomnom_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
                     response.Fake( FatJet.M(), FatJet.Perp(), weight )
                     response_jecup.Fake( FatJet.M() * FatJetCorrUp[ijet], FatJet.Perp()* FatJetCorrUp[ijet], weight )
                     response_jecdn.Fake( FatJet.M() * FatJetCorrDn[ijet], FatJet.Perp()* FatJetCorrDn[ijet], weight )
@@ -855,8 +898,12 @@ for itree,t in enumerate(trees) :
                     if abs(recomassSD) > 0.0 : jmrdnSD = max(0.0, (recomassSD+deltamassSD)/recomassSD)
                     else : jmrdnSD = 0.
 
+                    if options.verbose :
+                        print '     smearnom,jmrnom = %6.3f, %6.3f', smearnomSD, jmrnomSD
+                        
 
-                    h_2DHisto_measSD.Fill( FatJetSD.M()*jmrnomSD*smearnomSD, FatJetPt[ijet]*smearnomSD,  weight)
+                    h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
+                    h_2DHisto_nomnom_measSD.Fill( FatJetSD.M()*jmrnomSD*smearnomSD, FatJetPt[ijet]*smearnomSD,  weight)
                     response_softdrop.Fill( FatJetSD.M() , FatJetPt[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight )
                     response_softdrop_jecup.Fill( FatJetSD.M()  * FatJetCorrUp[ijet], FatJetPt[ijet] * FatJetCorrUp[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight )
                     response_softdrop_jecdn.Fill( FatJetSD.M()  * FatJetCorrDn[ijet], FatJetPt[ijet] * FatJetCorrDn[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight )
@@ -874,12 +921,19 @@ for itree,t in enumerate(trees) :
                     if GenJetsSD[igenSD].M() != 0:
                         h_mreco_mgen_softdrop.Fill(FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
                         h2_mreco_mgen_softdrop.Fill(GenJetPt[igen], FatJetSD.M()/GenJetsSD[igenSD].M(), weight)
+                        h_mreco_mgen_softdrop_nomnom.Fill(FatJetSD.M() *jmrnomSD*smearnomSD /GenJetsSD[igenSD].M(), weight)
+                        h2_mreco_mgen_softdrop_nomnom.Fill(GenJetPt[igen], FatJetSD.M()*jmrnomSD*smearnomSD/GenJetsSD[igenSD].M(), weight)
                     else:
                         h_mreco_mgen_softdrop.Fill(FatJetSD.M()/0.14, weight)
                         h2_mreco_mgen_softdrop.Fill(GenJetPt[igen], FatJetSD.M()/0.140, weight)
+                        h_mreco_mgen_softdrop_nomnom.Fill(FatJetSD.M() *jmrnomSD*smearnomSD/0.14, weight)
+                        h2_mreco_mgen_softdrop_nomnom.Fill(GenJetPt[igen], FatJetSD.M() *jmrnomSD*smearnomSD/0.140, weight)
                         masslessSD += 1
                     h_ptreco_ptgen_softdrop.Fill(FatJetPt[ijet]/GenJetPt[igen], weight)
                     h2_ptreco_ptgen_softdrop.Fill(GenJetPt[igen], FatJetPt[ijet]/GenJetPt[igen], weight)
+                    h_ptreco_ptgen_softdrop.Fill(FatJetPt[ijet]*smearnomSD/GenJetPt[igen], weight)
+                    h2_ptreco_ptgen_softdrop.Fill(GenJetPt[igen], FatJetPt[ijet]*smearnomSD/GenJetPt[igen], weight)
+
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
                     else:
@@ -933,6 +987,7 @@ for itree,t in enumerate(trees) :
                 else:
                     if options.verbose : print 'Fake groomed jet'
                     h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
+                    h_2DHisto_nomnom_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
                     response_softdrop.Fake( FatJetSD.M() , FatJetPt[ijet], weight )
                     response_softdrop_jecup.Fake( FatJetSD.M()  * FatJetCorrUp[ijet], FatJetPt[ijet] * FatJetCorrUp[ijet], weight )
                     response_softdrop_jecdn.Fake( FatJetSD.M()  * FatJetCorrDn[ijet], FatJetPt[ijet] * FatJetCorrDn[ijet], weight )
@@ -1060,9 +1115,16 @@ h_ptreco_ptgen.Write()
 h_mreco_mgen_softdrop.Write()
 h_ptreco_ptgen_softdrop.Write()
 
+h_mreco_mgen_nomnom.Write()
+h_ptreco_ptgen_nomnom.Write()
+h_mreco_mgen_softdrop_nomnom.Write()
+h_ptreco_ptgen_softdrop_nomnom.Write()
 
 h_2DHisto_measSD.Write()
 h_2DHisto_genSD.Write()
+h_2DHisto_nomnom_measSD.Write()
+h_2DHisto_nomnom_genSD.Write()
+
 response_softdrop.Write()
 response_softdrop_jecup.Write()
 response_softdrop_jecdn.Write()
@@ -1097,6 +1159,10 @@ h2_mreco_mgen.Write()
 h2_ptreco_ptgen.Write()
 h2_mreco_mgen_softdrop.Write()
 h2_ptreco_ptgen_softdrop.Write()
+h2_mreco_mgen_nomnom.Write()
+h2_ptreco_ptgen_nomnom.Write()
+h2_mreco_mgen_softdrop_nomnom.Write()
+h2_ptreco_ptgen_softdrop_nomnom.Write()
 
 for isys in xrange( len(sysvarstr) ) : 
     h2_y_meas_sys[isys].Write()
