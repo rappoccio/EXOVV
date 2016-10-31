@@ -767,18 +767,18 @@ for itree,t in enumerate(trees) :
                                         
                 else : # Here we have a "Fake", i.e. fewer than 2 gen jets matched to 2 reco jets
 
-                    if options.verbose : 'Fake ungroomed jet'
+                    if options.verbose : print 'Fake ungroomed jet'
                     h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
                     response.Fake( FatJet.M(), FatJet.Perp(), weight )
                     response_jecup.Fake( FatJet.M() * FatJetCorrUp[ijet], FatJet.Perp()* FatJetCorrUp[ijet], weight )
                     response_jecdn.Fake( FatJet.M() * FatJetCorrDn[ijet], FatJet.Perp()* FatJetCorrDn[ijet], weight )
-                    response_jerup.Fake( FatJet.M() * smearup, FatJet.Perp() * smearup, weight )
-                    response_jerdn.Fake( FatJet.M() * smeardn, FatJet.Perp() * smeardn, weight ) 
-                    response_jernom.Fake(FatJet.M() * smearnom, FatJet.Perp() * smearnom,weight)
-                    response_jmrup.Fake( FatJet.M() * jmrup , FatJet.Perp(), weight)
-                    response_jmrdn.Fake( FatJet.M() * jmrdn , FatJet.Perp(), weight)
-                    response_jmrnom.Fake(FatJet.M() * jmrnom, FatJet.Perp(), weight)
-                    response_nomnom.Fake(FatJet.M() * jmrnom*smearnom, FatJet.Perp()*smearnom, weight)
+                    response_jerup.Fake( FatJet.M(), FatJet.Perp(), weight )
+                    response_jerdn.Fake( FatJet.M(), FatJet.Perp(), weight ) 
+                    response_jernom.Fake(FatJet.M(), FatJet.Perp(),weight)
+                    response_jmrup.Fake( FatJet.M(), FatJet.Perp(), weight)
+                    response_jmrdn.Fake( FatJet.M(), FatJet.Perp(), weight)
+                    response_jmrnom.Fake(FatJet.M(), FatJet.Perp(), weight)
+                    response_nomnom.Fake(FatJet.M(), FatJet.Perp(), weight)
 
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
@@ -931,18 +931,18 @@ for itree,t in enumerate(trees) :
                     h_msd_meas.Fill( FatJetMassSoftDrop[ijet] , weight )
      #               h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
                 else:
-                    if options.verbose : 'Fake groomed jet'
+                    if options.verbose : print 'Fake groomed jet'
                     h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
                     response_softdrop.Fake( FatJetSD.M() , FatJetPt[ijet], weight )
                     response_softdrop_jecup.Fake( FatJetSD.M()  * FatJetCorrUp[ijet], FatJetPt[ijet] * FatJetCorrUp[ijet], weight )
                     response_softdrop_jecdn.Fake( FatJetSD.M()  * FatJetCorrDn[ijet], FatJetPt[ijet] * FatJetCorrDn[ijet], weight )
-                    response_softdrop_jerup.Fake( FatJetSD.M()  * smearupSD, FatJetPt[ijet] * smearupSD, weight )
-                    response_softdrop_jerdn.Fake( FatJetSD.M()  * smeardnSD, FatJetPt[ijet] * smeardnSD, weight )
-                    response_softdrop_jernom.Fake(FatJetSD.M() * smearnomSD, FatJetPt[ijet] * smearnomSD, weight)            
-                    response_softdrop_jmrnom.Fake(FatJetSD.M()*jmrnomSD, FatJetPt[ijet], weight)
-                    response_softdrop_jmrup.Fake(FatJetSD.M() *jmrupSD , FatJetPt[ijet] , weight)
-                    response_softdrop_jmrdn.Fake(FatJetSD.M() *jmrdnSD , FatJetPt[ijet] , weight)
-                    response_softdrop_nomnom.Fake(FatJetSD.M()*jmrnomSD* smearnomSD, FatJetPt[ijet]* smearnomSD, weight)
+                    response_softdrop_jerup.Fake( FatJetSD.M(), FatJetPt[ijet], weight )
+                    response_softdrop_jerdn.Fake( FatJetSD.M(), FatJetPt[ijet], weight )
+                    response_softdrop_jernom.Fake(FatJetSD.M(), FatJetPt[ijet], weight)            
+                    response_softdrop_jmrnom.Fake(FatJetSD.M(), FatJetPt[ijet], weight)
+                    response_softdrop_jmrup.Fake(FatJetSD.M() , FatJetPt[ijet] , weight)
+                    response_softdrop_jmrdn.Fake(FatJetSD.M() , FatJetPt[ijet] , weight)
+                    response_softdrop_nomnom.Fake(FatJetSD.M(), FatJetPt[ijet], weight)
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
                     else:
