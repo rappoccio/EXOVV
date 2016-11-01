@@ -1,5 +1,6 @@
 import ROOT
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gROOT.SetBatch()
 
 from ROOT import gRandom, TH1, cout, TH2, TLegend, TFile
 from ROOT import RooUnfoldResponse

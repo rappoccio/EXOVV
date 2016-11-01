@@ -27,7 +27,7 @@ f = ROOT.TFile(options.infile)
 
 histstrs = [
     #'h2_mreco_mgen',
-    'h2_mreco_mgen_softdrop',
+    'h2_mreco_mgen_softdrop_nomnom',
     #'h2_ptreco_ptgen',
     #'h2_ptreco_ptgen_softdrop',
     ]

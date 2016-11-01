@@ -31,7 +31,7 @@ parser.add_option('--logy', action='store_true',
 
 (options, args) = parser.parse_args()
 
-f = ROOT.TFile('2DData_nomnom.root')
+f = ROOT.TFile('2DData.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 

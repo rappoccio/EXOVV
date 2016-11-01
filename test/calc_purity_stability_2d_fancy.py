@@ -17,7 +17,7 @@ parser.add_option('--file', type='string', action='store',
 
 parser.add_option('--hist', type='string', action='store',
                   dest='hist',
-                  default = '2d_response_nomnom',
+                  default = '2d_response',
                   help='Response matrix')
 
 (options, args) = parser.parse_args()

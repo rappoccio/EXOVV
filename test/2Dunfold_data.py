@@ -1,5 +1,6 @@
 import ROOT
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gROOT.SetBatch()
 
 from ROOT import gRandom, TH1, cout, TH2, TLegend, TFile
 from ROOT import RooUnfoldResponse
@@ -31,12 +32,8 @@ truth = mcfile.Get('PFJet_pt_m_AK8Gen')
 truthSD = mcfile.Get('PFJet_pt_m_AK8SDgen')
 
 
-if 'nomnom' in options.extension :
-    reco = datafile.Get('PFJet_pt_m_AK8_nomnom')
-    recoSD = datafile.Get('PFJet_pt_m_AK8SD_nomnom')
-else : 
-    reco = datafile.Get('PFJet_pt_m_AK8')
-    recoSD = datafile.Get('PFJet_pt_m_AK8SD')
+reco = datafile.Get('PFJet_pt_m_AK8')
+recoSD = datafile.Get('PFJet_pt_m_AK8SD')
     
 truth.Scale( 1./truth.Integral())
 reco.Scale( 1. / reco.Integral() )
