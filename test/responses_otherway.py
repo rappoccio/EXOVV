@@ -562,7 +562,7 @@ for itree,t in enumerate(trees) :
             passptasym = ptasym < 0.3
             passkinloose = passptasym and passdphi
             passkinfull = abs(FatJetEta[maxjet]) < 2.4 and abs(FatJetEta[minjet]) < 2.4 and FatJetPt[maxjet] > options.ptMin and FatJetPt[minjet] > options.ptMin
-            passkinfullsoftdrop = passkinfull and FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin #and FatJetPtSoftDrop[maxjet] <= FatJetPt[maxjet] and FatJetPtSoftDrop[minjet] <= FatJetPt[minjet]
+            passkinfullsoftdrop = passkinfull #and FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin #and FatJetPtSoftDrop[maxjet] <= FatJetPt[maxjet] and FatJetPtSoftDrop[minjet] <= FatJetPt[minjet]
 
             # "N-1" plots for the dphi and pt asymmetry cuts. 
             if passdphi and passkinfull: 
@@ -583,7 +583,7 @@ for itree,t in enumerate(trees) :
                 FatJets.append(FatJet)
                 igen = getMatched( FatJet, GenJets )            
 
-
+                h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
                 if igen != None and ngen >= 2 :  # Here we have a "Fill"
                     if options.verbose : print ' reco   %6d --> gen   %6d' % ( ijet, igen )
 
@@ -630,7 +630,6 @@ for itree,t in enumerate(trees) :
                     if abs(recomass) > 0.0 : jmrnom = max(0.0, (recomass+deltamass)/recomass)
                     else : jmrnom = 0.
 
-                    h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
                     h_2DHisto_nomnom_meas.Fill( FatJet.M()*jmrnom*smearnom, FatJet.Perp()*smearnom,  weight )
                     
 
@@ -809,9 +808,7 @@ for itree,t in enumerate(trees) :
                                         
                 else : # Here we have a "Fake", i.e. fewer than 2 gen jets matched to 2 reco jets
 
-                    if options.verbose : print 'Fake ungroomed jet'
-                    h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
-                    h_2DHisto_nomnom_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
+                    if options.verbose : print 'Fake ungroomed jet'                    
                     response.Fake( FatJet.M(), FatJet.Perp(), weight )
                     response_jecup.Fake( FatJet.M() * FatJetCorrUp[ijet], FatJet.Perp()* FatJetCorrUp[ijet], weight )
                     response_jecdn.Fake( FatJet.M() * FatJetCorrDn[ijet], FatJet.Perp()* FatJetCorrDn[ijet], weight )
@@ -852,6 +849,7 @@ for itree,t in enumerate(trees) :
                 igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.1)
                 igen = getMatched(FatJetSD, GenJets, dRMax=0.1)
 
+                h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
                 if  igenSD != None and igen != None and ngenSD >= 2 :
                     if options.verbose : print ' recoSD %6d --> genSD %6d' % ( ijet, igenSD )
 
@@ -902,7 +900,6 @@ for itree,t in enumerate(trees) :
                         print '     smearnom,jmrnom = %6.3f, %6.3f', smearnomSD, jmrnomSD
                         
 
-                    h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
                     h_2DHisto_nomnom_measSD.Fill( FatJetSD.M()*jmrnomSD*smearnomSD, FatJetPt[ijet]*smearnomSD,  weight)
                     response_softdrop.Fill( FatJetSD.M() , FatJetPt[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight )
                     response_softdrop_jecup.Fill( FatJetSD.M()  * FatJetCorrUp[ijet], FatJetPt[ijet] * FatJetCorrUp[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight )
@@ -986,7 +983,6 @@ for itree,t in enumerate(trees) :
      #               h_2DHisto_measSD.Fill( FatJetPt[ijet], FatJetMassSoftDrop[ijet], weight )
                 else:
                     if options.verbose : print 'Fake groomed jet'
-                    h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
                     h_2DHisto_nomnom_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
                     response_softdrop.Fake( FatJetSD.M() , FatJetPt[ijet], weight )
                     response_softdrop_jecup.Fake( FatJetSD.M()  * FatJetCorrUp[ijet], FatJetPt[ijet] * FatJetCorrUp[ijet], weight )
@@ -1049,7 +1045,7 @@ for itree,t in enumerate(trees) :
                     response_mstw.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight*mstwweight)
 
 
-        if ngenSD >= 2 and not ( passkinloose and passkinfullsoftdrop ):
+        if ngen >= 2 and ngenSD >= 2 and not ( passkinloose and passkinfullsoftdrop ):
             # Now get the "Misses" (i.e. we have no RECO jet)
             for igenSD in xrange( 2 ):
                 igen = getMatched( GenJetsSD[igenSD], GenJets, dRMax=0.1 )

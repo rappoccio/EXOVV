@@ -24,7 +24,7 @@ parser.add_option('--hist', type='string', action='store',
 argv = []
 
 import ROOT
-
+ROOT.gROOT.SetBatch()
 ROOT.gSystem.Load("RooUnfold/libRooUnfold.so")
 #ROOT.gROOT.Macro("rootlogon.C")
 ROOT.gStyle.SetOptStat(000000)

@@ -1,5 +1,6 @@
 import ROOT
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gROOT.SetBatch()
 
 from ROOT import gRandom, TH1, cout, TH2, TLegend, TFile
 from ROOT import RooUnfoldResponse
@@ -43,12 +44,12 @@ herwig_reco_softdrop.Scale(1./herwig_reco_softdrop.Integral())
 
 # get truth and normalize it
 pythia8_gen = pythia8file.Get('PFJet_pt_m_AK8Gen')
-pythia8_gen_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD_gen')
+pythia8_gen_softdrop = pythia8file.Get('PFJet_pt_m_AK8SDgen')
 pythia8_gen.Scale(1./pythia8_gen.Integral())
 pythia8_gen_softdrop.Scale(1./pythia8_gen_softdrop.Integral())
 
 herwig_gen = herwigfile.Get('PFJet_pt_m_AK8Gen')
-herwig_gen_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD_gen')
+herwig_gen_softdrop = herwigfile.Get('PFJet_pt_m_AK8SDgen')
 herwig_gen.Scale(1./herwig_gen.Integral())
 herwig_gen_softdrop.Scale(1./herwig_gen_softdrop.Integral())
 

@@ -1,5 +1,6 @@
 import ROOT
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gROOT.SetBatch()
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
