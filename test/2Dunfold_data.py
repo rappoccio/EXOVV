@@ -17,8 +17,8 @@ parser.add_option('--extension', action ='store', type = 'string',
        
 (options, args) = parser.parse_args()
 
-mcfile = TFile('responses_repdf_otherway_qcdmc_2dplots.root')
-datafile = TFile('jetht_weighted_dataplots_otherway_repdf.root')
+mcfile = TFile('responses_rejec_otherway_qcdmc_2dplots.root')
+datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
 
 outfile = TFile('2DData' + options.extension + '.root', 'RECREATE')
@@ -28,11 +28,16 @@ response = mcfile.Get('2d_response'+ options.extension)
 responseSD = mcfile.Get('2d_response_softdrop' + options.extension)
 
 truth = mcfile.Get('PFJet_pt_m_AK8Gen')
-reco = datafile.Get('PFJet_pt_m_AK8')
-
 truthSD = mcfile.Get('PFJet_pt_m_AK8SDgen')
-recoSD = datafile.Get('PFJet_pt_m_AK8SD')
 
+
+if 'nomnom' in options.extension :
+    reco = datafile.Get('PFJet_pt_m_AK8_nomnom')
+    recoSD = datafile.Get('PFJet_pt_m_AK8SD_nomnom')
+else : 
+    reco = datafile.Get('PFJet_pt_m_AK8')
+    recoSD = datafile.Get('PFJet_pt_m_AK8SD')
+    
 truth.Scale( 1./truth.Integral())
 reco.Scale( 1. / reco.Integral() )
 

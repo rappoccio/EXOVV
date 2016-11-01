@@ -20,16 +20,23 @@ parser.add_option('--extension', action ='store', type = 'string',
                                 
 (options, args) = parser.parse_args()
 
-myfile = TFile('responses_repdf_otherway_qcdmc_2dplots.root')
+myfile = TFile('responses_rejec_otherway_qcdmc_2dplots.root')
 
 
 response = myfile.Get('2d_response' + options.extension )
+responseSD = myfile.Get('2d_response_softdrop' + options.extension )
 outtext = options.extension
 truth = myfile.Get('PFJet_pt_m_AK8Gen')
-reco = myfile.Get('PFJet_pt_m_AK8')
-responseSD = myfile.Get('2d_response_softdrop' + options.extension )
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
-recoSD = myfile.Get('PFJet_pt_m_AK8SD')
+
+
+if 'nomnom' in options.extension :
+    reco = myfile.Get('PFJet_pt_m_AK8_nomnom')
+    recoSD = myfile.Get('PFJet_pt_m_AK8SD_nomnom')
+else :
+    reco = myfile.Get('PFJet_pt_m_AK8')
+    recoSD = myfile.Get('PFJet_pt_m_AK8SD')
+    
 response.Draw('colz')
 
 truth.Scale(1./truth.Integral())
