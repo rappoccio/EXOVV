@@ -12,12 +12,12 @@ parser = OptionParser()
 
 parser.add_option('--file', type='string', action='store',
                   dest='file',
-                  default = 'responses_repdf_otherway_qcdmc_2dplots.root',
+                  default = 'responses_rejec_otherway_qcdmc_2dplots.root',
                   help='Input file')
 
 parser.add_option('--hist', type='string', action='store',
                   dest='hist',
-                  default = '2d_response',
+                  default = '2d_response_nomnom',
                   help='Response matrix')
 
 (options, args) = parser.parse_args()

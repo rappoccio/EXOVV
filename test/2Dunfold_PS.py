@@ -11,44 +11,44 @@ from ROOT import TCanvas
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
 nptbin = 11
 
-herwigfile = TFile('qcdmc_herwig_otherway_repdf_2dplots.root')
-pythia8file = TFile('responses_repdf_otherway_qcdmc_2dplots.root')
-datafile = TFile('jetht_weighted_dataplots_otherway_repdf.root')
+herwigfile = TFile('qcdmc_herwig_otherway_rejec_2dplots.root')
+pythia8file = TFile('responses_rejec_otherway_qcdmc_2dplots.root')
+datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
 
-herwig_response = herwigfile.Get('2d_response')
-herwig_response_softdrop = herwigfile.Get('2d_response_softdrop')
+herwig_response = herwigfile.Get('2d_response_nomnom')
+herwig_response_softdrop = herwigfile.Get('2d_response_softdrop_nomnom')
 
-pythia8_response = pythia8file.Get('2d_response')
-pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop')
+pythia8_response = pythia8file.Get('2d_response_nomnom')
+pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop_nomnom')
 
 # Get data hists and normalize
-data_reco = datafile.Get('PFJet_pt_m_AK8')
-data_reco_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
+data_reco = datafile.Get('PFJet_pt_m_AK8_nomnom')
+data_reco_softdrop = datafile.Get('PFJet_pt_m_AK8SD_nomnom')
 
 data_reco.Scale(1./data_reco.Integral())
 data_reco_softdrop.Scale(1./data_reco_softdrop.Integral())
 
 # get pythia 8 reco and normalize
-pythia8_reco = pythia8file.Get('PFJet_pt_m_AK8')
-pythia8_reco_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD')
+pythia8_reco = pythia8file.Get('PFJet_pt_m_AK8_nomnom')
+pythia8_reco_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD_nomnom')
 pythia8_reco.Scale(1./pythia8_reco.Integral())
 pythia8_reco_softdrop.Scale(1./pythia8_reco_softdrop.Integral())
 
 # get herwig reco and normalize
-herwig_reco = herwigfile.Get('PFJet_pt_m_AK8')
-herwig_reco_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD')
+herwig_reco = herwigfile.Get('PFJet_pt_m_AK8_nomnom')
+herwig_reco_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD_nomnom')
 herwig_reco.Scale(1./herwig_reco.Integral())
 herwig_reco_softdrop.Scale(1./herwig_reco_softdrop.Integral())
 
 # get truth and normalize it
 pythia8_gen = pythia8file.Get('PFJet_pt_m_AK8Gen')
-pythia8_gen_softdrop = pythia8file.Get('PFJet_pt_m_AK8SDgen')
+pythia8_gen_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD_gen')
 pythia8_gen.Scale(1./pythia8_gen.Integral())
 pythia8_gen_softdrop.Scale(1./pythia8_gen_softdrop.Integral())
 
 herwig_gen = herwigfile.Get('PFJet_pt_m_AK8Gen')
-herwig_gen_softdrop = herwigfile.Get('PFJet_pt_m_AK8SDgen')
+herwig_gen_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD_gen')
 herwig_gen.Scale(1./herwig_gen.Integral())
 herwig_gen_softdrop.Scale(1./herwig_gen_softdrop.Integral())
 
