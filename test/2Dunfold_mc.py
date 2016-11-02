@@ -1,5 +1,6 @@
 import ROOT
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+ROOT.gROOT.SetBatch()
 
 from ROOT import gRandom, TH1, cout, TH2, TLegend, TFile
 from ROOT import RooUnfoldResponse
@@ -20,19 +21,24 @@ parser.add_option('--extension', action ='store', type = 'string',
                                 
 (options, args) = parser.parse_args()
 
-myfile = TFile('responses_repdf_otherway_qcdmc_2dplots.root')
+myfile = TFile('responses_rejec_otherway_qcdmc_2dplots.root')
 
 
 response = myfile.Get('2d_response' + options.extension )
+responseSD = myfile.Get('2d_response_softdrop' + options.extension )
 outtext = options.extension
 truth = myfile.Get('PFJet_pt_m_AK8Gen')
-<<<<<<< HEAD
-reco = myfile.Get('PFJet_pt_m_AK8')
-responseSD = myfile.Get('2d_response_softdrop' + options.extension )
-=======
->>>>>>> 7bff57e... Something went screwy
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
-recoSD = myfile.Get('PFJet_pt_m_AK8SD')
+#truth = response.Htruth()
+#truthSD = responseSD.Htruth()
+
+reco = myfile.Get('PFJet_pt_m_AK8')
+    
+if 'nomnom' in options.extension :    
+    recoSD = myfile.Get('PFJet_pt_m_AK8SD_nomnom')
+else :
+    recoSD = myfile.Get('PFJet_pt_m_AK8SD')
+    
 response.Draw('colz')
 
 truth.Scale(1./truth.Integral())
@@ -194,10 +200,12 @@ for i in range(0, nptbin):
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
     ihist = namesreco[i] = reco_unfolded.ProjectionX('pythia8_mass' + str(i), i+1, i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append( ihist )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesreco[i].Draw('hist')
     ihist = namesgen[i] = truth.ProjectionX('genmass' + str(i), i+1 , i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append( ihist) 
     namesgen[i].SetLineColor(2)
     namesgen[i].Draw('same hist')
@@ -209,10 +217,12 @@ for i, canvas in enumerate(canvases) :
 for i, canvas in enumerate(canvasesSD):
     canvas.cd()
     ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionX('pythia8_massSD' + str(i), i+1, i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append(ihist)
     namesrecoSD[i].SetTitle('SD Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesrecoSD[i].Draw('hist')
     ihist = namesgenSD[i] = truthSD.ProjectionX('genmassSD' + str(i), i+1, i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append(ihist)
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')
