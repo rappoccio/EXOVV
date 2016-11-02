@@ -30,7 +30,6 @@ outtext = options.extension
 truth = myfile.Get('PFJet_pt_m_AK8Gen')
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
 
-
 reco = myfile.Get('PFJet_pt_m_AK8')
     
 if 'nomnom' in options.extension :    
@@ -199,10 +198,12 @@ for i in range(0, nptbin):
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
     ihist = namesreco[i] = reco_unfolded.ProjectionX('pythia8_mass' + str(i), i+1, i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append( ihist )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesreco[i].Draw('hist')
     ihist = namesgen[i] = truth.ProjectionX('genmass' + str(i), i+1 , i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append( ihist) 
     namesgen[i].SetLineColor(2)
     namesgen[i].Draw('same hist')
@@ -214,10 +215,12 @@ for i, canvas in enumerate(canvases) :
 for i, canvas in enumerate(canvasesSD):
     canvas.cd()
     ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionX('pythia8_massSD' + str(i), i+1, i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append(ihist)
     namesrecoSD[i].SetTitle('SD Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesrecoSD[i].Draw('hist')
     ihist = namesgenSD[i] = truthSD.ProjectionX('genmassSD' + str(i), i+1, i+1)
+    ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append(ihist)
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')
