@@ -509,7 +509,7 @@ for itree,t in enumerate(trees) :
 
         if options.verbose :
             print '--------- Gen Jets -----------'
-        for igen in xrange( min( 2, int(NGenJet[0]) ) ):
+        for igen in xrange(  int(NGenJet[0]) ):
             GenJet = ROOT.TLorentzVector()
             GenJet.SetPtEtaPhiM( GenJetPt[igen], GenJetEta[igen], GenJetPhi[igen], GenJetMass[igen])
             GenJetSD = ROOT.TLorentzVector()
@@ -519,10 +519,12 @@ for itree,t in enumerate(trees) :
             GenJetsMassSD.append( GenJetMassSoftDrop[igen] )
             if GenJetPt[igen] > 0. :
                 ngen += 1
-                h_2DHisto_gen.Fill( GenJet.M(), GenJet.Perp(), weight )
+                if ngen <= 2 : 
+                    h_2DHisto_gen.Fill( GenJet.M(), GenJet.Perp(), weight )
             if GenJetPtSoftDrop[igen] > 0. :
                 ngenSD += 1
-                h_2DHisto_genSD.Fill( GenJetSD.M(), GenJetSD.Perp(), weight)
+                if ngenSD <= 2 : 
+                    h_2DHisto_genSD.Fill( GenJetSD.M(), GenJetSD.Perp(), weight)
             if options.verbose :
                 print '  ungroomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( igen, GenJet.Perp(), GenJet.Eta(), GenJet.Phi(), GenJet.M() )
                 print '    groomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( igen, GenJetSD.Perp(), GenJetSD.Eta(), GenJetSD.Phi(), GenJetSD.M() )
