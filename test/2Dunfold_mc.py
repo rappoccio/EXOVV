@@ -26,8 +26,11 @@ myfile = TFile('responses_repdf_otherway_qcdmc_2dplots.root')
 response = myfile.Get('2d_response' + options.extension )
 outtext = options.extension
 truth = myfile.Get('PFJet_pt_m_AK8Gen')
+<<<<<<< HEAD
 reco = myfile.Get('PFJet_pt_m_AK8')
 responseSD = myfile.Get('2d_response_softdrop' + options.extension )
+=======
+>>>>>>> 7bff57e... Something went screwy
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
 recoSD = myfile.Get('PFJet_pt_m_AK8SD')
 response.Draw('colz')
