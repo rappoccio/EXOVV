@@ -524,7 +524,7 @@ for itree,t in enumerate(trees) :
             if GenJetPtSoftDrop[igen] > 0. :
                 ngenSD += 1
                 if ngenSD <= 2 : 
-                    h_2DHisto_genSD.Fill( GenJetSD.M(), GenJetSD.Perp(), weight)
+                    h_2DHisto_genSD.Fill( GenJetSD.M(), GenJet.Perp(), weight)
             if options.verbose :
                 print '  ungroomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( igen, GenJet.Perp(), GenJet.Eta(), GenJet.Phi(), GenJet.M() )
                 print '    groomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( igen, GenJetSD.Perp(), GenJetSD.Eta(), GenJetSD.Phi(), GenJetSD.M() )
