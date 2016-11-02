@@ -29,9 +29,15 @@ parser.add_option('--logy', action='store_true',
                   help='plots in log y')
 
 
+parser.add_option('--extension', action ='store', type = 'string',
+                 default ='',
+                 dest='extension',
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
+
+
 (options, args) = parser.parse_args()
 
-f = ROOT.TFile('2DData.root')
+f = ROOT.TFile('2DData' + options.extension + '.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 

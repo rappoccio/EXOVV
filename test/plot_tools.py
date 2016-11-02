@@ -59,13 +59,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     powhegfile = ROOT.TFile("CMS_SMP_16_010.root")
     powheglist = []
     powheglistSD = []
-    for h in xrange(1, 10):
+    for h in [1,2,3,4,5,6,7,8,9]:
         powheglist.append( powhegfile.Get("CMS_SMP_16_010/d0"+str(h)+"-x01-y01"))
-    for h in xrange(10, 18):
+    for h in [10,11]:
         powheglist.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
-    for h in xrange(19,37):
+    for h in [12,13,14,15,16,17,18,19,20,21,22]:
         powheglistSD.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
-
     
     for h in xrange(0, 11):
         theorylist.append( theoryfile.Get("histSD_"+str(h)+"_ours"))
@@ -272,7 +271,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         herwigCopy.SetName( herwigCopy.GetName() + "_copy")
 
         powheg = None
-        if i < 11:
+        if i < 12:
             if options.isSoftDrop:
                 powheg = powheglistSD[i]
             else:
@@ -630,11 +629,11 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     powhegfile = ROOT.TFile("CMS_SMP_16_010.root")
     powheglist = []
     powheglistSD = []
-    for h in xrange(1, 10):
+    for h in [1,2,3,4,5,6,7,8,9]:
         powheglist.append( powhegfile.Get("CMS_SMP_16_010/d0"+str(h)+"-x01-y01"))
-    for h in xrange(10, 18):
+    for h in [10,11]:
         powheglist.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
-    for h in xrange(19,37):
+    for h in [12,13,14,15,16,17,18,19,20,21,22]:
         powheglistSD.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
 
     for h in xrange(0, 11):

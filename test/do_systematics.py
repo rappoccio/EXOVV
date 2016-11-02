@@ -12,7 +12,7 @@ parser = OptionParser()
                                  
 (options, args) = parser.parse_args()
 
-f = ROOT.TFile('2DClosure.root')
+f = ROOT.TFile('2DClosure_nomnom.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 bins = ['p_{T} 200-260 GeV','p_{T} 260-350 GeV','p_{T} 350-460 GeV','p_{T} 460-550 GeV','p_{T} 550-650 GeV','p_{T} 650-760 GeV', 'p_{T} 760-900 GeV', 'p_{T} 900-1000 GeV', 'p_{T} 1000-1100 GeV','p_{T} 1100-1200 GeV',

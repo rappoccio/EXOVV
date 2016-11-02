@@ -30,13 +30,13 @@ python 2Dunfold_mc.py --extension _jmrnom
 python 2Dunfold_mc.py --extension _nomnom
 
 python 2Dplot_data.py --oneband
-python 2Dplot_data.py --oneband --isSoftDrop
+python 2Dplot_data.py --oneband --isSoftDrop --extension "_nomnom"
 
 
 python 2Dplot_mc.py --oneband
-python 2Dplot_mc.py --oneband --isSoftDrop
+python 2Dplot_mc.py --oneband --isSoftDrop --extension "_nomnom"
 python 2Dplot_mc.py 
-python 2Dplot_mc.py --isSoftDrop
+python 2Dplot_mc.py --isSoftDrop --extension "_nomnom"
 
 
 python do_systematics.py 

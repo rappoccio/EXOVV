@@ -20,6 +20,11 @@ parser.add_option('--isSoftDrop', action='store_true',
                   help='theory curves on plots')
 
 
+parser.add_option('--extension', action ='store', type = 'string',
+                 default ='',
+                 dest='extension',
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
+
 
 parser.add_option('--logy', action='store_true',
                   default = False,
@@ -29,7 +34,7 @@ parser.add_option('--logy', action='store_true',
                                  
 (options, args) = parser.parse_args()
 
-f = ROOT.TFile('2DClosure.root')
+f = ROOT.TFile('2DClosure' + options.extension + '.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 
