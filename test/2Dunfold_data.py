@@ -80,9 +80,11 @@ for x in range(0, nptbin):
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
     namesreco[i] = reco_unfolded.ProjectionX('mass' + str(i), i+1, i+1)
+    namesreco[i].Scale( 1.0 / namesreco[i].Integral() )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco[i].Draw('hist')
     namesgen[i] = truth.ProjectionX('genmass' + str(i), i+1, i+1)
+    namesgen[i].Scale( 1.0 / namesgen[i].Integral() )
     namesgen[i].SetLineColor(4)
     namesgen[i].Draw('same hist')
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
@@ -93,9 +95,11 @@ for i, canvas in enumerate(canvases) :
 for i, canvas in enumerate(canvasesSD) : 
     canvas.cd()
     namesrecoSD[i] = recoSD_unfolded.ProjectionX('massSD' + str(i), i+1, i+1)
+    namesrecoSD[i].Scale( 1.0 / namesrecoSD[i].Integral() )
     namesrecoSD[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesrecoSD[i].Draw('hist')
     namesgenSD[i] = truthSD.ProjectionX('genmassSD' + str(i), i+1, i+1)
+    namesgenSD[i].Scale( 1.0 / namesgenSD[i].Integral() )
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')
     legendsSD[i].AddEntry(namesrecoSD[i], 'SD Reco', 'l')

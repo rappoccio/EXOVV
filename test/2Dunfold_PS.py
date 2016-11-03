@@ -18,10 +18,10 @@ datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
 
 herwig_response = herwigfile.Get('2d_response')
-herwig_response_softdrop = herwigfile.Get('2d_response_softdrop')
+herwig_response_softdrop = herwigfile.Get('2d_response_softdrop_nomnom')
 
 pythia8_response = pythia8file.Get('2d_response')
-pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop')
+pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop_nomnom')
 
 # Get data hists and normalize
 data_reco = datafile.Get('PFJet_pt_m_AK8')
@@ -32,13 +32,13 @@ data_reco_softdrop.Scale(1./data_reco_softdrop.Integral())
 
 # get pythia 8 reco and normalize
 pythia8_reco = pythia8file.Get('PFJet_pt_m_AK8')
-pythia8_reco_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD')
+pythia8_reco_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD_nomnom')
 pythia8_reco.Scale(1./pythia8_reco.Integral())
 pythia8_reco_softdrop.Scale(1./pythia8_reco_softdrop.Integral())
 
 # get herwig reco and normalize
 herwig_reco = herwigfile.Get('PFJet_pt_m_AK8')
-herwig_reco_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD')
+herwig_reco_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD_nomnom')
 herwig_reco.Scale(1./herwig_reco.Integral())
 herwig_reco_softdrop.Scale(1./herwig_reco_softdrop.Integral())
 
@@ -57,6 +57,7 @@ herwig_gen_softdrop.Scale(1./herwig_gen_softdrop.Integral())
 unfold_ps = RooUnfoldBayes(herwig_response, pythia8_reco, 4)
 unfolded_ps = unfold_ps.Hreco()
 pyth8_uherwig = unfolded_ps.ProjectionX()
+pyth8_uherwig.Scale( 1.0 / pyth8_uherwig.Integral() )
 pyth8_uherwig.SetName("pyth8_uherwig")
 canvases = []
 namesreco = []
@@ -71,9 +72,11 @@ for x in range(0, nptbin):
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
     namesreco[i] = unfolded_ps.ProjectionX('pythia8_unfolded_by_herwig' + str(i), i+1, i+1)
+    namesreco[i].Scale( 1.0 / namesreco[i].Integral() )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco[i].Draw('hist')
     namesgen[i] = pythia8_gen.ProjectionX('pythia8_gen' + str(i), i+1, i+1)
+    namesgen[i].Scale(1.0 / namesgen[i].Integral() )
     namesgen[i].SetLineColor(4)
     namesgen[i].Draw('same hist')
     legends[i].AddEntry(namesreco[i], 'Reco', 'l')
@@ -86,6 +89,7 @@ for i, canvas in enumerate(canvases) :
 unfold_ps_softdrop = RooUnfoldBayes(herwig_response_softdrop, pythia8_reco_softdrop, 4)
 unfolded_ps_softdrop = unfold_ps_softdrop.Hreco()
 pyth8_uherwig_softdrop = unfolded_ps_softdrop.ProjectionX()
+pyth8_uherwig_softdrop.Scale(1.0 / pyth8_uherwig_softdrop.Integral() )
 pyth8_uherwig_softdrop.SetName('pyth8_uherwig_softdrop')
 
 
@@ -103,9 +107,11 @@ for x in range(0, nptbin):
 for i, canvas in enumerate(canvases_softdrop) : 
     canvas.cd()
     namesreco_softdrop[i] = unfolded_ps_softdrop.ProjectionX('pythia8_unfolded_by_herwig_softdrop' + str(i), i+1, i+1)
+    namesreco_softdrop[i].Scale(1.0 / namesreco_softdrop[i].Integral() )
     namesreco_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco_softdrop[i].Draw('hist')
     namesgen_softdrop[i] = pythia8_gen_softdrop.ProjectionX('pythia8_gen' + str(i), i+1, i+1)
+    namesgen_softdrop[i].Scale( 1.0 / namesgen_softdrop[i].Integral() )
     namesgen_softdrop[i].SetLineColor(4)
     namesgen_softdrop[i].Draw('same hist')
     legends_softdrop[i].AddEntry(namesreco_softdrop[i], 'Reco', 'l')
@@ -117,6 +123,7 @@ unfold_ps_data = RooUnfoldBayes(herwig_response, data_reco, 4)
 unfolded_ps_data = unfold_ps_data.Hreco()
 
 data_uherwig = unfolded_ps_data.ProjectionX()
+data_uherwig.Scale(1.0 / data_uherwig.Integral() )
 data_uherwig.SetName('data_uherwig')
 
 canvases_data = []
@@ -129,6 +136,7 @@ for x in range(0, nptbin):
 for i, canvas in enumerate(canvases_data) : 
     canvas.cd()
     namesreco_data.append(unfolded_ps_data.ProjectionX('data_unfolded_by_herwig' + str(i), i+1, i+1))
+    namesreco_data[i].Scale(1.0 / namesreco_data[i].Integral() )
     namesreco_data[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco_data[i].Draw('hist')
     legends_data[i].AddEntry(namesreco_data[i], 'Reco', 'l')
@@ -141,6 +149,7 @@ unfold_ps_data_softdrop = RooUnfoldBayes(herwig_response_softdrop, data_reco_sof
 unfolded_ps_data_softdrop = unfold_ps_data_softdrop.Hreco()
 
 data_uherwig_softdrop = unfolded_ps_data_softdrop.ProjectionX()
+data_uherwig_softdrop.Scale( 1.0 / data_uherwig_softdrop.Integral() )
 data_uherwig_softdrop.SetName('data_uherwig_softdrop')
 
 canvases_data_softdrop = []
@@ -154,6 +163,7 @@ for x in range(0, nptbin):
 for i, canvas in enumerate(canvases_data_softdrop) : 
     canvas.cd()
     namesreco_data_softdrop.append(unfolded_ps_data_softdrop.ProjectionX('data_unfolded_by_herwig_softdrop' + str(i), i+1, i+1))
+    namesreco_data_softdrop[i].Scale( 1.0 / namesreco_data_softdrop[i].Integral() )
     namesreco_data_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco_data_softdrop[i].Draw('hist')
     legends_data_softdrop[i].AddEntry(namesreco_data_softdrop[i], 'Reco', 'l')
@@ -177,9 +187,11 @@ for x in range(0, nptbin):
 for i, canvas in enumerate(canvases_bias) : 
     canvas.cd()
     namesreco_bias[i] = unfolded_bias.ProjectionX('herwig_unfolded_by_pythia8' + str(i), i+1, i+1)
+    namesreco_bias[i].Scale( 1.0 / namesreco_bias[i].Integral() )
     namesreco_bias[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco_bias[i].Draw('hist')
     namesgen_bias[i] = herwig_gen.ProjectionX('herwig_gen' + str(i), i+1, i+1)
+    namesgen_bias[i].Scale( 1.0 / namesgen_bias[i].Integral() )
     namesgen_bias[i].SetLineColor(4)
     namesgen_bias[i].Draw('same hist')
     legends_bias[i].AddEntry(namesreco_bias[i], 'Pyth6 Unfolded by Pythia8', 'l')
@@ -206,9 +218,11 @@ for x in range(0, nptbin):
 for i, canvas in enumerate(canvases_bias_softdrop) : 
     canvas.cd()
     namesreco_bias_softdrop[i] = unfolded_bias_softdrop.ProjectionX('herwig_unfolded_by_pythia8_softdrop' + str(i), i+1, i+1)
+    namesreco_bias_softdrop[i].Scale( 1.0 / namesreco_bias_softdrop[i].Integral() )
     namesreco_bias_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
     namesreco_bias_softdrop[i].Draw('hist')
     namesgen_bias_softdrop[i] = herwig_gen_softdrop.ProjectionX('herwig_gen_softdrop' + str(i), i+1, i+1)
+    namesgen_bias_softdrop[i].Scale( 1.0 / namesgen_bias_softdrop[i].Integral() )
     namesgen_bias_softdrop[i].SetLineColor(4)
     namesgen_bias_softdrop[i].Draw('same hist')
     legends_bias_softdrop[i].AddEntry(namesreco_bias_softdrop[i], 'Reco', 'l')
