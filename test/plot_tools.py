@@ -66,7 +66,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     for h in [12,13,14,15,16,17,18,19,20,21,22]:
         powheglistSD.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
     
-    for h in xrange(0, 11):
+    for h in xrange(0, 12):
         theorylist.append( theoryfile.Get("histSD_"+str(h)+"_ours"))
         theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)+"_ours"))
 
@@ -285,13 +285,16 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             #legends_list[i].Draw("same")
             powhegcopy = powheg.Clone()
             powhegcopy.SetName( powheg.GetName()+"_copy")
+            powhegcopy.SetLineStyle(4)
+            powhegcopy.SetLineColor(ROOT.kGreen + 3)
+            powhegcopy.SetLineWidth(3)            
 
 
-        if i < 18 and options.isSoftDrop and isData:
+        if i < 12 and options.isSoftDrop and isData:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
-            ratio_bin = float(hReco.GetBinContent(7)/theory.GetBinContent(7))
+            ratio_bin = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory.GetBinContent( theory.GetXaxis().FindBin(50.)))
             theory.Scale(ratio_bin)
             #theory.Scale(scales[i])
             theory.SetFillStyle(3003)
@@ -350,14 +353,14 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         
         datcopy = hReco.Clone()
         datcopy.SetName( datcopy.GetName() + "_copy" )
-        datcopy.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datcopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datcopy.GetYaxis().SetTitleOffset(1.2)
         datcopy.GetYaxis().SetTitleSize(34)
         datcopy.SetMarkerStyle(0)
         # this stuff here is parton shower, bad name, ------------------------------------------> NEEDS REFACTORING
         datcopycopy = hRecoCopy.Clone()
         datcopycopy.SetName(hRecoCopy.GetName()+"_copyofcopy")
-        datcopycopy.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datcopycopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datcopycopy.GetYaxis().SetTitleOffset(1.2)
         datcopycopy.GetYaxis().SetLabelOffset(0.0001)
         datcopycopy.GetYaxis().SetTitleSize(34)
@@ -365,7 +368,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
-        datPDF.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPDF.GetYaxis().SetTitleOffset(1.2)
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(34)
@@ -373,7 +376,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         
         datJMR = hRecoJMR.Clone()
         datJMR.SetName(hRecoJMR.GetName()+"_jmrcopy")
-        datJMR.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datJMR.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datJMR.GetYaxis().SetTitleOffset(1.2)
         datJMR.GetYaxis().SetLabelOffset(0.0001)
         datJMR.GetYaxis().SetTitleSize(34)
@@ -381,7 +384,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
 
         datRMS = hRMS.Clone()
         datRMS.SetName(hRecoJMR.GetName()+"_jmrcopy")
-        datRMS.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datRMS.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datRMS.GetYaxis().SetTitleOffset(1.2)
         datRMS.GetYaxis().SetLabelOffset(0.0001)
         datRMS.GetYaxis().SetTitleSize(34)
@@ -419,17 +422,17 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
-        trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+        trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
         trueCopy.GetYaxis().SetTitleOffset(1.2)
 
-        herwigCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+        herwigCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
         herwigCopy.UseCurrentStyle()
         herwigCopy.GetXaxis().SetTitleOffset(2)
         herwigCopy.GetYaxis().SetTitleOffset(1.2)
         if i < 11 and options.isSoftDrop and isData:
-            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
             theorycopy.UseCurrentStyle()
             theorycopy.SetFillStyle(3003)
             theorycopy.SetFillColor(ROOT.kBlue)
@@ -437,7 +440,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
-            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
             theory2copy.SetFillStyle(3006)
             theory2copy.SetFillColor(ROOT.kOrange+7)
@@ -446,8 +449,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theory2copy.GetXaxis().SetTitleOffset(2)
             theory2copy.GetYaxis().SetTitleOffset(1.2)
         if i < 11:
-            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
-            powhegcopy.UseCurrentStyle()
+            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            #powhegcopy.UseCurrentStyle()
             powhegcopy.GetXaxis().SetTitleOffset(2)
             powhegcopy.GetYaxis().SetTitleOffset(1.2)
     
@@ -476,31 +479,31 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.GetYaxis().SetNdivisions(2,4,0,False)
         datRMS.SetFillColor(ROOT.kMagenta+2)
 
-        datcopy.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datcopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datcopy.GetYaxis().SetTitleSize(34)
         datcopy.GetYaxis().SetTitleOffset(1.2)
         datcopy.GetYaxis().SetLabelOffset(0.01)
         datcopy.GetYaxis().SetLabelSize(28)
         datcopy.GetXaxis().SetLabelSize(28)
-        datcopycopy.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datcopycopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datcopycopy.GetYaxis().SetTitleSize(34)
         datcopycopy.GetYaxis().SetTitleOffset(1.2)
         datcopycopy.GetYaxis().SetLabelOffset(0.01)
         datcopycopy.GetYaxis().SetLabelSize(28)
         datcopycopy.GetXaxis().SetLabelSize(28)
-        datPDF.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPDF.GetYaxis().SetTitleSize(34)
         datPDF.GetYaxis().SetTitleOffset(1.2)
         datPDF.GetYaxis().SetLabelOffset(0.01)
         datPDF.GetYaxis().SetLabelSize(28)
         datPDF.GetXaxis().SetLabelSize(28)
-        datJMR.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datJMR.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datJMR.GetYaxis().SetTitleSize(34)
         datJMR.GetYaxis().SetTitleOffset(1.2)
         datJMR.GetYaxis().SetLabelOffset(0.01)
         datJMR.GetYaxis().SetLabelSize(28)
         datJMR.GetXaxis().SetLabelSize(28)
-        datRMS.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datRMS.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datRMS.GetYaxis().SetTitleSize(34)
         datRMS.GetYaxis().SetTitleOffset(1.2)
         datRMS.GetYaxis().SetLabelOffset(0.01)
@@ -631,12 +634,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     powheglistSD = []
     for h in [1,2,3,4,5,6,7,8,9]:
         powheglist.append( powhegfile.Get("CMS_SMP_16_010/d0"+str(h)+"-x01-y01"))
-    for h in [10,11]:
+    for h in [10,11,12]:
         powheglist.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
-    for h in [12,13,14,15,16,17,18,19,20,21,22]:
+    for h in [13,14,15,16,17,18,19,20,21,22,23,24]:
         powheglistSD.append( powhegfile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
 
-    for h in xrange(0, 11):
+    for h in xrange(0, 12):
         theorylist.append( theoryfile.Get("histSD_"+str(h)+"_ours"))
         theorylist2.append( theoryfile2.Get("histSD_"+str(h)+"_ours"))
     for i, canv in enumerate(canvas_list):
@@ -810,12 +813,16 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             legends_list[i].AddEntry(powheg, "POWHEG + PYTHIA8", 'l')
             powhegcopy = powheg.Clone()
             powhegcopy.SetName( powheg.GetName()+"_copy")
-
+            powhegcopy.SetLineStyle(4)
+            powhegcopy.SetLineColor(ROOT.kGreen + 3)
+            powhegcopy.SetLineWidth(3)
+            
         if i < 11 and options.isSoftDrop and isData:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
-            ratio_bin = float(hReco.GetBinContent(7)/theory.GetBinContent(7))
+            print 'i = ', i
+            ratio_bin = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory.GetBinContent( theory.GetXaxis().FindBin(50.)))
             theory.Scale(ratio_bin)
             #theory.Scale(scales[i])
             theory.SetFillStyle(3003)
@@ -925,14 +932,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
-        datPDF.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPDF.GetYaxis().SetTitleOffset(1.2)
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(34)
         datPDF.SetMarkerStyle(0)
         datStat = hStat.Clone()
         datStat.SetName(hStat.GetName()+"copy")
-        datStat.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datStat.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datStat.GetYaxis().SetTitleOffset(1.2)
         datStat.GetYaxis().SetLabelOffset(0.0001)
         datStat.GetYaxis().SetTitleSize(34)
@@ -959,17 +966,17 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
-        trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+        trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
         trueCopy.GetYaxis().SetTitleOffset(1.2)
-        herwigCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+        herwigCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
         herwigCopy.UseCurrentStyle()
         herwigCopy.GetXaxis().SetTitleOffset(2)
         herwigCopy.GetYaxis().SetTitleOffset(1.2)
         if i < 11 and options.isSoftDrop and isData:
 
-            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
             theorycopy.UseCurrentStyle()
             theorycopy.SetFillStyle(3003)
             theorycopy.SetFillColor(ROOT.kBlue)
@@ -977,7 +984,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
-            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
+            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
             theory2copy.SetFillStyle(3006)
             theory2copy.SetFillColor(ROOT.kOrange+7)            
@@ -987,8 +994,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory2copy.GetYaxis().SetTitleOffset(1.2)
 
         if i < 11:
-            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Unfolded }")
-            powhegcopy.UseCurrentStyle()
+            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            #powhegcopy.UseCurrentStyle()
             powhegcopy.GetXaxis().SetTitleOffset(2)
             powhegcopy.GetYaxis().SetTitleOffset(1.2)
 
@@ -997,7 +1004,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetYaxis().SetNdivisions(2,4,0,False)
         datPDF.SetFillColor(ROOT.kGray)
         
-        datPDF.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPDF.GetYaxis().SetTitleSize(34)
         datPDF.GetYaxis().SetTitleOffset(1.2)
         datPDF.GetYaxis().SetLabelOffset(0.01)
@@ -1008,7 +1015,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datStat.SetMaximum(2)
         datStat.GetYaxis().SetNdivisions(2, 4, 0, False)
         datStat.SetFillColor(ROOT.kGray+1)
-        datStat.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        datStat.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datStat.GetYaxis().SetTitleSize(34)
         datStat.GetYaxis().SetTitleOffset(1.2)
         datStat.GetYaxis().SetLabelOffset(0.01)
@@ -1168,11 +1175,11 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gencopy.Divide(gencopy, reco_list[i], 1.0, 1.0, "B")
 
         pads_list[i][1].cd()
-        gencopy.SetTitle(";Jet Mass (GeV); #frac{Theory}{Unfolded }")
+        gencopy.SetTitle(";Jet Mass (GeV); #frac{Theory}{Data}")
         recocopy.SetMinimum(0)
         recocopy.SetMaximum(2)
         recocopy.GetYaxis().SetNdivisions(2,4,0,False)
-        recocopy.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        recocopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         recocopy.GetYaxis().SetTitleOffset(1.2)
         recocopy.GetYaxis().SetLabelOffset(0.01)
         recocopy.GetYaxis().SetLabelSize(28)
@@ -1183,7 +1190,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gencopy.SetMinimum(0)
         gencopy.SetMaximum(2)
         gencopy.GetYaxis().SetNdivisions(2,4,0,False)
-        gencopy.GetYaxis().SetTitle("#frac{Theory}{Unfolded }")
+        gencopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         gencopy.GetYaxis().SetTitleOffset(1.2)
         gencopy.GetYaxis().SetLabelOffset(0.01)
         gencopy.GetYaxis().SetLabelSize(28)

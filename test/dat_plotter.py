@@ -55,12 +55,11 @@ for j, jbin in enumerate(ptbins):
             histbin = hist.GetXaxis().FindBin( ixval )
             hist.SetBinContent( histbin, Bincontent[Xvalues.index(ixval)] )
             hist.SetBinError( histbin, Binerrors[Xvalues.index(ixval)] )
-        #ourhist = hist.Rebin( len(binning) - 1, hist.GetName() + '_ours', binning )
-        ourhist = hist.Clone( hist.GetName() + '_ours' )
+        ourhist = hist.Rebin( len(binning) - 1, hist.GetName() + '_ours', binning )
 
-        #for ibin in xrange(1, ourhist.GetNbinsX()+1):
-        #    ourhist.SetBinContent(ibin, ourhist.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-        #    ourhist.SetBinError(ibin, ourhist.GetBinError(ibin) * 1./mbinwidths[ibin-1])
+        for ibin in xrange(1, ourhist.GetNbinsX()+1):
+            ourhist.SetBinContent(ibin, ourhist.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            ourhist.SetBinError(ibin, ourhist.GetBinError(ibin) * 1./mbinwidths[ibin-1])
         ourhist.Write()
 fout.Close()
 
