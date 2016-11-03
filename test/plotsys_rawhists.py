@@ -42,6 +42,7 @@ ROOT.gStyle.SetTitleOffset(1.5, "Y")
 ROOT.gStyle.SetLabelFont(43, "XYZ")
 ROOT.gStyle.SetLabelSize(24, "XYZ")
 
+ptBinA = array.array('i', [  200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 13000])
 
 
 
@@ -120,6 +121,11 @@ tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
 tlx.SetTextSize(25)
+
+tlx2 = ROOT.TLatex()
+tlx2.SetNDC()
+tlx2.SetTextFont(43)
+tlx2.SetTextSize(22)
 legs = []
 
 for iptbin in xrange( len(dataprojs) ) :
@@ -185,9 +191,13 @@ for iptbin in xrange( len(dataprojs) ) :
     tlx.DrawLatex(0.2, 0.926, "CMS Preliminary")
     tlx.DrawLatex(0.72, 0.926, "2.3 fb^{-1} (13 TeV)")
 
-    if 'AK8SD' not in options.hist : 
+    
+
+    if 'AK8SD' not in options.hist :
+        tlx2.DrawLatex( 0.3, 0.4, "p_{T} = " + str(ptBinA[iptbin]) + '-' + str(ptBinA[iptbin+1]) + ' GeV' ) 
         leg = ROOT.TLegend(0.3, 0.6, 0.55, 0.85)
     elif 'AK8SD' in options.hist :
+        tlx2.DrawLatex( 0.6, 0.4, "p_{T} = " + str(ptBinA[iptbin]) + '-' + str(ptBinA[iptbin+1]) + ' GeV' ) 
         leg = ROOT.TLegend(0.6, 0.6, 0.85, 0.85)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)

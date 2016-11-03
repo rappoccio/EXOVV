@@ -1,0 +1,30 @@
+In this histogram:
+CentralValue = relative probability (bins above 50 GeV sum to unity)
+Format:
+ 
+MassBin(GeV)	CentralValue	LowerValue	UpperValue#Comment
+ 
+5. — 10.	0.538	0.175	0.901#NonperturbativeEffectsNotModeled
+10. — 15.	0.489	0.236	0.741#NonperturbativeEffectsNotModeled
+15. — 20.	0.441	0.245	0.637#NonperturbativeEffectsNotModeled
+20. — 25.	0.395	0.238	0.552#NonperturbativeEffectsNotModeled
+25. — 30.	0.362	0.223	0.501#NonperturbativeEffectsNotModeled
+30. — 35.	0.309	0.204	0.414
+35. — 40.	0.279	0.187	0.372
+40. — 45.	0.248	0.17	0.326
+45. — 50.	0.226	0.157	0.294
+50. — 55.	0.196	0.14	0.251
+55. — 60.	0.169	0.126	0.212
+60. — 65.	0.144	0.111	0.177
+65. — 70.	0.118	0.0977	0.139
+70. — 75.	0.0992	0.0861	0.112
+75. — 80.	0.0786	0.0739	0.0833
+80. — 85.	0.0585	0.0523	0.0648
+85. — 90.	0.0397	0.0261	0.0532
+90. — 95.	0.0266	0.00761	0.0455
+95. — 100.	0.018	0	0.0401
+100. — 105.	0.0132	0	0.0361
+105. — 110.	0.0107	0	0.0335
+110. — 115.	0.01	0	0.0319
+115. — 120.	0.00958	0	0.0304
+120. — 125.	0.00914	0	0.0291
