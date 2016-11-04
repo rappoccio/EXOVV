@@ -417,7 +417,9 @@ def JetTreeDump_FWLite(argv) :
 
     h_jetsAK8Keys = Handle("std::vector<std::vector<int> >")
     l_jetsAK8Keys = ( "jetKeysAK8" + options.puStr , "" )
-
+    
+    h_jetsAK8BDisc = Handle("std::vector<float>")
+    l_jetsAK8BDisc = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "CSVv2" )
     h_jetsAK8SoftDropMass = Handle("std::vector<float>")
     l_jetsAK8SoftDropMass = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "softDropMass" )
     h_jetsAK8TrimMass = Handle("std::vector<float>")
@@ -1119,6 +1121,7 @@ def JetTreeDump_FWLite(argv) :
 
             event.getByLabel ( l_jetsAK8Keys, h_jetsAK8Keys )
 
+
             event.getByLabel ( l_jetsAK8SoftDropMass, h_jetsAK8SoftDropMass )
             event.getByLabel ( l_jetsAK8TrimMass, h_jetsAK8TrimMass )
             event.getByLabel ( l_jetsAK8PrunMass, h_jetsAK8PrunMass )
@@ -1129,8 +1132,8 @@ def JetTreeDump_FWLite(argv) :
 
             event.getByLabel ( l_jetsAK8vSubjetIndex0, h_jetsAK8vSubjetIndex0 )
             event.getByLabel ( l_jetsAK8vSubjetIndex1, h_jetsAK8vSubjetIndex1 )
-
-
+            
+            event.getByLabel ( l_jetsAK8BDisc , h_jetsAK8BDisc )
             event.getByLabel ( l_subjetsAK8BDisc, h_subjetsAK8BDisc)
             event.getByLabel ( l_subjetsAK8Pt, h_subjetsAK8Pt)
             event.getByLabel ( l_subjetsAK8Eta, h_subjetsAK8Eta)
@@ -1169,6 +1172,7 @@ def JetTreeDump_FWLite(argv) :
                 AK8Energy = h_jetsAK8Energy.product()
                 AK8Y = h_jetsAK8Y.product()
 
+                AK8BDisc = h_jetsAK8BDisc.product()
                 AK8OldJEC = h_jetsAK8JEC.product()
                 AK8Area = h_jetsAK8Area.product()
                 AK8SoftDropM = h_jetsAK8SoftDropMass.product()
@@ -1518,6 +1522,7 @@ def JetTreeDump_FWLite(argv) :
                     FatJetEta           [ifatjet] = jetP4.Eta()
                     FatJetPhi           [ifatjet] = jetP4.Phi()
                     FatJetRap           [ifatjet] = jetP4.Rapidity()
+                    FatJetSDmaxbdisc    [ifatjet] = AK8BDisc[ifatjet]
                     if AK8JetRho[ifatjet] != None : 
                         FatJetRhoRatio      [ifatjet] = AK8JetRho[ifatjet]
                     else :
