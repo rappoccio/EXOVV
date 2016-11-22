@@ -4,7 +4,7 @@ ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
-from plot_tools import plotter, setup, get_ptbins
+from plot_tools import plotter, setup, get_ptbins, smooth
 from optparse import OptionParser
 from sysvar import plot_vars, reset
 import pickle
@@ -136,10 +136,15 @@ for i in range(0, nptbins):
     temp_softdrop_diff = []
     ps.append(parton_shower.Get('pythia8_unfolded_by_herwig'+str(i)))
     ps_softdrop.append(parton_shower.Get('pythia8_unfolded_by_herwig_softdrop'+str(i)))
+    
     temp_unc = (ps[i] - datalist[i])
     temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
     temp_unc.Scale(scales[i])
     temp_softdrop_unc.Scale(scales[i])
+
+    smooth( temp_unc, delta=2 )
+    smooth( temp_softdrop_unc, delta=2)
+    
     for ibin in xrange(1,temp_unc.GetNbinsX()):
         temp_diff.append(abs(temp_unc.GetBinContent(ibin)))
         temp_softdrop_diff.append(abs(temp_softdrop_unc.GetBinContent(ibin)))
@@ -193,12 +198,22 @@ for i in range(0, nptbins):
     temp_unc2_softdrop.Scale(scales[i])
     temp_unc3.Scale(scales[i])
     temp_unc3_softdrop.Scale(scales[i])
-    
+
+    smooth( temp_unc, delta=2 )
+    smooth( temp_unc_softdrop, delta=2 )
+    smooth( temp_unc2, delta=2 )
+    smooth( temp_unc2_softdrop, delta=2 )
+    smooth( temp_unc3, delta=2 )
+    smooth( temp_unc3_softdrop, delta=2 )
+                
     for ibin in xrange(1, temp_unc.GetNbinsX()):
         val_ungroomed = (temp_unc.GetBinContent(ibin))**2 + (temp_unc2.GetBinContent(ibin))**2 + (temp_unc3.GetBinContent(ibin))**2
         val_groomed = (temp_unc_softdrop.GetBinContent(ibin))**2 + (temp_unc2_softdrop.GetBinContent(ibin))**2 + (temp_unc3_softdrop.GetBinContent(ibin))**2
         temp_pdf_diff.append(sqrt(val_ungroomed))
         temp_softdrop_pdf_diff.append( sqrt(val_groomed) )
+
+
+
     pdf_differences.append(temp_pdf_diff)
     pdf_differences_softdrop.append(temp_softdrop_pdf_diff)
 

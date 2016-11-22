@@ -1,10 +1,3 @@
-#from ROOT import *
-import ROOT
-ROOT.gSystem.Load("RooUnfold/libRooUnfold")
-from ROOT import TCanvas, TLegend
-from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
-from math import sqrt
-from plot_tools import plotter, setup, get_ptbins, plot_OneBand, PlotRatios
 from optparse import OptionParser
 import pickle
 parser = OptionParser()
@@ -28,7 +21,6 @@ parser.add_option('--logy', action='store_true',
                   dest='logy',
                   help='plots in log y')
 
-
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
@@ -36,6 +28,14 @@ parser.add_option('--extension', action ='store', type = 'string',
 
 
 (options, args) = parser.parse_args()
+
+#from ROOT import *
+import ROOT
+ROOT.gSystem.Load("RooUnfold/libRooUnfold")
+from ROOT import TCanvas, TLegend
+from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
+from math import sqrt
+from plot_tools import plotter, setup, get_ptbins, plot_OneBand, PlotRatios
 
 f = ROOT.TFile('2DData' + options.extension + '.root')
 parton_shower = ROOT.TFile('PS_hists.root')

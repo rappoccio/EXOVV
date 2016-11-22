@@ -21,6 +21,13 @@ parser.add_option('--logy', action='store_true',
                   dest='logy',
                   help='plots in log y')
 
+parser.add_option('--extension', action ='store', type = 'string',
+                 default ='',
+                 dest='extension',
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
+
+
+
 (options, args) = parser.parse_args()
 
 
@@ -31,7 +38,7 @@ def add_quadrature( a ):
 
 def get_ptbins_std():
     return ['200-260 GeV #times 10^{0}','260-350 GeV #times 10^{1}','350-460 GeV #times 10^{2}','460-550 GeV #times 10^{3}','550-650 GeV #times 10^{4}','650-760 GeV #times 10^{5}', '760-900 GeV #times 10^{6}', '900-1000 GeV #times 10^{7}', '1000-1100 GeV #times 10^{8}','1100-1200 GeV #times 10^{9}',
-    '1200-1300 GeV', '> 1300 GeV']
+    '1200-1300 GeV #times 10^{10}', '> 1300 GeV']
 
 def get_markers() :
     return [ 20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28  ]
@@ -40,6 +47,46 @@ def get_ptbins():
     return ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} 760-900 GeV}', '#bf{p_{T} 900-1000 GeV}', '#bf{p_{T} 1000-1100 GeV}','#bf{p_{T} 1100-1200 GeV}',
     '#bf{p_{T} 1200-1300 GeV}', '#bf{p_{T} > 1300 GeV}']
 
+
+# Smooth histograms :
+#   - Loop through bins
+#   - Take the median value above and below "this" bin
+#   - If the current value is below the median above AND below, replace with average of medians
+def smooth( hist, delta = 2 ) :
+    newvalues = []
+    if hist.GetNbinsX() >= 2 * delta :
+        for ibin in xrange(0, hist.GetNbinsX() + 1 ) :
+            val = hist.GetBinContent( ibin )
+            valslo = []
+            valshi = []
+            binlo = ibin - delta
+            if binlo < 0 : binlo = 0
+            binhi = ibin + delta
+            if binhi > hist.GetNbinsX()+1 : binhi = hist.GetNbinsX()+1
+            for jbin in xrange( binlo, ibin ) :
+                valslo.append( hist.GetBinContent( jbin ) )
+            for jbin in xrange( ibin, binhi ) :
+                valshi.append( hist.GetBinContent( jbin ) )
+            
+            svalslo = sorted( valslo )
+            svalshi = sorted( valshi )
+            if len( valslo ) == 0 :
+                medianlo = 0.
+            else : 
+                medianlo = svalslo[ len(svalslo) / 2 ]
+            if len( valshi ) == 0 :
+                medianhi = 0.
+            else : 
+                medianhi = svalshi[ len(svalshi) / 2 ]
+            if val < medianlo and val < medianhi :
+                newvalues.append ((medianlo + medianhi) * 0.5)
+            else :
+                newvalues.append( val )
+        for ibin in xrange(0, hist.GetNbinsX() + 1 ) :
+            hist.SetBinContent( ibin, newvalues[ibin] )
+            
+            
+        
 
 def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
@@ -607,7 +654,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     
     the_stack = THStack("stack", "")
     build_the_stack = []
-    stackleg = ROOT.TLegend(0.2, 0.7, 0.85, 0.85)
+    stackleg = ROOT.TLegend(0.17, 0.7, 0.89, 0.89)
+    stackleg.SetTextSize( 0.017 )
     stackleg.SetNColumns(4)
     stackleg.SetFillColor(0)
     stackleg.SetBorderSize(0)
@@ -1106,9 +1154,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
     stackleg.Draw()
     if(not options.isSoftDrop):
-        the_stack.SetTitle(";Soft Drop Jet Mass(GeV);Fractional Cross Section")
-    else:
         the_stack.SetTitle(";Jet Mass(GeV);Fractional Cross Section")
+    else:
+        the_stack.SetTitle(";Groomed Jet Mass(GeV);Fractional Cross Section")
     latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
     latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 

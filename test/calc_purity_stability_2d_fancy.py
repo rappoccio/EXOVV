@@ -35,6 +35,7 @@ ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 f = ROOT.TFile(options.file)
 r = f.Get(options.hist)
 h2 = r.Hresponse()
+
 h2pretty = h2.Clone("h2pretty")
 
 title = 'Ungroomed'
@@ -236,6 +237,8 @@ c0.Update()
 c0.Print("response_" + options.hist + ".pdf", "pdf")
 c0.Print("response_" + options.hist + ".png", "png")
 
+
+
 c1 = ROOT.TCanvas("c1", "xpurity")
 leg = ROOT.TLegend(0.7, 0.7, 0.84, 0.84)
 leg.SetFillColor(0)
@@ -251,3 +254,52 @@ c1.Update()
 outstr = "ungroomed"
 c1.Print("purity_stability_" + options.hist + ".pdf", "pdf")
 c1.Print("purity_stability_" + options.hist + ".png", "png")
+
+
+
+
+
+
+h2pretty_ptonly = h2pretty.Clone("h2pretty_ptonly")
+h2pretty_ptonly.Rebin2D(len(mbins)-1,len(mbins)-1)
+
+
+c2 = ROOT.TCanvas("c2", "response", 800, 800)
+c2.SetRightMargin(0.15)
+c2.SetLeftMargin(0.15)
+c2.SetBottomMargin(0.15)
+c2.SetTopMargin(0.15)
+c2.SetGrid()
+axislabels.GetYaxis().SetTitleOffset(1.5)
+axislabels.SetTitle(';Response Matrix Reconstructed p_{T} Bins (GeV);Response Matrix Generated p_{T} Bins (GeV)')
+axislabels.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetXaxis().SetTitleOffset(1.5)
+axislabels.GetYaxis().SetTitleOffset(1.5)
+axislabels.Draw("axis")
+h2pretty_ptonly.GetYaxis().SetTitleOffset(1.5)
+h2pretty_ptonly.GetXaxis().SetLabelSize(0)
+h2pretty_ptonly.GetYaxis().SetLabelSize(0)
+h2pretty_ptonly.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
+h2pretty_ptonly.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
+h2pretty_ptonly.GetXaxis().SetTitleOffset(1.5)
+h2pretty_ptonly.GetYaxis().SetTitleOffset(1.5)
+h2pretty_ptonly.Draw("colz same")
+
+
+
+
+
+c2.SetLogz()
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(43)
+tlx.SetTextSize(30)
+tlx.DrawLatex(0.14, 0.860, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.860, "2.3 fb^{-1} (13 TeV)")
+tlx.SetTextSize(22)
+tlx.DrawLatex(0.2, 0.6, title + " Jets")
+#xaxis1.Draw()
+c2.Update()
+c2.Print("responsept_" + options.hist + ".pdf", "pdf")
+c2.Print("responsept_" + options.hist + ".png", "png")
