@@ -1,4 +1,4 @@
-﻿#! /usr/bin/env python
+#! /usr/bin/env python
 
 ##################
 # Editting flags
@@ -621,9 +621,17 @@ def JetTreeDump_FWLite(argv) :
         GenJetSDsubjetBp4   = array('f', [-1., -1., -1., -1., -1.])
         GenJetPtSoftDrop    = array('f', [-1., -1., -1., -1., -1.])
 
-
-        #### Here : invent a new name for "GenPartXXXX" etc and fill everything below as done for other variables
-
+        GenPartID           = array('f', [-1., -1., -1., -1., -1.])
+        GenPartStatus       = array('f', [-1., -1., -1., -1., -1.])
+        GenPartMom0ID       = array('f', [-1., -1., -1., -1., -1.])
+        GenPartMom0Status   = array('f', [-1., -1., -1., -1., -1.])
+        GenPartMom1ID       = array('f', [-1., -1., -1., -1., -1.])
+        GenPartMom1Status   = array('f', [-1., -1., -1., -1., -1.])
+        GenPartDau0ID       = array('f', [-1., -1., -1., -1., -1.])
+        GenPartDau0Status   = array('f', [-1., -1., -1., -1., -1.])
+        GenPartDau1ID       = array('f', [-1., -1., -1., -1., -1.])
+        GenPartDau1Status   = array('f', [-1., -1., -1., -1., -1.])
+        
         METpx        = array('f', [-1.])
         METpy        = array('f', [-1.])
         METpt        = array('f', [-1.])
@@ -691,6 +699,17 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('GenJetMass'          , GenJetMass          ,  'GenJetMass[NGenJet]/F'          )
         TreeEXOVV.Branch('GenJetMassSoftDrop'  , GenJetMassSoftDrop  ,  'GenJetMassSoftDrop[NGenJet]/F'  )
         TreeEXOVV.Branch('GenJetPtSoftDrop'    , GenJetPtSoftDrop    ,  'GenJetPtSoftDrop[NGenJet]/F'    )
+        
+        TreeEXOVV.Branch('GenPartID'           , GenPartID           ,  'GenPartID[NGenJet]/F'           )
+        TreeEXOVV.Branch('GenPartStatus'       , GenPartStatus       ,  'GenPartStatus[NGenJet]/F'       )
+        TreeEXOVV.Branch('GenPartMom0ID'       , GenPartMom0ID       ,  'GenPartMom0ID[NGenJet]/F'       )
+        TreeEXOVV.Branch('GenPartMom0Status'   , GenPartMom0Status   ,  'GenPartMom0Status[NGenJet]/F'   )
+        TreeEXOVV.Branch('GenPartMom1ID'       , GenPartMom1ID       ,  'GenPartMom1ID[NGenJet]/F'       )
+        TreeEXOVV.Branch('GenPartMom1Status'   , GenPartMom1Status   ,  'GenPartMom1Status[NGenJet]/F'   )
+        TreeEXOVV.Branch('GenPartDau0ID'       , GenPartDau0ID       ,  'GenPartDau0ID[NGenJet]/F'       )
+        TreeEXOVV.Branch('GenPartDau0Status'   , GenPartDau0Status   ,  'GenPartDau0Status[NGenJet]/F'   )
+        TreeEXOVV.Branch('GenPartDau1ID'       , GenPartDau1ID       ,  'GenPartDau1ID[NGenJet]/F'       )
+        TreeEXOVV.Branch('GenPartDau1Status'   , GenPartDau1Status   ,  'GenPartDau1Status[NGenJet]/F'   )
 
 
         TreeEXOVV.Branch('METpx'        , METpx        ,  'METpx/F'        )
@@ -1140,9 +1159,17 @@ def JetTreeDump_FWLite(argv) :
                 event.getByLabel ( l_genPartEta, h_genPartEta )
                 event.getByLabel ( l_genPartPhi, h_genPartPhi )
                 event.getByLabel ( l_genPartMass, h_genPartMass )
-
-
-                ##### HERE you pull out the information for the gen particles:
+                    
+                event.getByLabel ( l_genPartID, h_genPartID )
+                event.getByLabel ( l_genPartStatus, h_genPartStatus )
+                event.getByLabel ( l_genPartMom0ID, h_genPartMom0ID )
+                event.getByLabel ( l_genPartMom0Status, h_genPartMom0Status )
+                event.getByLabel ( l_genPartMom1ID, h_genPartMom1ID )
+                event.getByLabel ( l_genPartMom1Status, h_genPartMom1Status )
+                event.getByLabel ( l_genPartDau0ID, h_genPartDau0ID )
+                event.getByLabel ( l_genPartDau0Status, h_genPartDau0Status )
+                event.getByLabel ( l_genPartDau1ID, h_genPartDau1ID )
+                event.getByLabel ( l_genPartDau1Status, h_genPartDau1Status )
                 
 
 
@@ -1260,10 +1287,18 @@ def JetTreeDump_FWLite(argv) :
                     GenAK8SoftDropEta = h_genJetsAK8SoftDropEta.product()
                     GenAK8SoftDropPhi = h_genJetsAK8SoftDropPhi.product()
                     GenAK8SoftDropMass = h_genJetsAK8SoftDropMass.product()
+                    
+                    GenAK8PartID = h_genPartID.product()
+                    GenAK8PartStatus = h_genPartStatus.product()
+                    GenAK8PartMom0ID = h_genPartMom0ID.product()
+                    GenAK8PartMom0Status = h_genPartMom0Status.product()
+                    GenAK8PartMom1ID = h_genPartMom1ID.product()
+                    GenAK8PartMom1Status = h_genPartMom1Status.product()
+                    GenAK8PartDau0ID = h_genPartDau0ID.product()
+                    GenAK8PartDau0Status = h_genPartDau0Status.product()
+                    GenAK8PartDau1ID = h_genPartDau1ID.product()
+                    GenAK8PartDau1Status = h_genPartDau1Status.product()
 
-
-
-                #### HERE: fill your vectors ONLY with what you want (b quarks only????)
 
 
             njets = len(h_jetsAK8Pt.product())
@@ -1604,6 +1639,19 @@ def JetTreeDump_FWLite(argv) :
                         GenJetMassSoftDrop  [igenjet] = ak8GenJetsSoftDropP4[igenjet].M()
                         GenJetMass          [igenjet] = jetP4.M()
                         GenJetPtSoftDrop    [igenjet] = ak8GenJetsSoftDropP4[igenjet].Perp()
+                        
+                        GenPartID           [igenjet] = GenAK8PartID[igenjet]
+                        if abs(GenAK8PartID[igenjet]) == 5:
+                            GenPartStatus       [igenjet] = GenAK8PartStatus        [igenjet]
+                            GenPartMom0ID       [igenjet] = GenAK8PartMom0ID        [igenjet]
+                            GenPartMom0Status   [igenjet] = GenAK8PartMom0Status    [igenjet]
+                            GenPartMom1ID       [igenjet] = GenAK8PartMom1ID        [igenjet]
+                            GenPartMom1Status   [igenjet] = GenAK8PartMom1Status    [igenjet]
+                            GenPartDau0ID       [igenjet] = GenAK8PartDau0ID        [igenjet]
+                            GenPartDau0Status   [igenjet] = GenAK8PartDau0Status    [igenjet]
+                            GenPartDau1ID       [igenjet] = GenAK8PartDau1ID        [igenjet]
+                            GenPartDau1Status   [igenjet] = GenAK8PartDau1Status    [igenjet]
+
 
 
                 METpx               [0] = metPx
