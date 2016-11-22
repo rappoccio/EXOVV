@@ -462,8 +462,39 @@ def JetTreeDump_FWLite(argv) :
     h_subjetsAK8BDisc = Handle( "std::vector<float>")
     l_subjetsAK8BDisc = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + options.btagger)
 
+    h_genPartPt = Handle("std::vector<float>")
+    l_genPartPt = ("genPart" , "genPartPt")
+    h_genPartEta = Handle("std::vector<float>")
+    l_genPartEta = ("genPart" , "genPartEta")
+    h_genPartPhi = Handle("std::vector<float>")
+    l_genPartPhi = ("genPart" , "genPartPhi")
+    h_genPartMass = Handle("std::vector<float>")
+    l_genPartMass = ("genPart" , "genPartMass")
 
-
+    #### ADD IN THESE BELOW : ####
+    # PDG ID : http://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf
+    # Want abs(pdgid) == 5
+    h_genPartID = Handle("std::vector<float>")               # PDG ID : 
+    l_genPartID = ("genPart" , "genPartID")
+    h_genPartStatus = Handle("std::vector<float>")           # Generator "status"
+    l_genPartStatus = ("genPart" , "genPartStatus")
+    h_genPartMom0ID = Handle("std::vector<float>")           # "Mother 0" particle ID
+    l_genPartMom0ID = ("genPart" , "genPartMom0ID")
+    h_genPartMom0Status = Handle("std::vector<float>")       # "Mother 0" particle status
+    l_genPartMom0Status = ("genPart" , "genPartMom0Status")
+    h_genPartMom1ID = Handle("std::vector<float>")           # "Mother 1" particle ID
+    l_genPartMom1ID = ("genPart" , "genPartMom1ID")
+    h_genPartMom1Status = Handle("std::vector<float>")       # "Mother 1" particle ID
+    l_genPartMom1Status = ("genPart" , "genPartMom1Status")
+    h_genPartDau0ID = Handle("std::vector<float>")
+    l_genPartDau0ID = ("genPart" , "genPartDau0ID")          # Ditto for daughters
+    h_genPartDau0Status = Handle("std::vector<float>")
+    l_genPartDau0Status = ("genPart" , "genPartDau0Status")
+    h_genPartDau1ID = Handle("std::vector<float>")
+    l_genPartDau1ID = ("genPart" , "genPartDau1ID")
+    h_genPartDau1Status = Handle("std::vector<float>")
+    l_genPartDau1Status = ("genPart" , "genPartDau1Status")
+    
     h_genJetsAK8Pt = Handle("std::vector<float>")
     l_genJetsAK8Pt = ("genJetsAK8" , "genJetsAK8Pt")
     h_genJetsAK8Eta = Handle("std::vector<float>")
@@ -589,6 +620,9 @@ def JetTreeDump_FWLite(argv) :
         GenJetSDsubjetBmass = array('f', [-1., -1., -1., -1., -1.])
         GenJetSDsubjetBp4   = array('f', [-1., -1., -1., -1., -1.])
         GenJetPtSoftDrop    = array('f', [-1., -1., -1., -1., -1.])
+
+
+        #### Here : invent a new name for "GenPartXXXX" etc and fill everything below as done for other variables
 
         METpx        = array('f', [-1.])
         METpy        = array('f', [-1.])
@@ -1101,6 +1135,15 @@ def JetTreeDump_FWLite(argv) :
                 event.getByLabel ( l_genJetsAK8SoftDropPt, h_genJetsAK8SoftDropPt )
                 event.getByLabel ( l_genJetsAK8SoftDropPhi, h_genJetsAK8SoftDropPhi )
                 event.getByLabel ( l_genJetsAK8SoftDropEta, h_genJetsAK8SoftDropEta )
+                
+                event.getByLabel ( l_genPartPt, h_genPartPt )
+                event.getByLabel ( l_genPartEta, h_genPartEta )
+                event.getByLabel ( l_genPartPhi, h_genPartPhi )
+                event.getByLabel ( l_genPartMass, h_genPartMass )
+
+
+                ##### HERE you pull out the information for the gen particles:
+                
 
 
             # event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt ) got this above to speed things up
@@ -1217,6 +1260,10 @@ def JetTreeDump_FWLite(argv) :
                     GenAK8SoftDropEta = h_genJetsAK8SoftDropEta.product()
                     GenAK8SoftDropPhi = h_genJetsAK8SoftDropPhi.product()
                     GenAK8SoftDropMass = h_genJetsAK8SoftDropMass.product()
+
+
+
+                #### HERE: fill your vectors ONLY with what you want (b quarks only????)
 
 
             njets = len(h_jetsAK8Pt.product())
@@ -1522,7 +1569,7 @@ def JetTreeDump_FWLite(argv) :
                     FatJetEta           [ifatjet] = jetP4.Eta()
                     FatJetPhi           [ifatjet] = jetP4.Phi()
                     FatJetRap           [ifatjet] = jetP4.Rapidity()
-                    FatJetSDmaxbdisc    [ifatjet] = AK8BDisc[ifatjet]
+                    FatJetBDisc         [ifatjet] = AK8BDisc[ifatjet]
                     if AK8JetRho[ifatjet] != None : 
                         FatJetRhoRatio      [ifatjet] = AK8JetRho[ifatjet]
                     else :
