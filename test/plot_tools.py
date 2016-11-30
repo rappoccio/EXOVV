@@ -1,6 +1,6 @@
 import ROOT
 ROOT.gSystem.Load("../libRooUnfold")
-from ROOT import TCanvas, TLegend, THStack, gRandom, TH1, TH1D, cout
+from ROOT import TCanvas, TLegend, THStack, gRandom, TH1, TH1D, cout, TGraphErrors
 from math import sqrt
 from optparse import OptionParser
 
@@ -48,6 +48,30 @@ def get_ptbins():
     '#bf{p_{T} 1200-1300 GeV}', '#bf{p_{T} > 1300 GeV}']
 
 
+import array
+# Turn a histogram into a graph
+def getGraph( hist ) :
+    x = array.array("d", [] )
+    y = array.array("d", [] )
+    dx = array.array("d", [] )
+    dy = array.array("d", [] )
+    for ibin in xrange( 1, hist.GetNbinsX() + 1):
+        val = hist.GetBinContent(ibin) 
+        if val > 0. :
+            x.append( hist.GetXaxis().GetBinCenter(ibin) )
+            dx.append( hist.GetXaxis().GetBinWidth(ibin) )
+            y.append( val )
+            dy.append( hist.GetBinError(ibin) )
+    graph =TGraphErrors( len(x), x, y, dx, dy )
+    graph.SetName( hist.GetName() + "_graph")
+    graph.SetLineColor( hist.GetLineColor() )
+    graph.SetLineStyle( hist.GetLineStyle() )
+    graph.SetLineWidth( hist.GetLineWidth() )
+    graph.SetFillColor( hist.GetFillColor() )
+    graph.SetFillStyle( hist.GetFillStyle() )
+    return graph
+    
+
 # Smooth histograms :
 #   - Loop through bins
 #   - Take the median value above and below "this" bin
@@ -57,6 +81,7 @@ def smooth( hist, delta = 2 ) :
     if hist.GetNbinsX() >= 2 * delta :
         for ibin in xrange(0, hist.GetNbinsX() + 1 ) :
             val = hist.GetBinContent( ibin )
+            err = hist.GetBinError( ibin ) 
             valslo = []
             valshi = []
             binlo = ibin - delta
@@ -68,17 +93,19 @@ def smooth( hist, delta = 2 ) :
             for jbin in xrange( ibin, binhi ) :
                 valshi.append( hist.GetBinContent( jbin ) )
             
-            svalslo = sorted( valslo )
-            svalshi = sorted( valshi )
+            svalslo = sorted( valslo, reverse=True)
+            svalshi = sorted( valshi, reverse=True)
             if len( valslo ) == 0 :
                 medianlo = 0.
             else : 
                 medianlo = svalslo[ len(svalslo) / 2 ]
+                #medianlo = svalslo[ 0 ]
             if len( valshi ) == 0 :
                 medianhi = 0.
             else : 
                 medianhi = svalshi[ len(svalshi) / 2 ]
-            if val < medianlo and val < medianhi :
+                #medianhi = svalshi[ 0 ]
+            if (val < medianlo and val < medianhi) :
                 newvalues.append ((medianlo + medianhi) * 0.5)
             else :
                 newvalues.append( val )
@@ -86,7 +113,54 @@ def smooth( hist, delta = 2 ) :
             hist.SetBinContent( ibin, newvalues[ibin] )
             
             
-        
+
+# "Unpinch" histograms :
+#   - Average the uncertainties at the "peak" by averaging uncertainties from "peak +- delta"
+def unpinch( hist, delta = 2, xval = None ) :
+    newxvals = []
+
+    if xval == None :
+        xval = hist.GetMaximumBin()
+    if hist.GetNbinsX() >= 2 * delta  :
+        binlo = max( 0, xval - delta)
+        binhi = min( xval + delta, hist.GetNbinsX() )
+        avg = 0.0
+        navg = 0
+        for ibin in xrange(binlo, binhi) :
+            val = hist.GetBinContent( ibin )
+            err = hist.GetBinError( ibin )
+            if val > 0.0 :
+                avg += err/val
+                navg += 1
+        avg = avg / navg
+        for ibin in xrange(binlo, binhi) :
+            val = hist.GetBinContent( ibin )
+            err = hist.GetBinError( ibin )
+            if err < avg * val : 
+                hist.SetBinError( ibin, avg * val )
+
+def unpinch_vals( hist, delta = 2, xval = None ) :
+    newxvals = []
+
+    if xval == None :
+        xval = hist.GetMaximumBin()
+    if hist.GetNbinsX() >= 2 * delta  :
+        binlo = max( 0, xval - delta)
+        binhi = min( xval + delta, hist.GetNbinsX() )
+        avg = 0.0
+        navg = 0
+        for ibin in xrange(binlo, binhi) :
+            val = hist.GetBinContent( ibin )
+            avg += val
+            navg += 1
+        avg = avg / navg
+        for ibin in xrange(binlo, binhi) :
+            val = hist.GetBinContent( ibin )
+            if (val < 1.0 and val > avg) or (val > 1.0 and val < avg) : 
+                hist.SetBinContent( ibin, avg )
+                
+
+            
 
 def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
@@ -808,8 +882,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRecoPDF.SetAxisRange(1,400,"X")
             hStat.SetAxisRange(1, 400, "X")
         build_the_stack_band.append(hRecoPDF.Clone())
-        hRecoPDF.Draw("E2")
-        hStat.Draw("E2 same")
+
+
         hRecoBarePdf = hRecoPDF.Clone()
         hRecoBarePdf.SetName( hRecoPDF.GetName() + "_bare" )
         for ibin in xrange( hRecoBarePdf.GetXaxis().GetNbins() ) :
@@ -817,7 +891,47 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoBarePdf.SetMarkerStyle(20)
         hRecoBarePdf.SetLineColor( hStat.GetLineColor() )
         hRecoBarePdf.SetFillStyle(0)
+
+
+        hRecoPDF.Draw("E2")
+        hStat.Draw("E2 same")
         hRecoBarePdf.Draw("e x0 same")
+
+
+        for ibin in xrange( hRecoPDF.GetNbinsX()+1):
+            err = hRecoPDF.GetBinError( ibin )
+            val = hRecoPDF.GetBinContent( ibin )
+
+            if (val == 0.0  or ( val > 0.0 and abs(err) / abs(val) > 0.6)) or (not options.isSoftDrop and hRecoPDF.GetXaxis().GetBinUpEdge(ibin) <= 10.0): 
+                hRecoPDF.SetBinContent( ibin, 0.0 )
+                hRecoPDF.SetBinError( ibin, 0.0 )
+                hRecoBarePdf.SetBinContent( ibin, 0.0 )
+                hRecoBarePdf.SetBinError( ibin, 0.0 )
+                hStat.SetBinContent( ibin, 0.0 )
+                hStat.SetBinError( ibin, 0.0 )
+                MC_list[i].SetBinContent( ibin, 0.0 )
+                MC_list[i].SetBinError( ibin, 0.0 )
+                if options.isSoftDrop:
+                    powheglistSD[i].SetBinContent( ibin, 0.0 )
+                    powheglistSD[i].SetBinError( ibin, 0.0 )
+                    herwig_genlistSD[i].SetBinContent( ibin, 0.0 )
+                    herwig_genlistSD[i].SetBinError( ibin, 0.0 )
+                else:
+                    powheglist[i].SetBinContent( ibin, 0.0 )
+                    powheglist[i].SetBinError( ibin, 0.0 )
+                    herwig_genlist[i].SetBinContent( ibin, 0.0 )
+                    herwig_genlist[i].SetBinError( ibin, 0.0 )
+                    
+                if i < 11 and options.isSoftDrop and isData : 
+                    theorylist[i].SetBinContent( ibin, 0.0 )
+                    theorylist[i].SetBinError( ibin, 0.0 )
+                    theorylist2[i].SetBinContent( ibin, 0.0 )
+                    theorylist2[i].SetBinError( ibin, 0.0 )
+
+        if not options.isSoftDrop : 
+            unpinch( hRecoPDF )
+            unpinch( hRecoBarePdf )
+            unpinch( hStat )
         hRecoPDF.GetXaxis().SetTickLength(0.05)
         keephists.append([hRecoPDF, hStat, hRecoBarePdf])
         
@@ -878,11 +992,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory.SetLineColor(ROOT.kBlue)
             theory.SetLineWidth(3)
             #theory.SetAxisRange(1e-5, 1, "Y")
-            theory.Draw("C E5 same")
-            theorydumb = theory.Clone(theory.GetName() + "_dumb")
-            theorydumb.SetFillStyle(0)
-            theorydumb.Draw("C hist same")
-            theorydumb.GetXaxis().SetRangeUser(5, 100000)
+
+            theorygraph = getGraph( theory ) 
+            theorygraph.Draw("L3 same")
+            
+            #theorydumb = theory.Clone(theory.GetName() + "_dumb")
+            #theorydumb.SetFillStyle(0)
+            #theorydumb.Draw("C hist same")
+            #theorydumb.GetXaxis().SetRangeUser(5, 100000)
             legends_list[i].AddEntry(theory, "Frye et al", 'f')
             #legends_list[i].Draw("same")
             
@@ -896,10 +1013,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory2.SetFillColor(ROOT.kOrange+7)            
             theory2.SetLineColor(ROOT.kOrange+7)
             theory2.SetLineWidth(3)
-            theory2.Draw("C E5 same")
-            theory2dumb = theory2.Clone(theory2.GetName() + "_dumb")
-            theory2dumb.SetFillStyle(0)
-            theory2dumb.Draw("C hist same")
+            theory2graph = getGraph( theory2 )
+            theory2graph.Draw("L3 same") 
+            #theory2.Draw("C E5 same")
+            #theory2dumb = theory2.Clone(theory2.GetName() + "_dumb")
+            #theory2dumb.SetFillStyle(0)
+            #theory2dumb.Draw("C hist same")
             legends_list[i].AddEntry(theory2, "Marzani et al", 'f')
             ## add to the stack and scale
             theoryc = theory.Clone()
@@ -1121,15 +1240,19 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         trueCopy.Draw("hist same")
         herwigCopy.Draw("hist same")
         if i < 11 and options.isSoftDrop and isData:
-            theorycopy.Draw("C E5 same")
-            theory2copy.Draw("C E5 same")
-            theorycopydumb = theorycopy.Clone( theorycopy.GetName() + "_dumb")
-            theory2copydumb = theory2copy.Clone( theorycopy.GetName() + "_dumb")
-            theorycopydumb.SetFillStyle(0)
-            theory2copydumb.SetFillStyle(0)
-            theorycopydumb.Draw("C hist same")
-            theorycopydumb.GetXaxis().SetRangeUser(5, 100000)
-            theory2copydumb.Draw("C hist same")
+            theorycopygraph = getGraph( theorycopy )
+            theorycopygraph.Draw("L3 same")
+            theory2copygraph = getGraph( theory2copy )
+            theory2copygraph.Draw("L3 same")
+            #theorycopy.Draw("C E5 same")
+            #theory2copy.Draw("C E5 same")
+            #theorycopydumb = theorycopy.Clone( theorycopy.GetName() + "_dumb")
+            #theory2copydumb = theory2copy.Clone( theorycopy.GetName() + "_dumb")
+            #theorycopydumb.SetFillStyle(0)
+            #theory2copydumb.SetFillStyle(0)
+            #theorycopydumb.Draw("C hist same")
+            #theorycopydumb.GetXaxis().SetRangeUser(5, 100000)
+            #theory2copydumb.Draw("C hist same")
         if i < 11:
             powhegcopy.Draw("hist same")
         keephists.append([datPDF])
@@ -1145,8 +1268,27 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     stack_canvas.SetLogx()
     #for hist in build_the_stack_band:
     #    hist.Draw('same E5')
-    for hist in build_the_stack:
+    for ihist in xrange( 1, len(build_the_stack), 2) :
+        hist = build_the_stack[ihist]
+        mchist = build_the_stack[ihist - 1]
+        for errbin in xrange ( 1, hist[0].GetNbinsX() + 1):
+            ierr = hist[0].GetBinError( errbin )
+            ival = hist[0].GetBinContent( errbin )
+            if options.isSoftDrop == False and hist[0].GetXaxis().GetBinUpEdge(errbin) <= 10.0 :
+                hist[0].SetBinContent(errbin,0.0)
+                hist[0].SetBinError( errbin, 0.0 )
+                mchist[0].SetBinContent(errbin,0.0)
+                mchist[0].SetBinError( errbin, 0.0 )                
+            if ival > 0.0 and ierr / ival > 0.6 :
+                hist[0].SetBinContent(errbin,0.0)
+                hist[0].SetBinError( errbin, 0.0 )
+                mchist[0].SetBinContent(errbin,0.0)
+                mchist[0].SetBinError( errbin, 0.0 )
+            if ival == 0.0 :
+                mchist[0].SetBinContent(errbin,0.0)
+                mchist[0].SetBinError( errbin, 0.0 )                
         the_stack.Add(hist[0], hist[1])
+        the_stack.Add(mchist[0], mchist[1])
     the_stack.Draw("nostack")
     the_stack.GetXaxis().SetRangeUser(1, 1000)
     the_stack.SetMinimum(1e-14)

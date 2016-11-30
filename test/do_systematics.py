@@ -141,9 +141,6 @@ for i in range(0, nptbins):
     temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
     temp_unc.Scale(scales[i])
     temp_softdrop_unc.Scale(scales[i])
-
-    smooth( temp_unc, delta=2 )
-    smooth( temp_softdrop_unc, delta=2)
     
     for ibin in xrange(1,temp_unc.GetNbinsX()):
         temp_diff.append(abs(temp_unc.GetBinContent(ibin)))
@@ -198,13 +195,6 @@ for i in range(0, nptbins):
     temp_unc2_softdrop.Scale(scales[i])
     temp_unc3.Scale(scales[i])
     temp_unc3_softdrop.Scale(scales[i])
-
-    smooth( temp_unc, delta=2 )
-    smooth( temp_unc_softdrop, delta=2 )
-    smooth( temp_unc2, delta=2 )
-    smooth( temp_unc2_softdrop, delta=2 )
-    smooth( temp_unc3, delta=2 )
-    smooth( temp_unc3_softdrop, delta=2 )
                 
     for ibin in xrange(1, temp_unc.GetNbinsX()):
         val_ungroomed = (temp_unc.GetBinContent(ibin))**2 + (temp_unc2.GetBinContent(ibin))**2 + (temp_unc3.GetBinContent(ibin))**2

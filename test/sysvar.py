@@ -3,6 +3,7 @@ ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
+from plot_tools import unpinch_vals
 
 def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, histname = "Ungroomed "):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
@@ -31,6 +32,9 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         jerUP.Scale(scales[i])
         jerDOWN.Scale(scales[i])
         nom.Scale(scales[i])
+
+        maxbin = hRMS.GetMaximumBin()
+        
         for ibin in xrange(1, hRMS.GetNbinsX()):
             hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
@@ -196,6 +200,19 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             hRMSup.SetAxisRange(1, 300,"X")
         elif i < 2:
             hRMSup.SetAxisRange(1, 200,"X")
+
+        if histname != "Soft Drop " : 
+            unpinch_vals( hRMSup, xval=maxbin )
+            unpinch_vals( hRMSdn , xval=maxbin )
+            unpinch_vals( hRecoup, xval=maxbin )
+            unpinch_vals( hRecodn, xval=maxbin )
+            unpinch_vals( hRecoCopyup, xval=maxbin )
+            unpinch_vals( hRecoCopydn, xval=maxbin )
+            unpinch_vals( hRecoJMRup, xval=maxbin )
+            unpinch_vals( hRecoJMRdn, xval=maxbin )
+            unpinch_vals( hRecoPDFup, xval=maxbin )
+            unpinch_vals( hRecoPDFdn, xval=maxbin )
+    
         hRMSup.Draw('hist')
         hRMSdn.Draw('hist same')
         hRecoup.Draw('hist same')
