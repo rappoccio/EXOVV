@@ -76,41 +76,50 @@ def getGraph( hist ) :
 #   - Loop through bins
 #   - Take the median value above and below "this" bin
 #   - If the current value is below the median above AND below, replace with average of medians
-def smooth( hist, delta = 2 ) :
-    newvalues = []
+def smooth( hist, delta = 2, xmin = None, xmax = None, reverse=True, verbose=False) :
+    newvalues = {}
     if hist.GetNbinsX() >= 2 * delta :
-        for ibin in xrange(0, hist.GetNbinsX() + 1 ) :
+        if xmin == None :
+            xmin = 1
+        if xmax == None :
+            xmax = hist.GetNbinsX() + 1
+        for ibin in xrange(xmin, xmax ) :
             val = hist.GetBinContent( ibin )
-            err = hist.GetBinError( ibin ) 
-            valslo = []
-            valshi = []
+
+            if val == 0.0 :
+                continue
+            
+            vals = []
             binlo = ibin - delta
             if binlo < 0 : binlo = 0
-            binhi = ibin + delta
-            if binhi > hist.GetNbinsX()+1 : binhi = hist.GetNbinsX()+1
-            for jbin in xrange( binlo, ibin ) :
-                valslo.append( hist.GetBinContent( jbin ) )
-            for jbin in xrange( ibin, binhi ) :
-                valshi.append( hist.GetBinContent( jbin ) )
+            binhi = ibin + delta + 1
             
-            svalslo = sorted( valslo, reverse=True)
-            svalshi = sorted( valshi, reverse=True)
-            if len( valslo ) == 0 :
-                medianlo = 0.
+            if binhi > hist.GetNbinsX()+1 : binhi = hist.GetNbinsX()+1
+            for jbin in xrange( binlo, binhi ) :
+                vals.append( hist.GetBinContent( jbin ) )
+            
+            svals = sorted( vals, reverse=reverse)
+
+            
+            if len( vals ) == 0 :
+                median = 0.
             else : 
-                medianlo = svalslo[ len(svalslo) / 2 ]
-                #medianlo = svalslo[ 0 ]
-            if len( valshi ) == 0 :
-                medianhi = 0.
-            else : 
-                medianhi = svalshi[ len(svalshi) / 2 ]
-                #medianhi = svalshi[ 0 ]
-            if (val < medianlo and val < medianhi) :
-                newvalues.append ((medianlo + medianhi) * 0.5)
-            else :
-                newvalues.append( val )
-        for ibin in xrange(0, hist.GetNbinsX() + 1 ) :
-            hist.SetBinContent( ibin, newvalues[ibin] )
+                median = svals[ len(svals) / 2 ]
+            
+            newvalues[ibin] = median
+
+
+
+            if verbose: 
+                print '-----------'
+                for ival in svals :
+                    print '%6.2f' % ( ival ),
+                print ''
+                print median
+                
+        for ibin in xrange(xmin, xmax) :
+            if ibin in newvalues : 
+                hist.SetBinContent( ibin, newvalues[ibin] )
             
             
 

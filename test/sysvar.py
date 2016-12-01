@@ -3,7 +3,7 @@ ROOT.gSystem.Load("../libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
-from plot_tools import unpinch_vals
+from plot_tools import unpinch_vals, smooth
 
 def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, histname = "Ungroomed "):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
@@ -212,7 +212,21 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             unpinch_vals( hRecoJMRdn, xval=maxbin )
             unpinch_vals( hRecoPDFup, xval=maxbin )
             unpinch_vals( hRecoPDFdn, xval=maxbin )
-    
+
+        bin400 = hRecoCopyup.GetXaxis().FindBin(500.) - 1
+        print 'smoothing '
+        smooth( hRMSup, delta=2, xmin=bin400 )
+        smooth( hRMSdn , delta=2, xmin=bin400 )
+        smooth( hRecoup, delta=2, xmin=bin400 )
+        smooth( hRecodn, delta=2, xmin=bin400 )
+        print '<<<<<<<------ this is the one we want'
+        smooth( hRecoCopyup, delta=2, xmin=bin400, verbose=True )
+        smooth( hRecoCopydn, delta=2, xmin=bin400, verbose=True )
+        smooth( hRecoJMRup, delta=2, xmin=bin400 )
+        smooth( hRecoJMRdn, delta=2, xmin=bin400 )
+        smooth( hRecoPDFup, delta=2, xmin=bin400 )
+        smooth( hRecoPDFdn, delta=2, xmin=bin400 )
+            
         hRMSup.Draw('hist')
         hRMSdn.Draw('hist same')
         hRecoup.Draw('hist same')
