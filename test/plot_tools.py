@@ -541,14 +541,18 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             datcopycopy.SetBinContent(ibin, 1.0)
             datRMS.SetBinContent(ibin, 1.0)
         ########################################################################################################## Take Ratio
-        trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
-        herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0, "B" )
+        trueCopy.Divide( trueCopy, hReco, 1.0, 1.0 )
+        herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0 )
         if i < 11 and options.isSoftDrop and isData:
-            theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
-            theory2copy.Divide( theory2copy, hReco, 1.0, 1.0, "B" )
+            print 'N theory bins = ', theorycopy.GetNbinsX()
+            print 'N data bins = ', hReco.GetNbinsX()
+            print 'N theory UB bins = ', theory2copy.GetNbinsX()
+            
+            theorycopy.Divide( theorycopy, hReco, 1.0, 1.0 )
+            theory2copy.Divide( theory2copy, hReco, 1.0, 1.0 )
 
         if i < 11:
-            powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0, "B")
+            powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0)
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
@@ -1132,13 +1136,16 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             datPDF.SetBinContent(ibin, 1.0)
             datStat.SetBinContent(ibin, 1.0)
 ########################################################################################################## Take Ratio
-        trueCopy.Divide( trueCopy, hReco, 1.0, 1.0, "B" )
-        herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0, "B" )
+        trueCopy.Divide( trueCopy, hReco, 1.0, 1.0 )
+        herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0 )
         if i < 11 and options.isSoftDrop and isData:
-            theorycopy.Divide( theorycopy, hReco, 1.0, 1.0, "B" )
-            theory2copy.Divide( theory2copy, hReco, 1.0, 1.0, "B" )
+            print 'N theory bins = ', theorycopy.GetNbinsX()
+            print 'N data bins = ', hReco.GetNbinsX()
+            print 'N theory UB bins = ', theory2copy.GetNbinsX()
+            theorycopy.Divide( theorycopy, hReco, 1.0, 1.0 )
+            theory2copy.Divide( theory2copy, hReco, 1.0, 1.0 )
         if i < 11:
-            powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0, "B")
+            powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0)
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
@@ -1371,7 +1378,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
             else:
                 recocopy.SetBinError(ibin, 0)
             recocopy.SetBinContent(ibin, 1.0)
-        gencopy.Divide(gencopy, reco_list[i], 1.0, 1.0, "B")
+        gencopy.Divide(gencopy, reco_list[i], 1.0, 1.0)
 
         pads_list[i][1].cd()
         gencopy.SetTitle(";Jet Mass (GeV); #frac{Theory}{Data}")
@@ -1435,8 +1442,8 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
             postData.SetBinContent(ibin, postData.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
 
         
-        postMC.Divide( postMC, preMC, 1.0, 1.0, "B" )
-        postData.Divide( postData, preData, 1.0, 1.0, "B" )
+        postMC.Divide( postMC, preMC, 1.0, 1.0 )
+        postData.Divide( postData, preData, 1.0, 1.0 )
 
         canvas.cd()
 
@@ -1480,9 +1487,9 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
             preData2.SetBinContent(ibin, preData2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             postData2.SetBinContent(ibin, postData2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
 
-        genMC.Divide( genMC, postData2, 1.0, 1.0, "B" )
-        preMC2.Divide( preMC2, preData2, 1.0, 1.0, "B" )
-        genMC.Divide( genMC, preMC2, 1.0, 1.0, "B" )
+        genMC.Divide( genMC, postData2, 1.0, 1.0 )
+        preMC2.Divide( preMC2, preData2, 1.0, 1.0 )
+        genMC.Divide( genMC, preMC2, 1.0, 1.0 )
         
         canvas2 = manyratios_canvas_list[i]
         canvas2.cd()

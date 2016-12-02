@@ -1,0 +1,17 @@
+In this histogram:
+
+CentralValue = 1/(xsec) * d(xsec)/dm
+             = normalized event count / bin width
+               (bins above 60 GeV integrate to 1)
+Format:
+ 
+MassBin(GeV)	CentralValue	LowerValue	UpperValue#Comment
+ 
+5. — 10.	0.0844	0.0397	0.129#NonperturbativeEffectsNotModeled
+10. — 20.	0.0693	0.0386	0.1#NonperturbativeEffectsNotModeled
+20. — 40.	0.0529	0.0364	0.0693#NonperturbativeEffectsNotModeled
+40. — 60.	0.0355	0.027	0.044
+60. — 80.	0.0244	0.0196	0.0293
+80. — 100.	0.0147	0.0132	0.0161
+100. — 150.	0.00391	0.00201	0.00656
+150. — 200.	0.000448	0	0.00161

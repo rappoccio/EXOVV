@@ -3,8 +3,8 @@ from ROOT import *
 import array
 
 
-binning = array.array('d',[ 5., 10., 20., 40., 60., 80., 100., 150., 200., 250., 300., 350., 400., 450., 500., 550., 600., 650., 700., 750., 800., 850., 900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450., 1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000. ])
-mbinwidths = [5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
+binning = array.array('d',[0, 1, 5., 10., 20., 40., 60., 80., 100., 150., 200., 250., 300., 350., 400., 450., 500., 550., 600., 650., 700., 750., 800., 850., 900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450., 1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000. ])
+mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
 
 
 ptbins = [200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
@@ -15,15 +15,15 @@ fout.cd()
 for j, jbin in enumerate(ptbins):
     #for k in xrange(1,4):
     
-    Bincontent = []
-    Binerrors = []
-    Xvalues = []
-    with open('histogram_NNLL_pt'+str(jbin)+'._beta0._norm.dat') as f:
+    Bincontent = [0., 0.]  # These have to be added because the calculation
+    Binerrors = [0., 0.]   # only goes down to 5 GeV but our histograms
+    Xvalues = [0., 1.]     # extend down to zero. 
+    with open('theory/histogram_NNLL_pt'+str(jbin)+'._beta0._rebinned.dat') as f:
         i = 0
         reader = csv.reader(f, delimiter="\t")
         for line in reader:
             i += 1
-            if i > 6:
+            if i > 9:
                 xvalue =  float(line[0].split(' ')[0])
                 central = float(line[1])
                 lower = float(line[2])
@@ -44,11 +44,11 @@ for j, jbin in enumerate(ptbins):
                     
 
         nextx = Xvalues[ len(Xvalues) - 1 ]
-        while nextx < 2000. :
+        while nextx <= 2000. :
                 Xvalues.append( nextx )
                 Bincontent.append( 0 )
                 Binerrors.append( 0 )
-                nextx += 5.0
+                nextx += 50.0
         aXvalues = array.array('f', Xvalues)
         hist = TH1F('histSD_'+str(j), 'Mass Distributions', len(Xvalues)-1, aXvalues)
         for ixval in Xvalues[0:len(Xvalues)-1] :
@@ -57,9 +57,9 @@ for j, jbin in enumerate(ptbins):
             hist.SetBinError( histbin, Binerrors[Xvalues.index(ixval)] )
         ourhist = hist.Rebin( len(binning) - 1, hist.GetName() + '_ours', binning )
 
-        for ibin in xrange(1, ourhist.GetNbinsX()+1):
-            ourhist.SetBinContent(ibin, ourhist.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            ourhist.SetBinError(ibin, ourhist.GetBinError(ibin) * 1./mbinwidths[ibin-1])
+        #for ibin in xrange(1, ourhist.GetNbinsX()+1):
+        #    ourhist.SetBinContent(ibin, ourhist.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+        #    ourhist.SetBinError(ibin, ourhist.GetBinError(ibin) * 1./mbinwidths[ibin-1])
         ourhist.Write()
 fout.Close()
 
