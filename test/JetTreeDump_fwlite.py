@@ -622,6 +622,10 @@ def JetTreeDump_FWLite(argv) :
         GenJetPtSoftDrop    = array('f', [-1., -1., -1., -1., -1.])
 
         GenPartID           = array('f', [-1., -1., -1., -1., -1.])
+        GenPartPt           = array('f', [-1., -1., -1., -1., -1.])
+        GenPartEta          = array('f', [-1., -1., -1., -1., -1.])
+        GenPartPhi          = array('f', [-1., -1., -1., -1., -1.])
+        GenPartMass         = array('f', [-1., -1., -1., -1., -1.])
         GenPartStatus       = array('f', [-1., -1., -1., -1., -1.])
         GenPartMom0ID       = array('f', [-1., -1., -1., -1., -1.])
         GenPartMom0Status   = array('f', [-1., -1., -1., -1., -1.])
@@ -701,6 +705,10 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('GenJetPtSoftDrop'    , GenJetPtSoftDrop    ,  'GenJetPtSoftDrop[NGenJet]/F'    )
         
         TreeEXOVV.Branch('GenPartID'           , GenPartID           ,  'GenPartID[NGenJet]/F'           )
+        TreeEXOVV.Branch('GenPartPt'           , GenPartPt           ,  'GenPartPt[NGenJet]/F'           )
+        TreeEXOVV.Branch('GenPartEta'          , GenPartEta          ,  'GenPartEta[NGenJet]/F'          )
+        TreeEXOVV.Branch('GenPartPhi'          , GenPartPhi          ,  'GenPartPhi[NGenJet]/F'          )
+        TreeEXOVV.Branch('GenPartMass'         , GenPartMass         ,  'GenPartMass[NGenJet]/F'         )
         TreeEXOVV.Branch('GenPartStatus'       , GenPartStatus       ,  'GenPartStatus[NGenJet]/F'       )
         TreeEXOVV.Branch('GenPartMom0ID'       , GenPartMom0ID       ,  'GenPartMom0ID[NGenJet]/F'       )
         TreeEXOVV.Branch('GenPartMom0Status'   , GenPartMom0Status   ,  'GenPartMom0Status[NGenJet]/F'   )
@@ -1289,6 +1297,10 @@ def JetTreeDump_FWLite(argv) :
                     GenAK8SoftDropMass = h_genJetsAK8SoftDropMass.product()
                     
                     GenAK8PartID = h_genPartID.product()
+                    GenAK8PartPt = h_genPartPt.product()
+                    GenAK8PartEta = h_genPartEta.product()
+                    GenAK8PartPhi = h_genPartPhi.product()
+                    GenAK8PartMass = h_genPartMass.product()
                     GenAK8PartStatus = h_genPartStatus.product()
                     GenAK8PartMom0ID = h_genPartMom0ID.product()
                     GenAK8PartMom0Status = h_genPartMom0Status.product()
@@ -1639,18 +1651,25 @@ def JetTreeDump_FWLite(argv) :
                         GenJetMassSoftDrop  [igenjet] = ak8GenJetsSoftDropP4[igenjet].M()
                         GenJetMass          [igenjet] = jetP4.M()
                         GenJetPtSoftDrop    [igenjet] = ak8GenJetsSoftDropP4[igenjet].Perp()
-                        
-                        GenPartID           [igenjet] = GenAK8PartID[igenjet]
-                        if abs(GenAK8PartID[igenjet]) == 5:
-                            GenPartStatus       [igenjet] = GenAK8PartStatus        [igenjet]
-                            GenPartMom0ID       [igenjet] = GenAK8PartMom0ID        [igenjet]
-                            GenPartMom0Status   [igenjet] = GenAK8PartMom0Status    [igenjet]
-                            GenPartMom1ID       [igenjet] = GenAK8PartMom1ID        [igenjet]
-                            GenPartMom1Status   [igenjet] = GenAK8PartMom1Status    [igenjet]
-                            GenPartDau0ID       [igenjet] = GenAK8PartDau0ID        [igenjet]
-                            GenPartDau0Status   [igenjet] = GenAK8PartDau0Status    [igenjet]
-                            GenPartDau1ID       [igenjet] = GenAK8PartDau1ID        [igenjet]
-                            GenPartDau1Status   [igenjet] = GenAK8PartDau1Status    [igenjet]
+                
+                    NGenPart [0] = 0
+                    for igenpart in xrange( len(GenAK8PartID)) :
+                        if abs(GenAK8PartID[igenpart]) == 5 or abs(GenAK8PartID[igenpart]) == 4:
+                            NGenPart [0] += 1
+                            GenPartID           [igenpart] = GenAK8PartID            [igenpart]
+                            GenPartPt           [igenpart] = GenAK8PartPt            [igenpart]
+                            GenPartEta          [igenpart] = GenAK8PartEta           [igenpart]
+                            GenPartPhi          [igenpart] = GenAK8PartPhi           [igenpart]
+                            GenPartMass         [igenpart] = GenAK8PartMass          [igenpart]
+                            GenPartStatus       [igenpart] = GenAK8PartStatus        [igenpart]
+                            GenPartMom0ID       [igenpart] = GenAK8PartMom0ID        [igenpart]
+                            GenPartMom0Status   [igenpart] = GenAK8PartMom0Status    [igenpart]
+                            GenPartMom1ID       [igenpart] = GenAK8PartMom1ID        [igenpart]
+                            GenPartMom1Status   [igenpart] = GenAK8PartMom1Status    [igenpart]
+                            GenPartDau0ID       [igenpart] = GenAK8PartDau0ID        [igenpart]
+                            GenPartDau0Status   [igenpart] = GenAK8PartDau0Status    [igenpart]
+                            GenPartDau1ID       [igenpart] = GenAK8PartDau1ID        [igenpart]
+                            GenPartDau1Status   [igenpart] = GenAK8PartDau1Status    [igenpart]
 
 
 
