@@ -210,7 +210,10 @@ for iptbin in xrange( len(dataprojs) ) :
     pads[1].SetLogx()
     ratio = pyprojs[iptbin].Clone("ratio" + pyprojs[iptbin].GetName() )
     ratio.UseCurrentStyle()
-    ratio.SetTitle(";Jet mass (GeV);MC / Data")
+    if 'AK8SD' not in options.hist : 
+        ratio.SetTitle(";Jet mass (GeV);MC / Data")
+    else :
+        ratio.SetTitle(";Groomed jet mass (GeV);MC / Data")
     ratio.Divide( dataprojs[iptbin] )
     ratio.SetFillColor(ROOT.kBlue)
     ratio.SetFillStyle(3001)
