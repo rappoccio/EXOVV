@@ -210,7 +210,7 @@ for iptbin in xrange( len(dataprojs) ) :
     pads[1].SetLogx()
     ratio = pyprojs[iptbin].Clone("ratio" + pyprojs[iptbin].GetName() )
     ratio.UseCurrentStyle()
-    ratio.SetTitle(";Mass (GeV);MC / Data")
+    ratio.SetTitle(";Jet mass (GeV);MC / Data")
     ratio.Divide( dataprojs[iptbin] )
     ratio.SetFillColor(ROOT.kBlue)
     ratio.SetFillStyle(3001)

@@ -64,7 +64,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             sys2 = float(((upjer + downjer )/2.))
             err = sqrt(sys*sys + sys2*sys2) + err1  
             hReco.SetBinError(ibin, err)
-        ####################################################################################### Get Jet Mass Resolution Band
+        ####################################################################################### Get Jet mass Resolution Band
         hRecoJMR = hReco.Clone()
         reset(hRecoJMR)
         for ibin in xrange(1, hRecoJMR.GetNbinsX()):
@@ -119,16 +119,16 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRecoPDFdn = hRecoPDF.Clone()
 
         for ibin in xrange(1, hRMS.GetNbinsX()):
-            hRMSup.SetBinContent(ibin, 1 + (hRMS.GetBinError(ibin) / 2.0) )
-            hRMSdn.SetBinContent(ibin, 1 - (hRMS.GetBinError(ibin) / 2.0) )
-            hRecoup.SetBinContent(ibin, 1 + (hReco.GetBinError(ibin) / 2.0) )
-            hRecodn.SetBinContent(ibin, 1 - (hReco.GetBinError(ibin) / 2.0) )
-            hRecoCopyup.SetBinContent(ibin, 1 + (hRecoCopy.GetBinError(ibin) / 2.0) )
-            hRecoCopydn.SetBinContent(ibin, 1 - (hRecoCopy.GetBinError(ibin) / 2.0) )
-            hRecoJMRup.SetBinContent(ibin, 1 + (hRecoJMR.GetBinError(ibin) / 2.0) )
-            hRecoJMRdn.SetBinContent(ibin, 1 - (hRecoJMR.GetBinError(ibin) / 2.0) )
-            hRecoPDFup.SetBinContent(ibin, 1 + (hRecoPDF.GetBinError(ibin) / 2.0) )
-            hRecoPDFdn.SetBinContent(ibin, 1 - (hRecoPDF.GetBinError(ibin) / 2.0) )
+            hRMSup.SetBinContent(ibin,  (hRMS.GetBinError(ibin) / 2.0) )
+            hRMSdn.SetBinContent(ibin,  (hRMS.GetBinError(ibin) / 2.0) )
+            hRecoup.SetBinContent(ibin,  (hReco.GetBinError(ibin) / 2.0) )
+            hRecodn.SetBinContent(ibin,  (hReco.GetBinError(ibin) / 2.0) )
+            hRecoCopyup.SetBinContent(ibin,  (hRecoCopy.GetBinError(ibin) / 2.0) )
+            hRecoCopydn.SetBinContent(ibin,  (hRecoCopy.GetBinError(ibin) / 2.0) )
+            hRecoJMRup.SetBinContent(ibin,  (hRecoJMR.GetBinError(ibin) / 2.0) )
+            hRecoJMRdn.SetBinContent(ibin,  (hRecoJMR.GetBinError(ibin) / 2.0) )
+            hRecoPDFup.SetBinContent(ibin,  (hRecoPDF.GetBinError(ibin) / 2.0) )
+            hRecoPDFdn.SetBinContent(ibin,  (hRecoPDF.GetBinError(ibin) / 2.0) )
 
         ######################################################################## Format, Draw, and save
 
@@ -172,34 +172,38 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRecoPDFdn.SetLineWidth(3)
 
         canvas_list[i].cd()
-        hRMSup.GetYaxis().SetTitle("Variation")
+        hRMSup.SetTitle( '' )
+        hRMSup.GetYaxis().SetTitle("Uncertainty (%)")
         hRMSup.GetYaxis().SetTitleSize(30)
         hRMSup.GetYaxis().SetLabelSize(30)
-        hRMSup.SetTitle( histname + "Uncertainty Variations Unfolded for " +ptbins_dict[i] )
+        
         hRMSup.SetTitleSize(30)
-        hRMSup.GetXaxis().SetTitle("Jet Mass (GeV)")
+        if histname != "Soft Drop ":
+            hRMSup.GetXaxis().SetTitle("Jet mass (GeV)")
+        else :
+            hRMSup.GetXaxis().SetTitle("Groomed jet mass (GeV)")
         hRMSup.SetMinimum(0.0)
-        hRMSup.SetMaximum(2.0)
+        hRMSup.SetMaximum(0.5)
         if i == 18:
             hRMSup.SetAxisRange(1, 1900,"X")
         elif i >= 15 and i < 18:
             hRMSup.SetAxisRange(1, 1000, "X")
-        elif i >= 11 and i < 15:
-            hRMSup.SetAxisRange(1, 900, "X")
-        elif i >= 9 and i < 11:
-            hRMSup.SetAxisRange(1, 800, "X")
-        elif i >= 7 and i < 9:
-            hRMSup.SetAxisRange(1, 700, "X")
-        elif i >= 6 and i < 7:
+        elif i >= 10 and i < 15:
             hRMSup.SetAxisRange(1, 600, "X")
-        elif i >= 5 and i < 6:
+        elif i >= 9 and i < 10:
             hRMSup.SetAxisRange(1, 500, "X")
-        elif i >= 3 and i < 5:
+        elif i >= 7 and i < 9:
+            hRMSup.SetAxisRange(1, 500, "X")
+        elif i >= 6 and i < 7:
             hRMSup.SetAxisRange(1, 400, "X")
+        elif i >= 5 and i < 6:
+            hRMSup.SetAxisRange(1, 300, "X")
+        elif i >= 3 and i < 5:
+            hRMSup.SetAxisRange(1, 250, "X")
         elif i >= 2 and i < 3 :
-            hRMSup.SetAxisRange(1, 300,"X")
-        elif i < 2:
             hRMSup.SetAxisRange(1, 200,"X")
+        elif i < 2:
+            hRMSup.SetAxisRange(1, 100,"X")
 
         if histname != "Soft Drop " : 
             unpinch_vals( hRMSup, xval=maxbin )
@@ -219,24 +223,38 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         smooth( hRMSdn , delta=2, xmin=bin400 )
         smooth( hRecoup, delta=2, xmin=bin400 )
         smooth( hRecodn, delta=2, xmin=bin400 )
-        print '<<<<<<<------ this is the one we want'
-        smooth( hRecoCopyup, delta=2, xmin=bin400, verbose=True )
-        smooth( hRecoCopydn, delta=2, xmin=bin400, verbose=True )
+        #print '<<<<<<<------ this is the one we want'
+        smooth( hRecoCopyup, delta=2, xmin=bin400 )
+        smooth( hRecoCopydn, delta=2, xmin=bin400 )
         smooth( hRecoJMRup, delta=2, xmin=bin400 )
         smooth( hRecoJMRdn, delta=2, xmin=bin400 )
         smooth( hRecoPDFup, delta=2, xmin=bin400 )
         smooth( hRecoPDFdn, delta=2, xmin=bin400 )
-            
+
+        smooth( hRMSup, delta=2 )
+        smooth( hRMSdn , delta=2 )
+        smooth( hRecoup, delta=2 )
+        smooth( hRecodn, delta=2 )
+        #print '<<<<<<<------ this is the one we want'
+        smooth( hRecoCopyup, delta=2 )
+        smooth( hRecoCopydn, delta=2 )
+        smooth( hRecoJMRup, delta=2 )
+        smooth( hRecoJMRdn, delta=2 )
+        smooth( hRecoPDFup, delta=2 )
+        smooth( hRecoPDFdn, delta=2 )
+        
+
+                    
         hRMSup.Draw('hist')
-        hRMSdn.Draw('hist same')
+        #hRMSdn.Draw('hist same')
         hRecoup.Draw('hist same')
-        hRecodn.Draw('hist same')
+        #hRecodn.Draw('hist same')
         hRecoCopyup.Draw('hist same')
-        hRecoCopydn.Draw('hist same')
+        #hRecoCopydn.Draw('hist same')
         hRecoJMRup.Draw('hist same')
-        hRecoJMRdn.Draw('hist same')
+        #hRecoJMRdn.Draw('hist same')
         hRecoPDFup.Draw('hist same')
-        hRecoPDFdn.Draw('hist same')
+        #hRecoPDFdn.Draw('hist same')
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(hRecoJMRup, 'JMR', 'l')
         legends_list[i].AddEntry(hRecoPDFup, 'PDF', 'l')
@@ -245,6 +263,21 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         legends_list[i].AddEntry(hRMSup, 'Stat', 'l')
         legends_list[i].Draw()
 
+        tlx = ROOT.TLatex()
+        tlx.SetNDC()
+        tlx.SetTextFont(43)
+        tlx.SetTextSize(24)
+
+        tlx.DrawLatex(0.15, 0.926, "CMS Preliminary")
+        tlx.DrawLatex(0.69, 0.926, "2.3 fb^{-1} (13 TeV)")
+
+        tlx2 = ROOT.TLatex()
+        tlx2.SetNDC()
+        tlx2.SetTextFont(63)
+        tlx2.SetTextSize(20)
+        tlx2.DrawLatex(0.22, 0.830, histname + ptbins_dict[i])
+
+        
         canvas_list[i].Draw()
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")

@@ -15,8 +15,8 @@ parser = OptionParser()
 f = ROOT.TFile('2DClosure_nomnom.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
-bins = ['p_{T} 200-260 GeV','p_{T} 260-350 GeV','p_{T} 350-460 GeV','p_{T} 460-550 GeV','p_{T} 550-650 GeV','p_{T} 650-760 GeV', 'p_{T} 760-900 GeV', 'p_{T} 900-1000 GeV', 'p_{T} 1000-1100 GeV','p_{T} 1100-1200 GeV',
-    'p_{T} 1200-1300 GeV', 'p_{T} > 1300 GeV']
+bins = ['p_{T} = 200-260 GeV','p_{T} = 260-350 GeV','p_{T} = 350-460 GeV','p_{T} = 460-550 GeV','p_{T} = 550-650 GeV','p_{T} = 650-760 GeV', 'p_{T} = 760-900 GeV', 'p_{T} = 900-1000 GeV', 'p_{T} = 1000-1100 GeV','p_{T} = 1100-1200 GeV',
+    'p_{T} = 1200-1300 GeV', 'p_{T} > 1300 GeV']
 scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
 nptbins = 11
 ##### WARNING ### WARNING #####<----------------------------------------------
@@ -124,8 +124,8 @@ for x in range(0, nptbins):
     atlxpt.append(ROOT.TLatex())
     atlxSD.append(ROOT.TLatex())
     atlxSDpt.append(ROOT.TLatex())
-    alegends.append(TLegend(.3, .65, .5, .88))
-    alegendsSD.append(TLegend(.3, .65, .5, .88))
+    alegends.append(TLegend(.2, .45, .6, .80))
+    alegendsSD.append(TLegend(.2, .45, .6, .80))
     datacanvases[x].SetLeftMargin(0.15)
     datacanvasesSD[x].SetLeftMargin(0.15)
 ################################################################################################################# Get Parton Showering Unc.

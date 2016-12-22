@@ -396,7 +396,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         herwig_gen.SetLineColor(ROOT.kMagenta + 3)
         herwig_gen.SetLineWidth(3)
         herwig_gen.Draw("hist same")
-        legends_list[i].AddEntry(herwig_gen, "Herwig", 'l')
+        legends_list[i].AddEntry(herwig_gen, "HERWIG++", 'l')
         herwigCopy = herwig_gen.Clone()
         herwigCopy.SetName( herwigCopy.GetName() + "_copy")
 
@@ -556,17 +556,23 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
-        trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+
+        if options.isSoftDrop :
+            xlabeloption = 'Groomed j'
+        else :
+            xlabeloption = 'J'
+        
+        trueCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
         trueCopy.GetYaxis().SetTitleOffset(1.2)
 
-        herwigCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+        herwigCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         herwigCopy.UseCurrentStyle()
         herwigCopy.GetXaxis().SetTitleOffset(2)
         herwigCopy.GetYaxis().SetTitleOffset(1.2)
         if i < 11 and options.isSoftDrop and isData:
-            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            theorycopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theorycopy.UseCurrentStyle()
             theorycopy.SetFillStyle(3003)
             theorycopy.SetFillColor(ROOT.kBlue)
@@ -574,7 +580,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
-            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            theory2copy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
             theory2copy.SetFillStyle(3006)
             theory2copy.SetFillColor(ROOT.kOrange+7)
@@ -583,7 +589,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theory2copy.GetXaxis().SetTitleOffset(2)
             theory2copy.GetYaxis().SetTitleOffset(1.2)
         if i < 11:
-            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            powhegcopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             #powhegcopy.UseCurrentStyle()
             powhegcopy.GetXaxis().SetTitleOffset(2)
             powhegcopy.GetYaxis().SetTitleOffset(1.2)
@@ -668,12 +674,15 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datJMR.GetXaxis().SetTitleOffset(3.5)
         datRMS.GetXaxis().SetTitleOffset(3.5)
 
-
-        datcopy.GetXaxis().SetTitle("Jet Mass (GeV)")
-        datcopycopy.GetXaxis().SetTitle("Jet Mass (GeV)")
-        datPDF.GetXaxis().SetTitle("Jet Mass (GeV)")
-        datJMR.GetXaxis().SetTitle("Jet Mass (GeV)") 
-        datRMS.GetXaxis().SetTitle("Jet Mass (GeV)")
+        if options.isSoftDrop :
+            xlabeloption = 'Groomed j'
+        else :
+            xlabeloption = 'J'
+        datcopy.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
+        datcopycopy.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
+        datPDF.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
+        datJMR.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)") 
+        datRMS.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
 
 
         ######################################################################## Draw and save
@@ -842,7 +851,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             sys2 = float(((upjer + downjer )/2.))
             err = add_quadrature([sys, sys2, err1])
             hReco.SetBinError(ibin, err)
-        ####################################################################################### Add Jet Mass Resolution Band
+        ####################################################################################### Add Jet mass Resolution Band
         hRecoJMR = hReco.Clone()
         for ibin in xrange(1, hRecoJMR.GetNbinsX()):
             val = float(hRecoJMR.GetBinContent(ibin))
@@ -886,14 +895,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRecoPDF.SetAxisRange(1,1200, "X")
             hStat.SetAxisRange(1, 1200, "X")
         elif i > 7 and i < 11:
-            hRecoPDF.SetAxisRange(1,900, "X")
-            hStat.SetAxisRange(1, 900, "X")
+            hRecoPDF.SetAxisRange(1,500, "X")
+            hStat.SetAxisRange(1, 500, "X")
         elif i > 3 and i < 8:
-            hRecoPDF.SetAxisRange(1,600, "X")
-            hStat.SetAxisRange(1, 600, "X")
+            hRecoPDF.SetAxisRange(1,300, "X")
+            hStat.SetAxisRange(1, 300, "X")
         elif i < 4:
-            hRecoPDF.SetAxisRange(1,400,"X")
-            hStat.SetAxisRange(1, 400, "X")
+            hRecoPDF.SetAxisRange(1,200,"X")
+            hStat.SetAxisRange(1, 200, "X")
         build_the_stack_band.append(hRecoPDF.Clone())
 
 
@@ -970,7 +979,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         herwig_gen.SetLineColor(ROOT.kMagenta + 3)
         herwig_gen.SetLineWidth(3)
         herwig_gen.Draw("hist same")
-        legends_list[i].AddEntry(herwig_gen, "Herwig", 'l')
+        legends_list[i].AddEntry(herwig_gen, "HERWIG++", 'l')
         herwigCopy = herwig_gen.Clone()
         herwigCopy.SetName( herwigCopy.GetName() + "_copy")
 
@@ -1110,6 +1119,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory2copy = theory2.Clone()
             theory2copy.SetName( theory2.GetName() + "_copy" )
 
+
+
+        if options.isSoftDrop :
+            xlabeloption = 'Groomed j'
+        else :
+            xlabeloption = 'J'
+
+            
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
         datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
@@ -1149,17 +1166,17 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
-        trueCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+        trueCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
         trueCopy.GetYaxis().SetTitleOffset(1.2)
-        herwigCopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+        herwigCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         herwigCopy.UseCurrentStyle()
         herwigCopy.GetXaxis().SetTitleOffset(2)
         herwigCopy.GetYaxis().SetTitleOffset(1.2)
         if i < 11 and options.isSoftDrop and isData:
 
-            theorycopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            theorycopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theorycopy.UseCurrentStyle()
             theorycopy.SetFillStyle(3003)
             theorycopy.SetFillColor(ROOT.kBlue)
@@ -1167,7 +1184,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
             theorycopy.GetYaxis().SetTitleOffset(1.2)
-            theory2copy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            theory2copy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
             theory2copy.SetFillStyle(3006)
             theory2copy.SetFillColor(ROOT.kOrange+7)            
@@ -1177,7 +1194,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory2copy.GetYaxis().SetTitleOffset(1.2)
 
         if i < 11:
-            powhegcopy.SetTitle(";Jet Mass (GeV);#frac{Theory}{Data}")
+            powhegcopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             #powhegcopy.UseCurrentStyle()
             powhegcopy.GetXaxis().SetTitleOffset(2)
             powhegcopy.GetYaxis().SetTitleOffset(1.2)
@@ -1226,12 +1243,18 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         #    powhegcopy.SetLineColor(ROOT.kGreen + 3)
         #    powhegcopy.SetLineWidth(3)
 
+
+        if options.isSoftDrop :
+            xlabeloption = 'Groomed j'
+        else :
+            xlabeloption = 'J'
+        
         datPDF.GetXaxis().SetTitleOffset(3.5)
     
-        datPDF.GetXaxis().SetTitle("Jet Mass (GeV)")
+        datPDF.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
 		
         datStat.GetXaxis().SetTitleOffset(3.5)
-        datStat.GetXaxis().SetTitle("Jet Mass (GeV)")
+        datStat.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
 
         ######################################################################## Draw and save
         
@@ -1242,14 +1265,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             datPDF.SetAxisRange(1,1200, "X")
             datStat.SetAxisRange(1, 1200, "X")
         elif i > 7 and i < 11:
-            datPDF.SetAxisRange(1,900, "X")
-            datStat.SetAxisRange(1, 900, "X")
+            datPDF.SetAxisRange(1,500, "X")
+            datStat.SetAxisRange(1, 500, "X")
         elif i > 3 and i < 8:
-            datPDF.SetAxisRange(1,600, "X")
-            datStat.SetAxisRange(1, 600, "X")
+            datPDF.SetAxisRange(1,300, "X")
+            datStat.SetAxisRange(1, 300, "X")
         elif i < 4:
-            datPDF.SetAxisRange(1,400,"X")
-            datStat.SetAxisRange(1, 400, "X")
+            datPDF.SetAxisRange(1,200,"X")
+            datStat.SetAxisRange(1, 200, "X")
         datPDF.Draw('e2')
         datPDF.GetXaxis().SetTickLength(0.05)
         datStat.Draw('e2 same')
@@ -1306,15 +1329,15 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         the_stack.Add(hist[0], hist[1])
         the_stack.Add(mchist[0], mchist[1])
     the_stack.Draw("nostack")
-    the_stack.GetXaxis().SetRangeUser(1, 1000)
+    the_stack.GetXaxis().SetRangeUser(1, 500)
     the_stack.SetMinimum(1e-14)
     the_stack.SetMaximum(1e6)
     stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
     stackleg.Draw()
     if(not options.isSoftDrop):
-        the_stack.SetTitle(";Jet Mass(GeV);Fractional Cross Section")
+        the_stack.SetTitle(";Jet mass(GeV);Fractional Cross Section")
     else:
-        the_stack.SetTitle(";Groomed Jet Mass(GeV);Fractional Cross Section")
+        the_stack.SetTitle(";Groomed Jet mass(GeV);Fractional Cross Section")
     latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
     latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
@@ -1356,7 +1379,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         reco_list[i].SetAxisRange(1e-11, 1, "Y")
         reco_list[i].SetStats(0)
         reco_list[i].Draw("SAME hist")
-        reco_list[i].GetXaxis().SetTitle("Mass (GeV)")
+        reco_list[i].GetXaxis().SetTitle("Jet mass (GeV)")
         legends_list[i].AddEntry(reco_list[i], recolegname_str, 'l')
         legends_list[i].AddEntry(gen_list[i], genlegname_str, 'pl')
         legends_list[i].Draw()
@@ -1381,7 +1404,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gencopy.Divide(gencopy, reco_list[i], 1.0, 1.0)
 
         pads_list[i][1].cd()
-        gencopy.SetTitle(";Jet Mass (GeV); #frac{Theory}{Data}")
+        gencopy.SetTitle(";" + xlabeloption + "et mass (GeV); #frac{Theory}{Data}")
         recocopy.SetMinimum(0)
         recocopy.SetMaximum(2)
         recocopy.GetYaxis().SetNdivisions(2,4,0,False)
@@ -1449,8 +1472,15 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
 
         leg = legends_list[i]
 
+        if options.isSoftDrop :
+            xlabeloption = 'Groomed j'
+        else :
+            xlabeloption = 'J'
+
+
+        
         postMC.SetLineColor(2)
-        postMC.SetTitle(";Jet Mass (GeV);Ratio of Unfolded to Preunfolded")
+        postMC.SetTitle(";" + xlabeloption + "et mass (GeV);Ratio of Unfolded to Preunfolded")
         postMC.Draw("hist")
         postData.SetLineColor(4)
         postData.Draw("hist same")
@@ -1501,5 +1531,5 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
         latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")        
-        genMC.SetTitle(";Jet Mass (GeV);(Gen/Unfolded Data)/(Preunfolded MC/Preunfolded Data)")
+        genMC.SetTitle(";" + xlabeloption + "et mass (GeV);(Gen/Unfolded Data)/(Preunfolded MC/Preunfolded Data)")
         canvas2.SaveAs("gen"+ outname_str + str(i) + ".pdf")

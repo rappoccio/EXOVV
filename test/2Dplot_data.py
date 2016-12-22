@@ -224,13 +224,13 @@ for x in range(0, nptbin):
         else:
             alegendsSD.append(TLegend(.58, .30, .90, .80))
         if x > 13:
-            alegends_fullband.append(TLegend(.22, .55, .47, .80))
+            alegends_fullband.append(TLegend(.25, .2, .54, .80))
         else:
-            alegends_fullband.append(TLegend(.22, .55, .47, .80))
+            alegends_fullband.append(TLegend(.25, .2, .54, .80))
         if x == 0:
-            alegends_fullbandSD.append(TLegend(.60, .50, .90, .80))
+            alegends_fullbandSD.append(TLegend(.55, .29, .89, .80))
         else:
-            alegends_fullbandSD.append(TLegend(.58, .30, .90, .80))
+            alegends_fullbandSD.append(TLegend(.55, .29, .89, .80))
 
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
