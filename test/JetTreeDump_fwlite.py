@@ -705,11 +705,12 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('GenJetMassSoftDrop'  , GenJetMassSoftDrop  ,  'GenJetMassSoftDrop[NGenJet]/F'  )
         TreeEXOVV.Branch('GenJetPtSoftDrop'    , GenJetPtSoftDrop    ,  'GenJetPtSoftDrop[NGenJet]/F'    )
         
+        TreeEXOVV.Branch('NGenPart'            , NGenPart            ,  'NGenPart/I'                      )
         TreeEXOVV.Branch('GenPartID'           , GenPartID           ,  'GenPartID[NGenPart]/F'           )
         TreeEXOVV.Branch('GenPartPt'           , GenPartPt           ,  'GenPartPt[NGenPart]/F'           )
         TreeEXOVV.Branch('GenPartEta'          , GenPartEta          ,  'GenPartEta[NGenPart]/F'          )
         TreeEXOVV.Branch('GenPartPhi'          , GenPartPhi          ,  'GenPartPhi[NGenPart]/F'          )
-        TreeEXOVV.Branch('GenPartMass'         , GenPartMass         ,  'GenPartMass[NNGenPart]/F'         )
+        TreeEXOVV.Branch('GenPartMass'         , GenPartMass         ,  'GenPartMass[NGenPart]/F'         )
         TreeEXOVV.Branch('GenPartStatus'       , GenPartStatus       ,  'GenPartStatus[NGenPart]/F'       )
         TreeEXOVV.Branch('GenPartMom0ID'       , GenPartMom0ID       ,  'GenPartMom0ID[NGenPart]/F'       )
         TreeEXOVV.Branch('GenPartMom0Status'   , GenPartMom0Status   ,  'GenPartMom0Status[NGenPart]/F'   )
