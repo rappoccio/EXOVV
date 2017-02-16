@@ -1655,23 +1655,28 @@ def JetTreeDump_FWLite(argv) :
                         GenJetPtSoftDrop    [igenjet] = ak8GenJetsSoftDropP4[igenjet].Perp()
                 
                     NGenPart [0] = 0
-                    for igenpart in xrange( len(GenAK8PartID)) :
+                    for igenpart in xrange( len(GenAK8PartID) ) :
+                        if NGenPart[0] >= 20 : 
+                            break
+                        #print 'igenpart = ', igenpart, ', id = ', GenAK8PartID[igenpart]
                         if abs(GenAK8PartID[igenpart]) == 5 or abs(GenAK8PartID[igenpart]) == 4:
+                            GenPartID           [NGenPart[0]] = GenAK8PartID            [igenpart]
+                            GenPartPt           [NGenPart[0]] = GenAK8PartPt            [igenpart]
+                            GenPartEta          [NGenPart[0]] = GenAK8PartEta           [igenpart]
+                            GenPartPhi          [NGenPart[0]] = GenAK8PartPhi           [igenpart]
+                            GenPartMass         [NGenPart[0]] = GenAK8PartMass          [igenpart]
+                            GenPartStatus       [NGenPart[0]] = GenAK8PartStatus        [igenpart]
+                            GenPartMom0ID       [NGenPart[0]] = GenAK8PartMom0ID        [igenpart]
+                            GenPartMom0Status   [NGenPart[0]] = GenAK8PartMom0Status    [igenpart]
+                            GenPartMom1ID       [NGenPart[0]] = GenAK8PartMom1ID        [igenpart]
+                            GenPartMom1Status   [NGenPart[0]] = GenAK8PartMom1Status    [igenpart]
+                            GenPartDau0ID       [NGenPart[0]] = GenAK8PartDau0ID        [igenpart]
+                            GenPartDau0Status   [NGenPart[0]] = GenAK8PartDau0Status    [igenpart]
+                            GenPartDau1ID       [NGenPart[0]] = GenAK8PartDau1ID        [igenpart]
+                            GenPartDau1Status   [NGenPart[0]] = GenAK8PartDau1Status    [igenpart]
                             NGenPart [0] += 1
-                            GenPartID           [igenpart] = GenAK8PartID            [igenpart]
-                            GenPartPt           [igenpart] = GenAK8PartPt            [igenpart]
-                            GenPartEta          [igenpart] = GenAK8PartEta           [igenpart]
-                            GenPartPhi          [igenpart] = GenAK8PartPhi           [igenpart]
-                            GenPartMass         [igenpart] = GenAK8PartMass          [igenpart]
-                            GenPartStatus       [igenpart] = GenAK8PartStatus        [igenpart]
-                            GenPartMom0ID       [igenpart] = GenAK8PartMom0ID        [igenpart]
-                            GenPartMom0Status   [igenpart] = GenAK8PartMom0Status    [igenpart]
-                            GenPartMom1ID       [igenpart] = GenAK8PartMom1ID        [igenpart]
-                            GenPartMom1Status   [igenpart] = GenAK8PartMom1Status    [igenpart]
-                            GenPartDau0ID       [igenpart] = GenAK8PartDau0ID        [igenpart]
-                            GenPartDau0Status   [igenpart] = GenAK8PartDau0Status    [igenpart]
-                            GenPartDau1ID       [igenpart] = GenAK8PartDau1ID        [igenpart]
-                            GenPartDau1Status   [igenpart] = GenAK8PartDau1Status    [igenpart]
+                            #print 'Found one! now NGenPart is ', NGenPart[0]
+
 
 
 
