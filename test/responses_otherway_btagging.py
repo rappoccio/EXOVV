@@ -25,7 +25,7 @@ parser.add_option('--ptMin', type='float', action='store',
 
 parser.add_option('--bdisc', type='int', action='store',
                   dest='bdisc',
-                  default = None,
+                  default = 0.6,
                   help='b discriminator cut')
 
 parser.add_option('--herwigFlat', action='store_true',
@@ -403,11 +403,12 @@ for itree,t in enumerate(trees) :
     GenJetRhoRatio = array.array('f', [-1]*5)
     FatJetPtSoftDrop = array.array('f', [-1]*5)
     GenJetPtSoftDrop = array.array('f', [-1]*5)
-    GenPartID = array.array('f', [-1]*5)
-    GenPartPt = array.array('f', [-1]*5)
-    GenPartEta = array.array('f', [-1]*5)
-    GenPartPhi = array.array('f', [-1]*5)
-    GenPartMass = array.array('f', [-1]*5)
+    NGenJet = array.array('i', [0] )
+    GenPartID = array.array('f', [-1]*20)
+    GenPartPt = array.array('f', [-1]*20)
+    GenPartEta = array.array('f', [-1]*20)
+    GenPartPhi = array.array('f', [-1]*20)
+    GenPartMass = array.array('f', [-1]*20)
     
     
     
@@ -471,6 +472,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress ('FatJetPtSoftDrop', FatJetPtSoftDrop)
     t.SetBranchAddress ('GenJetPtSoftDrop', GenJetPtSoftDrop)
     t.SetBranchAddress ('FatJetBDisc', FatJetBDisc)
+    t.SetBranchAddress ('NGenPart', NGenPart)
     t.SetBranchAddress ('GenPartID', GenPartID)
     t.SetBranchAddress ('GenPartPt', GenPartPt)
     t.SetBranchAddress ('GenPartEta', GenPartEta)
@@ -557,8 +559,9 @@ for itree,t in enumerate(trees) :
                     LQuark.SetPtEtaPhiM( GenPartPt[ipart], GenPartEta[ipart], GenPartPhi[ipart], GenPartMass[ipart])
                     lightquarklist.append(LQuark)
                 else:
-                    Gluon = ROOT.TLorentzVector()
-                    Gluon.SetPtEtaPhiM( GenPartPt[ipart], GenPartEta[ipart], GenPartPhi[ipart], GenPartMass[ipart])
+                    Gluon = ijet
+                    #Gluon = ROOT.TLorentzVector()
+                    #Gluon.SetPtEtaPhiM( GenPartPt[ipart], GenPartEta[ipart], GenPartPhi[ipart], GenPartMass[ipart])
                     gluonlist.append(Gluon)
             if getmatched(genjet, bquarklist) != None:
                 bjetlist.append(ijet)
