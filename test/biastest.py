@@ -22,34 +22,44 @@ parser.add_option('--softdrop', action ='store_true',
                   dest='softdrop',
                   help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : or nothing at all to get the nominal')
 
+parser.add_option('--isBottomLine', action='store_true',
+                  default= False,
+                  dest='isBottomLine',
+                  help='Flag true to run bottom line test on data')
+
 
 (options, args) = parser.parse_args()
 argv = []
 
 myfile = TFile('qcdmc_stitched_withpdf_qcdmc.root')
-
+datfile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 outtext = ''
 outfile = None
 
 if options.softdrop == False : 
     response = myfile.Get('2d_response_softdrop' + options.extension)
-    outfile = TFile('2DClosure_softdrop' + options.extension + '.root', 'RECREATE')
-    outtext = options.extension
+    if options.isBottomLine:
+        reco = datfile.Get('PFJet_pt_m_AK8SD')
+        outfile = TFile('2DBottomLine_softdrop' + options.extension + '.root', 'RECREATE')
+        outtext = 'BottomLine' + options.extension
+    else:
+        reco = myfile.Get('PFJet_pt_m_AK8SD')
+        outfile = TFile('2DClosure_softdrop' + options.extension + '.root', 'RECREATE')
+        outtext = options.extension
 
     truth = myfile.Get('PFJet_pt_m_AK8SDgen')
-
-
-    reco = myfile.Get('PFJet_pt_m_AK8SD')
-
 else :
     response = myfile.Get('2d_response' + options.extension)
-    outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
-    outtext = options.extension
-
+    if options.isBottomLine:
+        reco = datfile.Get('PFJet_pt_m_AK8')
+        outfile = TFile('2DBottomLine' + options.extension + '.root', 'RECREATE')
+        outtext = 'BottomLine' + options.extension
+    else:
+        reco = myfile.Get('PFJet_pt_m_AK8')
+        outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
+        outtext = options.extension
+    
     truth = myfile.Get('PFJet_pt_m_AK8Gen')
-
-
-    reco = myfile.Get('PFJet_pt_m_AK8')
         
 c_reco = ROOT.TCanvas("c_reco", "c_reco")
 reco.Draw("colz")
@@ -105,8 +115,13 @@ plot3.SetMarkerStyle(21)
 
 plot3.SetTitle("Probability vs Number of Iterations; Number of Iterations ; Probability ")
 plot3.Draw("AL")
-canvas3.Print("niterations_optimize.png", "png")
-canvas3.Print("niterations_optimize.pdf", "pdf")
+if options.isBottomLine:
+    outname = "BottomLine"
+else:
+    outname = "niteration_optimize"
+
+canvas3.Print(outname+ ".png", "png")
+canvas3.Print(outname+ ".pdf", "pdf")
 
 
 
