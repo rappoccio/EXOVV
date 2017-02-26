@@ -321,32 +321,47 @@ ROOT.gStyle.SetLabelSize(24, "XYZ")
 
 deweightFlat = False
 
-if not options.herwigFlat : 
-    qcdIn =[
-        ROOT.TFile('qcdpy8_170to300_rejec.root'),
-        ROOT.TFile('qcdpy8_300to470_rejec.root'),
-        ROOT.TFile('qcdpy8_470to600_rejec.root'),
-        ROOT.TFile('qcdpy8_600to800_rejec.root'),
-        ROOT.TFile('qcdpy8_800to1000_rejec.root'),
-        ROOT.TFile('qcdpy8_1000to1400_rejec.root'),
-        ROOT.TFile('qcdpy8_1400to1800_rejec.root'),
-        ROOT.TFile('qcdpy8_1800to2400_rejec.root'),
-        ROOT.TFile('qcdpy8_2400to3200_rejec.root'),
-        ROOT.TFile('qcdpy8_3200toinf_rejec.root'),
-        ]
-    qcdWeights =[
-        117276.      / 6918748.,  #170to300    
-        7823.        / 5968960.,  #300to470    
-        648.2        / 3977770.,  #470to600    
-        186.9        / 3979884.,  #600to800    
-        32.293       / 3973224.,  #800to1000   
-        9.4183       / 2953982.,  #1000to1400  
-        0.84265      / 395725. ,  #1400to1800  
-        0.114943     / 393760. ,  #1800to2400  
-        0.00682981   / 398452. ,  #2400to3200  
-        0.000165445  / 391108. ,  #3200toInf   
-        ]
-else : 
+
+if not options.herwigFlat :
+    input_names_file = open("outplots_names.txt", "r")
+    for line in input_names_file:
+        qcdIn.append(ROOT.TFile(line))
+        #qcdIn =[
+        #ROOT.TFile('qcdpy8_170to300_rejec.root'),
+        #ROOT.TFile('qcdpy8_300to470_rejec.root'),
+        #ROOT.TFile('qcdpy8_470to600_rejec.root'),
+        #ROOT.TFile('qcdpy8_600to800_rejec.root'),
+        #ROOT.TFile('qcdpy8_800to1000_rejec.root'),
+        #ROOT.TFile('qcdpy8_1000to1400_rejec.root'),
+        #ROOT.TFile('qcdpy8_1400to1800_rejec.root'),
+        #ROOT.TFile('qcdpy8_1800to2400_rejec.root'),
+        #ROOT.TFile('qcdpy8_2400to3200_rejec.root'),
+        #ROOT.TFile('qcdpy8_3200toinf_rejec.root'),
+        #]
+        #qcdWeights =[
+        #117276.      / 6918748.,  #170to300
+        #7823.        / 5968960.,  #300to470
+        #648.2        / 3977770.,  #470to600
+        #186.9        / 3979884.,  #600to800
+        #32.293       / 3973224.,  #800to1000
+        #9.4183       / 2953982.,  #1000to1400
+        #0.84265      / 395725. ,  #1400to1800
+        #0.114943     / 393760. ,  #1800to2400
+        #0.00682981   / 398452. ,  #2400to3200
+        #0.000165445  / 391108. ,  #3200toInf
+        #]
+    qcdWeights =      [117276.      / 6918748.]*165  #170to300
+    qcdWeights.extend([7823.        / 5968960.]*144) #300to470
+    qcdWeights.extend([648.2        / 3977770.]*89)  #470to600
+    qcdWeights.extend([186.9        / 3979884.]*91)  #600to800
+    qcdWeights.extend([32.293       / 3973224.]*98)  #800to1000
+    qcdWeights.extend([9.4183       / 2953982.]*89)  #1000to1400
+    qcdWeights.extend([0.84265      / 395725. ]*9)   #1400to1800
+    qcdWeights.extend([0.114943     / 393760. ]*9)   #1800to2400
+    qcdWeights.extend([0.00682981   / 398452. ]*9)   #2400to3200
+    qcdWeights.extend([0.000165445  / 391108. ]*9)   #3200toInf
+
+else :
     qcdIn =[
         ROOT.TFile('qcdherwig_flat_rejec.root'),
         ]
