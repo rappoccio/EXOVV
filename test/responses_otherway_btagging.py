@@ -302,7 +302,7 @@ def getMatched( p4, coll, dRMax = 0.4) :
         for i,c in enumerate(coll):
             if p4.DeltaR(c) < dRMax :
                 return i
-    return None
+    return None
 
 
 
@@ -325,6 +325,7 @@ deweightFlat = False
 if not options.herwigFlat :
     input_names_file = open("outplots_names.txt", "r")
     for line in input_names_file:
+        qcdIn = []
         qcdIn.append(ROOT.TFile(line))
         #qcdIn =[
         #ROOT.TFile('qcdpy8_170to300_rejec.root'),
