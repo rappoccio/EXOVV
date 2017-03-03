@@ -493,9 +493,11 @@ canvpre.Print( 'trigplots_pre_' + var + '.pdf', 'pdf')
 
 
 turnoncanvs = []
-for itrig, trig in enumerate(trigs):
+for itrig in xrange(len(trigs) - 1):
+    trig = trigs[itrig]
     pt0histsTurnon[itrig].Sumw2()
-    pt0histsTurnon[itrig].Divide( pt0histspre[itrig] )
+    pt0histsTurnon[itrig].SetTitle("Trigger Turnon, " + trigs[itrig + 1] )
+    ROOT.TH1.Divide( pt0histsTurnon[itrig], pt0histspre[itrig], 1.0, 1.0, 'b' )
     turnoncanv = ROOT.TCanvas("cturnon" + str(itrig), "cturnon" + str(itrig) )
     pt0histsTurnon[itrig].Draw('e')
     pt0histsTurnon[itrig].SetMinimum(0.0)
@@ -506,7 +508,8 @@ for itrig, trig in enumerate(trigs):
     pt0histsTurnon[itrig].Write()
 
     ptsd0histsTurnon[itrig].Sumw2()
-    ptsd0histsTurnon[itrig].Divide( ptsd0histspre[itrig] )
+    ptsd0histsTurnon[itrig].SetTitle("Trigger Turnon, " + trigs[itrig + 1] )
+    ROOT.TH1.Divide( ptsd0histsTurnon[itrig], ptsd0histspre[itrig], 1.0, 1.0, 'b' )
     turnoncanv = ROOT.TCanvas("cturnonsd" + str(itrig), "cturnonsd" + str(itrig) )
     ptsd0histsTurnon[itrig].Draw('e')
     ptsd0histsTurnon[itrig].SetMinimum(0.0)

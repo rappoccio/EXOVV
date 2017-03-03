@@ -1,5 +1,5 @@
 import ROOT
-ROOT.gSystem.Load("../libRooUnfold")
+ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
@@ -173,7 +173,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
         canvas_list[i].cd()
         hRMSup.SetTitle( '' )
-        hRMSup.GetYaxis().SetTitle("Uncertainty (%)")
+        hRMSup.GetYaxis().SetTitle("Uncertainty (fraction)")
         hRMSup.GetYaxis().SetTitleSize(30)
         hRMSup.GetYaxis().SetLabelSize(30)
         
@@ -242,9 +242,10 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         smooth( hRecoJMRdn, delta=2 )
         smooth( hRecoPDFup, delta=2 )
         smooth( hRecoPDFdn, delta=2 )
-        
 
-                    
+
+        hRMSup.SetMaximum(100)
+        hRMSup.SetMinimum(1e-4)
         hRMSup.Draw('hist')
         #hRMSdn.Draw('hist same')
         hRecoup.Draw('hist same')
@@ -256,6 +257,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRecoPDFup.Draw('hist same')
         #hRecoPDFdn.Draw('hist same')
         ####################################################################################### Legends Filled
+        legends_list[i].SetNColumns(3)
         legends_list[i].AddEntry(hRecoJMRup, 'JMR', 'l')
         legends_list[i].AddEntry(hRecoPDFup, 'PDF', 'l')
         legends_list[i].AddEntry(hRecoCopyup, 'Parton Shower', 'l')
@@ -279,6 +281,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
         
         canvas_list[i].Draw()
+        canvas_list[i].SetLogy()
+        canvas_list[i].SetLogx()
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
 

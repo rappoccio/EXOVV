@@ -91,7 +91,7 @@ effstack = ROOT.THStack("effstack", ";Jet p_{T};N(path x) / N(path x-1)")
 for ihist in xrange(0, len(hists) - 1) :
     eff = hists[ihist].Clone()
     eff.SetName("eff" + str(ihist) )
-    eff.Divide( hists[ihist + 1] )
+    eff.Divide( hists[ihist + 1] , 'b')
     effs.append(effs)
     effstack.Add( eff )
     leg2.AddEntry( eff, labels[ihist], 'l')

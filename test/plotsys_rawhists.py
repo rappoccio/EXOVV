@@ -36,7 +36,7 @@ ROOT.gStyle.SetOptStat(000000)
 ROOT.gStyle.SetTitleFont(43)
 #ROOT.gStyle.SetTitleFontSize(0.05)
 ROOT.gStyle.SetTitleFont(43, "XYZ")
-ROOT.gStyle.SetTitleSize(30, "XYZ")
+ROOT.gStyle.SetTitleSize(25, "XYZ")
 ROOT.gStyle.SetTitleOffset(3.5, "X")
 ROOT.gStyle.SetTitleOffset(1.5, "Y")
 ROOT.gStyle.SetLabelFont(43, "XYZ")
@@ -64,9 +64,9 @@ def getProjsY( name, h, norm=True ) :
 def setupPads(canv, pads):
     canv.cd()
     pad1 = ROOT.TPad('pad' + canv.GetName() + '1', 'pad' + canv.GetName() + '1', 0., 0.3, 1.0, 1.0)
-    pad1.SetBottomMargin(0)
+    pad1.SetBottomMargin(0.022)
     pad2 = ROOT.TPad('pad' + canv.GetName() + '2', 'pad' + canv.GetName() + '2', 0., 0.0, 1.0, 0.3)
-    pad2.SetTopMargin(0)
+    pad2.SetTopMargin(0.05)
     pad1.SetLeftMargin(0.20)
     pad2.SetLeftMargin(0.20)
     pad2.SetBottomMargin(0.5)
@@ -194,10 +194,10 @@ for iptbin in xrange( len(dataprojs) ) :
     
 
     if 'AK8SD' not in options.hist :
-        tlx2.DrawLatex( 0.3, 0.4, "p_{T} = " + str(ptBinA[iptbin]) + '-' + str(ptBinA[iptbin+1]) + ' GeV' ) 
+        tlx2.DrawLatex( 0.3, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
         leg = ROOT.TLegend(0.3, 0.6, 0.55, 0.85)
     elif 'AK8SD' in options.hist :
-        tlx2.DrawLatex( 0.6, 0.4, "p_{T} = " + str(ptBinA[iptbin]) + '-' + str(ptBinA[iptbin+1]) + ' GeV' ) 
+        tlx2.DrawLatex( 0.6, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
         leg = ROOT.TLegend(0.6, 0.6, 0.85, 0.85)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
