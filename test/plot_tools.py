@@ -40,6 +40,9 @@ def get_ptbins_std():
     return ['200-260 GeV #times 10^{0}','260-350 GeV #times 10^{1}','350-460 GeV #times 10^{2}','460-550 GeV #times 10^{3}','550-650 GeV #times 10^{4}','650-760 GeV #times 10^{5}', '760-900 GeV #times 10^{6}', '900-1000 GeV #times 10^{7}', '1000-1100 GeV #times 10^{8}','1100-1200 GeV #times 10^{9}',
     '1200-1300 GeV #times 10^{10}', '> 1300 GeV']
 
+def expected_agreement():
+    return [[5,50], [10,70], [20,100], [20,100], [20,100], [20,100], [20,200], [30, 200], [30,300], [30, 300], [30,300], [30,300] ]
+
 def get_markers() :
     return [ 20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28  ]
 
@@ -181,7 +184,10 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     theorylist = []
     theoryfile2 = ROOT.TFile("theory_predictions_marzani.root")
     theorylist2 = []
-    
+    chi2 = []
+    chi2_marzani = []
+    chi2_harvard = []
+
     herwig_genfile = ROOT.TFile("PS_hists.root")
     herwig_genlist = []
     herwig_genlistSD = []
@@ -730,6 +736,17 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         canvas_list[i].Draw()
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
+        chi2.append(hRecoPDF.KolmogorovTest(MC_list[i]))
+        if options.isSoftDrop and i < 12:
+            chi2_marzani.append(theory2.KolmogorovTest(hReco))
+            chi2_harvard.append(theory.KolmogorovTest(hReco))
+    print "The KS values for Pythia8 Generator are "
+    print chi2
+    if options.isSoftDrop:
+        print "The KS values for Marzani predicitons are "
+        print chi2_marzani
+        print "The KS values for Harvard predictions are "
+        print chi2_harvard
     theoryfile.Close()
     theoryfile2.Close()
     powhegfile.Close()
@@ -759,6 +776,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     stackleg.SetFillColor(0)
     stackleg.SetBorderSize(0)
 
+    chi2 = []
+    chi2_marzani = []
+    chi2_harvard = []
+    
     #uncertainties on the stacks :D
     build_the_stack_band = []
     stack_canvas = TCanvas("sc", "sc", 800, 800)
@@ -1305,6 +1326,24 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         canvas_list[i].Draw()
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
+        hRecoKS = hRecoPDF.Clone( hRecoPDF.GetName() + "_KS")
+        hMCKS = MC_list[i].Clone( MC_list[i].GetName() + "_KS")
+
+        hRecoKS.GetXaxis().SetRangeUser( expected_agreement()[i][0], 10000)
+        hMCKS.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
+        hRecoKS.Scale( 1.0 / hRecoKS.Integral() )
+        hMCKS.Scale( 1.0 / hMCKS.Integral() )
+        chi2.append(hRecoKS.Chi2Test(hMCKS, "WW"))
+        if options.isSoftDrop and i < 12:
+            theoryKS = theory.Clone(theory.GetName() + "_KS")
+            theory2KS = theory2.Clone(theory2.GetName() + "_KS")
+            theoryKS.GetXaxis().SetRangeUser(expected_agreement()[i][0], expected_agreement()[i][1])
+            theory2KS.GetXaxis().SetRangeUser(expected_agreement()[i][0],expected_agreement()[i][1])
+            theory2KS.Scale( 1.0 / theory2KS.Integral() )
+            theoryKS.Scale( 1.0 / theoryKS.Integral() )
+            chi2_marzani.append(theory2KS.Chi2Test(hRecoKS, "WW"))
+            chi2_harvard.append(theoryKS.Chi2Test(hRecoKS, "WW"))
+                    
     stack_canvas.cd()
     stack_canvas.SetLogy()
     stack_canvas.SetLogx()
@@ -1332,6 +1371,16 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 mchist[0].SetBinError( errbin, 0.0 )                
         the_stack.Add(hist[0], hist[1])
         the_stack.Add(mchist[0], mchist[1])
+
+    print "The KS values for Pythia8 Generator are "
+    print chi2
+    if options.isSoftDrop:
+        print "The KS values for Marzani predicitons are "
+        print chi2_marzani
+        print "The KS values for Harvard predictions are "
+        print chi2_harvard
+
+        
     the_stack.Draw("][ nostack")
     the_stack.GetXaxis().SetRangeUser(1, 500)
     the_stack.SetMinimum(1e-14)
