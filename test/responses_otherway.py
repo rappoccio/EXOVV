@@ -203,6 +203,8 @@ h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Number", 50, 0, ROO
 h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", 50, 0, 1.0 )
 h_rho_vs_tau_meas = ROOT.TH2F("h_rho_vs_tau21_meas", ";Jet (m/p_{T}R)^{2};Jet #tau_{2}/#tau_{1}", 100, 0, 1.0, 50, 0, 1.0 )
 
+h_nvtx = ROOT.TH1F("h_nvtx", ";N_{PV};Number", 100, 0, 100)
+
 h_massup = ROOT.TH1F("h_massup", "JMR Up Variation", nbinsm, mBinA)
 h_massdn = ROOT.TH1F("h_massdn", "JMR Down Variation", nbinsm, mBinA)
 h_massnom = ROOT.TH1F("h_massnom", "JMR Nominal", nbinsm, mBinA)
@@ -397,7 +399,7 @@ for itree,t in enumerate(trees) :
     GenJetRhoRatio = array.array('f', [-1]*5)
     FatJetPtSoftDrop = array.array('f', [-1]*5)
     GenJetPtSoftDrop = array.array('f', [-1]*5)
-    
+    Nvtx = array.array('f', [-1.0])
     
     Trig = array.array('i', [-1] )
     
@@ -429,7 +431,7 @@ for itree,t in enumerate(trees) :
 
     t.SetBranchStatus ('CTEQweight_Central', 1)
     t.SetBranchStatus ('MSTWweight_Central', 1)
-
+    t.SetBranchStatus ('Nvtx', 1)
 
     t.SetBranchAddress ('NNPDF3weight_CorrDn', NNPDF3weight_CorrDn)
     t.SetBranchAddress ('NNPDF3weight_CorrUp', NNPDF3weight_CorrUp)
@@ -457,6 +459,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress ('GenJetRhoRatio', GenJetRhoRatio)
     t.SetBranchAddress ('FatJetPtSoftDrop', FatJetPtSoftDrop)
     t.SetBranchAddress ('GenJetPtSoftDrop', GenJetPtSoftDrop)
+    t.SetBranchAddress ('Nvtx', Nvtx)
     entries = t.GetEntriesFast()
     print 'Processing tree ' + str(itree)
     
@@ -481,6 +484,7 @@ for itree,t in enumerate(trees) :
         FatJetsSD = []
         weight = qcdWeights[itree]
 
+
         
         pdfweight_up = NNPDF3weight_CorrUp[0]
         pdfweight_dn = NNPDF3weight_CorrDn[0]
@@ -501,6 +505,8 @@ for itree,t in enumerate(trees) :
                 if options.verbose : print 'Weight is outside bounds, skipping'
                 continue
 
+
+        h_nvtx.Fill( Nvtx[0], weight )
 
         # First get the generator level jets. If there are at least two,
         # this part is "good". 
@@ -1133,6 +1139,8 @@ response_softdrop_jmrdn.Write()
 response_softdrop_jmrnom.Write()
 response_softdrop_jernom.Write()
 response_softdrop_nomnom.Write()
+
+h_nvtx.Write()
 h_pt_meas.Write()
 h_y_meas.Write()
 h_phi_meas.Write()

@@ -18,10 +18,10 @@ parser.add_option('--outname', type='string', action='store',
                   default = "jetht_weighted_dataplots_otherway_repdf.root",
                   help='Output string for output file')
 
-parser.add_option('--dir', type='string', action='store',
-                  dest='dir',
+parser.add_option('--plotname', type='string', action='store',
+                  dest='plotname',
                   default = "",
-                  help='Directory containing root histograms')
+                  help='Plot name for trig eff plots')
 
 
 
@@ -227,6 +227,8 @@ h_dphi_meas = ROOT.TH1F("h_dphi_meas", ";Jet #phi (radians); Number", 50, 0, ROO
 h_ptasym_meas = ROOT.TH1F("h_ptasym_meas", ";Jet (p_{T1} - p_{T2}) / (p_{T1} + p_{T2}); Number", 50, 0, 1.0 )
 h_rho_vs_tau_meas = ROOT.TH2F("h_rho_vs_tau21_meas", ";Jet (m/p_{T}R)^{2};Jet #tau_{2}/#tau_{1}", 100, 0, 1.0, 50, 0, 1.0 )
 
+h_nvtx = ROOT.TH1F("h_nvtx", ";N_{PV};Number", 100,0,100)
+
 for itrig,trig in enumerate(trigs) :
     pt0histpre = ROOT.TH1F(var + "_" + trig + "_pre", var + "_" + trig + "_pre", 200, 0, 2000)
     pt0histpre.SetMarkerStyle(markers[itrig])
@@ -279,7 +281,7 @@ for itree,t in enumerate(trees) :
     FatJetTau32 = array.array('f', [-1]*5)
     METpt = array.array('f', [-1])
     Trig = array.array('i', [-1] )
-
+    Nvtx = array.array('f', [-1.0] )
 
     t.SetBranchStatus('*', 0)
     t.SetBranchStatus('NFatJet', 1)
@@ -295,6 +297,7 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus( 'FatJetTau32', 1)
     t.SetBranchStatus( 'METpt', 1)
     t.SetBranchStatus('Trig', 1)
+    t.SetBranchStatus('Nvtx', 1)
 
     t.SetBranchAddress('NFatJet', NFatJet)
     t.SetBranchAddress('FatJetPt', FatJetPt)
@@ -309,9 +312,10 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress( 'FatJetTau32', FatJetTau32)
     t.SetBranchAddress( 'METpt', METpt)    
     t.SetBranchAddress('Trig', Trig)
+    t.SetBranchAddress('Nvtx', Nvtx)
     
     entries = t.GetEntriesFast()
-    #entries = 1000000
+    #entries = 10000
     for jentry in xrange( entries ):
         ientry = t.GetEntry( jentry )
         if ientry < 0:
@@ -323,6 +327,9 @@ for itree,t in enumerate(trees) :
         if jentry % 100000 == 0 : 
             print '%15d / %20d = %6.2f' % (jentry, entries, float(jentry)/float(entries) )
 
+
+
+        h_nvtx.Fill( Nvtx[0] )
 
         if NFatJet[0] < 2 :
             continue
@@ -493,35 +500,36 @@ canvpre.Print( 'trigplots_pre_' + var + '.pdf', 'pdf')
 
 
 turnoncanvs = []
+efficiencies = []
 for itrig in xrange(len(trigs) - 1):
     trig = trigs[itrig]
     pt0histsTurnon[itrig].Sumw2()
-    pt0histsTurnon[itrig].SetTitle("Trigger Turnon, " + trigs[itrig + 1] )
-    ROOT.TH1.Divide( pt0histsTurnon[itrig], pt0histspre[itrig], 1.0, 1.0, 'b' )
+    efficiency = ROOT.TEfficiency( pt0histsTurnon[itrig], pt0histspre[itrig] )
+    efficiency.SetTitle("Trigger Turnon, " + trigs[itrig + 1] )
     turnoncanv = ROOT.TCanvas("cturnon" + str(itrig), "cturnon" + str(itrig) )
-    pt0histsTurnon[itrig].Draw('e')
-    pt0histsTurnon[itrig].SetMinimum(0.0)
-    pt0histsTurnon[itrig].SetMaximum(1.1)    
+    efficiency.Draw('ap')
     turnoncanvs.append(turnoncanv)
-    turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + '.png', 'png')
-    turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + '.pdf', 'pdf')
-    pt0histsTurnon[itrig].Write()
+    turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + options.plotname +  '.png', 'png')
+    turnoncanv.Print( 'trigplots_turnon_' + var + '_' + str(itrig) + options.plotname +  '.pdf', 'pdf')
+    efficiency.Write()
 
     ptsd0histsTurnon[itrig].Sumw2()
-    ptsd0histsTurnon[itrig].SetTitle("Trigger Turnon, " + trigs[itrig + 1] )
-    ROOT.TH1.Divide( ptsd0histsTurnon[itrig], ptsd0histspre[itrig], 1.0, 1.0, 'b' )
+    efficiencySD = ROOT.TEfficiency( ptsd0histsTurnon[itrig], ptsd0histspre[itrig] )
+    efficiencySD.SetTitle("Trigger Turnon, " + trigs[itrig + 1] )
+
     turnoncanv = ROOT.TCanvas("cturnonsd" + str(itrig), "cturnonsd" + str(itrig) )
-    ptsd0histsTurnon[itrig].Draw('e')
-    ptsd0histsTurnon[itrig].SetMinimum(0.0)
-    ptsd0histsTurnon[itrig].SetMaximum(1.1)    
+    efficiencySD.Draw('ap')
     turnoncanvs.append(turnoncanv)
-    turnoncanv.Print( 'trigplots_turnon_' + var + 'sd_' + str(itrig) + '.png', 'png')
-    turnoncanv.Print( 'trigplots_turnon_' + var + 'sd_' + str(itrig) + '.pdf', 'pdf')
-    ptsd0histsTurnon[itrig].Write()
-    
+    turnoncanv.Print( 'trigplots_turnon_' + var + 'sd_' + str(itrig) + options.plotname + '.png', 'png')
+    turnoncanv.Print( 'trigplots_turnon_' + var + 'sd_' + str(itrig) + options.plotname + '.pdf', 'pdf')
+    efficiencySD.Write()
+
+    efficiencies.append( efficiency )
+    efficiencies.append( efficiencySD )
 
 h_2DHisto_meas.Write()
 h_2DHisto_measSD.Write()
+h_nvtx.Write()
 h_pt_meas.Write()
 h_y_meas.Write()
 h_phi_meas.Write()
