@@ -27,6 +27,12 @@ parser.add_option('--extension', action ='store', type = 'string',
                  help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
 
 
+parser.add_option('--unrestrictedChi2', action='store_true',
+                  default = False,
+                  dest='unrestrictedChi2',
+                  help='If true, do not restrict range in chi2 calculation')
+
+
 (options, args) = parser.parse_args()
 
 #from ROOT import *

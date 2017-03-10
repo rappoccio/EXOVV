@@ -26,9 +26,16 @@ parser.add_option('--extension', action ='store', type = 'string',
                  dest='extension',
                  help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
 
+parser.add_option('--unrestrictedChi2', action='store_true',
+                  default = False,
+                  dest='unrestrictedChi2',
+                  help='If true, do not restrict range in chi2 calculation')
 
 
 (options, args) = parser.parse_args()
+
+def get_pt_bin_vals() :
+    return array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 13000.])
 
 
 def add_quadrature( a ):
@@ -40,9 +47,14 @@ def get_ptbins_std():
     return ['200-260 GeV #times 10^{0}','260-350 GeV #times 10^{1}','350-460 GeV #times 10^{2}','460-550 GeV #times 10^{3}','550-650 GeV #times 10^{4}','650-760 GeV #times 10^{5}', '760-900 GeV #times 10^{6}', '900-1000 GeV #times 10^{7}', '1000-1100 GeV #times 10^{8}','1100-1200 GeV #times 10^{9}',
     '1200-1300 GeV #times 10^{10}', '> 1300 GeV']
 
-def expected_agreement():
-    return [[5,50], [10,70], [20,100], [20,100], [20,100], [20,100], [20,200], [30, 200], [30,300], [30, 300], [30,300], [30,300] ]
 
+if options.unrestrictedChi2 :    
+    def expected_agreement():
+        return [[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000] ]
+else :
+    def expected_agreement():
+        return [[5,50], [10,70], [20,100], [20,100], [20,100], [20,100], [20,200], [30, 200], [30,300], [30, 300], [30,300], [30,300] ]
+ 
 def get_markers() :
     return [ 20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28  ]
 
@@ -187,6 +199,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     chi2 = []
     chi2_marzani = []
     chi2_harvard = []
+
+    graphs = []
 
     herwig_genfile = ROOT.TFile("PS_hists.root")
     herwig_genlist = []
@@ -607,6 +621,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datcopy.SetMaximum(2)
         datcopy.GetYaxis().SetNdivisions(2,4,0,False)
         datcopy.SetFillColor(ROOT.kYellow)
+        datcopy.GetXaxis().SetTickLength(0.5)
 
         datcopycopy.SetMinimum(0)
         datcopycopy.SetMaximum(2)
@@ -694,6 +709,16 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
 
 
+        datcopy.GetXaxis().SetTickLength(0.2)
+        datcopycopy.GetXaxis().SetTickLength(0.2)
+        datPDF.GetXaxis().SetTickLength(0.2)
+        datJMR.GetXaxis().SetTickLength(0.2)
+        datRMS.GetXaxis().SetTickLength(0.2)
+                
+        datPDF.GetXaxis().SetTickLength(0.2)
+        datPDF.GetXaxis().SetNoExponent()
+
+
         ######################################################################## Draw and save
 
         if i == 18:
@@ -707,7 +732,6 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         elif i < 4:
             datPDF.SetAxisRange(1,400,"X")
         datPDF.Draw('e2')
-        datPDF.GetXaxis().SetTickLength(0.05)
         datcopycopy.Draw('e2 same')
         datJMR.Draw('e2 same')
         datcopy.Draw('e2 same')
@@ -771,7 +795,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     the_stack = THStack("stack", "")
     build_the_stack = []
     stackleg = ROOT.TLegend(0.17, 0.7, 0.89, 0.89)
-    stackleg.SetTextSize( 0.017 )
+    stackleg.SetTextSize( 0.021 )
     stackleg.SetNColumns(3)
     stackleg.SetFillColor(0)
     stackleg.SetBorderSize(0)
@@ -779,7 +803,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     chi2 = []
     chi2_marzani = []
     chi2_harvard = []
-    
+
+    graphs = []
     #uncertainties on the stacks :D
     build_the_stack_band = []
     stack_canvas = TCanvas("sc", "sc", 800, 800)
@@ -1223,9 +1248,11 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             powhegcopy.GetXaxis().SetTitleOffset(2)
             powhegcopy.GetYaxis().SetTitleOffset(1.2)
 
+        trueCopy.GetXaxis().SetTickLength(0.5)
         datPDF.SetMinimum(0)
         datPDF.SetMaximum(2)
         datPDF.GetYaxis().SetNdivisions(2,4,0,False)
+        datPDF.GetXaxis().SetTickLength(10)
         datPDF.SetFillColor(ROOT.kGray)
         
         datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
@@ -1298,7 +1325,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             datPDF.SetAxisRange(1,200,"X")
             datStat.SetAxisRange(1, 200, "X")
         datPDF.Draw('e2')
-        datPDF.GetXaxis().SetTickLength(0.05)
+        datPDF.GetXaxis().SetTickLength(0.10)
+        datPDF.GetXaxis().SetNoExponent()
         datStat.Draw('e2 same')
         trueCopy.Draw("hist same")
         herwigCopy.Draw("hist same")
@@ -1372,17 +1400,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         the_stack.Add(hist[0], hist[1])
         the_stack.Add(mchist[0], mchist[1])
 
-    print "The KS values for Pythia8 Generator are "
-    print chi2
-    if options.isSoftDrop:
-        print "The KS values for Marzani predicitons are "
-        print chi2_marzani
-        print "The KS values for Harvard predictions are "
-        print chi2_harvard
-
         
     the_stack.Draw("][ nostack")
     the_stack.GetXaxis().SetRangeUser(1, 500)
+    the_stack.GetXaxis().SetNoExponent()
     the_stack.SetMinimum(1e-14)
     the_stack.SetMaximum(1e8)
     stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
@@ -1405,6 +1426,74 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     else:
         stack_canvas.SaveAs("fullstacksoftdrop.png")
         stack_canvas.SaveAs("fullstacksoftdrop.pdf")
+
+
+    # Make plots of chi2
+    print "The KS values for Pythia8 Generator are "
+    print chi2
+    if options.isSoftDrop:
+        print "The KS values for Marzani predicitons are "
+        print chi2_marzani
+        print "The KS values for Harvard predictions are "
+        print chi2_harvard
+
+
+    chi2_canvas = TCanvas("cchi2", "cchi2" )
+    chi2_canvas.SetLeftMargin(0.15)
+    chi2_legend = ROOT.TLegend( 0.65, 0.2, 0.87, 0.5 )
+    chi2_legend.SetFillColor(0)
+    chi2_legend.SetBorderSize(0)
+
+    
+    chi2_0 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2 ) )
+    chi2_0.SetName("chi2_0")
+    chi2_0.SetLineWidth(3)
+    chi2_0.Draw('al')
+    graphs.append( chi2_0 )
+    chi2_legend.AddEntry( chi2_0, "PYTHIA8", 'l')
+
+        
+    if options.isSoftDrop :     
+        chi2_1 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_marzani ) )
+        chi2_1.SetName("chi2_1")
+        chi2_1.SetLineColor(ROOT.kOrange + 7)
+        chi2_1.SetLineStyle(2)
+        chi2_1.SetLineWidth(3)
+        chi2_2 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_harvard ) )
+        chi2_2.SetName("chi2_2")
+        chi2_2.SetLineColor(ROOT.kBlue)
+        chi2_2.SetLineStyle(3)
+        chi2_2.SetLineWidth(3)
+        chi2_2.Draw('l')
+        chi2_1.Draw('l')
+        graphs.append( chi2_1 )
+        graphs.append( chi2_2 )
+        chi2_legend.AddEntry( chi2_2, "Frye et al", 'l')
+        chi2_legend.AddEntry( chi2_1, "Marzani et al", 'l')
+    
+        
+    chi2_canvas.SetTopMargin(0.1)
+    chi2_canvas.SetBottomMargin(0.15)
+    chi2_0.SetMaximum(1.0)
+    chi2_0.SetMinimum(0.0)
+    chi2_0.SetTitle(';Jet p_{T} (GeV);Probability')
+
+    chi2_0.GetXaxis().SetNoExponent()
+    latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
+    latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
+
+    chi2_legend.Draw()
+    
+    if options.unrestrictedChi2 : 
+        chi2_canvas.Print('chi2prob_unrestricted.png', 'png')
+        chi2_canvas.Print('chi2prob_unrestricted.pdf', 'pdf')
+    else :
+        chi2_canvas.Print('chi2prob.png', 'png')
+        chi2_canvas.Print('chi2prob.pdf', 'pdf')
+
+    canvas_list.append( chi2_canvas )
+    legends_list.append( chi2_legend )
+    
     # Close the files
     theoryfile.Close()
     theoryfile2.Close()
@@ -1432,6 +1521,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         reco_list[i].SetAxisRange(1e-11, 1, "Y")
         reco_list[i].SetStats(0)
         reco_list[i].Draw("SAME hist")
+        reco_list[i].GetXaxis().SetNoExponent()
         reco_list[i].GetXaxis().SetTitle("Jet mass (GeV)")
         legends_list[i].AddEntry(reco_list[i], recolegname_str, 'l')
         legends_list[i].AddEntry(gen_list[i], genlegname_str, 'pl')
@@ -1468,6 +1558,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         recocopy.GetXaxis().SetLabelSize(28)
         recocopy.GetYaxis().SetTitleSize(30)
         recocopy.GetXaxis().SetTitleOffset(2.3)
+        recocopy.GetXaxis().SetTickLength(0.5)
 
         gencopy.SetMinimum(0)
         gencopy.SetMaximum(2)

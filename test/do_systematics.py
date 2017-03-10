@@ -99,9 +99,12 @@ datacanvases= []
 
 ################################################################################# generate canvases 
 for x in range(0, nptbins):
-    datacanvases.append(TCanvas("cdist"+str(x), "cdist"+str(x)))
-    datacanvasesSD.append(TCanvas("cdist" + str(x) + "SD", "cdist"+str(x)+"SD"))
-
+    datacanvases.append(TCanvas("cdist"+str(x), "cdist"+str(x), 800, 600))
+    datacanvasesSD.append(TCanvas("cdist" + str(x) + "SD", "cdist"+str(x)+"SD", 800, 600))
+for canv in datacanvases:
+    canv.SetBottomMargin(0.15)
+for canv in datacanvasesSD:
+    canv.SetBottomMargin(0.15)
 ######################################################################################### Get Central Value hists and generate legends etc
 
 datalist = []

@@ -246,6 +246,9 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
         hRMSup.SetMaximum(100)
         hRMSup.SetMinimum(1e-4)
+        hRMSup.GetXaxis().SetTitleOffset(1.2)
+        hRMSup.GetYaxis().SetTitleOffset(1.2)
+        hRMSup.GetXaxis().SetNoExponent()
         hRMSup.Draw('hist')
         #hRMSdn.Draw('hist same')
         hRecoup.Draw('hist same')
