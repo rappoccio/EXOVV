@@ -74,6 +74,14 @@ response_pdfdn = ROOT.RooUnfoldResponse()
 response_pdfdn.SetName("2d_response_pdfdn")
 response_pdfdn.Setup(measVarHist, trueVarHist)
 
+response_puup = ROOT.RooUnfoldResponse()
+response_puup.SetName("2d_response_puup")
+response_puup.Setup(measVarHist, trueVarHist)
+
+response_pudn = ROOT.RooUnfoldResponse()
+response_pudn.SetName("2d_response_pudn")
+response_pudn.Setup(measVarHist, trueVarHist)
+
 response_softdrop_pdfup = ROOT.RooUnfoldResponse()
 response_softdrop_pdfup.SetName("2d_response_softdrop_pdfup")
 response_softdrop_pdfup.Setup(measVarHist, trueVarHist)
@@ -81,6 +89,14 @@ response_softdrop_pdfup.Setup(measVarHist, trueVarHist)
 response_softdrop_pdfdn = ROOT.RooUnfoldResponse()
 response_softdrop_pdfdn.SetName("2d_response_softdrop_pdfdn")
 response_softdrop_pdfdn.Setup(measVarHist, trueVarHist)
+
+response_softdrop_puup = ROOT.RooUnfoldResponse()
+response_softdrop_puup.SetName("2d_response_softdrop_puup")
+response_softdrop_puup.Setup(measVarHist, trueVarHist)
+
+response_softdrop_pudn = ROOT.RooUnfoldResponse()
+response_softdrop_pudn.SetName("2d_response_softdrop_pudn")
+response_softdrop_pudn.Setup(measVarHist, trueVarHist)
 
 response_cteq = ROOT.RooUnfoldResponse()
 response_cteq.SetName("2d_response_cteq")
@@ -254,7 +270,7 @@ h2_ptreco_ptgen_softdrop_nomnom = ROOT.TH2F("h2_ptreco_ptgen_softdrop_nomnom", "
 
 
 
-sysvarstr = ['jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'pdfup', 'pdfdn', 'cteq', 'mstw' ]
+sysvarstr = ['jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'pdfup', 'pdfdn', 'puup', 'pudn', 'cteq', 'mstw' ]
 jecup_ndx = sysvarstr.index('jecup')
 jecdn_ndx = sysvarstr.index('jecdn')
 jerup_ndx = sysvarstr.index('jerup')
@@ -263,6 +279,8 @@ jmrup_ndx = sysvarstr.index('jmrup')
 jmrdn_ndx = sysvarstr.index('jmrdn')
 pdfup_ndx = sysvarstr.index('pdfup')
 pdfdn_ndx = sysvarstr.index('pdfdn')
+puup_ndx = sysvarstr.index('puup')
+pudn_ndx = sysvarstr.index('pudn')
 cteq_ndx  = sysvarstr.index('cteq')
 mstw_ndx  = sysvarstr.index('mstw')
 
@@ -353,6 +371,11 @@ else :
     deweightFlat = True
         
 masslessSD = 0
+
+purw = ROOT.TFile("purw.root")
+pu_nom = purw.Get("hnom")
+pu_up = purw.Get("hup")
+pu_dn = purw.Get("hdn")
 
 
 trees = []
@@ -505,7 +528,10 @@ for itree,t in enumerate(trees) :
                 if options.verbose : print 'Weight is outside bounds, skipping'
                 continue
 
-
+        puweight = pu_nom.GetBinContent( pu_nom.GetXaxis().FindBin( Nvtx[0] ) )
+        puweight_up = pu_up.GetBinContent( pu_up.GetXaxis().FindBin( Nvtx[0] ) ) / puweight
+        puweight_dn = pu_dn.GetBinContent( pu_dn.GetXaxis().FindBin( Nvtx[0] ) ) / puweight
+        
         h_nvtx.Fill( Nvtx[0], weight )
 
         # First get the generator level jets. If there are at least two,
@@ -666,6 +692,7 @@ for itree,t in enumerate(trees) :
                     h2_massnom.Fill(FatJet.Perp(), FatJet.M()*jmrnom, weight)
 
 
+
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
                     else:
@@ -683,6 +710,14 @@ for itree,t in enumerate(trees) :
                         response_mstw.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*mstwweight)
 
 
+
+                    response_puup.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*puweight_up)
+                    response_pudn.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*puweight_dn)
+
+
+
+
+                        
                     # Make some data-to-MC plots
 
                     #                h_2DHisto_meas.Fill( FatJetPt[ijet], FatJetMass[ijet], weight )
@@ -793,6 +828,26 @@ for itree,t in enumerate(trees) :
                     h_2DHisto_meas_sys[pdfdn_ndx].Fill( FatJet.M(), FatJet.Perp(),  weight*pdfweight_dn )
                     h_2DHisto_measSD_sys[pdfdn_ndx].Fill( FatJetMassSoftDrop[ijet], FatJet.Perp(),  weight*pdfweight_dn)
 
+                    h2_y_meas_sys    [puup_ndx].Fill( FatJet.Perp(), FatJetRap[ijet] , weight*puweight_up )
+                    h2_phi_meas_sys  [puup_ndx].Fill( FatJet.Perp(), FatJetPhi[ijet] , weight*puweight_up )
+                    h2_m_meas_sys    [puup_ndx].Fill( FatJet.Perp(), FatJetMass[ijet] , weight*puweight_up )
+                    h2_msd_meas_sys  [puup_ndx].Fill( FatJet.Perp(), FatJetMassSoftDrop[ijet], weight*puweight_up )
+                    h2_rho_meas_sys  [puup_ndx].Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight*puweight_up )
+                    h2_tau21_meas_sys[puup_ndx].Fill( FatJet.Perp(), FatJetTau21[ijet] , weight*puweight_up )
+                    h_2DHisto_meas_sys[puup_ndx].Fill( FatJet.M(), FatJet.Perp(),  weight*puweight_up )
+                    h_2DHisto_measSD_sys[puup_ndx].Fill( FatJetMassSoftDrop[ijet], FatJet.Perp(),  weight*puweight_up)
+
+                    h2_y_meas_sys    [pudn_ndx].Fill( FatJet.Perp(), FatJetRap[ijet] , weight*puweight_dn )
+                    h2_phi_meas_sys  [pudn_ndx].Fill( FatJet.Perp(), FatJetPhi[ijet] , weight*puweight_dn )
+                    h2_m_meas_sys    [pudn_ndx].Fill( FatJet.Perp(), FatJetMass[ijet] , weight*puweight_dn )
+                    h2_msd_meas_sys  [pudn_ndx].Fill( FatJet.Perp(), FatJetMassSoftDrop[ijet], weight*puweight_dn )
+                    h2_rho_meas_sys  [pudn_ndx].Fill( FatJet.Perp(), FatJetRhoRatio[ijet] , weight*puweight_dn )
+                    h2_tau21_meas_sys[pudn_ndx].Fill( FatJet.Perp(), FatJetTau21[ijet] , weight*puweight_dn )
+                    h_2DHisto_meas_sys[pudn_ndx].Fill( FatJet.M(), FatJet.Perp(),  weight*puweight_dn )
+                    h_2DHisto_measSD_sys[pudn_ndx].Fill( FatJetMassSoftDrop[ijet], FatJet.Perp(),  weight*puweight_dn)
+
+
+                    
                     h2_y_meas_sys    [cteq_ndx].Fill( FatJet.Perp(), FatJetRap[ijet] , weight*cteqweight )
                     h2_phi_meas_sys  [cteq_ndx].Fill( FatJet.Perp(), FatJetPhi[ijet] , weight*cteqweight )
                     h2_m_meas_sys    [cteq_ndx].Fill( FatJet.Perp(), FatJetMass[ijet] , weight*cteqweight )
@@ -844,7 +899,10 @@ for itree,t in enumerate(trees) :
                     else:
                         response_mstw.Fake( FatJet.M(), FatJet.Perp(), weight*mstwweight)
 
+                    response_puup.Fake(FatJet.M(), FatJet.Perp(), weight*puweight_up)
+                    response_pudn.Fake(FatJet.M(), FatJet.Perp(), weight*puweight_dn)
 
+                        
             # Now get the "Fills" and "Fakes" for soft drop (i.e. we at least have a RECO jet)
             for ijet in [maxjet, minjet]:
                 if not ( passkinloose and passkinfullsoftdrop ) :
@@ -956,7 +1014,9 @@ for itree,t in enumerate(trees) :
                     else:
                         response_softdrop_mstw.Fill( FatJetSD.M(), FatJetPt[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight*mstwweight)
 
-                        
+
+                    response_softdrop_puup.Fill( FatJetSD.M(), FatJetPt[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight*puweight_up)
+                    response_softdrop_pudn.Fill( FatJetSD.M(), FatJetPt[ijet], GenJetsSD[igenSD].M(), GenJetPt[igen], weight*puweight_dn)                        
 
                     if ( FatJetPt[ijet] > 1300. and FatJetSD.M() > 800 and GenJetsSD[igenSD].M() < 500 ) or (igen != igenSD) :
                     #if ( FatJetPt[ijet]/GenJetPt[igenSD] > 1.1 ) :
@@ -1020,6 +1080,11 @@ for itree,t in enumerate(trees) :
                         response_softdrop_mstw.Fake( FatJetSD.M(), FatJetPt[ijet], weight*mstwweight)
 
 
+                    response_softdrop_puup.Fake( FatJetSD.M(), FatJetPt[ijet], weight*puweight_up)
+                    response_softdrop_pudn.Fake( FatJetSD.M(), FatJetPt[ijet], weight*puweight_dn)
+
+                        
+
         if ngen >= 2 and not ( passkinloose and passkinfull ) :
             # Now get the "Misses" (i.e. we have no RECO jet)
             for igen in xrange( 2 ):
@@ -1053,6 +1118,10 @@ for itree,t in enumerate(trees) :
                     response_mstw.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight*mstwweight)
 
 
+                response_puup.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight*puweight_up)
+                response_pudn.Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight*puweight_dn)
+
+                    
         if ngen >= 2 and ngenSD >= 2 and not ( passkinloose and passkinfullsoftdrop ):
             # Now get the "Misses" (i.e. we have no RECO jet)
             for igenSD in xrange( 2 ):
@@ -1086,6 +1155,8 @@ for itree,t in enumerate(trees) :
                     response_softdrop_mstw.Miss( GenJetsSD[igenSD].M(), GenJetPt[igen], weight*mstwweight)
 
 
+                response_softdrop_puup.Miss( GenJetsSD[igenSD].M(), GenJetPt[igen], weight*puweight_up)
+                response_softdrop_pudn.Miss( GenJetsSD[igenSD].M(), GenJetPt[igen], weight*puweight_dn)
                     
 print "Number of Massless Softdrop Jets: " + str(masslessSD)
 fout.cd()
@@ -1107,6 +1178,11 @@ response_pdfup.Write()
 response_pdfdn.Write()
 response_softdrop_pdfup.Write()
 response_softdrop_pdfdn.Write()
+
+response_puup.Write()
+response_pudn.Write()
+response_softdrop_puup.Write()
+response_softdrop_pudn.Write()
 
 response_cteq.Write()
 response_softdrop_cteq.Write()
