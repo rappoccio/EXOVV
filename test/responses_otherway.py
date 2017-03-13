@@ -529,8 +529,12 @@ for itree,t in enumerate(trees) :
                 continue
 
         puweight = pu_nom.GetBinContent( pu_nom.GetXaxis().FindBin( Nvtx[0] ) )
-        puweight_up = pu_up.GetBinContent( pu_up.GetXaxis().FindBin( Nvtx[0] ) ) / puweight
-        puweight_dn = pu_dn.GetBinContent( pu_dn.GetXaxis().FindBin( Nvtx[0] ) ) / puweight
+        if abs(puweight) > 0.00001 : 
+            puweight_up = pu_up.GetBinContent( pu_up.GetXaxis().FindBin( Nvtx[0] ) ) / puweight
+            puweight_dn = pu_dn.GetBinContent( pu_dn.GetXaxis().FindBin( Nvtx[0] ) ) / puweight
+        else :
+            puweight_up = 0.0
+            puweight_dn = 0.0
         
         h_nvtx.Fill( Nvtx[0], weight )
 
