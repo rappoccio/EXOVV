@@ -189,7 +189,7 @@ def unpinch_vals( hist, delta = 2, xval = None ) :
 
             
 
-def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
+def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, puup_list, pudn_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions.root")
@@ -240,6 +240,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         jeOWN = jecdn_list[i]
         jerUP  = jerup_list[i]
         jerDOWN = jerdn_list[i]
+        puUP  = puup_list[i]
+        puDOWN = pudn_list[i]
         ########################################################################################## Get JMR hists
         jmrup = jmrup_list[i]
         jmrdn = jmrdn_list[i]
@@ -252,6 +254,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         jeOWN.Scale(scales[i])
         jerUP.Scale(scales[i])
         jerDOWN.Scale(scales[i])
+        puUP.Scale(scales[i])
+        puDOWN.Scale(scales[i])
         nom.Scale(scales[i])
         
 
@@ -271,6 +275,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            puUP.SetBinContent(ibin, puUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            puDOWN.SetBinContent(ibin, puDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])            
             nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             
@@ -301,16 +307,30 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             sys = float(((upjmr + downjmr)/2.))
             err = add_quadrature( [err1 , sys] )
             hRecoJMR.SetBinError(ibin, err)
+
+
+        ####################################################################################### Add Jet Mass Resolution Band
+        hRecoPU = hRecoJMR.Clone()
+        for ibin in xrange(1, hRecoPU.GetNbinsX()):
+            val = float(hRecoPU.GetBinContent(ibin))
+            err1 = float(hRecoPU.GetBinError(ibin))
+            uppu = float(abs(puup.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+            downpu = float(abs(nom.GetBinContent(ibin) - pudn.GetBinContent(ibin)))
+            sys = float(((uppu + downpu)/2.))
+            err = add_quadrature( [err1 , sys] )
+            hRecoPU.SetBinError(ibin, err)
+            
         ######################################################################################## Add Parton Shower Uncertainties
-        hRecoCopy = hRecoJMR.Clone()
+        hRecoCopy = hRecoPU.Clone()
         for ibin in xrange(1, hRecoCopy.GetNbinsX()):
             temp = hRecoCopy.GetBinError(ibin)
-            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) ]) )
+            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) ]) )            
         ######################################################################################## Add PDF Uncertainties
         hRecoPDF = hRecoCopy.Clone()
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             temp = hRecoPDF.GetBinError(ibin)
             hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] )] ))
+
         ####################################################################################### PDF Drawn Here
         #hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
         hRecoPDF.SetTitle(";;Normalized cross section")
@@ -376,7 +396,19 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hReco.Scale(1.0/hReco.Integral())
         hReco.SetAxisRange( 1e-5, 1, 'Y')
         hReco.Draw("same")
-#hReco.Draw("E same")
+
+        ####################################################################################### PU Drawn Here
+        hRecoPU.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
+        hRecoPU.SetTitle(";;Normalized cross section")
+        hRecoPU.GetYaxis().SetTitleSize(30)
+        hRecoPU.GetYaxis().SetTitleOffset(1.2)
+        hRecoPU.GetYaxis().SetLabelOffset(0.0001)
+        hRecoPU.GetYaxis().SetLabelSize(28)
+        hRecoPU.SetMarkerStyle(20)
+        hRecoPU.Scale(1.0/hRecoPU.Integral())
+        hRecoPU.SetFillColor(ROOT.kGreen)
+        hRecoPU.Draw("E2 same") 
+        
         keephists.append([hReco, hRecoPDF])
         ####################################################################################### Stat Drawn Here
         hRMS.SetTitle(";;Normalized cross section")
@@ -404,6 +436,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(hRecoJMR, 'JMR', 'f')
         legends_list[i].AddEntry(hRecoPDF, 'PDF', 'f')
+        legends_list[i].AddEntry(hRecoPU, 'PU', 'f')
         legends_list[i].AddEntry(hRecoCopy, 'Parton Shower', 'f')
         legends_list[i].AddEntry(hReco, 'JES+JER', 'f')
         legends_list[i].AddEntry(hRMS, 'Stat', 'f')
@@ -526,7 +559,16 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(30)
         datPDF.SetMarkerStyle(0)
-        
+
+        datPU = hRecoPU.Clone()
+        datPU.SetName(hRecoPU.GetName()+"_pucopy")
+        datPU.GetYaxis().SetTitle("#frac{Theory}{Data}")
+        datPU.GetYaxis().SetTitleOffset(1.2)
+        datPU.GetYaxis().SetLabelOffset(0.0001)
+        datPU.GetYaxis().SetTitleSize(30)
+        datPU.SetMarkerStyle(0)
+
+                
         datJMR = hRecoJMR.Clone()
         datJMR.SetName(hRecoJMR.GetName()+"_jmrcopy")
         datJMR.GetYaxis().SetTitle("#frac{Theory}{Data}")
@@ -544,7 +586,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS.SetMarkerStyle(0)
         
         ##################################################################################### divide error by bin content and set to unity
-        keephists.append( [datcopy,trueCopy, datPDF, datJMR])
+        keephists.append( [datcopy,trueCopy, datPDF, datJMR, datPU])
         for ibin in xrange(1,datcopy.GetNbinsX()):
             if datcopy.GetBinContent(ibin) > 0: 
                 datcopy.SetBinError(ibin, datcopy.GetBinError(ibin)/datcopy.GetBinContent(ibin))
@@ -552,17 +594,20 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
                 datPDF.SetBinError(ibin, datPDF.GetBinError(ibin)/datPDF.GetBinContent(ibin))
                 datJMR.SetBinError(ibin, datJMR.GetBinError(ibin)/datJMR.GetBinContent(ibin))
                 datRMS.SetBinError(ibin, datRMS.GetBinError(ibin)/datRMS.GetBinContent(ibin))
+                datPU.SetBinError(ibin, datPU.GetBinError(ibin)/datPU.GetBinContent(ibin))
             else:
                 datcopy.SetBinError(ibin, 0)
                 datcopycopy.SetBinError(ibin, 0)
                 datPDF.SetBinError(ibin, 0)
                 datJMR.SetBinError(ibin, 0)
                 datRMS.SetBinError(ibin, 0)
+                datPU.SetBinError(ibin, 0)
             datJMR.SetBinContent(ibin, 1.0)
             datPDF.SetBinContent(ibin, 1.0)
             datcopy.SetBinContent(ibin, 1.0)
             datcopycopy.SetBinContent(ibin, 1.0)
             datRMS.SetBinContent(ibin, 1.0)
+            datPU.SetBinContent(ibin, 1.0)
         ########################################################################################################## Take Ratio
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0 )
         herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0 )
@@ -638,6 +683,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datJMR.GetYaxis().SetNdivisions(2,4,0,False)
         datJMR.SetFillColor(ROOT.kGreen)
 
+        datPU.SetMinimum(0)
+        datPU.SetMaximum(2)
+        datPU.GetYaxis().SetNdivisions(2,4,0,False)
+        datPU.SetFillColor(ROOT.kGreen)
+
+        
         datRMS.SetMinimum(0)
         datRMS.SetMaximum(2)
         datRMS.GetYaxis().SetNdivisions(2,4,0,False)
@@ -667,6 +718,13 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datJMR.GetYaxis().SetLabelOffset(0.01)
         datJMR.GetYaxis().SetLabelSize(28)
         datJMR.GetXaxis().SetLabelSize(28)
+        datJMR.GetYaxis().SetTitle("#frac{Theory}{Data}")
+        datPU.GetYaxis().SetTitleSize(30)
+        datPU.GetYaxis().SetTitleOffset(1.2)
+        datPU.GetYaxis().SetLabelOffset(0.01)
+        datPU.GetYaxis().SetLabelSize(28)
+        datPU.GetXaxis().SetLabelSize(28)
+
         datRMS.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datRMS.GetYaxis().SetTitleSize(30)
         datRMS.GetYaxis().SetTitleOffset(1.2)
@@ -696,6 +754,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datcopycopy.GetXaxis().SetTitleOffset(3.5)
         datPDF.GetXaxis().SetTitleOffset(3.5)
         datJMR.GetXaxis().SetTitleOffset(3.5)
+        datPU.GetXaxis().SetTitleOffset(3.5)
         datRMS.GetXaxis().SetTitleOffset(3.5)
 
         if options.isSoftDrop :
@@ -705,7 +764,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datcopy.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
         datcopycopy.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
         datPDF.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
-        datJMR.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)") 
+        datJMR.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
+        datPU.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)") 
         datRMS.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
 
 
@@ -714,6 +774,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datPDF.GetXaxis().SetTickLength(0.2)
         datJMR.GetXaxis().SetTickLength(0.2)
         datRMS.GetXaxis().SetTickLength(0.2)
+        datPU.GetXaxis().SetTickLength(0.2)
                 
         datPDF.GetXaxis().SetTickLength(0.2)
         datPDF.GetXaxis().SetNoExponent()
@@ -736,6 +797,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datJMR.Draw('e2 same')
         datcopy.Draw('e2 same')
         datRMS.Draw('e2 same')
+        datPU.Draw('e2 same')
         datcopy.SetMarkerStyle(0)
         trueCopy.Draw("hist same")
         herwigCopy.Draw("hist same")
@@ -855,7 +917,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         jmrup = jmrup_list[i]
         jmrdn = jmrdn_list[i]
         jmrnom = jmrnom_list[i]
+        ########################################################################################## Get PU hists
+        puup = puup_list[i]
+        pudn = pudn_list[i]
         ########################################################################################## Scale the hists for Pt bins
+        puup.Scale(scales[i])
+        pudn.Scale(scales[i])
         jmrup.Scale(scales[i])
         jmrdn.Scale(scales[i])
         jmrnom.Scale(scales[i])
@@ -874,6 +941,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hReco = hRMS.Clone()
         ########################################################################################## Scale the hists for mass bins
         for ibin in xrange(1, hReco.GetNbinsX()):
+            puup.SetBinContent(ibin, puup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            pudn.SetBinContent(ibin, pudn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
@@ -910,8 +979,19 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             sys = float(((upjmr + downjmr)/2.))
             err = add_quadrature( [err1 , sys] )
             hRecoJMR.SetBinError(ibin, err)
+
+        ####################################################################################### Add Jet mass Resolution Band
+        hRecoPU = hRecoJMR.Clone()
+        for ibin in xrange(1, hRecoPU.GetNbinsX()):
+            val = float(hRecoPU.GetBinContent(ibin))
+            err1 = float(hRecoPU.GetBinError(ibin))
+            uppu = float(abs(puup.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+            downpu = float(abs(nom.GetBinContent(ibin) - pudn.GetBinContent(ibin)))
+            sys = float(((uppu + downpu)/2.))
+            err = add_quadrature( [err1 , sys] )
+            hRecoPU.SetBinError(ibin, err)
         ######################################################################################## Add Parton Shower Uncertainties
-        hRecoCopy = hRecoJMR.Clone()
+        hRecoCopy = hRecoPU.Clone()
         for ibin in xrange(1, hRecoCopy.GetNbinsX()):
             temp = hRecoCopy.GetBinError(ibin)
             hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) ]))

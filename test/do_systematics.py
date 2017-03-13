@@ -42,6 +42,8 @@ jernoma = []
 jmrdna = []
 jmrupa = []
 jmrnoma = []
+pudna = []
+puupa = []
 
 
 jecdnaSD = []
@@ -52,6 +54,8 @@ jernomaSD = []
 jmrdnaSD = []
 jmrupaSD = []
 jmrnomaSD = []
+pudnaSD = []
+puupaSD = []
 
 ps = []
 ps_softdrop = []
@@ -67,6 +71,8 @@ jernom = ROOT.TFile('2DClosure_jernom.root')
 jmrupfile = ROOT.TFile('2DClosure_jmrup.root')
 jmrdnfile = ROOT.TFile('2DClosure_jmrdn.root')
 jmrnomfile= ROOT.TFile('2DClosure_jmrnom.root')
+puupfile = ROOT.TFile('2DClosure_puup.root')
+pudnfile = ROOT.TFile('2DClosure_pudn.root')
 
 ##################################################################### Get uncertainty hists
 for i in range(0, nptbins):
@@ -78,7 +84,10 @@ for i in range(0, nptbins):
     jmrupa.append(jmrupfile.Get('pythia8_mass' + str(i)))
     jmrdna.append(jmrdnfile.Get('pythia8_mass' + str(i)))
     jmrnoma.append(jmrnomfile.Get('pythia8_mass' + str(i)))
+    puupa.append(puupfile.Get('pythia8_mass' + str(i)))
+    pudna.append(pudnfile.Get('pythia8_mass' + str(i)))
 
+    
     jecdnaSD.append(jecdn.Get('pythia8_massSD' + str(i)))
     jecupaSD.append(jecup.Get('pythia8_massSD' + str(i)))
     jerdnaSD.append(jerdn.Get('pythia8_massSD' + str(i)))
@@ -87,7 +96,10 @@ for i in range(0, nptbins):
     jmrupaSD.append(jmrupfile.Get('pythia8_massSD' + str(i)))
     jmrdnaSD.append(jmrdnfile.Get('pythia8_massSD' + str(i)))
     jmrnomaSD.append(jmrnomfile.Get('pythia8_massSD' + str(i)))
+    puupaSD.append(puupfile.Get('pythia8_massSD' + str(i)))
+    pudnaSD.append(pudnfile.Get('pythia8_massSD' + str(i)))
 
+    
 ROOT.gStyle.SetOptStat(000000)
 ROOT.gStyle.SetTitleFont(43,"XYZ")
 ROOT.gStyle.SetTitleSize(30,"XYZ")
@@ -222,5 +234,5 @@ for leg in alegendsSD :
 
 histstokeep = []
 
-plot_vars(datacanvases, datalist, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "mcvariations_", jmrupa, jmrdna, jmrnoma, bins, keephists=histstokeep, jackknifeRMS=RMS_vals)
-plot_vars(datacanvasesSD, datalistSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "mcvariations_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, bins, softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, histname="Soft Drop ")
+plot_vars(datacanvases, datalist, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "mcvariations_", jmrupa, jmrdna, jmrnoma, puupa, pudna, bins, keephists=histstokeep, jackknifeRMS=RMS_vals)
+plot_vars(datacanvasesSD, datalistSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "mcvariations_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, puupaSD, pudnaSD, bins, softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, histname="Soft Drop ")

@@ -35,9 +35,9 @@ fdn = ROOT.TFile(options.datafiles + 'Dn.root')
 
 fmc = ROOT.TFile(options.mcfile)
 
-hnom = fnom.Get("pileup")
-hup = fup.Get("pileup")
-hdn = fdn.Get("pileup")
+hnom = fnom.Get("pileup").Clone("hnom")
+hup = fup.Get("pileup").Clone("hup")
+hdn = fdn.Get("pileup").Clone("hdn")
 hmc = fmc.Get("h_nvtx")
 
 for hist in [hnom,hup,hdn,hmc]:

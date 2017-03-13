@@ -85,7 +85,7 @@ fpythia8 = ROOT.TFile("responses_rejec_otherway_qcdmc_2dplots.root")
 fherwig = ROOT.TFile("qcdmc_herwig_otherway_rejec_2dplots.root")
 
 systs = [
-    'jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'pdfup', 'pdfdn'
+    'jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'puup', 'pudn', 'pdfup', 'pdfdn'
     ]
 
 JECUP=systs.index('jecup')
@@ -94,6 +94,8 @@ JERUP=systs.index('jerup')
 JERDN=systs.index('jerdn')
 JMRUP=systs.index('jmrup')
 JMRDN=systs.index('jmrdn')
+PUUP=systs.index('puup')
+PUDN=systs.index('pudn')
 PDFUP=systs.index('pdfup')
 PDFDN=systs.index('pdfdn')
 
@@ -154,6 +156,8 @@ for iptbin in xrange( len(dataprojs) ) :
         jerdn = pysysprojs[JERDN][iptbin].GetBinContent( imbin )
         jmrup = pysysprojs[JMRUP][iptbin].GetBinContent( imbin )
         jmrdn = pysysprojs[JMRDN][iptbin].GetBinContent( imbin )
+        puup = pysysprojs[PUUP][iptbin].GetBinContent( imbin )
+        pudn = pysysprojs[PUDN][iptbin].GetBinContent( imbin )
         pdfup = pysysprojs[PDFUP][iptbin].GetBinContent( imbin )
         pdfdn = pysysprojs[PDFDN][iptbin].GetBinContent( imbin )
         hwval = hwprojs[iptbin].GetBinContent(imbin)
@@ -166,9 +170,10 @@ for iptbin in xrange( len(dataprojs) ) :
             jec = (jecup - jecdn) * 0.5 / val
             jer = (jerup - jerdn) * 0.5 / val
             jmr = (jmrup - jmrdn) * 0.5 / val
+            pu = (puup - pudn) * 0.5 / val
             pdf = (pdfup - pdfdn) * 0.5 / val
             psunc = (hwval - val) * 0.5 / val
-            errtot += jec**2 + jer**2 + jmr**2 + pdf**2 + psunc**2
+            errtot += jec**2 + jer**2 + jmr**2 + pu**2 + pdf**2 + psunc**2
             errtot = sqrt(errtot) * val
         pyprojs[iptbin].SetBinError( imbin, errtot )
     pyprojs[iptbin].SetFillStyle(3001)
