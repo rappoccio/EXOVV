@@ -516,7 +516,7 @@ else:
         if options.isSoftDrop:
             plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, puupaFSD, pudnaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldeddata_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=True)
         else:
-            plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF,  jecupaF, jecdnaF, ps_differences, pdf_differences, alegends_fullband, "unfoldeddata_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=True)
+            plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, puupaF, pudnaF, ps_differences, pdf_differences, alegends_fullband, "unfoldeddata_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=True)
         del histstokeep[:]
 
     else:

@@ -852,7 +852,7 @@ def setup(canvases_to_use, pads_to_use):
         pad2.Draw()
         pads_to_use.append( [pad1,pad2] )
 
-def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
+def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, puup_list, pudn_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     
     the_stack = THStack("stack", "")
     build_the_stack = []
@@ -1130,7 +1130,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             powhegcopy.SetLineColor(ROOT.kGreen + 2)
             powhegcopy.SetLineWidth(3)
             
-        if i < 11 and options.isSoftDrop and isData:
+        if i < 11 and options.isSoftDrop : #and isData:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral())
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
@@ -1563,13 +1563,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
     chi2_legend.Draw()
-    
-    if options.unrestrictedChi2 : 
-        chi2_canvas.Print('chi2prob_unrestricted.png', 'png')
-        chi2_canvas.Print('chi2prob_unrestricted.pdf', 'pdf')
-    else :
-        chi2_canvas.Print('chi2prob.png', 'png')
-        chi2_canvas.Print('chi2prob.pdf', 'pdf')
+
+    if options.isData : 
+        if options.unrestrictedChi2 : 
+            chi2_canvas.Print('chi2prob_unrestricted.png', 'png')
+            chi2_canvas.Print('chi2prob_unrestricted.pdf', 'pdf')
+        else :
+            chi2_canvas.Print('chi2prob.png', 'png')
+            chi2_canvas.Print('chi2prob.pdf', 'pdf')
 
     canvas_list.append( chi2_canvas )
     legends_list.append( chi2_legend )
