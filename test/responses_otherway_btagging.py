@@ -23,7 +23,7 @@ parser.add_option('--ptMin', type='float', action='store',
                   default = 220.,
                   help='Max events')
 
-parser.add_option('--bdisc', type='int', action='store',
+parser.add_option('--bdisc', type='float', action='store',
                   dest='bdisc',
                   default = 0.6,
                   help='b discriminator cut')
@@ -324,9 +324,10 @@ deweightFlat = False
 
 if not options.herwigFlat :
     input_names_file = open("outplots_names.txt", "r")
+    qcdIn = []
     for line in input_names_file:
-        qcdIn = []
-        qcdIn.append(ROOT.TFile(line))
+        print 'adding ' + line
+        qcdIn.append(ROOT.TFile.Open(line.rstrip() ))
         #qcdIn =[
         #ROOT.TFile('qcdpy8_170to300_rejec.root'),
         #ROOT.TFile('qcdpy8_300to470_rejec.root'),
@@ -379,6 +380,7 @@ trees = []
 if options.split == None : 
     for iq in qcdIn:
         trees.append( iq.Get("TreeEXOVV") )
+	print 'tree found for '+ str(iq)
 else : 
     trees.append( qcdIn[options.split].Get("TreeEXOVV") )
     
@@ -409,7 +411,7 @@ for itree,t in enumerate(trees) :
     FatJetCorrUp = array.array('f', [-1]*5)
     FatJetCorrDn = array.array('f', [-1]*5)
     FatJetRhoRatio = array.array('f', [-1]*5)
-    FatJetBDisc = array('f', [-1]*5)
+    FatJetBDisc = array.array('f', [-1]*5)
     NGenJet = array.array('i', [0] )
     GenJetPt = array.array('f', [-1]*5)
     GenJetEta = array.array('f', [-1]*5)
@@ -419,7 +421,7 @@ for itree,t in enumerate(trees) :
     GenJetRhoRatio = array.array('f', [-1]*5)
     FatJetPtSoftDrop = array.array('f', [-1]*5)
     GenJetPtSoftDrop = array.array('f', [-1]*5)
-    NGenJet = array.array('i', [0] )
+    NGenPart = array.array('i', [0] )
     GenPartID = array.array('f', [-1]*20)
     GenPartPt = array.array('f', [-1]*20)
     GenPartEta = array.array('f', [-1]*20)
@@ -434,11 +436,13 @@ for itree,t in enumerate(trees) :
     t.SetBranchStatus ('Weight', 1)
     t.SetBranchStatus ('NFatJet', 1)
     t.SetBranchStatus ('NGenJet', 1)
+    t.SetBranchStatus ('NGenPart', 1)
     t.SetBranchStatus ('FatJetPt', 1)
     t.SetBranchStatus ('FatJetEta', 1)
     t.SetBranchStatus ('FatJetRap', 1)
     t.SetBranchStatus ('FatJetPhi', 1)
     t.SetBranchStatus ('FatJetMass', 1)
+    t.SetBranchStatus ('FatJetBDisc', 1)
     t.SetBranchStatus ('FatJetMassSoftDrop', 1)
     t.SetBranchStatus ('GenJetPt', 1)
     t.SetBranchStatus ('GenJetEta', 1)
@@ -550,17 +554,32 @@ for itree,t in enumerate(trees) :
         gluonjetlist = []
         ThirdGenJet = None
 
+        bquarklist = []
+        cquarklist = []
+        lightquarklist = []
+        gluonlist = []
+
+
         if options.verbose :
             print '--------- Gen Jets -----------'
         for ijet in xrange(  int(NGenJet[0]) ):
             genjet = ROOT.TLorentzVector()
             genjet.SetPtEtaPhiM( GenJetPt[ijet], GenJetEta[ijet], GenJetPhi[ijet], GenJetMass[ijet])
-            genIDlist = []
-            genIDlist.append( GenPartID[ijet] )
-            bquarklist = []
-            cquarklist = []
-            lightquarklist = []
-            gluonlist = []
+            GenJet = ROOT.TLorentzVector()
+            GenJet.SetPtEtaPhiM( GenJetPt[ijet], GenJetEta[ijet], GenJetPhi[ijet], GenJetMass[ijet])
+            GenJetSD = ROOT.TLorentzVector()
+            GenJetSD.SetPtEtaPhiM( GenJetPtSoftDrop[ijet], GenJetEta[ijet], GenJetPhi[ijet], GenJetMassSoftDrop[ijet] )
+            GenJets.append(GenJet)
+            GenJetsSD.append(GenJetSD)
+            GenJetsMassSD.append( GenJetMassSoftDrop[ijet] )
+            if options.verbose :
+                print '  ungroomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( ijet, GenJet.Perp(), GenJet.Eta(), GenJet.Phi(), GenJet.M() )
+                print '    groomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( ijet, GenJetSD.Perp(), GenJetSD.Eta(), GenJetSD.Phi(), GenJetSD.M() )
+            
+
+        genIDlist = []
+        for part in xrange( int(NGenPart[0])):
+            genIDlist.append( GenPartID[part] )
             for ipart, ipartID in enumerate(genIDlist):
                 if abs(ipartID) == 5:
                     BQuark = ROOT.TLorentzVector()
@@ -579,31 +598,21 @@ for itree,t in enumerate(trees) :
                     #Gluon = ROOT.TLorentzVector()
                     #Gluon.SetPtEtaPhiM( GenPartPt[ipart], GenPartEta[ipart], GenPartPhi[ipart], GenPartMass[ipart])
                     gluonlist.append(Gluon)
-            if getmatched(genjet, bquarklist) != None:
-                bjetlist.append(ijet)
-            elif getmatched(genjet, cquarklist) != None:
-                cjetlist.append(ijet)
-            elif getmatched(genjet, lightquarklist) != None:
-                lightjetlist.append(ijet)
-            else:
-                gluonjetlist.append(ijet)
+        if getMatched(genjet, bquarklist) != None:
+            bjetlist.append(ijet)
+        elif getMatched(genjet, cquarklist) != None:
+            cjetlist.append(ijet)
+        elif getMatched(genjet, lightquarklist) != None:
+            lightjetlist.append(ijet)
+        else:
+            gluonjetlist.append(ijet)
                 
-        if len(bjetlist)== 2 and len(gluonjetlist) == 1:
+        if len(bjetlist) >= 2 and len(gluonjetlist) >= 1:
             ThirdGenJet = gluonjetlist[0]
-            GenJet = ROOT.TLorentzVector()
-            GenJet.SetPtEtaPhiM( GenJetPt[ThirdGenJet], GenJetEta[ThirdGenJet], GenJetPhi[ThirdGenJet], GenJetMass[ThirdGenJet])
-            GenJetSD = ROOT.TLorentzVector()
-            GenJetSD.SetPtEtaPhiM( GenJetPtSoftDrop[ThirdGenJet], GenJetEta[ThirdGenJet], GenJetPhi[ThirdGenJet], GenJetMassSoftDrop[ThirdGenJet] )
-            GenJets.append(GenJet)
-            GenJetsSD.append(GenJetSD)
-            GenJetsMassSD.append( GenJetMassSoftDrop[ThirdGenJet] )
             if GenJetPt[ThirdGenJet] > 0. :
-                h_2DHisto_gen.Fill( GenJet.M(), GenJet.Perp(), weight )
+                h_2DHisto_gen.Fill( GenJets[ThirdGenJet].M(), GenJets[ThirdGenJet].Perp(), weight )
             if GenJetPtSoftDrop[ThirdGenJet] > 0. :
-                h_2DHisto_genSD.Fill( GenJetSD.M(), GenJet.Perp(), weight)
-            if options.verbose :
-                print '  ungroomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( ThirdGenJet, GenJet.Perp(), GenJet.Eta(), GenJet.Phi(), GenJet.M() )
-                print '    groomed  %6d : pt,eta,phi,m = %6.2f, %8.3f, %8.3f, %6.2f' % ( ThirdGenJet, GenJetSD.Perp(), GenJetSD.Eta(), GenJetSD.Phi(), GenJetSD.M() )
+                h_2DHisto_genSD.Fill( GenJetsSD[ThirdGenJet].M(), GenJetsSD[ThirdGenJet].Perp(), weight)
 
 
 
@@ -628,10 +637,12 @@ for itree,t in enumerate(trees) :
             bdisctuple.append( [ijet, FatJetBDisc[ijet] ] )
             if options.verbose :
                 print '  ungroomed  %6d : pt,eta,phi,m,bdisc = %6.2f, %8.3f, %8.3f, %6.2f, %6.2f, ' % ( ijet, FatJetPt[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMass[ijet], FatJetBDisc[ijet] )
-                print '    groomed  %6d : pt,eta,phi,m,bdisc = %6.2f, %8.3f, %8.3f, %6.2f, %6.2f, ' % ( ijet, FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet], FatJetBDisc[ijet] )
+                print '   groomed  %6d : pt,eta,phi,m,bdisc = %6.2f, %8.3f, %8.3f, %6.2f, %6.2f, ' % ( ijet, FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet], FatJetBDisc[ijet] )
         if NFatJet[0] >= 3 :
             bdiscsorted = sorted(bdisctuple, key=lambda bdiscsort : bdiscsort[1], reverse=True )
-            if (bdiscsorted[0][1] >= bdisccut and bdiscsorted[1][1] >= bdisccut) and (bdiscsorted[2][1] < bdisccut):
+            if options.verbose :
+                print bdiscsorted
+            if (bdiscsorted[0][1] >= bdisccut and bdiscsorted[1][1] >= bdisccut):
                 ThirdJet = bdiscsorted[2][0]
                 Bjet1 = bdiscsorted[0][0]
                 Bjet2 = bdiscsorted[1][0]
@@ -640,6 +651,10 @@ for itree,t in enumerate(trees) :
                 print bdiscsorted
                 print ', third jet = ', ThirdJet
 
+            if ThirdJet == None :
+                if options.verbose : 
+                    print 'No third jet!'
+                continue
 
             passkinfull = FatJetPt[ThirdJet] > options.ptMin
             passkinfullsoftdrop = passkinfull #and FatJetPtSoftDrop[maxjet] > options.ptMin and FatJetPtSoftDrop[minjet] > options.ptMin #and FatJetPtSoftDrop[maxjet] <= FatJetPt[maxjet] and FatJetPtSoftDrop[minjet] <= FatJetPt[minjet]
@@ -655,8 +670,13 @@ for itree,t in enumerate(trees) :
                 FatJets.append(FatJet)
                 igen = getMatched( FatJet, GenJets )            
 
+                if options.verbose : 
+                    print 'Found igen!'
+                    print igen
+                    print 'ngen = ', ngen
+
                 h_2DHisto_meas.Fill( FatJet.M(), FatJet.Perp(),  weight )
-                if igen != None and ngen >= 2 :  # Here we have a "Fill"
+                if igen != None :  # Here we have a "Fill"
                     if options.verbose : print ' reco   %6d --> gen   %6d' % ( ijet, igen )
 
 
@@ -922,7 +942,7 @@ for itree,t in enumerate(trees) :
                 igen = getMatched(FatJetSD, GenJets, dRMax=0.3)
 
                 h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
-                if  igenSD != None and igen != None and ngenSD >= 2 :
+                if  igenSD != None and igen != None  :
                     if options.verbose : print ' recoSD %6d --> genSD %6d' % ( ijet, igenSD )
 
                     #### be less conservative, define jes and jer for SD now
