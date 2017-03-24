@@ -307,10 +307,10 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         #hRecoPDFdn.Draw('hist same')
         ####################################################################################### Legends Filled
         legends_list[i].SetNColumns(3)
-        legends_list[i].AddEntry(hRecoJMRup, 'JMR', 'l')
+        legends_list[i].AddEntry(hRecoJMRup, 'JMS+JMR', 'l')
         legends_list[i].AddEntry(hRecoPUup, 'PU', 'l')
         legends_list[i].AddEntry(hRecoPDFup, 'PDF', 'l')
-        legends_list[i].AddEntry(hRecoCopyup, 'Parton Shower', 'l')
+        legends_list[i].AddEntry(hRecoCopyup, 'Physics Model', 'l')
         legends_list[i].AddEntry(hRecoup, 'JES+JER', 'l')
         legends_list[i].AddEntry(hRMSup, 'Stat', 'l')
         legends_list[i].Draw()

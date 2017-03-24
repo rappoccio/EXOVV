@@ -196,7 +196,8 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     theorylist = []
     theoryfile2 = ROOT.TFile("theory_predictions_marzani.root")
     theorylist2 = []
-    chi2 = []
+    chi2_pythia = []
+    chi2_herwig = []
     chi2_marzani = []
     chi2_harvard = []
 
@@ -862,7 +863,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     stackleg.SetFillColor(0)
     stackleg.SetBorderSize(0)
 
-    chi2 = []
+    chi2_pythia = []
+    chi2_herwig = []
     chi2_marzani = []
     chi2_harvard = []
 
@@ -1359,7 +1361,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         trueCopy.SetLineWidth(3)
 
         herwigCopy.SetLineStyle(8)
-        herwigCopy.SetLineColor(ROOT.kMagenta+3)
+        herwigCopy.SetLineColor(ROOT.kMagenta + 1)
         herwigCopy.SetLineWidth(3)
 
         #if i < 11 and options.isSoftDrop and isData:
@@ -1436,12 +1438,36 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
         hRecoKS = hRecoPDF.Clone( hRecoPDF.GetName() + "_KS")
         hMCKS = MC_list[i].Clone( MC_list[i].GetName() + "_KS")
+        hMCKS_Herwig = herwig_gen.Clone( herwig_gen.GetName() + "_KS")
+
+
 
         hRecoKS.GetXaxis().SetRangeUser( expected_agreement()[i][0], 10000)
         hMCKS.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
+        hMCKS_Herwig.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
         hRecoKS.Scale( 1.0 / hRecoKS.Integral() )
         hMCKS.Scale( 1.0 / hMCKS.Integral() )
-        chi2.append(hRecoKS.Chi2Test(hMCKS, "WW"))
+        hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral() )
+
+        for ihwbin in xrange( 1, hMCKS.GetNbinsX() ) :
+            val_py = hMCKS.GetBinContent(ihwbin)
+            val_hw = hMCKS_Herwig.GetBinContent(ihwbin)
+            val_data = hRecoKS.GetBinContent(ihwbin)
+            err_py = hMCKS.GetBinError(ihwbin)
+            err_hw = hMCKS_Herwig.GetBinError(ihwbin)
+            err_data = hRecoKS.GetBinError(ihwbin)
+            if val_py > 1e-10 and val_hw > 1e-10 :
+                err1 = err_py / val_py
+                err2 = err_hw / val_hw
+                valdiff_hw = (val_data - val_hw) / err_hw
+                valdiff_py = (val_data - val_py) / err_py
+             
+                errtot = err1 * val_hw
+
+                hMCKS_Herwig.SetBinError( ihwbin, errtot )
+        
+        chi2_pythia.append(hRecoKS.Chi2Test(hMCKS, "WW"))
+        chi2_herwig.append(hRecoKS.Chi2Test(hMCKS_Herwig, "WW"))
         if options.isSoftDrop and i < 12:
             theoryKS = theory.Clone(theory.GetName() + "_KS")
             theory2KS = theory2.Clone(theory2.GetName() + "_KS")
@@ -1510,7 +1536,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
     # Make plots of chi2
     print "The KS values for Pythia8 Generator are "
-    print chi2
+    print chi2_pythia
+    print "The KS values for Herwig Generator are "
+    print chi2_herwig
     if options.isSoftDrop:
         print "The KS values for Marzani predicitons are "
         print chi2_marzani
@@ -1525,31 +1553,39 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     chi2_legend.SetBorderSize(0)
 
     
-    chi2_0 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2 ) )
+    chi2_0 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_pythia ) )
     chi2_0.SetName("chi2_0")
     chi2_0.SetLineWidth(3)
     chi2_0.Draw('al')
     graphs.append( chi2_0 )
     chi2_legend.AddEntry( chi2_0, "PYTHIA8", 'l')
+    chi2_1 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_herwig ) )
+    chi2_1.SetName("chi2_1")
+    chi2_1.SetLineWidth(3)
+    chi2_1.SetLineStyle(4)
+    chi2_1.SetLineColor(ROOT.kMagenta + 1)
+    chi2_1.Draw('l')
+    graphs.append( chi2_1 )
+    chi2_legend.AddEntry( chi2_1, "HERWIG++", 'l')
 
         
     if options.isSoftDrop :     
-        chi2_1 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_marzani ) )
-        chi2_1.SetName("chi2_1")
-        chi2_1.SetLineColor(ROOT.kOrange + 7)
-        chi2_1.SetLineStyle(2)
-        chi2_1.SetLineWidth(3)
-        chi2_2 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_harvard ) )
+        chi2_2 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_marzani ) )
         chi2_2.SetName("chi2_2")
-        chi2_2.SetLineColor(ROOT.kBlue)
-        chi2_2.SetLineStyle(3)
+        chi2_2.SetLineColor(ROOT.kOrange + 7)
+        chi2_2.SetLineStyle(2)
         chi2_2.SetLineWidth(3)
+        chi2_3 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_harvard ) )
+        chi2_3.SetName("chi2_3")
+        chi2_3.SetLineColor(ROOT.kBlue)
+        chi2_3.SetLineStyle(3)
+        chi2_3.SetLineWidth(3)
+        chi2_3.Draw('l')
         chi2_2.Draw('l')
-        chi2_1.Draw('l')
-        graphs.append( chi2_1 )
         graphs.append( chi2_2 )
-        chi2_legend.AddEntry( chi2_2, "Frye et al", 'l')
-        chi2_legend.AddEntry( chi2_1, "Marzani et al", 'l')
+        graphs.append( chi2_3 )
+        chi2_legend.AddEntry( chi2_3, "Frye et al", 'l')
+        chi2_legend.AddEntry( chi2_2, "Marzani et al", 'l')
     
         
     chi2_canvas.SetTopMargin(0.1)
@@ -1564,7 +1600,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
     chi2_legend.Draw()
 
-    if options.isData : 
+    if isData : 
         if options.unrestrictedChi2 : 
             chi2_canvas.Print('chi2prob_unrestricted.png', 'png')
             chi2_canvas.Print('chi2prob_unrestricted.pdf', 'pdf')

@@ -107,6 +107,7 @@ hwhist = fherwig.Get(options.hist)
 dataprojs = getProjsY( name='data', h= datahist )
 pyprojs = getProjsY( name='py', h=pyhist )
 hwprojs = getProjsY( name='hw', h=hwhist )
+pyprojsclone = []
 
 pysysprojs = []
 
@@ -176,13 +177,21 @@ for iptbin in xrange( len(dataprojs) ) :
             errtot += jec**2 + jer**2 + jmr**2 + pu**2 + pdf**2 + psunc**2
             errtot = sqrt(errtot) * val
         pyprojs[iptbin].SetBinError( imbin, errtot )
+        hwprojs[iptbin].SetBinError( imbin, 1e-12 )
+    pyprojsclone.append( pyprojs[iptbin].Clone( pyprojs[iptbin].GetName() + "_linestyle") )
+    pyprojsclone[iptbin].SetLineColor(ROOT.kBlue)
     pyprojs[iptbin].SetFillStyle(3001)
     pyprojs[iptbin].SetFillColor(ROOT.kBlue)
     pyprojs[iptbin].SetMarkerStyle(0)
     pyprojs[iptbin].SetMarkerSize(0)
+    hwprojs[iptbin].SetLineStyle(2)
+    hwprojs[iptbin].SetLineColor(2)
+    #hwprojs[iptbin].SetLineWidth(2)
     dataprojs[iptbin].SetMarkerStyle(20)
     stack = ROOT.THStack( "stack" + str(iptbin), ";;Fraction / GeV" )
     stack.Add( pyprojs[iptbin], "e2" )
+    stack.Add( pyprojsclone[iptbin], "hist" )
+    stack.Add( hwprojs[iptbin], "hist")
     stack.Add( dataprojs[iptbin], "e" )
 
     #pyprojs[iptbin].Draw("e2 same")
@@ -190,7 +199,7 @@ for iptbin in xrange( len(dataprojs) ) :
     #dataprojs[iptbin].Draw("e same")
     stack.Draw("nostack")
     maxval = stack.GetMaximum()
-    stack.SetMaximum( maxval * 0.6 )
+    #stack.SetMaximum( maxval * 0.6 )
     stack.GetXaxis().SetRangeUser(axisrange[0],axisrange[1])
     stack.GetXaxis().SetTickLength(0.05)
     stacks.append(stack)
@@ -208,7 +217,8 @@ for iptbin in xrange( len(dataprojs) ) :
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     leg.AddEntry( dataprojs[iptbin], 'Data', 'p')
-    leg.AddEntry( pyprojs[iptbin], 'PYTHIA8 MC', 'f')
+    leg.AddEntry( hwprojs[iptbin], 'HERWIG++ MC', 'l')
+    leg.AddEntry( pyprojs[iptbin], 'PYTHIA8 MC', 'lf')
     leg.Draw()
     legs.append(leg)
     
@@ -216,11 +226,23 @@ for iptbin in xrange( len(dataprojs) ) :
     pads[1].SetLogx()
     ratio = pyprojs[iptbin].Clone("ratio" + pyprojs[iptbin].GetName() )
     ratio.UseCurrentStyle()
+    ratio2 = hwprojs[iptbin].Clone("ratio2" + hwprojs[iptbin].GetName() )
+    #ratio2.UseCurrentStyle()
+
+
+
+
     if 'AK8SD' not in options.hist : 
         ratio.SetTitle(";Jet mass (GeV);MC / Data")
     else :
         ratio.SetTitle(";Groomed jet mass (GeV);MC / Data")
     ratio.Divide( dataprojs[iptbin] )
+    ratio2.Divide( dataprojs[iptbin] )
+    ratioline = ratio.Clone( "ratioclone" + pyprojs[iptbin].GetName() )
+    ratioline.SetFillStyle(0)    
+    for imbin in xrange( 1,hwprojs[iptbin].GetNbinsX()+1 ) :
+        ratio2.SetBinError( imbin, 1e-12)
+        ratioline.SetBinError( imbin, 1e-12)
     ratio.SetFillColor(ROOT.kBlue)
     ratio.SetFillStyle(3001)
     ratio.GetYaxis().SetNdivisions(2,4,0,False)
@@ -231,7 +253,10 @@ for iptbin in xrange( len(dataprojs) ) :
     ratio.SetMarkerStyle(0)
     ratio.SetMarkerSize(0)
     ratio.Draw("e2")
+    ratioline.Draw("hist ][ same")
+    ratio2.Draw("hist same ][")
     ratios.append(ratio)
+    ratios.append(ratio2)
     pads[0].Update()
     pads[1].Update()
     c.Update()
