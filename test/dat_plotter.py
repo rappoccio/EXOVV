@@ -2,13 +2,14 @@ import csv
 from ROOT import *
 import array
 
+'''
 
 binning = array.array('d',[0, 1, 5., 10., 20., 40., 60., 80., 100., 150., 200., 250., 300., 350., 400., 450., 500., 550., 600., 650., 700., 750., 800., 850., 900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450., 1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000. ])
 mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
 
 
-ptbins = [200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
 
+ptbins = [200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
 fout = TFile('theory_predictions.root', 'RECREATE')
 fout.cd()
 
@@ -63,7 +64,10 @@ for j, jbin in enumerate(ptbins):
         ourhist.Write()
 fout.Close()
 
-'''
+
+
+##### OLD Marzani et al prediction:
+
 fout = TFile('theory_predictions_marzani.root', 'RECREATE')
 fout.cd()
 binstart = [2, 51, 100, 149, 198, 247, 296, 345, 394, 443, 492, 541, 590, 639, 688, 737, 786, 835, 884 ]
@@ -73,9 +77,10 @@ for j, jbin in enumerate(ptbins):
     Bincontent = []
     Binerrors = []
 
-    with open('matched-ll_lo-cms.res.txt') as f:
+    with open('theory/matched-ll_lo-cms.res.txt') as f:
         reader = csv.reader(f, delimiter=" ")
         for line in reader:
+            print line
             
             if i > (binstart[j]-1) and i < (binstart[j+1]-4):
                 central = float(line[3])
@@ -104,3 +109,73 @@ fout.Close()
 
 
 
+
+binning = array.array('d',[0, 1, 5., 10., 20., 40., 60., 80., 100., 150., 200., 250., 300., 350., 400., 450., 500., 550., 600., 650., 700., 750., 800., 850., 900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450., 1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000. ])
+
+ptbins = [200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 13000]
+
+fout = TFile('theory_predictions_marzani_newpred.root', 'RECREATE')
+fout.cd()
+
+f = open('theory/mmdt-mass-lhc13-NLO+LL-MSS.res')
+for j in xrange(len( ptbins) - 1):
+    bin_header = '# pt_' + str(ptbins[j]) + '_' + str(ptbins[j+1])    
+    print 'processing pt bin ', bin_header
+    jbin = ptbins[j]
+    Bincontent = array.array('d',  [0.0] * len(binning) )
+    Binerrors = array.array( 'd', [0.0] * len(binning) )
+
+
+    while True :
+        line = f.readline()
+
+        if not line :
+            break
+    
+        if line.rstrip() == bin_header : 
+            line = f.readline()
+            for massbin in xrange( len(binning)-2 ):
+                    
+                line = f.readline()
+                toks = line.rstrip().split(' ')
+
+                if j == 0 :
+                    Bincontent[massbin+1] = float(toks[25])
+                    vallo = float(toks[24])
+                    valhi = float(toks[26])
+                else : 
+                    Bincontent[massbin+1] = float(toks[13])
+                    vallo = float(toks[12])
+                    valhi = float(toks[14])
+                baderrors = vallo < 0.
+                if (vallo < 0. ) :
+                    vallo = 0.
+                if ( valhi < 0. ) :
+                    valhi = 0.
+                BinerrorsLo = abs( Bincontent[massbin+1] - vallo)
+                BinerrorsHi = abs( valhi - Bincontent[massbin+1] )
+                if baderrors : 
+                    Binerrors[massbin+1] = ( BinerrorsLo + BinerrorsHi ) * 0.5
+                else :
+                    Binerrors[massbin+1] = BinerrorsHi
+                ## if Bincontent[massbin+1] < 0.:
+                ##     Bincontent[massbin+1] = 0.
+                ##     Binerrors[massbin+1] = 0.
+                print ' --- %6.0f : %8.3e +- %8.3e' % ( binning[massbin], Bincontent[massbin+1], Binerrors[massbin+1] )
+
+                    
+
+            break
+
+
+
+
+    hist = TH1F('hist_marzani_SD_'+str(j), 'Mass Distributions', len(binning)-1, binning)
+    for ibin in xrange(len(binning)) :
+        hist.SetBinContent( ibin + 1, Bincontent[ibin])
+        hist.SetBinError( ibin + 1, Binerrors[ibin])
+
+
+    hist.Write()
+
+fout.Close()

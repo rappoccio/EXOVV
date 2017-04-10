@@ -38,7 +38,7 @@ ROOT.gStyle.SetTitleFont(43)
 ROOT.gStyle.SetTitleFont(43, "XYZ")
 ROOT.gStyle.SetTitleSize(25, "XYZ")
 ROOT.gStyle.SetTitleOffset(3.5, "X")
-ROOT.gStyle.SetTitleOffset(1.5, "Y")
+ROOT.gStyle.SetTitleOffset(1.8, "Y")
 ROOT.gStyle.SetLabelFont(43, "XYZ")
 ROOT.gStyle.SetLabelSize(24, "XYZ")
 
@@ -50,8 +50,8 @@ def getProjsY( name, h, norm=True ) :
     projs = []
     for y in xrange( 1, h.GetNbinsY()+1 ) :
         proj = h.ProjectionX( name + '_' + h.GetName() + "_proj" + str(y), y, y, 'e' )
-        if norm and proj.Integral() > 0.0 :            
-            proj.Scale( 1.0 / proj.Integral() )
+        if norm and proj.Integral("width") > 0.0 :            
+            proj.Scale( 1.0 / proj.Integral("width") )
         for x in xrange( 1,proj.GetNbinsX()+1 ) :
             val = proj.GetBinContent(x) / proj.GetBinWidth(x)
             err = proj.GetBinError(x) / proj.GetBinWidth(x)

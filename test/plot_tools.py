@@ -53,7 +53,7 @@ if options.unrestrictedChi2 :
         return [[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000],[0,13000] ]
 else :
     def expected_agreement():
-        return [[5,50], [10,70], [20,100], [20,100], [20,100], [20,100], [20,200], [30, 200], [30,300], [30, 300], [30,300], [30,300] ]
+        return [[20,50], [20,70], [20,100], [20,100], [30,100], [40,100], [40,200], [40, 200], [50,300], [50, 300], [50,300], [50,300] ]
  
 def get_markers() :
     return [ 20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28  ]
@@ -74,7 +74,7 @@ def getGraph( hist, width=None ) :
         val = hist.GetBinContent(ibin) 
         if val > 0. :
             x.append( hist.GetXaxis().GetBinCenter(ibin) )
-            dx.append( hist.GetXaxis().GetBinWidth(ibin) )
+            dx.append( hist.GetXaxis().GetBinWidth(ibin) / 2. )
             y.append( val )
             dy.append( hist.GetBinError(ibin) )
     graph =TGraphErrors( len(x), x, y, dx, dy )
@@ -194,7 +194,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions.root")
     theorylist = []
-    theoryfile2 = ROOT.TFile("theory_predictions_marzani.root")
+    theoryfile2 = ROOT.TFile("theory_predictions_marzani_newpred.root")
     theorylist2 = []
     chi2_pythia = []
     chi2_herwig = []
@@ -222,7 +222,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
     
     for h in xrange(0, 12):
         theorylist.append( theoryfile.Get("histSD_"+str(h)+"_ours"))
-        theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)+"_ours"))
+        theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)))
 
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
@@ -336,12 +336,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         #hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
         hRecoPDF.SetTitle(";;Normalized cross section")
         hRecoPDF.GetYaxis().SetTitleSize(30)
-        hRecoPDF.GetYaxis().SetTitleOffset(1.2)
+        hRecoPDF.GetYaxis().SetTitleOffset(1.3)
         hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
         hRecoPDF.GetYaxis().SetLabelSize(28)
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kOrange)
-        hRecoPDF.Scale(1.0/hRecoPDF.Integral())
+        hRecoPDF.Scale(1.0/hRecoPDF.Integral("width"))
         if i == 11:
             hRecoPDF.SetAxisRange(1,2000,"X")
         elif i > 11 and i < 18:
@@ -352,7 +352,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             hRecoPDF.SetAxisRange(1,600, "X")
         elif i < 4:
             hRecoPDF.SetAxisRange(1,400,"X")
-        hRecoPDF.Draw("E2")
+        hRecoPDF.Draw("E2 ][")
         hRecoBarePdf = hRecoPDF.Clone()
         hRecoBarePdf.SetName( hRecoPDF.GetName() + "_bare" )
         for ibin in xrange( hRecoBarePdf.GetXaxis().GetNbins() ) :
@@ -360,77 +360,77 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoBarePdf.SetMarkerStyle(20)
 #hRecoBarePdf.SetLineColor( hStat.GetLineColor() )
         hRecoBarePdf.SetFillStyle(0)
-        hRecoBarePdf.Draw("e x0 same")
+        hRecoBarePdf.Draw("e x0 ][ same")
         hRecoPDF.GetXaxis().SetTickLength(0.05)
         #hRecoPDF.Draw("E same")
         ####################################################################################### PS Drawn Here
         #hRecoCopy.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
         hRecoCopy.SetTitle(";;Normalized cross section")
         hRecoCopy.GetYaxis().SetTitleSize(30)
-        hRecoCopy.GetYaxis().SetTitleOffset(1.2)
+        hRecoCopy.GetYaxis().SetTitleOffset(1.3)
         hRecoCopy.GetYaxis().SetLabelOffset(0.0001)
         hRecoCopy.GetYaxis().SetLabelSize(28)
         hRecoCopy.SetMarkerStyle(20)
-        hRecoCopy.Scale(1.0/hRecoCopy.Integral())
+        hRecoCopy.Scale(1.0/hRecoCopy.Integral("width"))
         hRecoCopy.SetFillColor(ROOT.kAzure+2)
-        hRecoCopy.Draw(" E2 same")
+        hRecoCopy.Draw(" E2 ][ same")
         ####################################################################################### JMR Drawn Here
         hRecoJMR.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
         hRecoJMR.SetTitle(";;Normalized cross section")
         hRecoJMR.GetYaxis().SetTitleSize(30)
-        hRecoJMR.GetYaxis().SetTitleOffset(1.2)
+        hRecoJMR.GetYaxis().SetTitleOffset(1.3)
         hRecoJMR.GetYaxis().SetLabelOffset(0.0001)
         hRecoJMR.GetYaxis().SetLabelSize(28)
         hRecoJMR.SetMarkerStyle(20)
-        hRecoJMR.Scale(1.0/hRecoJMR.Integral())
+        hRecoJMR.Scale(1.0/hRecoJMR.Integral("width"))
         hRecoJMR.SetFillColor(ROOT.kGreen)
-        hRecoJMR.Draw("E2 same")    
+        hRecoJMR.Draw("E2 ][ same")    
         ####################################################################################### JES and JER Drawn Here
         hReco.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
         hReco.SetTitle(";;Normalized cross section")
         hReco.GetYaxis().SetTitleSize(30)
-        hReco.GetYaxis().SetTitleOffset(1.2)
+        hReco.GetYaxis().SetTitleOffset(1.3)
         hReco.GetYaxis().SetLabelOffset(0.0001)
         hReco.GetYaxis().SetLabelSize(28)
         hReco.SetMarkerStyle(20)
         hReco.SetFillColor(ROOT.kYellow)
-        hReco.Scale(1.0/hReco.Integral())
+        hReco.Scale(1.0/hReco.Integral("width"))
         hReco.SetAxisRange( 1e-5, 1, 'Y')
-        hReco.Draw("same")
+        hReco.Draw("][ same")
 
         ####################################################################################### PU Drawn Here
         hRecoPU.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
         hRecoPU.SetTitle(";;Normalized cross section")
         hRecoPU.GetYaxis().SetTitleSize(30)
-        hRecoPU.GetYaxis().SetTitleOffset(1.2)
+        hRecoPU.GetYaxis().SetTitleOffset(1.3)
         hRecoPU.GetYaxis().SetLabelOffset(0.0001)
         hRecoPU.GetYaxis().SetLabelSize(28)
         hRecoPU.SetMarkerStyle(20)
-        hRecoPU.Scale(1.0/hRecoPU.Integral())
+        hRecoPU.Scale(1.0/hRecoPU.Integral("width"))
         hRecoPU.SetFillColor(ROOT.kGreen)
-        hRecoPU.Draw("E2 same") 
+        hRecoPU.Draw("E2 ][ same") 
         
         keephists.append([hReco, hRecoPDF])
         ####################################################################################### Stat Drawn Here
         hRMS.SetTitle(";;Normalized cross section")
         hRMS.GetYaxis().SetTitleSize(30)
-        hRMS.GetYaxis().SetTitleOffset(1.2)
+        hRMS.GetYaxis().SetTitleOffset(1.3)
         hRMS.GetYaxis().SetLabelOffset(0.0001)
         hRMS.GetYaxis().SetLabelSize(28)
         hRMS.SetMarkerStyle(20)
         hRMS.SetFillColor(ROOT.kMagenta + 2)
-        hRMS.Scale(1.0/hRMS.Integral())
+        hRMS.Scale(1.0/hRMS.Integral("width"))
         hRMS.SetAxisRange( 1e-5, 1, 'Y')
-        hRMS.Draw("E2 same")
-        hRMS.Draw(" E same")
+        hRMS.Draw("E2 ][ same")
+        hRMS.Draw(" E ][ same")
         keephists.append(hRMS)
         
         ####################################################################################### Gen Drawn Here
         MC_list[i].SetLineColor(1)
         MC_list[i].SetLineStyle(2)
         MC_list[i].SetLineWidth(3)
-        MC_list[i].Scale(1.0/MC_list[i].Integral())
-        MC_list[i].Draw( "hist SAME" )
+        MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
+        MC_list[i].Draw( "hist ][ SAME" )
     
         ####################################################################################### Latex Drawn Here
 
@@ -448,11 +448,11 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             herwig_gen = herwig_genlistSD[i]
         else:
             herwig_gen = herwig_genlist[i]
-        herwig_gen.Scale(1.0/herwig_gen.Integral())
+        herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
         herwig_gen.SetLineStyle(8)
         herwig_gen.SetLineColor(ROOT.kMagenta + 1)
         herwig_gen.SetLineWidth(3)
-        herwig_gen.Draw("hist same")
+        herwig_gen.Draw("hist ][ same")
         legends_list[i].AddEntry(herwig_gen, "HERWIG++", 'l')
         herwigCopy = herwig_gen.Clone()
         herwigCopy.SetName( herwigCopy.GetName() + "_copy")
@@ -463,7 +463,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
                 powheg = powheglistSD[i]
             else:
                 powheg = powheglist[i]
-            powheg.Scale(1.0/powheg.Integral())
+            powheg.Scale(1.0/powheg.Integral("width"))
             powheg.SetLineStyle(4)
             powheg.SetLineColor(ROOT.kGreen + 2)
             powheg.SetLineWidth(3)
@@ -479,7 +479,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
 
         if i < 12 and options.isSoftDrop and isData:
             theory = theorylist[i]
-            theory.Scale(1.0/theory.Integral())
+            theory.Scale(1.0/theory.Integral("width"))
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
             ratio_bin = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory.GetBinContent( theory.GetXaxis().FindBin(50.)))
             theory.Scale(ratio_bin)
@@ -487,30 +487,32 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theory.SetFillStyle(3254)
             theory.SetFillColor(ROOT.kBlue)            
             #theory.SetAxisRange(1e-5, 1, "Y")
-            theory.Draw("C E5 same")            
+            theory.Draw("C E5 ][ same")            
             theorydumb = theory.Clone(theory.GetName() + "_dumb")
             theorydumb.SetFillStyle(0)
             theorydumb.SetLineWidth(3)
-            theorydumb.Draw("C hist same")
+            theorydumb.Draw("C hist ][ same")
             theorydumb.GetXaxis().SetRangeUser(5, 100000)
             legends_list[i].AddEntry(theory, "Frye et al", 'f')
             #legends_list[i].AddEntry(theory, "Frye et al", 'l')
             #legends_list[i].Draw("same")
             
             theory2 = theorylist2[i]
-            theory2.Scale(1.0/theory2.Integral())
+            ratio_bin2 = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory2.GetBinContent( theory2.GetXaxis().FindBin(50.)))
+            #theory2.Scale(ratio_bin2)
+            #theory2.Scale(1.0/theory2.Integral("width"))
             #ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
             #theory2.Scale(ratio_bin2)
-            #theory2.Scale(1.0/hRecoPDF.Integral())
+            #theory2.Scale(1.0/hRecoPDF.Integral("width"))
             theory2.SetFillStyle(3245)
             theory2.SetFillColor(ROOT.kOrange+7)            
-            theory2.Draw("hist same")
+            theory2.Draw("hist ][ same")
             theory2dumb = theory2.Clone(theory2.GetName() + "_dumb")
             theory2dumb.SetLineWidth(3)
             theory2dumb.SetFillStyle(0)
-            theory2dumb.Draw("C hist same")
+            theory2dumb.Draw("C hist ][ same")
             legends_list[i].AddEntry(theory2, "Marzani et al", 'f')
-        hRecoPDF.Draw("same")
+        hRecoPDF.Draw("][ same")
         legends_list[i].Draw()
         latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
@@ -541,14 +543,14 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datcopy = hReco.Clone()
         datcopy.SetName( datcopy.GetName() + "_copy" )
         datcopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datcopy.GetYaxis().SetTitleOffset(1.2)
+        datcopy.GetYaxis().SetTitleOffset(1.3)
         datcopy.GetYaxis().SetTitleSize(30)
         datcopy.SetMarkerStyle(0)
         # this stuff here is parton shower, bad name, ------------------------------------------> NEEDS REFACTORING
         datcopycopy = hRecoCopy.Clone()
         datcopycopy.SetName(hRecoCopy.GetName()+"_copyofcopy")
         datcopycopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datcopycopy.GetYaxis().SetTitleOffset(1.2)
+        datcopycopy.GetYaxis().SetTitleOffset(1.3)
         datcopycopy.GetYaxis().SetLabelOffset(0.0001)
         datcopycopy.GetYaxis().SetTitleSize(30)
         datcopycopy.SetMarkerStyle(0)
@@ -556,7 +558,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
         datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datPDF.GetYaxis().SetTitleOffset(1.2)
+        datPDF.GetYaxis().SetTitleOffset(1.3)
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(30)
         datPDF.SetMarkerStyle(0)
@@ -564,7 +566,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datPU = hRecoPU.Clone()
         datPU.SetName(hRecoPU.GetName()+"_pucopy")
         datPU.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datPU.GetYaxis().SetTitleOffset(1.2)
+        datPU.GetYaxis().SetTitleOffset(1.3)
         datPU.GetYaxis().SetLabelOffset(0.0001)
         datPU.GetYaxis().SetTitleSize(30)
         datPU.SetMarkerStyle(0)
@@ -573,7 +575,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datJMR = hRecoJMR.Clone()
         datJMR.SetName(hRecoJMR.GetName()+"_jmrcopy")
         datJMR.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datJMR.GetYaxis().SetTitleOffset(1.2)
+        datJMR.GetYaxis().SetTitleOffset(1.3)
         datJMR.GetYaxis().SetLabelOffset(0.0001)
         datJMR.GetYaxis().SetTitleSize(30)
         datJMR.SetMarkerStyle(0)
@@ -581,7 +583,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         datRMS = hRMS.Clone()
         datRMS.SetName(hRecoJMR.GetName()+"_jmrcopy")
         datRMS.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datRMS.GetYaxis().SetTitleOffset(1.2)
+        datRMS.GetYaxis().SetTitleOffset(1.3)
         datRMS.GetYaxis().SetLabelOffset(0.0001)
         datRMS.GetYaxis().SetTitleSize(30)
         datRMS.SetMarkerStyle(0)
@@ -634,12 +636,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
-        trueCopy.GetYaxis().SetTitleOffset(1.2)
+        trueCopy.GetYaxis().SetTitleOffset(1.3)
 
         herwigCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         herwigCopy.UseCurrentStyle()
         herwigCopy.GetXaxis().SetTitleOffset(2)
-        herwigCopy.GetYaxis().SetTitleOffset(1.2)
+        herwigCopy.GetYaxis().SetTitleOffset(1.3)
         if i < 11 and options.isSoftDrop and isData:
             theorycopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theorycopy.UseCurrentStyle()
@@ -648,7 +650,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
-            theorycopy.GetYaxis().SetTitleOffset(1.2)
+            theorycopy.GetYaxis().SetTitleOffset(1.3)
             theory2copy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
             theory2copy.SetFillStyle(3245)
@@ -656,79 +658,79 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theory2copy.SetLineColor(ROOT.kOrange+7)
             theory2copy.SetLineWidth(3)
             theory2copy.GetXaxis().SetTitleOffset(2)
-            theory2copy.GetYaxis().SetTitleOffset(1.2)
+            theory2copy.GetYaxis().SetTitleOffset(1.3)
         if i < 11:
             powhegcopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             #powhegcopy.UseCurrentStyle()
             powhegcopy.GetXaxis().SetTitleOffset(2)
-            powhegcopy.GetYaxis().SetTitleOffset(1.2)
+            powhegcopy.GetYaxis().SetTitleOffset(1.3)
     
-        datcopy.SetMinimum(0)
-        datcopy.SetMaximum(2)
+        datcopy.SetMinimum(0.8)
+        datcopy.SetMaximum(1.2)
         datcopy.GetYaxis().SetNdivisions(2,4,0,False)
         datcopy.SetFillColor(ROOT.kYellow)
         datcopy.GetXaxis().SetTickLength(0.5)
 
-        datcopycopy.SetMinimum(0)
-        datcopycopy.SetMaximum(2)
+        datcopycopy.SetMinimum(0.8)
+        datcopycopy.SetMaximum(1.2)
         datcopycopy.GetYaxis().SetNdivisions(2,4,0,False)
         datcopycopy.SetFillColor(ROOT.kAzure+2)
         
-        datPDF.SetMinimum(0)
-        datPDF.SetMaximum(2)
+        datPDF.SetMinimum(0.8)
+        datPDF.SetMaximum(1.2)
         datPDF.GetYaxis().SetNdivisions(2,4,0,False)
         datPDF.SetFillColor(ROOT.kOrange)
         
-        datJMR.SetMinimum(0)
-        datJMR.SetMaximum(2)
+        datJMR.SetMinimum(0.8)
+        datJMR.SetMaximum(1.2)
         datJMR.GetYaxis().SetNdivisions(2,4,0,False)
         datJMR.SetFillColor(ROOT.kGreen)
 
-        datPU.SetMinimum(0)
-        datPU.SetMaximum(2)
+        datPU.SetMinimum(0.8)
+        datPU.SetMaximum(1.2)
         datPU.GetYaxis().SetNdivisions(2,4,0,False)
         datPU.SetFillColor(ROOT.kGreen)
 
         
-        datRMS.SetMinimum(0)
-        datRMS.SetMaximum(2)
+        datRMS.SetMinimum(0.8)
+        datRMS.SetMaximum(1.2)
         datRMS.GetYaxis().SetNdivisions(2,4,0,False)
         datRMS.SetFillColor(ROOT.kMagenta+2)
 
         datcopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datcopy.GetYaxis().SetTitleSize(30)
-        datcopy.GetYaxis().SetTitleOffset(1.2)
+        datcopy.GetYaxis().SetTitleOffset(1.3)
         datcopy.GetYaxis().SetLabelOffset(0.01)
         datcopy.GetYaxis().SetLabelSize(28)
         datcopy.GetXaxis().SetLabelSize(28)
         datcopycopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datcopycopy.GetYaxis().SetTitleSize(30)
-        datcopycopy.GetYaxis().SetTitleOffset(1.2)
+        datcopycopy.GetYaxis().SetTitleOffset(1.3)
         datcopycopy.GetYaxis().SetLabelOffset(0.01)
         datcopycopy.GetYaxis().SetLabelSize(28)
         datcopycopy.GetXaxis().SetLabelSize(28)
         datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPDF.GetYaxis().SetTitleSize(30)
-        datPDF.GetYaxis().SetTitleOffset(1.2)
+        datPDF.GetYaxis().SetTitleOffset(1.3)
         datPDF.GetYaxis().SetLabelOffset(0.01)
         datPDF.GetYaxis().SetLabelSize(28)
         datPDF.GetXaxis().SetLabelSize(28)
         datJMR.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datJMR.GetYaxis().SetTitleSize(30)
-        datJMR.GetYaxis().SetTitleOffset(1.2)
+        datJMR.GetYaxis().SetTitleOffset(1.3)
         datJMR.GetYaxis().SetLabelOffset(0.01)
         datJMR.GetYaxis().SetLabelSize(28)
         datJMR.GetXaxis().SetLabelSize(28)
         datJMR.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPU.GetYaxis().SetTitleSize(30)
-        datPU.GetYaxis().SetTitleOffset(1.2)
+        datPU.GetYaxis().SetTitleOffset(1.3)
         datPU.GetYaxis().SetLabelOffset(0.01)
         datPU.GetYaxis().SetLabelSize(28)
         datPU.GetXaxis().SetLabelSize(28)
 
         datRMS.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datRMS.GetYaxis().SetTitleSize(30)
-        datRMS.GetYaxis().SetTitleOffset(1.2)
+        datRMS.GetYaxis().SetTitleOffset(1.3)
         datRMS.GetYaxis().SetLabelOffset(0.01)
         datRMS.GetYaxis().SetLabelSize(28)
         datRMS.GetXaxis().SetLabelSize(28)
@@ -793,27 +795,27 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             datPDF.SetAxisRange(1,600, "X")
         elif i < 4:
             datPDF.SetAxisRange(1,400,"X")
-        datPDF.Draw('e2')
-        datcopycopy.Draw('e2 same')
-        datJMR.Draw('e2 same')
-        datcopy.Draw('e2 same')
-        datRMS.Draw('e2 same')
-        datPU.Draw('e2 same')
+        datPDF.Draw('e2 ][')
+        datcopycopy.Draw('e2 ][ same')
+        datJMR.Draw('e2 ][ same')
+        datcopy.Draw('e2 ][ same')
+        datRMS.Draw('e2 ][ same')
+        datPU.Draw('e2 ][ same')
         datcopy.SetMarkerStyle(0)
-        trueCopy.Draw("hist same")
-        herwigCopy.Draw("hist same")
+        trueCopy.Draw("hist ][ same")
+        herwigCopy.Draw("hist ][ same")
         if i < 11 and options.isSoftDrop and isData:
-            theorycopy.Draw("C E5 same")
-            theory2copy.Draw("C E5 same")
+            theorycopy.Draw("C E5 ][ same")
+            theory2copy.Draw("C E5 ][ same")
             theorycopydumb = theorycopy.Clone( theorycopy.GetName() + "_dumb")
             theory2copydumb = theory2copy.Clone( theorycopy.GetName() + "_dumb")
             theorycopydumb.SetFillStyle(0)
             theory2copydumb.SetFillStyle(0)
-            theorycopydumb.Draw("C hist same")
+            theorycopydumb.Draw("C hist ][ same")
             theorycopydumb.GetXaxis().SetRangeUser(5, 100000)
-            theory2copydumb.Draw("C hist same")
+            theory2copydumb.Draw("C hist ][ same")
         if i < 11:
-            powhegcopy.Draw("hist same")
+            powhegcopy.Draw("hist ][ same")
     
         keephists.append([datcopy, datPDF])
         pads_list[i][0].Update()
@@ -877,7 +879,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
     theoryfile = ROOT.TFile("theory_predictions.root")
     theorylist = []
-    theoryfile2 = ROOT.TFile("theory_predictions_marzani.root")
+    theoryfile2 = ROOT.TFile("theory_predictions_marzani_newpred.root")
     theorylist2 = []
     herwig_genfile = ROOT.TFile("PS_hists.root")
     herwig_genlist = []
@@ -898,7 +900,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
     for h in xrange(0, 12):
         theorylist.append( theoryfile.Get("histSD_"+str(h)+"_ours"))
-        theorylist2.append( theoryfile2.Get("histSD_"+str(h)+"_ours"))
+        theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)))
     for i, canv in enumerate(canvas_list):
         pads_list[i][0].cd()
         if options.logy:
@@ -941,6 +943,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hStat.SetBinError(ibin, hStat.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin) , ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) ]) )
         hReco = hRMS.Clone()
+
+        
         ########################################################################################## Scale the hists for mass bins
         for ibin in xrange(1, hReco.GetNbinsX()):
             puup.SetBinContent(ibin, puup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
@@ -1003,22 +1007,22 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             temp = hRecoPDF.GetBinError(ibin)
             hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) ]))
         ####################################################################################### PDF Drawn Here
-        hReco.Scale(1.0/hReco.Integral())
+        hReco.Scale(1.0/hReco.Integral("width"))
         hRecoPDF.SetTitle(";;Normalized cross section")
         hRecoPDF.GetYaxis().SetTitleSize(30)
-        hRecoPDF.GetYaxis().SetTitleOffset(1.2)
+        hRecoPDF.GetYaxis().SetTitleOffset(1.3)
         hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
         hRecoPDF.GetYaxis().SetLabelSize(28)
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kGray)
-        hRecoPDF.Scale(1.0/hRecoPDF.Integral())
+        hRecoPDF.Scale(1.0/hRecoPDF.Integral("width"))
         hStat.SetTitle(";;Normalized cross section")
         hStat.GetYaxis().SetTitleSize(30)
-        hStat.GetYaxis().SetTitleOffset(1.2)
+        hStat.GetYaxis().SetTitleOffset(1.3)
         hStat.GetYaxis().SetLabelOffset(0.0001)
         hStat.GetYaxis().SetLabelSize(28)
         hStat.SetFillColor(ROOT.kGray+1)
-        hStat.Scale(1./hStat.Integral())
+        hStat.Scale(1./hStat.Integral("width"))
         if i == 11:
             hRecoPDF.SetAxisRange(1,2000,"X")
             hStat.SetAxisRange(1, 2000, "X")
@@ -1045,10 +1049,17 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoBarePdf.SetLineColor( hStat.GetLineColor() )
         hRecoBarePdf.SetFillStyle(0)
 
+        
+        print '-------- integral : ' + str( hRecoPDF.Integral(0, hRecoPDF.GetNbinsX(), "width" ) )
+        iisum = 0.
+        for iibin in xrange( hRecoPDF.GetNbinsX() ):
+            iisum += hRecoPDF.GetBinContent( iibin )
+        print '-------- iisum : ' + str( iisum)
 
-        hRecoPDF.Draw("E2")
-        hStat.Draw("E2 same")
-        hRecoBarePdf.Draw("e x0 same")
+        hRecoPDF.Draw("E2 ][")
+        hRecoPDF.SetMaximum( 2.0 * hRecoPDF.GetMaximum() )
+        hStat.Draw("E2 ][ same")
+        hRecoBarePdf.Draw("e x0 ][ same")
 
 
         for ibin in xrange( hRecoPDF.GetNbinsX()+1):
@@ -1092,8 +1103,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         MC_list[i].SetLineColor(1)
         MC_list[i].SetLineStyle(2)
         MC_list[i].SetLineWidth(3)
-        MC_list[i].Scale(1.0/MC_list[i].Integral())
-        MC_list[i].Draw( "hist SAME" )
+        MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
+        MC_list[i].Draw( "hist ][ SAME" )
         
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(hRecoPDF, 'Data', 'p')
@@ -1105,11 +1116,11 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             herwig_gen = herwig_genlistSD[i]
         else:
             herwig_gen = herwig_genlist[i]
-        herwig_gen.Scale(1.0/herwig_gen.Integral())
+        herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
         herwig_gen.SetLineStyle(8)
         herwig_gen.SetLineColor(ROOT.kMagenta + 1)
         herwig_gen.SetLineWidth(3)
-        herwig_gen.Draw("hist same")
+        herwig_gen.Draw("hist ][ same")
         legends_list[i].AddEntry(herwig_gen, "HERWIG++", 'l')
         herwigCopy = herwig_gen.Clone()
         herwigCopy.SetName( herwigCopy.GetName() + "_copy")
@@ -1120,11 +1131,11 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 powheg = powheglistSD[i]
             else:
                 powheg = powheglist[i]
-            powheg.Scale(1.0/powheg.Integral())
+            powheg.Scale(1.0/powheg.Integral("width"))
             powheg.SetLineStyle(4)
             powheg.SetLineColor(ROOT.kGreen + 2)
             powheg.SetLineWidth(3)
-            powheg.Draw("hist same")
+            powheg.Draw("hist ][ same")
             legends_list[i].AddEntry(powheg, "POWHEG + PYTHIA8", 'l')
             powhegcopy = powheg.Clone()
             powhegcopy.SetName( powheg.GetName()+"_copy")
@@ -1134,7 +1145,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             
         if i < 11 and options.isSoftDrop : #and isData:
             theory = theorylist[i]
-            theory.Scale(1.0/theory.Integral())
+            theory.Scale(1.0/theory.Integral("width"))
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
             print 'i = ', i
             ratio_bin = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory.GetBinContent( theory.GetXaxis().FindBin(50.)))
@@ -1147,7 +1158,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             #theory.SetAxisRange(1e-5, 1, "Y")
 
             theorygraph = getGraph( theory, width=3 ) 
-            theorygraph.Draw("L3 same")
+            theorygraph.Draw("L3 0 ][ same")
             
             #theorydumb = theory.Clone(theory.GetName() + "_dumb")
             #theorydumb.SetFillStyle(0)
@@ -1157,17 +1168,19 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             #legends_list[i].Draw("same")
             
             theory2 = theorylist2[i]
-            theory2.Scale(1.0/theory2.Integral())
+            ratio_bin2 = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory2.GetBinContent( theory2.GetXaxis().FindBin(50.)))
+            #theory2.Scale(ratio_bin2)
+            #theory2.Scale(1.0/theory2.Integral("width"))
             #ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
             #theory2.Scale(ratio_bin2)
-            #theory2.Scale(1.0/hRecoPDF.Integral())
+            #theory2.Scale(1.0/hRecoPDF.Integral("width"))
             #theory2.SetLineStyle(10)
             theory2.SetFillStyle(3245)
             theory2.SetFillColor(ROOT.kOrange+7)            
             theory2.SetLineColor(ROOT.kOrange+7)
             theory2.SetLineWidth(0)
             theory2graph = getGraph( theory2, width=3 )
-            theory2graph.Draw("L3 same") 
+            theory2graph.Draw("L3 0 ][ same") 
             #theory2.Draw("C E5 same")
             #theory2dumb = theory2.Clone(theory2.GetName() + "_dumb")
             #theory2dumb.SetFillStyle(0)
@@ -1261,14 +1274,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
         datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datPDF.GetYaxis().SetTitleOffset(1.2)
+        datPDF.GetYaxis().SetTitleOffset(1.3)
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(30)
         datPDF.SetMarkerStyle(0)
         datStat = hStat.Clone()
         datStat.SetName(hStat.GetName()+"copy")
         datStat.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        datStat.GetYaxis().SetTitleOffset(1.2)
+        datStat.GetYaxis().SetTitleOffset(1.3)
         datStat.GetYaxis().SetLabelOffset(0.0001)
         datStat.GetYaxis().SetTitleSize(30)
         datStat.SetMarkerStyle(0)
@@ -1300,11 +1313,11 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         trueCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         trueCopy.UseCurrentStyle()
         trueCopy.GetXaxis().SetTitleOffset(2)
-        trueCopy.GetYaxis().SetTitleOffset(1.2)
+        trueCopy.GetYaxis().SetTitleOffset(1.3)
         herwigCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
         herwigCopy.UseCurrentStyle()
         herwigCopy.GetXaxis().SetTitleOffset(2)
-        herwigCopy.GetYaxis().SetTitleOffset(1.2)
+        herwigCopy.GetYaxis().SetTitleOffset(1.3)
         if i < 11 and options.isSoftDrop and isData:
 
             theorycopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
@@ -1314,7 +1327,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
             theorycopy.GetXaxis().SetTitleOffset(2)
-            theorycopy.GetYaxis().SetTitleOffset(1.2)
+            theorycopy.GetYaxis().SetTitleOffset(1.3)
             theory2copy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
             theory2copy.SetFillStyle(3245)
@@ -1322,35 +1335,35 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory2copy.SetLineColor(ROOT.kOrange+7)
             theory2copy.SetLineWidth(3)
             theory2copy.GetXaxis().SetTitleOffset(2)
-            theory2copy.GetYaxis().SetTitleOffset(1.2)
+            theory2copy.GetYaxis().SetTitleOffset(1.3)
 
         if i < 11:
             powhegcopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             #powhegcopy.UseCurrentStyle()
             powhegcopy.GetXaxis().SetTitleOffset(2)
-            powhegcopy.GetYaxis().SetTitleOffset(1.2)
+            powhegcopy.GetYaxis().SetTitleOffset(1.3)
 
         trueCopy.GetXaxis().SetTickLength(0.5)
-        datPDF.SetMinimum(0)
-        datPDF.SetMaximum(2)
+        datPDF.SetMinimum(0.8)
+        datPDF.SetMaximum(1.2)
         datPDF.GetYaxis().SetNdivisions(2,4,0,False)
         datPDF.GetXaxis().SetTickLength(10)
         datPDF.SetFillColor(ROOT.kGray)
         
         datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPDF.GetYaxis().SetTitleSize(30)
-        datPDF.GetYaxis().SetTitleOffset(1.2)
+        datPDF.GetYaxis().SetTitleOffset(1.3)
         datPDF.GetYaxis().SetLabelOffset(0.01)
         datPDF.GetYaxis().SetLabelSize(28)
         datPDF.GetXaxis().SetLabelSize(28)
 		
-        datStat.SetMinimum(0)
-        datStat.SetMaximum(2)
+        datStat.SetMinimum(0.8)
+        datStat.SetMaximum(1.2)
         datStat.GetYaxis().SetNdivisions(2, 4, 0, False)
         datStat.SetFillColor(ROOT.kGray+1)
         datStat.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datStat.GetYaxis().SetTitleSize(30)
-        datStat.GetYaxis().SetTitleOffset(1.2)
+        datStat.GetYaxis().SetTitleOffset(1.3)
         datStat.GetYaxis().SetLabelOffset(0.01)
         datStat.GetYaxis().SetLabelSize(28)
         datStat.GetXaxis().SetLabelSize(28)
@@ -1406,12 +1419,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         elif i < 4:
             datPDF.SetAxisRange(1,200,"X")
             datStat.SetAxisRange(1, 200, "X")
-        datPDF.Draw('e2')
+        datPDF.Draw('e2 ][ ')
         datPDF.GetXaxis().SetTickLength(0.10)
         datPDF.GetXaxis().SetNoExponent()
-        datStat.Draw('e2 same')
-        trueCopy.Draw("hist same")
-        herwigCopy.Draw("hist same")
+        datStat.Draw('e2 ][ same')
+        trueCopy.Draw("hist ][ same")
+        herwigCopy.Draw("hist ][ same")
         if i < 11 and options.isSoftDrop and isData:
             theorycopygraph = getGraph( theorycopy, width=3 )
             theorycopygraph.Draw("L3 same")
@@ -1427,7 +1440,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             #theorycopydumb.GetXaxis().SetRangeUser(5, 100000)
             #theory2copydumb.Draw("C hist same")
         if i < 11:
-            powhegcopy.Draw("hist same")
+            powhegcopy.Draw("hist ][ same")
         keephists.append([datPDF])
         pads_list[i][0].Update()
         pads_list[i][0].RedrawAxis()
@@ -1445,9 +1458,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoKS.GetXaxis().SetRangeUser( expected_agreement()[i][0], 10000)
         hMCKS.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
         hMCKS_Herwig.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
-        hRecoKS.Scale( 1.0 / hRecoKS.Integral() )
-        hMCKS.Scale( 1.0 / hMCKS.Integral() )
-        hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral() )
+        hRecoKS.Scale( 1.0 / hRecoKS.Integral("width") )
+        hMCKS.Scale( 1.0 / hMCKS.Integral("width") )
+        hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral("width") )
 
         for ihwbin in xrange( 1, hMCKS.GetNbinsX() ) :
             val_py = hMCKS.GetBinContent(ihwbin)
@@ -1473,8 +1486,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theory2KS = theory2.Clone(theory2.GetName() + "_KS")
             theoryKS.GetXaxis().SetRangeUser(expected_agreement()[i][0], expected_agreement()[i][1])
             theory2KS.GetXaxis().SetRangeUser(expected_agreement()[i][0],expected_agreement()[i][1])
-            theory2KS.Scale( 1.0 / theory2KS.Integral() )
-            theoryKS.Scale( 1.0 / theoryKS.Integral() )
+            #theory2KS.Scale( 1.0 / theory2KS.Integral("width") )
+            theoryKS.Scale( 1.0 / theoryKS.Integral("width") )
             chi2_marzani.append(theory2KS.Chi2Test(hRecoKS, "WW"))
             chi2_harvard.append(theoryKS.Chi2Test(hRecoKS, "WW"))
                     
@@ -1522,7 +1535,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
     latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
     the_stack.GetYaxis().SetTitleSize(30)
-    the_stack.GetYaxis().SetTitleOffset(1.2)
+    the_stack.GetYaxis().SetTitleOffset(1.3)
     the_stack.GetYaxis().SetLabelOffset(0.0001)
     the_stack.GetYaxis().SetLabelSize(28)
     stack_canvas.Update()
@@ -1548,7 +1561,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
     chi2_canvas = TCanvas("cchi2", "cchi2" )
     chi2_canvas.SetLeftMargin(0.15)
-    chi2_legend = ROOT.TLegend( 0.65, 0.2, 0.87, 0.5 )
+    if options.isSoftDrop: 
+        chi2_legend = ROOT.TLegend( 0.55, 0.17, 0.77, 0.4 )
+    else :
+        chi2_legend = ROOT.TLegend( 0.68, 0.16, 0.88, 0.38 )
     chi2_legend.SetFillColor(0)
     chi2_legend.SetBorderSize(0)
 
@@ -1637,7 +1653,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         reco_list[i].SetLineColor(1)
         reco_list[i].SetAxisRange(1e-11, 1, "Y")
         reco_list[i].SetStats(0)
-        reco_list[i].Draw("SAME hist")
+        reco_list[i].Draw("SAME ][ hist")
         reco_list[i].GetXaxis().SetNoExponent()
         reco_list[i].GetXaxis().SetTitle("Jet mass (GeV)")
         legends_list[i].AddEntry(reco_list[i], recolegname_str, 'l')
@@ -1646,7 +1662,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gen_list[i].SetAxisRange(1e-11, 1, "Y")
         gen_list[i].SetMarkerStyle(8)
         #gen_list[i].SetMarkerSize(30)
-        gen_list[i].Draw("SAME")
+        gen_list[i].Draw("][ SAME")
         latex_list[i].DrawLatex(0.2, 0.926, "CMS preliminary, 40 pb^{-1} (13 TeV)")
         latexpt_list[i].DrawLatex(0.200, 0.779, ptbins_dict[i])
         
@@ -1665,11 +1681,11 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
 
         pads_list[i][1].cd()
         gencopy.SetTitle(";" + xlabeloption + "et mass (GeV); #frac{Theory}{Data}")
-        recocopy.SetMinimum(0)
-        recocopy.SetMaximum(2)
+        recocopy.SetMinimum(0.8)
+        recocopy.SetMaximum(1.2)
         recocopy.GetYaxis().SetNdivisions(2,4,0,False)
         recocopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        recocopy.GetYaxis().SetTitleOffset(1.2)
+        recocopy.GetYaxis().SetTitleOffset(1.3)
         recocopy.GetYaxis().SetLabelOffset(0.01)
         recocopy.GetYaxis().SetLabelSize(28)
         recocopy.GetXaxis().SetLabelSize(28)
@@ -1677,11 +1693,11 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         recocopy.GetXaxis().SetTitleOffset(2.3)
         recocopy.GetXaxis().SetTickLength(0.5)
 
-        gencopy.SetMinimum(0)
-        gencopy.SetMaximum(2)
+        gencopy.SetMinimum(0.8)
+        gencopy.SetMaximum(1.2)
         gencopy.GetYaxis().SetNdivisions(2,4,0,False)
         gencopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
-        gencopy.GetYaxis().SetTitleOffset(1.2)
+        gencopy.GetYaxis().SetTitleOffset(1.3)
         gencopy.GetYaxis().SetLabelOffset(0.01)
         gencopy.GetYaxis().SetLabelSize(28)
         gencopy.GetXaxis().SetLabelSize(28)
@@ -1689,8 +1705,8 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gencopy.GetXaxis().SetTitleOffset(2.3)
         #gencopy.SetMarkerSize(30)
 
-        recocopy.Draw('SAME')
-        gencopy.Draw("hist SAME")
+        recocopy.Draw('][ SAME')
+        gencopy.Draw("hist ][ SAME")
         
         pads_list[i][0].Update()
         pads_list[i][0].RedrawAxis()
@@ -1709,16 +1725,16 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         
         preMC = pre_MC_list[i].Clone()
         preMC.SetName( preMC.GetName()+"_copy" )
-        preMC.Scale(1.0/preMC.Integral())
+        preMC.Scale(1.0/preMC.Integral("width"))
         postMC = post_MC_list[i].Clone()
         postMC.SetName( postMC.GetName()+"_copy" )
-        postMC.Scale(1.0/postMC.Integral())
+        postMC.Scale(1.0/postMC.Integral("width"))
         preData = pre_data_list[i].Clone()
         preData.SetName( preData.GetName()+"_copy" )
-        preData.Scale(1.0/preData.Integral())
+        preData.Scale(1.0/preData.Integral("width"))
         postData = post_data_list[i].Clone()
         postData.SetName( postData.GetName()+"_copy" )
-        postData.Scale(1.0/postData.Integral())
+        postData.Scale(1.0/postData.Integral("width"))
         for ibin in xrange(1, preMC.GetNbinsX()):
             preMC.SetBinContent(ibin, preMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
             postMC.SetBinContent(ibin, postMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
@@ -1742,9 +1758,9 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         
         postMC.SetLineColor(1)
         postMC.SetTitle(";" + xlabeloption + "et mass (GeV);Ratio of Unfolded to Preunfolded")
-        postMC.Draw("hist")
+        postMC.Draw("][ hist")
         postData.SetLineColor(4)
-        postData.Draw("hist same")
+        postData.Draw("hist ][ same")
         legends_list[i].AddEntry(postMC, 'Ratio of Unfolded to PreUnfolded Monte Carlo '+softdrop, 'l')
         legends_list[i].AddEntry(postData, 'Ratio of Unfolded to PreUnfolded Data '+softdrop, 'l')
         legends_list[i].Draw()
@@ -1761,16 +1777,16 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
 
         genMC = genMC_list[i].Clone()
         genMC.SetName( genMC.GetName()+"_copy" )
-        genMC.Scale(1.0/genMC.Integral())
+        genMC.Scale(1.0/genMC.Integral("width"))
         preMC2 = pre_MC_list[i].Clone()
         preMC2.SetName( preMC2.GetName()+"_copy2" )
-        preMC2.Scale(1.0/preMC2.Integral())
+        preMC2.Scale(1.0/preMC2.Integral("width"))
         preData2 = pre_data_list[i].Clone()
         preData2.SetName( preData2.GetName()+"_copy2" )
-        preData2.Scale(1.0/preData2.Integral())
+        preData2.Scale(1.0/preData2.Integral("width"))
         postData2 = post_data_list[i].Clone()
         postData2.SetName( postData2.GetName()+"_copy2" )
-        postData2.Scale(1.0/postData2.Integral())
+        postData2.Scale(1.0/postData2.Integral("width"))
         
         for ibin in xrange(1, preMC.GetNbinsX()):
             preMC2.SetBinContent(ibin, preMC2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
@@ -1785,7 +1801,7 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         canvas2 = manyratios_canvas_list[i]
         canvas2.cd()
 
-        genMC.Draw("hist")
+        genMC.Draw("][ hist")
         leg2 = legends_list2[i]
         legends_list2[i].AddEntry(genMC, '(gen level/unfolded data)/(reco MC/reco data) '+softdrop, 'l')
         legends_list2[i].Draw()
