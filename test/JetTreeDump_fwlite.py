@@ -589,6 +589,10 @@ def JetTreeDump_FWLite(argv) :
         FatJetCorrDn        = array('f', [-1., -1., -1., -1., -1.])
         FatJetSDCorrUp      = array('f', [-1., -1., -1., -1., -1.])
         FatJetSDCorrDn      = array('f', [-1., -1., -1., -1., -1.])
+        MuonPt              = array('f', [-1., -1., -1., -1., -1.])
+        MuonEta             = array('f', [-1., -1., -1., -1., -1.])
+        MuonPhi             = array('f', [-1., -1., -1., -1., -1.])
+        MuonMass            = array('f', [-1., -1., -1., -1., -1.])
 
 
 
@@ -692,6 +696,11 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('FatJetCorrDn'        , FatJetCorrDn        ,  'FatJetCorrDn[NFatJet]/F'        )
         TreeEXOVV.Branch('FatJetSDCorrUp'      , FatJetSDCorrUp      ,  'FatJetSDCorrUp[NFatJet]/F'      )
         TreeEXOVV.Branch('FatJetSDCorrDn'      , FatJetSDCorrDn      ,  'FatJetSDCorrDn[NFatJet]/F'      )
+        
+        TreeEXOVV.Branch('MuonPt'              , MuonPt              ,  'MuonPt[NFatJet]/F'              )
+        TreeEXOVV.Branch('MuonEta'             , MuonEta             ,  'MuonEta[NFatJet]/F'             )
+        TreeEXOVV.Branch('MuonPhi'             , MuonPhi             ,  'MuonPhi[NFatJet]/F'             )
+        TreeEXOVV.Branch('MuonMass'            , MuonMass            ,  'MuonMass[NFatJet]/F'            )
 
 
         TreeEXOVV.Branch('NGenJet'             , NGenJet             ,  'NGenJet/I'                      )
@@ -1221,6 +1230,13 @@ def JetTreeDump_FWLite(argv) :
             event.getByLabel ( l_subjetsAK8Mass, h_subjetsAK8Mass)
             event.getByLabel ( l_subjetsAK8jecFactor0, h_subjetsAK8jecFactor0)
             event.getByLabel ( l_subjetsAK8jetArea, h_subjetsAK8jetArea)
+            
+            event.getByLabel ( l_muPt, h_muPt)
+            event.getByLabel ( l_muEta, h_muEta)
+            event.getByLabel ( l_muPhi, h_muPhi)
+            event.getByLabel ( l_muMass, h_muMass)
+
+
 
 
 
@@ -1273,6 +1289,12 @@ def JetTreeDump_FWLite(argv) :
                 AK8cEME =  h_jetsAK8cEMEnergy.product()
                 AK8numDaughters = h_jetsAK8numDaughters.product()
                 AK8cMultip =  h_jetsAK8cMultip.product()
+                    
+                MuPt = h_muPt.product()
+                MuEta = h_muEta.product()
+                MuPhi = h_muPhi.product()
+                MuMass = h_muMass.product()
+                
 
             if len( h_subjetsAK8BDisc.product() ) > 0 : 
                 AK8SubJetsBDisc = h_subjetsAK8BDisc.product()
@@ -1640,6 +1662,11 @@ def JetTreeDump_FWLite(argv) :
                     FatJetTau21         [ifatjet] = AK8Tau21[ifatjet]
                     FatJetCorrUp        [ifatjet] = ak8JetsCorrUp[ifatjet]
                     FatJetCorrDn        [ifatjet] = ak8JetsCorrDn[ifatjet]
+    
+                    MuonPt              [ifatjet] = MuPt[ifatjet]
+                    MuonEta             [ifatjet] = MuEta[ifatjet]
+                    MuonPhi             [ifatjet] = MuPhi[ifatjet]
+                    MuonMass            [ifatjet] = MuMass[ifatjet]
 
 
                 if options.isMC : 
