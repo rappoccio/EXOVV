@@ -12,8 +12,8 @@ from ROOT import TCanvas
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
 nptbin = 11
 
-herwigfile = TFile('qcdmc_herwig_otherway_rejec_2dplots.root')
-pythia8file = TFile('responses_rejec_otherway_qcdmc_2dplots.root')
+herwigfile = TFile('qcdmc_herwig_otherway_rejec_tightgen_2dplots.root')
+pythia8file = TFile('responses_rejec_tightgen_otherway_qcdmc_2dplots.root')
 datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
 

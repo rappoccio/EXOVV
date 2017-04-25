@@ -18,7 +18,7 @@ parser.add_option('--extension', action ='store', type = 'string',
        
 (options, args) = parser.parse_args()
 
-mcfile = TFile('responses_rejec_otherway_qcdmc_2dplots.root')
+mcfile = TFile('responses_rejec_tightgen_otherway_qcdmc_2dplots.root')
 datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
 

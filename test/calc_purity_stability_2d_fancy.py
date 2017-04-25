@@ -12,7 +12,7 @@ parser = OptionParser()
 
 parser.add_option('--file', type='string', action='store',
                   dest='file',
-                  default = 'responses_rejec_otherway_qcdmc_2dplots.root',
+                  default = 'responses_rejec_tightgen_otherway_qcdmc_2dplots.root',
                   help='Input file')
 
 parser.add_option('--hist', type='string', action='store',
