@@ -665,35 +665,35 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             powhegcopy.GetXaxis().SetTitleOffset(2)
             powhegcopy.GetYaxis().SetTitleOffset(1.3)
     
-        datcopy.SetMinimum(0.8)
-        datcopy.SetMaximum(1.2)
+        datcopy.SetMinimum(0.5)
+        datcopy.SetMaximum(1.5)
         datcopy.GetYaxis().SetNdivisions(2,4,0,False)
         datcopy.SetFillColor(ROOT.kYellow)
         datcopy.GetXaxis().SetTickLength(0.5)
 
-        datcopycopy.SetMinimum(0.8)
-        datcopycopy.SetMaximum(1.2)
+        datcopycopy.SetMinimum(0.5)
+        datcopycopy.SetMaximum(1.5)
         datcopycopy.GetYaxis().SetNdivisions(2,4,0,False)
         datcopycopy.SetFillColor(ROOT.kAzure+2)
         
-        datPDF.SetMinimum(0.8)
-        datPDF.SetMaximum(1.2)
+        datPDF.SetMinimum(0.5)
+        datPDF.SetMaximum(1.5)
         datPDF.GetYaxis().SetNdivisions(2,4,0,False)
         datPDF.SetFillColor(ROOT.kOrange)
         
-        datJMR.SetMinimum(0.8)
-        datJMR.SetMaximum(1.2)
+        datJMR.SetMinimum(0.5)
+        datJMR.SetMaximum(1.5)
         datJMR.GetYaxis().SetNdivisions(2,4,0,False)
         datJMR.SetFillColor(ROOT.kGreen)
 
-        datPU.SetMinimum(0.8)
-        datPU.SetMaximum(1.2)
+        datPU.SetMinimum(0.5)
+        datPU.SetMaximum(1.5)
         datPU.GetYaxis().SetNdivisions(2,4,0,False)
         datPU.SetFillColor(ROOT.kGreen)
 
         
-        datRMS.SetMinimum(0.8)
-        datRMS.SetMaximum(1.2)
+        datRMS.SetMinimum(0.5)
+        datRMS.SetMaximum(1.5)
         datRMS.GetYaxis().SetNdivisions(2,4,0,False)
         datRMS.SetFillColor(ROOT.kMagenta+2)
 
@@ -1056,8 +1056,17 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             iisum += hRecoPDF.GetBinContent( iibin )
         print '-------- iisum : ' + str( iisum)
 
+        ## for ibin in xrange( hRecoPDF.GetNbinsX() + 1) :
+        ##     hRecoPDF.SetBinContent( ibin, hRecoPDF.GetBinContent(ibin) * hRecoPDF.GetBinCenter(ibin) )
+        ##     hStat.SetBinContent( ibin, hStat.GetBinContent(ibin) * hStat.GetBinCenter(ibin) )
+        ##     hRecoBarePdf.SetBinContent( ibin, hRecoBarePdf.GetBinContent(ibin) * hRecoBarePdf.GetBinCenter(ibin) )
+
+        
         hRecoPDF.Draw("E2 ][")
-        hRecoPDF.SetMaximum( 2.0 * hRecoPDF.GetMaximum() )
+        if options.isSoftDrop : 
+            hRecoPDF.SetMaximum( 1.7 * hRecoPDF.GetMaximum() )
+        else :
+            hRecoPDF.SetMaximum( 1.2 * hRecoPDF.GetMaximum() )
         hStat.Draw("E2 ][ same")
         hRecoBarePdf.Draw("e x0 ][ same")
 
@@ -1344,8 +1353,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             powhegcopy.GetYaxis().SetTitleOffset(1.3)
 
         trueCopy.GetXaxis().SetTickLength(0.5)
-        datPDF.SetMinimum(0.8)
-        datPDF.SetMaximum(1.2)
+        datPDF.SetMinimum(0.5)
+        datPDF.SetMaximum(1.5)
         datPDF.GetYaxis().SetNdivisions(2,4,0,False)
         datPDF.GetXaxis().SetTickLength(10)
         datPDF.SetFillColor(ROOT.kGray)
@@ -1357,8 +1366,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetYaxis().SetLabelSize(28)
         datPDF.GetXaxis().SetLabelSize(28)
 		
-        datStat.SetMinimum(0.8)
-        datStat.SetMaximum(1.2)
+        datStat.SetMinimum(0.5)
+        datStat.SetMaximum(1.5)
         datStat.GetYaxis().SetNdivisions(2, 4, 0, False)
         datStat.SetFillColor(ROOT.kGray+1)
         datStat.GetYaxis().SetTitle("#frac{Theory}{Data}")
@@ -1462,22 +1471,22 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hMCKS.Scale( 1.0 / hMCKS.Integral("width") )
         hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral("width") )
 
-        for ihwbin in xrange( 1, hMCKS.GetNbinsX() ) :
-            val_py = hMCKS.GetBinContent(ihwbin)
-            val_hw = hMCKS_Herwig.GetBinContent(ihwbin)
-            val_data = hRecoKS.GetBinContent(ihwbin)
-            err_py = hMCKS.GetBinError(ihwbin)
-            err_hw = hMCKS_Herwig.GetBinError(ihwbin)
-            err_data = hRecoKS.GetBinError(ihwbin)
-            if val_py > 1e-10 and val_hw > 1e-10 :
-                err1 = err_py / val_py
-                err2 = err_hw / val_hw
-                valdiff_hw = (val_data - val_hw) / err_hw
-                valdiff_py = (val_data - val_py) / err_py
+        ## for ihwbin in xrange( 1, hMCKS.GetNbinsX() ) :
+        ##     val_py = hMCKS.GetBinContent(ihwbin)
+        ##     val_hw = hMCKS_Herwig.GetBinContent(ihwbin)
+        ##     val_data = hRecoKS.GetBinContent(ihwbin)
+        ##     err_py = hMCKS.GetBinError(ihwbin)
+        ##     err_hw = hMCKS_Herwig.GetBinError(ihwbin)
+        ##     err_data = hRecoKS.GetBinError(ihwbin)
+        ##     if val_py > 1e-10 and val_hw > 1e-10 :
+        ##         err1 = err_py / val_py
+        ##         err2 = err_hw / val_hw
+        ##         valdiff_hw = (val_data - val_hw) / err_hw
+        ##         valdiff_py = (val_data - val_py) / err_py
              
-                errtot = err1 * val_hw
+        ##         errtot = err1 * val_hw
 
-                hMCKS_Herwig.SetBinError( ihwbin, errtot )
+        ##         hMCKS_Herwig.SetBinError( ihwbin, errtot )
         
         chi2_pythia.append(hRecoKS.Chi2Test(hMCKS, "WW"))
         chi2_herwig.append(hRecoKS.Chi2Test(hMCKS_Herwig, "WW"))
@@ -1549,20 +1558,24 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
     # Make plots of chi2
     print "The KS values for Pythia8 Generator are "
-    print chi2_pythia
+    for chi2val in chi2_pythia :
+        print ' %6.2f & ' % ( round( chi2val, 2) )
     print "The KS values for Herwig Generator are "
-    print chi2_herwig
+    for chi2val in chi2_herwig :
+        print ' %6.2f & ' % ( round( chi2val, 2) )
     if options.isSoftDrop:
         print "The KS values for Marzani predicitons are "
-        print chi2_marzani
+        for chi2val in chi2_marzani :
+            print ' %6.2f & ' % ( round( chi2val, 2) )
         print "The KS values for Harvard predictions are "
-        print chi2_harvard
+        for chi2val in chi2_harvard :
+            print ' %6.2f & ' % ( round( chi2val, 2) )
 
 
     chi2_canvas = TCanvas("cchi2", "cchi2" )
     chi2_canvas.SetLeftMargin(0.15)
     if options.isSoftDrop: 
-        chi2_legend = ROOT.TLegend( 0.55, 0.17, 0.77, 0.4 )
+        chi2_legend = ROOT.TLegend( 0.35, 0.17, 0.57, 0.4 )
     else :
         chi2_legend = ROOT.TLegend( 0.68, 0.16, 0.88, 0.38 )
     chi2_legend.SetFillColor(0)
@@ -1681,8 +1694,8 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
 
         pads_list[i][1].cd()
         gencopy.SetTitle(";" + xlabeloption + "et mass (GeV); #frac{Theory}{Data}")
-        recocopy.SetMinimum(0.8)
-        recocopy.SetMaximum(1.2)
+        recocopy.SetMinimum(0.5)
+        recocopy.SetMaximum(1.5)
         recocopy.GetYaxis().SetNdivisions(2,4,0,False)
         recocopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         recocopy.GetYaxis().SetTitleOffset(1.3)
@@ -1693,8 +1706,8 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         recocopy.GetXaxis().SetTitleOffset(2.3)
         recocopy.GetXaxis().SetTickLength(0.5)
 
-        gencopy.SetMinimum(0.8)
-        gencopy.SetMaximum(1.2)
+        gencopy.SetMinimum(0.5)
+        gencopy.SetMaximum(1.5)
         gencopy.GetYaxis().SetNdivisions(2,4,0,False)
         gencopy.GetYaxis().SetTitle("#frac{Theory}{Data}")
         gencopy.GetYaxis().SetTitleOffset(1.3)

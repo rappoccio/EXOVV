@@ -51,7 +51,7 @@ def getProjsY( name, h, norm=True ) :
     for y in xrange( 1, h.GetNbinsY()+1 ) :
         proj = h.ProjectionX( name + '_' + h.GetName() + "_proj" + str(y), y, y, 'e' )
         if norm and proj.Integral("width") > 0.0 :            
-            proj.Scale( 1.0 / proj.Integral("width") )
+            proj.Scale( 1.0 / proj.Integral() )
         for x in xrange( 1,proj.GetNbinsX()+1 ) :
             val = proj.GetBinContent(x) / proj.GetBinWidth(x)
             err = proj.GetBinError(x) / proj.GetBinWidth(x)
@@ -113,6 +113,7 @@ pysysprojs = []
 
 for isyst in xrange( len( systs ) ) : 
     pysysprojs.append( getProjsY( name='pysys',h=fpythia8.Get( options.hist + '_sys' + systs[isyst] ) ) )
+    
 
 
 canvs = []
@@ -132,6 +133,7 @@ tlx2.SetTextSize(22)
 legs = []
 
 for iptbin in xrange( len(dataprojs) ) :
+    pyprojs[iptbin].UseCurrentStyle()
     c = ROOT.TCanvas("c" + str(iptbin), "c" + str(iptbin), 800, 600)
     pads = setupPads(c, allpads)
     pads[0].cd()
@@ -165,7 +167,7 @@ for iptbin in xrange( len(dataprojs) ) :
         
         #print ' pt,m = %6d,%6d : jec=(%8.3e-%8.3e), jer=(%8.3e - %8.3e), jmr=(%8.3e - %8.3e), pdf=(%8.3e - %8.3e)' % ( iptbin, imbin, jecup, jecdn, jerup, jerdn, jmrup, jmrdn, pdfup, pdfdn )
         errtot = 0.
-        if abs(val) > 0.001:
+        if abs(val) > 1e-20:
             errstat = pyprojs[iptbin].GetBinError ( imbin ) / val
             errtot = errstat**2 
             jec = (jecup - jecdn) * 0.5 / val
@@ -176,6 +178,8 @@ for iptbin in xrange( len(dataprojs) ) :
             psunc = (hwval - val) * 0.5 / val
             errtot += jec**2 + jer**2 + jmr**2 + pu**2 + pdf**2 + psunc**2
             errtot = sqrt(errtot) * val
+
+
         pyprojs[iptbin].SetBinError( imbin, errtot )
         hwprojs[iptbin].SetBinError( imbin, 1e-12 )
     pyprojsclone.append( pyprojs[iptbin].Clone( pyprojs[iptbin].GetName() + "_linestyle") )
@@ -189,10 +193,10 @@ for iptbin in xrange( len(dataprojs) ) :
     #hwprojs[iptbin].SetLineWidth(2)
     dataprojs[iptbin].SetMarkerStyle(20)
     stack = ROOT.THStack( "stack" + str(iptbin), ";;Fraction / GeV" )
-    stack.Add( pyprojs[iptbin], "e2" )
-    stack.Add( pyprojsclone[iptbin], "hist" )
-    stack.Add( hwprojs[iptbin], "hist")
-    stack.Add( dataprojs[iptbin], "e" )
+    stack.Add( pyprojs[iptbin], "e2 ][" )
+    stack.Add( pyprojsclone[iptbin], "hist ][" )
+    stack.Add( hwprojs[iptbin], "hist ][")
+    stack.Add( dataprojs[iptbin], "e ][" )
 
     #pyprojs[iptbin].Draw("e2 same")
     #pyprojs[iptbin].GetXaxis().SetRangeUser(1,1300)
@@ -225,7 +229,7 @@ for iptbin in xrange( len(dataprojs) ) :
     pads[1].cd()
     pads[1].SetLogx()
     ratio = pyprojs[iptbin].Clone("ratio" + pyprojs[iptbin].GetName() )
-    ratio.UseCurrentStyle()
+    #ratio.UseCurrentStyle()
     ratio2 = hwprojs[iptbin].Clone("ratio2" + hwprojs[iptbin].GetName() )
     #ratio2.UseCurrentStyle()
 
@@ -247,7 +251,7 @@ for iptbin in xrange( len(dataprojs) ) :
     ratio.SetFillStyle(3001)
     ratio.GetYaxis().SetNdivisions(2,4,0,False)
     ratio.GetXaxis().SetRangeUser(axisrange[0],axisrange[1])
-    ratio.GetYaxis().SetRangeUser(0,2)
+    ratio.GetYaxis().SetRangeUser(0.5,1.5)
     ratio.GetXaxis().SetTickLength(0.09)
     ratio.GetXaxis().SetNoExponent()
     ratio.SetMarkerStyle(0)
