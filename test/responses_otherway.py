@@ -927,8 +927,8 @@ for itree,t in enumerate(trees) :
                 FatJetSD = ROOT.TLorentzVector()
                 FatJetSD.SetPtEtaPhiM( FatJetPtSoftDrop[ijet], FatJetEta[ijet], FatJetPhi[ijet], FatJetMassSoftDrop[ijet]  )            
                 FatJetsSD.append(FatJetSD)
-                igenSD = getMatched(FatJetSD, GenJetsSD) #, dRMax=0.3)
-                igen = getMatched(FatJetSD, GenJets) #, dRMax=0.3)
+                igenSD = getMatched(FatJetSD, GenJetsSD, dRMax=0.3)
+                igen = getMatched(FatJetSD, GenJets, dRMax=0.3)
 
                 h_2DHisto_measSD.Fill( FatJetSD.M(), FatJetPt[ijet],  weight)
                 if  igenSD != None and igen != None and ngenSD >= 2  and passkinloosegen :
@@ -1142,7 +1142,7 @@ for itree,t in enumerate(trees) :
         if ngen >= 2 and ngenSD >= 2 and passkinloosegen and not ( passkinloose and passkinfullsoftdrop ):
             # Now get the "Misses" (i.e. we have no RECO jet)
             for igenSD in xrange( 2 ):
-                igen = getMatched( GenJetsSD[igenSD], GenJets) #, dRMax=0.3 )
+                igen = getMatched( GenJetsSD[igenSD], GenJets, dRMax=0.3 )
                 if options.verbose :
                     print 'Missed   groomed gen jet: ', igenSD
                 response_softdrop.Miss( GenJetsSD[igenSD].M(), GenJetPt[igen], weight )
