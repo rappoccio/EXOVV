@@ -10,6 +10,13 @@ parser.add_option('--isSoftDrop', action='store_true',
                   help='theory curves on plots')
 
 
+parser.add_option('--hist', action='store', type='string',
+                  default = 'pythia8_mass',
+                  dest='hist',
+                  help='histogram')
+
+
+
 (options, args) = parser.parse_args()
 
 
@@ -25,18 +32,22 @@ canvs = []
 stacks = []
 legs = []
 
+typestr = "RECO"
+if "gen" in options.hist :
+    typestr = "GEN"
+
 sdstr = ""
-sdtitle = 'Ungroomed jets'
-outstr = "ungroomed"
+sdtitle = typestr + ' Ungroomed jets'
+outstr = typestr + "_ungroomed"
 if options.isSoftDrop :
     sdstr = "SD"
-    sdtitle = 'Groomed jets'
-    outstr = "groomed"
+    sdtitle = typestr + ' Groomed jets'
+    outstr = typestr + "_groomed"
 
 for i in xrange(10):
     stack = ROOT.THStack("stack_" + str(i), sdtitle + ";Jet mass (GeV)")
-    hist1 = f1.Get("pythia8_mass" + sdstr + str(i)).Clone("hist1_" + str(i))
-    hist2 = f2.Get("pythia8_mass" + sdstr + str(i)).Clone("hist2_" + str(i))
+    hist1 = f1.Get(options.hist + sdstr + str(i)).Clone("hist1_" + str(i))
+    hist2 = f2.Get(options.hist + sdstr + str(i)).Clone("hist2_" + str(i))
     leg = ROOT.TLegend(0.7, 0.7, 0.9, 0.9)
     leg.SetBorderSize(0)
     leg.SetFillColor(0)

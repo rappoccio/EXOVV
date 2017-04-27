@@ -9,7 +9,7 @@ parser = OptionParser()
 
 parser.add_option('--infile', type='string', action='store',
                   dest='infile',
-                  default = 'responses_rejec_otherway_qcdmc_2dplots.root',
+                  default = 'responses_rejec_tightgen_otherway_qcdmc_2dplots.root',
                   help='String to append to MC names')
 
 
