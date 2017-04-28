@@ -12,7 +12,7 @@ parser = OptionParser()
 
 parser.add_option('--file', type='string', action='store',
                   dest='file',
-                  default = 'responses_rejec_otherway_qcdmc_2dplots.root',
+                  default = 'responses_rejec_tightgen_otherway_qcdmc_2dplots.root',
                   help='Input file')
 
 parser.add_option('--hist', type='string', action='store',
@@ -24,7 +24,7 @@ parser.add_option('--hist', type='string', action='store',
 argv = []
 
 import ROOT
-ROOT.gROOT.SetBatch()
+#ROOT.gROOT.SetBatch()
 ROOT.gSystem.Load("RooUnfold/libRooUnfold.so")
 #ROOT.gROOT.Macro("rootlogon.C")
 ROOT.gStyle.SetOptStat(000000)
@@ -42,20 +42,35 @@ title = 'Ungroomed'
 if "softdrop" in options.hist :
     title = "Soft Drop"
 # Make the histograms
+
+import array
+
+ptbins =array.array('f', [])
+mbins =array.array('f', [])
+
+ptbins =array.array('f', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 13000])
+mbins = array.array('f', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
+
 purity = ROOT.TH1F("purity", title + ";Bin;Fraction", h2.GetNbinsX(), 0, h2.GetNbinsX())
 stability = ROOT.TH1F("stability", title + ";Fraction;Bin", h2.GetNbinsX(), 0, h2.GetNbinsX())
+
+purities = []
+stabilities = []
 
 purity.GetYaxis().SetTitleOffset(0.8)
 
 stability.SetLineColor(2)
 
 
-ptbins =[  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300]
-mbins = [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000]
+for ipt in xrange( len(ptbins) ):
+    purities.append( ROOT.TH1F("purities_" + str(ipt), "pt = " + str(ptbins[ipt]) +';Jet mass (GeV)', len(mbins)-1, mbins) )
+    stabilities.append( ROOT.TH1F("stabilities_" + str(ipt), "pt = " + str(ptbins[ipt]) +';Jet mass (GeV)', len(mbins)-1, mbins) )
 
 import array
 prettybinHi = ROOT.TH2F("prettybinHi", ";Reconstructed Mass (GeV);Generated Mass (GeV)", len(mbins)-1, array.array('d', mbins ), len(mbins)-1, array.array('d', mbins ) )
 prettybinLo = ROOT.TH2F("prettybinLo", ";Reconstructed Mass (GeV);Generated Mass (GeV)", len(mbins)-1, array.array('d', mbins ), len(mbins)-1, array.array('d', mbins ) )
+
+
 
 
 for xbin in xrange( h2pretty.GetNbinsX() ) :
@@ -138,51 +153,57 @@ cprettylo.Print("response_lo_" + options.hist + ".png", "png")
 
 
         
-for irecopt in xrange( len(ptbins) ):
-    for irecom in xrange( len(mbins) ):
+for irecopt in xrange(len(ptbins) ):
+    for irecom in xrange(len(mbins) ):
         diag = 0
         tot = 0
         recopt = ptbins[irecopt]
         recom = mbins[irecom]
-        recobin = irecom + len(ptbins) * irecopt
+        recobin = irecom + ( len(mbins)-1) * irecopt
+        #print 'reco pt: %6d (%6.0f), m: %6d (%6.0f), rbin: %6d' % ( irecopt, recopt, irecom, recom, recobin)
         for igenpt in xrange( len(ptbins) ):
             for igenm in xrange( len(mbins) ):
                 genpt = ptbins[igenpt]
-                genm = mbins[igenm]                
-                genbin = igenm + len(ptbins) * igenpt
-                if genm < genpt * 0.8 / math.sqrt(2.0) and recom < recopt * 0.8 / math.sqrt(2.0) :
-                    if genbin == recobin :
-                        diag += h2.GetBinContent(recobin, genbin)                
-                    tot += h2.GetBinContent(recobin, genbin)
+                genm = mbins[igenm]
+                genbin = igenm + ( len(mbins)-1) * igenpt
+                #print 'gen  pt: %6d (%6.0f), m: %6d (%6.0f), gbin: %6d' % ( igenpt, genpt, igenm, genm, genbin),
+                #if genm < genpt * 0.8 / math.sqrt(2.0) and recom < recopt * 0.8 / math.sqrt(2.0) :
+                if genbin == recobin :
+                    #print "THESE BINS MATCH"
+                    diag += h2.GetBinContent(recobin, genbin)
+                tot += h2.GetBinContent(recobin, genbin)
         if tot > 0.0001 :
             frac = diag / tot
         else :
             frac = 0
+        #print '----> frac = %6.4f' % (frac)
         purity.SetBinContent( recobin + 1, frac )
+        purities[irecopt].Fill( recom, frac )
         
 
 # Stability
-for igenpt in xrange( len(ptbins) ):
-    for igenm in xrange( len(mbins) ):
+for igenpt in xrange(len(ptbins) ):
+    for igenm in xrange(len(mbins) ):
         diag = 0
         tot = 0
         genpt = ptbins[igenpt]
         genm = mbins[igenm]
-        genbin = igenm + len(ptbins) * igenpt
+        genbin = igenm + ( len(mbins)-1) * igenpt
         for irecopt in xrange( len(ptbins) ):
             for irecom in xrange( len(mbins) ):
                 recopt = ptbins[irecopt]
                 recom = mbins[irecom]                
-                recobin = irecom + len(ptbins) * irecopt
-                if recom < recopt * 0.8 / math.sqrt(2.0) and genm < genpt * 0.8 / math.sqrt(2.0) :
-                    if recobin == genbin :
-                        diag += h2.GetBinContent(recobin, genbin)                
-                    tot += h2.GetBinContent(recobin, genbin)
+                recobin = irecom + ( len(mbins)-1) * irecopt
+                #if recom < recopt * 0.8 / math.sqrt(2.0) and genm < genpt * 0.8 / math.sqrt(2.0) :
+                if recobin == genbin :
+                    diag += h2.GetBinContent(recobin, genbin)                
+                tot += h2.GetBinContent(recobin, genbin)
         if tot > 0.0001 :
             frac = diag / tot
         else :
             frac = 0
         stability.SetBinContent( genbin + 1, frac )
+        stabilities[igenpt].Fill( genm, frac )
 
 print 'Purity: ', purity.Integral()
 print 'Stability: ', stability.Integral()
@@ -248,7 +269,8 @@ leg.AddEntry( stability, 'Stability', 'l')
 purity.Draw()
 stability.Draw("same")
 purity.SetMaximum(1.0)
-purity.GetXaxis().SetRangeUser(0,400)
+#purity.GetXaxis().SetRangeUser(0,400)
+purity.GetXaxis().SetNdivisions( len(ptbins), False)
 leg.Draw()
 c1.Update()
 outstr = "ungroomed"
@@ -303,3 +325,28 @@ tlx.DrawLatex(0.2, 0.6, title + " Jets")
 c2.Update()
 c2.Print("responsept_" + options.hist + ".pdf", "pdf")
 c2.Print("responsept_" + options.hist + ".png", "png")
+
+canvs = []
+prettylegs = []
+for ipt in xrange( len(ptbins) ):
+    verbosecanv = ROOT.TCanvas("vc" + str(ipt), "vc" + str(ipt) )    
+    prettyleg = ROOT.TLegend( 0.7, 0.7, 0.9, 0.9)
+    prettyleg.SetFillColor(0)
+    prettyleg.SetBorderSize(0)
+    prettyleg.AddEntry( purities[ipt], "Purity", 'l')
+    prettyleg.AddEntry( stabilities[ipt], "Stability", 'l')
+    purities[ipt].Draw("hist")
+    purities[ipt].SetMaximum(1.0)
+    stabilities[ipt].SetLineStyle(2)
+    stabilities[ipt].SetLineColor(2)
+    stabilities[ipt].Draw("hist same")    
+    prettyleg.Draw()
+    verbosecanv.SetLogx()
+    prettylegs.append(prettyleg)
+    canvs.append(verbosecanv)
+    if "softdrop" in options.hist :
+        verbosecanv.Print( 'purity_stability_pt_' + str(ipt) + '_groomed.png', 'png' )
+        verbosecanv.Print( 'purity_stability_pt_' + str(ipt) + '_groomed.pdf', 'pdf' )
+    else:
+        verbosecanv.Print( 'purity_stability_pt_' + str(ipt) + '_ugroomed.png', 'png' )
+        verbosecanv.Print( 'purity_stability_pt_' + str(ipt) + '_ugroomed.pdf', 'pdf' )

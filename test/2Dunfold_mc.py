@@ -21,7 +21,7 @@ parser.add_option('--extension', action ='store', type = 'string',
                                 
 (options, args) = parser.parse_args()
 
-myfile = TFile('responses_rejec_otherway_qcdmc_2dplots.root')
+myfile = TFile('responses_rejec_tightgen_otherway_qcdmc_2dplots.root')
 
 
 response = myfile.Get('2d_response' + options.extension )
