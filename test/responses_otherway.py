@@ -269,7 +269,7 @@ h2_mreco_mgen_softdrop_nomnom = ROOT.TH2F("h2_mreco_mgen_softdrop_nomnom", "Reco
 h2_ptreco_ptgen_softdrop_nomnom = ROOT.TH2F("h2_ptreco_ptgen_softdrop_nomnom", "Reco Pt/Gen Pt Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
 
 binszzz = array.array('d', [] )
-for ival in xrange( 20 ):
+for ival in xrange( 1 ):
     binszzz.append( ival * 0.1 )
 
 h3_mreco_mgen = ROOT.TH3F("h3_mreco_mgen", "Reco Mass/Gen Mass", nbinsPt, ptBinA, nbinsm, mBinA, len(binszzz) - 1, binszzz)
@@ -776,7 +776,9 @@ for itree,t in enumerate(trees) :
                         h3_mreco_mgen_nomnom.Fill(GenJets[igen].Perp(), GenJets[igen].M(), FatJet.M() * smearnom * jmrnom/GenJets[igen].M(), weight)                        
                     else:
                         h2_mreco_mgen.Fill(GenJets[igen].Perp(), FatJet.M()/0.140, weight)
-                        h2_mreco_mgen_nomnom.Fill(GenJets[igen].Perp()* smearnom * jmrnom, FatJet.M()/0.140, weight)
+                        h2_mreco_mgen_nomnom.Fill(GenJets[igen].Perp(), FatJet.M()/0.140, weight)
+                        h3_mreco_mgen.Fill(GenJets[igen].Perp(), 0.140, FatJet.M()/0.140, weight)
+                        h3_mreco_mgen_nomnom.Fill(GenJets[igen].Perp(), 0.140, FatJet.M()/0.140, weight)                        
 
                     h2_ptreco_ptgen.Fill(FatJet.Perp(), FatJet.Perp()/GenJets[igen].Perp(), weight)
                     h2_ptreco_ptgen_nomnom.Fill(FatJet.Perp(), FatJet.Perp() * smearnom/GenJets[igen].Perp(), weight)
@@ -1022,6 +1024,8 @@ for itree,t in enumerate(trees) :
                         h_mreco_mgen_softdrop_nomnom.Fill(FatJetSD.M() *jmrnomSD*smearnomSD/0.14, weight)
                         h2_mreco_mgen_softdrop.Fill(GenJetPt[igen], FatJetSD.M()/0.140, weight)
                         h2_mreco_mgen_softdrop_nomnom.Fill(GenJetPt[igen], FatJetSD.M() *jmrnomSD*smearnomSD/0.140, weight)
+                        h3_mreco_mgen_softdrop.Fill(GenJetPt[igen], 0.140, FatJetSD.M()/0.140, weight)
+                        h3_mreco_mgen_softdrop_nomnom.Fill(GenJetPt[igen], 0.140, FatJetSD.M() *jmrnomSD*smearnomSD/0.140, weight)
                         masslessSD += 1
                     h_ptreco_ptgen_softdrop.Fill(FatJetPt[ijet]/GenJetPt[igen], weight)
                     h2_ptreco_ptgen_softdrop.Fill(GenJetPt[igen], FatJetPt[ijet]/GenJetPt[igen], weight)
