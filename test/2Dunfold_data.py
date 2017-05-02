@@ -45,10 +45,19 @@ response.Draw('colz')
 unfold = RooUnfoldBayes(response, reco, 4)
 unfoldSD = RooUnfoldBayes(responseSD, recoSD, 4)
 
+
 reco_unfolded = unfold.Hreco()
 recoSD_unfolded = unfoldSD.Hreco()
 
 reco_unfolded.Draw()
+
+
+
+print '--- does chi2 ever work? ---'
+chi2_val = unfold.Chi2( truth, 2 )
+print chi2_val
+
+
 
 truth.SetLineColor(4)
 
@@ -116,4 +125,6 @@ for more in namesgenSD:
     more.Write()
 for evenmore in namesrecoSD:
     evenmore.Write()
+unfold.Write()
+unfoldSD.Write()
 outfile.Close()

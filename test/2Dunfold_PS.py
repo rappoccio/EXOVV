@@ -247,3 +247,11 @@ for i in range(0, nptbin):
     pyth8_uherwig_softdrop.Write()
     data_uherwig.Write()
     data_uherwig_softdrop.Write()
+unfold_ps.Write()
+unfold_ps_softdrop.Write()
+unfold_ps_data.Write()
+unfold_ps_data_softdrop.Write()
+unfold_bias.Write()
+unfold_bias_softdrop.Write()
+
+outfile.Close()
