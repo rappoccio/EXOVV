@@ -13,6 +13,14 @@ from optparse import OptionParser
 parser = OptionParser()
 
 
+def normalize(vec):
+    norm = 0.
+    for i in range(vec.GetNrows() ):
+        norm += vec[i]
+    if abs(norm) > 0.0 : 
+        for i in range(vec.GetNrows() ):
+            vec[i] /= norm
+
 parser.add_option('--input', action ='store', type = 'string',
                  default ='2DData_sum.root',
                  dest='input',
@@ -27,8 +35,6 @@ totalcovSD = f.Get("totalcovSD")
 c= ROOT.TCanvas("c", "c")
 totalcov.Draw("colz")
 c.SetLogz()
-
-totalcov.Draw("colz")
 
 
 totalcovinv = ROOT.TDecompSVD( totalcov ).Invert()
@@ -100,13 +106,15 @@ for jhist, hists in enumerate ([ obshists, obshistsSD, pythiahists, pythiahistsS
     vecbin = 0
     for iptbin in xrange(11) :
         hist = hists[iptbin]
-        if ( hist.Integral() > 0.0 ):
-            hist.Scale(1.0 / hist.Integral() )
+        #if ( hist.Integral() > 0.0 ):
+        #    hist.Scale(1.0 / hist.Integral() )
         for mval in range( 1, hist.GetNbinsX() + 1 ) :
             predvecs[jhist][vecbin] = hist.GetBinContent( mval )
             dpredvecs[jhist][vecbin] = hist.GetBinError( mval )
             vecbin += 1
 
+for ivec in [obsvec, obsvecSD, pythiavector, herwigvector, pythiavectorSD, herwigvectorSD, fryevectorSD, marzanivectorSD] :
+    normalize(ivec)
 
             
 import copy
