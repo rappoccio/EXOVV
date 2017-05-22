@@ -65,6 +65,8 @@ for ihist in xrange( len(histstrs) ):
 
 
     for ptbin in xrange( 1, htemp.GetNbinsX() ) :
+
+        print 'processing ptbin ', ptbin
         
         c = ROOT.TCanvas("c" + str(ihist) + "_pt" + str(ptbin), "c" + str(ihist) + "_pt" + str(ptbin) )
         htemp.GetXaxis().SetRange(ptbin,ptbin+1)
@@ -94,7 +96,7 @@ for ihist in xrange( len(histstrs) ):
             proj.SetTitle("p_{T} = " + ptbinstrs[ptbin] + ", m = " + str(hist2D.GetXaxis().GetBinLowEdge(mbin)) + "-" +str(hist2D.GetXaxis().GetBinUpEdge(mbin)) + ";m_{reco}/m_{gen}")
             cm = ROOT.TCanvas("cm" + str(ptbin) + "_" + str(mbin), "cm" + str(ptbin) + "_" + str(mbin) )
             if proj.Integral() > 0 :
-                fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", proj.GetMean() - proj.GetRMS(), proj.GetMean() + proj.GetRMS() )
+                fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", proj.GetMean() - 2*proj.GetRMS(), proj.GetMean() + 2*proj.GetRMS() )
                 proj.Fit(fit, "LRM")
                 canvs.append(cm)
                 hists.append(proj)
@@ -136,7 +138,7 @@ for ihist in xrange( len(histstrs) ):
 
 
         resc2 = ROOT.TCanvas("resc2_" +str(ihist) + "_" + str(ptbin), "resc2_" + str(ptbin) )
-        massres2 = ROOT.TGraph( len(graphX), graphX, graphDX )
+        massres2 = ROOT.TGraph( len(graphX), graphX, graphDY )
         massres2.SetName("massres2_" + str(ptbin))
         massres2.SetTitle("p_{T} = " + ptbinstrs[ptbin] +"-" + ptbinstrs[ptbin] + ";Jet mass (GeV);Width of Fitted m_{reco}/m_{gen}")
         massres2.SetFillColor(ROOT.kBlue)
@@ -145,6 +147,7 @@ for ihist in xrange( len(histstrs) ):
         massres2.SetFillStyle(3005)
         massres2.Draw("AL")
         resc2.SetLogx()
+        resc2.SetLogy()
         #massres2.SetMaximum(2.0)
         #massres2.SetMinimum(0.0)
         graphs.append(massres2)
