@@ -70,7 +70,8 @@ for ihist in xrange( len(histstrs) ):
         htemp.GetXaxis().SetRange(ptbin,ptbin+1)
         hist2D = htemp.Project3D("zy")
         hist2D.SetName(htemp.GetName() + "_proj_pt" + str(ptbin) )
-        hist2D.Scale( 1.0 / hist2D.Integral() )
+        if hist2D.Integral() > 0 : 
+            hist2D.Scale( 1.0 / hist2D.Integral() )
 
 
         
@@ -132,6 +133,30 @@ for ihist in xrange( len(histstrs) ):
             resc.Print("mreco_mgen_pt_" + str(ptbin) +"_groomed.png", "png")
             resc.Print("mreco_mgen_pt_" + str(ptbin) +"_groomed.pdf", "pdf")
 
+
+
+        resc2 = ROOT.TCanvas("resc2_" +str(ihist) + "_" + str(ptbin), "resc2_" + str(ptbin) )
+        massres2 = ROOT.TGraph( len(graphX), graphX, graphDX )
+        massres2.SetName("massres2_" + str(ptbin))
+        massres2.SetTitle("p_{T} = " + ptbinstrs[ptbin] +"-" + ptbinstrs[ptbin] + ";Jet mass (GeV);Width of Fitted m_{reco}/m_{gen}")
+        massres2.SetFillColor(ROOT.kBlue)
+        massres2.SetLineColor(ROOT.kBlue)
+        massres2.SetLineWidth(3)
+        massres2.SetFillStyle(3005)
+        massres2.Draw("AL")
+        resc2.SetLogx()
+        #massres2.SetMaximum(2.0)
+        #massres2.SetMinimum(0.0)
+        graphs.append(massres2)
+        canvs.append(resc2)
+        if ihist == 0 : 
+            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.png", "png")
+            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.pdf", "pdf")
+        else :
+            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_groomed.png", "png")
+            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_groomed.pdf", "pdf")
+
+            
             
         #prof = hist2D.ProfileX("prof_" + str(ihist) + "_pt" + str(ptbin))
         #prof.SetMarkerStyle(20)

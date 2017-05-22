@@ -30,15 +30,15 @@ parser.add_option('--input', action ='store', type = 'string',
 
 f = ROOT.TFile(options.input)
 
-totalcov   = f.Get("totalcov")
-totalcovSD = f.Get("totalcovSD")
+totalcov   = f.Get("totalcovRooUnfold")
+totalcovSD = f.Get("totalcovSDRooUnfold")
 c= ROOT.TCanvas("c", "c")
 totalcov.Draw("colz")
 c.SetLogz()
 
 
-totalcovinv = ROOT.TDecompSVD( totalcov ).Invert()
-totalcovinvSD = ROOT.TDecompSVD( totalcovSD ).Invert()
+totalcovinv = totalcov.Wreco() #ROOT.TDecompSVD( totalcov ).Invert()
+totalcovinvSD = totalcovSD.Wreco() #ROOT.TDecompSVD( totalcovSD ).Invert()
 
 
 # For the theory predictions.
@@ -113,8 +113,8 @@ for jhist, hists in enumerate ([ obshists, obshistsSD, pythiahists, pythiahistsS
             dpredvecs[jhist][vecbin] = hist.GetBinError( mval )
             vecbin += 1
 
-for ivec in [obsvec, obsvecSD, pythiavector, herwigvector, pythiavectorSD, herwigvectorSD, fryevectorSD, marzanivectorSD] :
-    normalize(ivec)
+#for ivec in [obsvec, obsvecSD, pythiavector, herwigvector, pythiavectorSD, herwigvectorSD, fryevectorSD, marzanivectorSD] :
+#    normalize(ivec)
 
             
 import copy
