@@ -1512,7 +1512,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         for errbin in xrange ( 1, hist[0].GetNbinsX() + 1):
             ierr = hist[0].GetBinError( errbin )
             ival = hist[0].GetBinContent( errbin )
-            if options.isSoftDrop == False and hist[0].GetXaxis().GetBinUpEdge(errbin) <= 10.0 :
+            if options.isSoftDrop == False and hist[0].GetXaxis().GetBinUpEdge(errbin) <= 20.0 :
                 hist[0].SetBinContent(errbin,0.0)
                 hist[0].SetBinError( errbin, 0.0 )
                 mchist[0].SetBinContent(errbin,0.0)
@@ -1530,7 +1530,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
         
     the_stack.Draw("][ nostack")
-    the_stack.GetXaxis().SetRangeUser(1, 500)
+    if options.isSoftDrop == False :
+        the_stack.GetXaxis().SetRangeUser(5, 500)
+    else :
+        the_stack.GetXaxis().SetRangeUser(5, 500)
     the_stack.GetXaxis().SetNoExponent()
     the_stack.SetMinimum(1e-14)
     the_stack.SetMaximum(1e8)
