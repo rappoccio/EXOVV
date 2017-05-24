@@ -212,7 +212,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
         canvas_list[i].cd()
         hRMSup.SetTitle( '' )
-        hRMSup.GetYaxis().SetTitle("Uncertainty (fraction)")
+        hRMSup.GetYaxis().SetTitle("Fractional Uncertainty")
         hRMSup.GetYaxis().SetTitleSize(30)
         hRMSup.GetYaxis().SetLabelSize(30)
         

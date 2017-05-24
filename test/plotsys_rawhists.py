@@ -192,7 +192,7 @@ for iptbin in xrange( len(dataprojs) ) :
     hwprojs[iptbin].SetLineColor(2)
     #hwprojs[iptbin].SetLineWidth(2)
     dataprojs[iptbin].SetMarkerStyle(20)
-    stack = ROOT.THStack( "stack" + str(iptbin), ";;Fraction / GeV" )
+    stack = ROOT.THStack( "stack" + str(iptbin), ";;Yield (1/GeV)" )
     stack.Add( pyprojs[iptbin], "e2 ][" )
     stack.Add( pyprojsclone[iptbin], "hist ][" )
     stack.Add( hwprojs[iptbin], "hist ][")
