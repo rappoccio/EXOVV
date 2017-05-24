@@ -269,7 +269,7 @@ h2_mreco_mgen_softdrop_nomnom = ROOT.TH2F("h2_mreco_mgen_softdrop_nomnom", "Reco
 h2_ptreco_ptgen_softdrop_nomnom = ROOT.TH2F("h2_ptreco_ptgen_softdrop_nomnom", "Reco Pt/Gen Pt Softdrop", nbinsPt, ptBinA, 1000, 0, 2)
 
 binszzz = array.array('d', [] )
-for ival in xrange( 40 ):
+for ival in xrange( 80 ):
     binszzz.append( ival * 0.025 )
 
 h3_mreco_mgen = ROOT.TH3F("h3_mreco_mgen", "Reco Mass/Gen Mass", nbinsPt, ptBinA, nbinsm, mBinA, len(binszzz) - 1, binszzz)
