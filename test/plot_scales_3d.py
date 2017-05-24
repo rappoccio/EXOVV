@@ -96,7 +96,7 @@ for ihist in xrange( len(histstrs) ):
             proj.SetTitle("p_{T} = " + ptbinstrs[ptbin] + ", m = " + str(hist2D.GetXaxis().GetBinLowEdge(mbin)) + "-" +str(hist2D.GetXaxis().GetBinUpEdge(mbin)) + ";m_{reco}/m_{gen}")
             cm = ROOT.TCanvas("cm" + str(ptbin) + "_" + str(mbin), "cm" + str(ptbin) + "_" + str(mbin) )
             if proj.Integral() > 0 :
-                fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", proj.GetMean() - 2*proj.GetRMS(), proj.GetMean() + 2*proj.GetRMS() )
+                fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", 0.7, 1.3 )
                 proj.Fit(fit, "LRM")
                 canvs.append(cm)
                 hists.append(proj)
