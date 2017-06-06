@@ -237,23 +237,18 @@ for x in range(0, nptbin):
         else:
             alegends_fullbandSD.append(TLegend(.36, .10, .75, .450))
                 
-    else:
-
-        if x > 13:
-            alegends.append(TLegend(.22, .35, .37, .80))
-        else:
-            alegends.append(TLegend(.22, .35, .37, .80))
+    else:            
         if x < 4:
+            alegends.append(TLegend(.60, .40, .90, .80))
             alegendsSD.append(TLegend(.60, .40, .90, .80))
         else:
+            alegends.append(TLegend(.58, .30, .90, .80))
             alegendsSD.append(TLegend(.58, .30, .90, .80))
-        if x > 13:
-            alegends_fullband.append(TLegend(.25, .2, .54, .80))
-        else:
-            alegends_fullband.append(TLegend(.25, .2, .54, .80))
         if x == 0:
+            alegends_fullband.append(TLegend(.55, .29, .89, .80))
             alegends_fullbandSD.append(TLegend(.55, .29, .89, .80))
         else:
+            alegends_fullband.append(TLegend(.55, .29, .89, .80))
             alegends_fullbandSD.append(TLegend(.55, .29, .89, .80))
 
 ################################################################################################################# Get Parton Showering Unc.

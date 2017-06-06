@@ -38,10 +38,29 @@ def get_pt_bin_vals() :
     return array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 13000.])
 
 
+def minmassbin_ungroomed(ibin) :
+    return 5
+
+def minmassbin_groomed(ibin) :
+    ptbins_here = get_pt_bin_vals()
+    if ptbins_here[ibin] < 550:
+        return 2
+    elif ptbins_here[ibin] < 900:
+        return 3
+    else :
+        return 4
+
 def add_quadrature( a ):
     sumit = 0
     for ia in a: sumit += ia**2
     return sqrt( sumit )
+
+
+def zero_hist_bins( bin1, bin2, hists ):
+    for hist in hists:
+        for ibin in xrange(bin1,bin2) :
+            hist.SetBinContent(ibin, 0.0)
+        hist.GetXaxis().SetRange(bin2,hist.GetNbinsX()+1)
 
 def get_ptbins_std():
     return ['200-260 GeV #times 10^{0}','260-350 GeV #times 10^{1}','350-460 GeV #times 10^{2}','460-550 GeV #times 10^{3}','550-650 GeV #times 10^{4}','650-760 GeV #times 10^{5}', '760-900 GeV #times 10^{6}', '900-1000 GeV #times 10^{7}', '1000-1100 GeV #times 10^{8}','1100-1200 GeV #times 10^{9}',
@@ -54,7 +73,9 @@ if options.unrestrictedChi2 :
 else :
     def expected_agreement():
         return [[20,50], [20,70], [20,100], [20,100], [30,100], [40,100], [40,200], [40, 200], [50,300], [50, 300], [50,300], [50,300] ]
- 
+
+
+    
 def get_markers() :
     return [ 20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28  ]
 
@@ -343,15 +364,15 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoPDF.SetFillColor(ROOT.kOrange)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral("width"))
         if i == 11:
-            hRecoPDF.SetAxisRange(1,2000,"X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin,2000,"X")
         elif i > 11 and i < 18:
-            hRecoPDF.SetAxisRange(1,1200, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin,1200, "X")
         elif i > 7 and i < 11:
-            hRecoPDF.SetAxisRange(1,900, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin,900, "X")
         elif i > 3 and i < 8:
-            hRecoPDF.SetAxisRange(1,600, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin,600, "X")
         elif i < 4:
-            hRecoPDF.SetAxisRange(1,400,"X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin,400,"X")
         hRecoPDF.Draw("E2 ][")
         hRecoBarePdf = hRecoPDF.Clone()
         hRecoBarePdf.SetName( hRecoPDF.GetName() + "_bare" )
@@ -786,15 +807,15 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         ######################################################################## Draw and save
 
         if i == 18:
-            datPDF.SetAxisRange(1,2000,"X")
+            datPDF.GetXaxis().SetRange(minmassbin,2000,"X")
         elif i > 11 and i < 18:
-            datPDF.SetAxisRange(1,1200, "X")
+            datPDF.GetXaxis().SetRange(minmassbin,1200, "X")
         elif i > 7 and i < 12:
-            datPDF.SetAxisRange(1,900, "X")
+            datPDF.GetXaxis().SetRange(minmassbin,900, "X")
         elif i > 3 and i < 8:
-            datPDF.SetAxisRange(1,600, "X")
+            datPDF.GetXaxis().SetRange(minmassbin,600, "X")
         elif i < 4:
-            datPDF.SetAxisRange(1,400,"X")
+            datPDF.GetXaxis().SetRange(minmassbin,400,"X")
         datPDF.Draw('e2 ][')
         datcopycopy.Draw('e2 ][ same')
         datJMR.Draw('e2 ][ same')
@@ -902,6 +923,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         theorylist.append( theoryfile.Get("histSD_"+str(h)+"_ours"))
         theorylist2.append( theoryfile2.Get("hist_marzani_SD_"+str(h)))
     for i, canv in enumerate(canvas_list):
+        minmassbin = minmassbin_ungroomed(i)
+        if options.isSoftDrop :
+            minmassbin = minmassbin_groomed(i)
         pads_list[i][0].cd()
         if options.logy:
             pads_list[i][0].SetLogy()
@@ -935,7 +959,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         jerUP.Scale(scales[i])
         jerDOWN.Scale(scales[i])
         nom.Scale(scales[i])
-        hStat = hRMS.Clone()		
+        hStat = hRMS.Clone()
+
+        #zero_hist_bins( 0, 1, [hRMS,hStat,puup,pudn,jmrup,jmrdn,jmrnom,jesUP,jeOWN,jerUP,jerDOWN,nom] )
+
         for ibin in xrange(1, hRMS.GetNbinsX()):
             hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
             hStat.SetBinContent(ibin, hStat.GetBinContent(ibin)* 1. / mbinwidths[ibin-1])
@@ -1024,20 +1051,20 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hStat.SetFillColor(ROOT.kGray+1)
         hStat.Scale(1./hStat.Integral("width"))
         if i == 11:
-            hRecoPDF.SetAxisRange(1,2000,"X")
-            hStat.SetAxisRange(1, 2000, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin(2000))
+            hStat.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin( 2000 ))
         elif i > 11 and i < 18:
-            hRecoPDF.SetAxisRange(1,1200, "X")
-            hStat.SetAxisRange(1, 1200, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin(2000 ))
+            hStat.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin( 2000 ))
         elif i > 7 and i < 11:
-            hRecoPDF.SetAxisRange(1,500, "X")
-            hStat.SetAxisRange(1, 500, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin(2000 ))
+            hStat.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin( 2000 ))
         elif i > 3 and i < 8:
-            hRecoPDF.SetAxisRange(1,300, "X")
-            hStat.SetAxisRange(1, 300, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin(2000 ))
+            hStat.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin( 2000 ))
         elif i < 4:
-            hRecoPDF.SetAxisRange(1,200,"X")
-            hStat.SetAxisRange(1, 200, "X")
+            hRecoPDF.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin(2000))
+            hStat.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin( 2000 ))
         build_the_stack_band.append(hRecoPDF.Clone())
 
 
@@ -1074,6 +1101,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         for ibin in xrange( hRecoPDF.GetNbinsX()+1):
             err = hRecoPDF.GetBinError( ibin )
             val = hRecoPDF.GetBinContent( ibin )
+
+
 
             if (val == 0.0  or ( val > 0.0 and abs(err) / abs(val) > 0.6)) or (not options.isSoftDrop and hRecoPDF.GetXaxis().GetBinUpEdge(ibin) <= 10.0): 
                 hRecoPDF.SetBinContent( ibin, 0.0 )
@@ -1412,22 +1441,23 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datStat.GetXaxis().SetTitle(xlabeloption + "et mass (GeV)")
 
         ######################################################################## Draw and save
-        
+
+            
         if i == 11:
-            datPDF.SetAxisRange(1,2000,"X")
-            datStat.SetAxisRange(1, 2000, "X")
+            datPDF.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin(2000) )
+            datStat.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin( 2000 ) )
         elif i > 11 and i < 18:
-            datPDF.SetAxisRange(1,1200, "X")
-            datStat.SetAxisRange(1, 1200, "X")
+            datPDF.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin(2000 ) )
+            datStat.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin( 2000 ) )
         elif i > 7 and i < 11:
-            datPDF.SetAxisRange(1,500, "X")
-            datStat.SetAxisRange(1, 500, "X")
+            datPDF.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin(2000 ) )
+            datStat.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin( 2000 ) )
         elif i > 3 and i < 8:
-            datPDF.SetAxisRange(1,300, "X")
-            datStat.SetAxisRange(1, 300, "X")
+            datPDF.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin(2000 ) )
+            datStat.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin( 2000 ) )
         elif i < 4:
-            datPDF.SetAxisRange(1,200,"X")
-            datStat.SetAxisRange(1, 200, "X")
+            datPDF.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin(2000) )
+            datStat.GetXaxis().SetRange(minmassbin, datPDF.GetXaxis().FindBin( 2000 ) )
         datPDF.Draw('e2 ][ ')
         datPDF.GetXaxis().SetTickLength(0.10)
         datPDF.GetXaxis().SetNoExponent()
@@ -1509,6 +1539,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hist = build_the_stack[ihist]
         mchist = build_the_stack[ihist - 1]
         mchist[0].SetLineColor(2)
+        ptbin_stack = ihist/2
         for errbin in xrange ( 1, hist[0].GetNbinsX() + 1):
             ierr = hist[0].GetBinError( errbin )
             ival = hist[0].GetBinContent( errbin )
@@ -1524,19 +1555,30 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 mchist[0].SetBinError( errbin, 0.0 )
             if ival == 0.0 :
                 mchist[0].SetBinContent(errbin,0.0)
-                mchist[0].SetBinError( errbin, 0.0 )                
+                mchist[0].SetBinError( errbin, 0.0 )
+            if options.isSoftDrop==False and errbin < minmassbin_ungroomed(ptbin_stack) :
+                hist[0].SetBinContent(errbin,0.0)
+                hist[0].SetBinError( errbin, 0.0 )
+                mchist[0].SetBinContent(errbin,0.0)
+                mchist[0].SetBinError( errbin, 0.0 )
+            if options.isSoftDrop==True and errbin < minmassbin_groomed(ptbin_stack) :
+                hist[0].SetBinContent(errbin,0.0)
+                hist[0].SetBinError( errbin, 0.0 )
+                mchist[0].SetBinContent(errbin,0.0)
+                mchist[0].SetBinError( errbin, 0.0 )
+                
         the_stack.Add(hist[0], hist[1])
         the_stack.Add(mchist[0], mchist[1])
 
         
     the_stack.Draw("][ nostack")
     if options.isSoftDrop == False :
-        the_stack.GetXaxis().SetRangeUser(5, 500)
+        the_stack.GetXaxis().SetRangeUser(1, 1000)
     else :
-        the_stack.GetXaxis().SetRangeUser(5, 500)
+        the_stack.GetXaxis().SetRangeUser(1, 1000)
     the_stack.GetXaxis().SetNoExponent()
     the_stack.SetMinimum(1e-14)
-    the_stack.SetMaximum(1e8)
+    the_stack.SetMaximum(1e4)
     stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
     stackleg.Draw()
     if(not options.isSoftDrop):

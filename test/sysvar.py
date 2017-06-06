@@ -312,7 +312,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         legends_list[i].AddEntry(hRecoPDFup, 'PDF', 'l')
         legends_list[i].AddEntry(hRecoCopyup, 'Physics Model', 'l')
         legends_list[i].AddEntry(hRecoup, 'JES+JER', 'l')
-        legends_list[i].AddEntry(hRMSup, 'Stat', 'l')
+        legends_list[i].AddEntry(hRMSup, 'MC Stat', 'l')
         legends_list[i].Draw()
 
         tlx = ROOT.TLatex()
