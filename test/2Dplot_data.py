@@ -21,6 +21,13 @@ parser.add_option('--logy', action='store_true',
                   dest='logy',
                   help='plots in log y')
 
+
+parser.add_option('--plotTheoryAndMC', action='store', type = 'int',
+                  default = 0, # 0 = plot both, 1 = plot only MC, 2 = plot only theory
+                  dest='plotTheoryAndMC',
+                  help='Plot theory and MC (0), just MC (1), or just theory (2)')
+
+
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',

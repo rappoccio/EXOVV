@@ -53,7 +53,7 @@ tlx.SetNDC()
 tlx.SetTextFont(43)
 tlx.SetTextSize(25)
 
-
+lines = []
 graphs = []
 
 import array
@@ -128,6 +128,7 @@ for ihist in xrange( len(histstrs) ):
         massres.SetMinimum(0.0)
         graphs.append(massres)
         canvs.append(resc)
+
         if ihist == 0 : 
             resc.Print("mreco_mgen_pt_" + str(ptbin) +"_ungroomed.png", "png")
             resc.Print("mreco_mgen_pt_" + str(ptbin) +"_ungroomed.pdf", "pdf")
@@ -152,6 +153,10 @@ for ihist in xrange( len(histstrs) ):
         #massres2.SetMinimum(0.0)
         graphs.append(massres2)
         canvs.append(resc2)
+        line=ROOT.TLine()
+        line.SetLineColor(2)
+        line.DrawLine(1,0.5,2000.,0.5)
+        lines.append(line)
         if ihist == 0 : 
             resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.png", "png")
             resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.pdf", "pdf")

@@ -21,6 +21,14 @@ parser.add_option('--logy', action='store_true',
                   dest='logy',
                   help='plots in log y')
 
+
+parser.add_option('--plotTheoryAndMC', action='store', type = 'int',
+                  default = 0, # 0 = plot both, 1 = plot only MC, 2 = plot only theory
+                  dest='plotTheoryAndMC',
+                  help='Plot theory and MC (0), just MC (1), or just theory (2)')
+
+
+
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
@@ -39,16 +47,19 @@ def get_pt_bin_vals() :
 
 
 def minmassbin_ungroomed(ibin) :
-    return 5
+    ptbins_here = get_pt_bin_vals()
+    if ptbins_here[ibin] < 760:
+        return 5
+    else :
+        return 6
 
 def minmassbin_groomed(ibin) :
-    ptbins_here = get_pt_bin_vals()
-    if ptbins_here[ibin] < 550:
-        return 2
-    elif ptbins_here[ibin] < 900:
-        return 3
-    else :
-        return 4
+    return 4
+#    ptbins_here = get_pt_bin_vals()
+#    if ptbins_here[ibin] < 900:
+#        return 4
+#    else :
+#        return 5
 
 def add_quadrature( a ):
     sumit = 0
@@ -86,12 +97,16 @@ def get_ptbins():
 
 import array
 # Turn a histogram into a graph
-def getGraph( hist, width=None ) :
+def getGraph( hist, width=None, minmassbin=None ) :
     x = array.array("d", [] )
     y = array.array("d", [] )
     dx = array.array("d", [] )
     dy = array.array("d", [] )
-    for ibin in xrange( 1, hist.GetNbinsX() + 1):
+    if minmassbin == None :
+        imin = 1
+    else :
+        imin = minmassbin
+    for ibin in xrange( imin, hist.GetNbinsX() + 1):
         val = hist.GetBinContent(ibin) 
         if val > 0. :
             x.append( hist.GetXaxis().GetBinCenter(ibin) )
@@ -505,7 +520,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             ratio_bin = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory.GetBinContent( theory.GetXaxis().FindBin(50.)))
             theory.Scale(ratio_bin)
             #theory.Scale(scales[i])
-            theory.SetFillStyle(3254)
+            theory.SetFillStyle(3004)
             theory.SetFillColor(ROOT.kBlue)            
             #theory.SetAxisRange(1e-5, 1, "Y")
             theory.Draw("C E5 ][ same")            
@@ -525,7 +540,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             #ratio_bin2 = float(hRecoPDF.GetBinContent(7)/theory2.GetBinContent(7))
             #theory2.Scale(ratio_bin2)
             #theory2.Scale(1.0/hRecoPDF.Integral("width"))
-            theory2.SetFillStyle(3245)
+            theory2.SetFillStyle(3005)
             theory2.SetFillColor(ROOT.kOrange+7)            
             theory2.Draw("hist ][ same")
             theory2dumb = theory2.Clone(theory2.GetName() + "_dumb")
@@ -555,11 +570,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
 
-        if i < 11 and options.isSoftDrop and isData:
-            theorycopy = theory.Clone()
-            theorycopy.SetName( theory.GetName() + "_copy" )
-            theory2copy = theory2.Clone()
-            theory2copy.SetName( theory2.GetName() + "_copy" )
+        if i < 11 :
+            if options.isSoftDrop and isData:
+                theorycopy = theory.Clone()
+                theorycopy.SetName( theory.GetName() + "_copy" )
+                theory2copy = theory2.Clone()
+                theory2copy.SetName( theory2.GetName() + "_copy" )
         
         datcopy = hReco.Clone()
         datcopy.SetName( datcopy.GetName() + "_copy" )
@@ -635,13 +651,14 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         ########################################################################################################## Take Ratio
         trueCopy.Divide( trueCopy, hReco, 1.0, 1.0 )
         herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0 )
-        if i < 11 and options.isSoftDrop and isData:
-            print 'N theory bins = ', theorycopy.GetNbinsX()
-            print 'N data bins = ', hReco.GetNbinsX()
-            print 'N theory UB bins = ', theory2copy.GetNbinsX()
+        if i < 11 :
+            if options.isSoftDrop and isData:
+                print 'N theory bins = ', theorycopy.GetNbinsX()
+                print 'N data bins = ', hReco.GetNbinsX()
+                print 'N theory UB bins = ', theory2copy.GetNbinsX()
             
-            theorycopy.Divide( theorycopy, hReco, 1.0, 1.0 )
-            theory2copy.Divide( theory2copy, hReco, 1.0, 1.0 )
+                theorycopy.Divide( theorycopy, hReco, 1.0, 1.0 )
+                theory2copy.Divide( theory2copy, hReco, 1.0, 1.0 )
 
         if i < 11:
             powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0)
@@ -666,7 +683,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         if i < 11 and options.isSoftDrop and isData:
             theorycopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theorycopy.UseCurrentStyle()
-            theorycopy.SetFillStyle(3254)
+            theorycopy.SetFillStyle(3004)
             theorycopy.SetFillColor(ROOT.kBlue)
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
@@ -674,7 +691,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
             theorycopy.GetYaxis().SetTitleOffset(1.3)
             theory2copy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
-            theory2copy.SetFillStyle(3245)
+            theory2copy.SetFillStyle(3005)
             theory2copy.SetFillColor(ROOT.kOrange+7)
             theory2copy.SetLineColor(ROOT.kOrange+7)
             theory2copy.SetLineWidth(3)
@@ -868,7 +885,7 @@ def setup(canvases_to_use, pads_to_use):
         pad1 = ROOT.TPad('pad' + str(icanv) + '1', 'pad' + str(icanv) + '1', 0., 0.3, 1.0, 1.0)
         pad1.SetBottomMargin(0.022)
         pad2 = ROOT.TPad('pad' + str(icanv) + '2', 'pad' + str(icanv) + '2', 0., 0.0, 1.0, 0.3)
-        pad2.SetTopMargin(0.05)
+        pad2.SetTopMargin(0.08)
         pad1.SetLeftMargin(0.20)
         pad2.SetLeftMargin(0.20)
         pad2.SetBottomMargin(0.5)
@@ -1038,8 +1055,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoPDF.SetTitle(";;Normalized cross section")
         hRecoPDF.GetYaxis().SetTitleSize(30)
         hRecoPDF.GetYaxis().SetTitleOffset(1.3)
-        hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
-        hRecoPDF.GetYaxis().SetLabelSize(28)
+        hRecoPDF.GetYaxis().SetLabelOffset(0.01)
+        hRecoPDF.GetYaxis().SetLabelSize(25)
+        hRecoPDF.GetXaxis().SetLabelOffset(2)
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kGray)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral("width"))
@@ -1090,10 +1108,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
         
         hRecoPDF.Draw("E2 ][")
+        
         if options.isSoftDrop : 
-            hRecoPDF.SetMaximum( 1.7 * hRecoPDF.GetMaximum() )
+            hRecoPDF.SetMaximum( 2.0 * hRecoPDF.GetMaximum() )
         else :
             hRecoPDF.SetMaximum( 1.2 * hRecoPDF.GetMaximum() )
+        hRecoPDF.GetXaxis().SetRange( minmassbin,hRecoPDF.GetXaxis().FindBin(1000) )
+        #hRecoPDF.GetXaxis().SetMoreLogLabels( True )
+        
         hStat.Draw("E2 ][ same")
         hRecoBarePdf.Draw("e x0 ][ same")
 
@@ -1142,29 +1164,32 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         MC_list[i].SetLineStyle(2)
         MC_list[i].SetLineWidth(3)
         MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
-        MC_list[i].Draw( "hist ][ SAME" )
+        if options.plotTheoryAndMC < 2 : 
+            MC_list[i].Draw( "hist ][ SAME" )
         
         ####################################################################################### Legends Filled
         legends_list[i].AddEntry(hRecoPDF, 'Data', 'p')
-        legends_list[i].AddEntry(hRecoPDF, 'Stat. + Sys. Unc.', 'f')
-        legends_list[i].AddEntry(hStat, 'Stat Unc.', 'f')
-        legends_list[i].AddEntry(MC_list[i], 'Pythia8', 'l')
-        herwig_gen = None
-        if options.isSoftDrop:
-            herwig_gen = herwig_genlistSD[i]
-        else:
-            herwig_gen = herwig_genlist[i]
-        herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
-        herwig_gen.SetLineStyle(8)
-        herwig_gen.SetLineColor(ROOT.kMagenta + 1)
-        herwig_gen.SetLineWidth(3)
-        herwig_gen.Draw("hist ][ same")
-        legends_list[i].AddEntry(herwig_gen, "HERWIG++", 'l')
-        herwigCopy = herwig_gen.Clone()
-        herwigCopy.SetName( herwigCopy.GetName() + "_copy")
+        legends_list[i].AddEntry(hRecoPDF, 'Stat. + Syst. Unc.', 'f')
+        legends_list[i].AddEntry(hStat, 'Stat. Unc.', 'f')
+
+        if options.plotTheoryAndMC < 2 : 
+            legends_list[i].AddEntry(MC_list[i], 'Pythia8', 'l')
+            herwig_gen = None
+            if options.isSoftDrop:
+                herwig_gen = herwig_genlistSD[i]
+            else:
+                herwig_gen = herwig_genlist[i]
+            herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
+            herwig_gen.SetLineStyle(8)
+            herwig_gen.SetLineColor(ROOT.kMagenta + 1)
+            herwig_gen.SetLineWidth(3)
+            herwig_gen.Draw("hist ][ same")
+            legends_list[i].AddEntry(herwig_gen, "HERWIG++", 'l')
+            herwigCopy = herwig_gen.Clone()
+            herwigCopy.SetName( herwigCopy.GetName() + "_copy")
 
         powheg = None
-        if i < 11:
+        if i < 11 and ( options.plotTheoryAndMC < 2) :
             if options.isSoftDrop:
                 powheg = powheglistSD[i]
             else:
@@ -1181,7 +1206,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             powhegcopy.SetLineColor(ROOT.kGreen + 2)
             powhegcopy.SetLineWidth(3)
             
-        if i < 11 and options.isSoftDrop : #and isData:
+        if i < 11 and options.isSoftDrop and (options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2) : #and isData:
             theory = theorylist[i]
             theory.Scale(1.0/theory.Integral("width"))
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
@@ -1189,14 +1214,15 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             ratio_bin = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory.GetBinContent( theory.GetXaxis().FindBin(50.)))
             theory.Scale(ratio_bin)
             #theory.Scale(scales[i])
-            theory.SetFillStyle(3254)
+            theory.SetFillStyle(3004)
             theory.SetFillColor(ROOT.kBlue)
             theory.SetLineColor(ROOT.kBlue)
             theory.SetLineWidth(0)
             #theory.SetAxisRange(1e-5, 1, "Y")
 
-            theorygraph = getGraph( theory, width=3 ) 
-            theorygraph.Draw("L3 0 ][ same")
+            theorygraph = getGraph( theory, width=3, minmassbin=minmassbin )
+            theorygraph.Draw("L3 0 same")
+            #theorygraph.GetXaxis().SetRangeUser(20, 1000) #(minmassbin, hRecoPDF.GetXaxis().FindBin(2000))
             
             #theorydumb = theory.Clone(theory.GetName() + "_dumb")
             #theorydumb.SetFillStyle(0)
@@ -1213,37 +1239,44 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             #theory2.Scale(ratio_bin2)
             #theory2.Scale(1.0/hRecoPDF.Integral("width"))
             #theory2.SetLineStyle(10)
-            theory2.SetFillStyle(3245)
+            theory2.SetFillStyle(3005)
             theory2.SetFillColor(ROOT.kOrange+7)            
             theory2.SetLineColor(ROOT.kOrange+7)
             theory2.SetLineWidth(0)
-            theory2graph = getGraph( theory2, width=3 )
-            theory2graph.Draw("L3 0 ][ same") 
+            theory2graph = getGraph( theory2, width=3, minmassbin=minmassbin )            
+            theory2graph.Draw("L3 0 same")
+            #theory2graph.GetXaxis().SetRange(minmassbin, hRecoPDF.GetXaxis().FindBin(2000))
             #theory2.Draw("C E5 same")
             #theory2dumb = theory2.Clone(theory2.GetName() + "_dumb")
             #theory2dumb.SetFillStyle(0)
             #theory2dumb.Draw("C hist same")
+
+            
             legends_list[i].AddEntry(theory2, "Marzani et al", 'f')
             ## add to the stack and scale
             theoryc = theory.Clone()
             theory2c = theory2.Clone()
+
+        if i < 11 and options.isSoftDrop and options.plotTheoryAndMC < 2 : 
             powhegc = powheg.Clone()
+            powhegc.Scale(10**(i-9))
+            powhegc.SetLineStyle(0)
+            powhegc.SetMarkerStyle(33)
+            for ibin in range(1, powhegc.GetNbinsX()):
+                powhegc.SetBinError(ibin, 0)
+                
+
+        if options.isSoftDrop and ( options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2 ) : 
             for ibin in range(1, theoryc.GetNbinsX()):
                 theoryc.SetBinError(ibin, 0)
-                theory2c.SetBinError(ibin, 0)
-                powhegc.SetBinError(ibin, 0)
-            
+                theory2c.SetBinError(ibin, 0)            
             theoryc.Scale(10**(i-9))
             theory2c.Scale(10**(i-9))
-            powhegc.Scale(10**(i-9))
-            
             theoryc.SetLineStyle(0)
             theory2c.SetLineStyle(0)
-            powhegc.SetLineStyle(0)
-
             theoryc.SetMarkerStyle(26)
             theory2c.SetMarkerStyle(32)
-            powhegc.SetMarkerStyle(33)
+            
             
             #build_the_stack.append(theoryc)
             #build_the_stack.append(theory2c)
@@ -1261,41 +1294,46 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
             else:
                 latexpt_list[i].DrawLatex(0.22, 0.830, ptbins_dict[i])
-        
-        mcc = MC_list[i].Clone()
+
         pdfc = hRecoPDF.Clone()
         barepdfc = hRecoBarePdf.Clone()
-        herwigc = herwig_gen.Clone()
-
-        for ibin in range(1, mcc.GetNbinsX()):
-            mcc.SetBinError(ibin, 0)
-            herwigc.SetBinError(ibin, 0)
-        
-        mcc.Scale(10**(i-9))
         pdfc.Scale(10**(i-9))
         barepdfc.Scale(10**(i-9))
-        herwigc.Scale(10**(i-9))
-        
-        mcc.SetMarkerStyle(34)
-        #mcc.UseCurrentStyle()
-        herwigc.SetMarkerStyle(23)
-        #herwigc.UseCurrentStyle()
         pdfc.SetLineStyle(1)
-        #pdfc.UseCurrentStyle()
+                
+        if options.plotTheoryAndMC < 2 : 
+            mcc = MC_list[i].Clone()
+            herwigc = herwig_gen.Clone()
+
+            for ibin in range(1, mcc.GetNbinsX()):
+                mcc.SetBinError(ibin, 0)
+                herwigc.SetBinError(ibin, 0)
         
-        stackleg.AddEntry( pdfc, get_ptbins_std()[i], 'p')
+            mcc.Scale(10**(i-9))
+            herwigc.Scale(10**(i-9))
+            
+            mcc.SetMarkerStyle(34)
+            #mcc.UseCurrentStyle()
+            herwigc.SetMarkerStyle(23)
+            #herwigc.UseCurrentStyle()
+        
+            #pdfc.UseCurrentStyle()
+
+        if options.plotTheoryAndMC == 0 : 
+            stackleg.AddEntry( pdfc, get_ptbins_std()[i], 'p')
         pdfc.SetFillColor(ROOT.kGray)
         pdfc.SetFillStyle(3101)
         pdfc.SetMarkerStyle( get_markers()[i] )
-        build_the_stack.append( [mcc, 'hist'] )
-        build_the_stack.append( [pdfc, 'e2'] )
+        if options.plotTheoryAndMC == 0 : 
+            build_the_stack.append( [mcc, 'hist'] )
+            build_the_stack.append( [pdfc, 'e2'] )
         #build_the_stack.append(barepdfc)
         #build_the_stack.append(herwigc)
 ####################################################################################### Hists Cloned and formatted for ratios
         trueCopy = MC_list[i].Clone()
         trueCopy.SetName( trueCopy.GetName() + "_copy")
         
-        if i < 11 and options.isSoftDrop and isData:
+        if i < 11 and options.isSoftDrop and isData and  (options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2):
             theorycopy = theory.Clone()
             theorycopy.SetName( theory.GetName() + "_copy" )
             theory2copy = theory2.Clone()
@@ -1308,13 +1346,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         else :
             xlabeloption = 'J'
 
-            
+
         datPDF = hRecoPDF.Clone()
         datPDF.SetName(hRecoPDF.GetName()+"_pdfcopy")
         datPDF.GetYaxis().SetTitle("#frac{Theory}{Data}")
         datPDF.GetYaxis().SetTitleOffset(1.3)
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(30)
+        datPDF.GetXaxis().SetLabelOffset(0.001)
         datPDF.SetMarkerStyle(0)
         datStat = hStat.Clone()
         datStat.SetName(hStat.GetName()+"copy")
@@ -1335,32 +1374,35 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             datPDF.SetBinContent(ibin, 1.0)
             datStat.SetBinContent(ibin, 1.0)
 ########################################################################################################## Take Ratio
-        trueCopy.Divide( trueCopy, hReco, 1.0, 1.0 )
-        herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0 )
-        if i < 11 and options.isSoftDrop and isData:
+
+        if options.plotTheoryAndMC < 2 : 
+            trueCopy.Divide( trueCopy, hReco, 1.0, 1.0 )
+            herwigCopy.Divide( herwigCopy, hReco, 1.0, 1.0 )
+        if i < 11 and options.isSoftDrop and isData and (options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2 ):
             print 'N theory bins = ', theorycopy.GetNbinsX()
             print 'N data bins = ', hReco.GetNbinsX()
             print 'N theory UB bins = ', theory2copy.GetNbinsX()
             theorycopy.Divide( theorycopy, hReco, 1.0, 1.0 )
             theory2copy.Divide( theory2copy, hReco, 1.0, 1.0 )
-        if i < 11:
+        if i < 11 and options.plotTheoryAndMC < 2:
             powhegcopy.Divide( powhegcopy, hReco, 1.0, 1.0)
         ########################################################################################################## change pad and set axis range
         pads_list[i][1].cd()
         pads_list[i][1].SetLogx()
-        trueCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
-        trueCopy.UseCurrentStyle()
-        trueCopy.GetXaxis().SetTitleOffset(2)
-        trueCopy.GetYaxis().SetTitleOffset(1.3)
-        herwigCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
-        herwigCopy.UseCurrentStyle()
-        herwigCopy.GetXaxis().SetTitleOffset(2)
-        herwigCopy.GetYaxis().SetTitleOffset(1.3)
-        if i < 11 and options.isSoftDrop and isData:
+        if options.plotTheoryAndMC < 2  : 
+            trueCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
+            trueCopy.UseCurrentStyle()
+            trueCopy.GetXaxis().SetTitleOffset(2)
+            trueCopy.GetYaxis().SetTitleOffset(1.3)
+            herwigCopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
+            herwigCopy.UseCurrentStyle()
+            herwigCopy.GetXaxis().SetTitleOffset(2)
+            herwigCopy.GetYaxis().SetTitleOffset(1.3)
+        if i < 11 and options.isSoftDrop and isData and (options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2 ):
 
             theorycopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theorycopy.UseCurrentStyle()
-            theorycopy.SetFillStyle(3254)
+            theorycopy.SetFillStyle(3004)
             theorycopy.SetFillColor(ROOT.kBlue)
             theorycopy.SetLineColor(ROOT.kBlue)
             theorycopy.SetLineWidth(3)
@@ -1368,20 +1410,22 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             theorycopy.GetYaxis().SetTitleOffset(1.3)
             theory2copy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             theory2copy.UseCurrentStyle()
-            theory2copy.SetFillStyle(3245)
+            theory2copy.SetFillStyle(3005)
             theory2copy.SetFillColor(ROOT.kOrange+7)            
             theory2copy.SetLineColor(ROOT.kOrange+7)
             theory2copy.SetLineWidth(3)
             theory2copy.GetXaxis().SetTitleOffset(2)
             theory2copy.GetYaxis().SetTitleOffset(1.3)
 
-        if i < 11:
+        if i < 11 and options.plotTheoryAndMC < 2 :
             powhegcopy.SetTitle(";" + xlabeloption + "et mass (GeV);#frac{Theory}{Data}")
             #powhegcopy.UseCurrentStyle()
             powhegcopy.GetXaxis().SetTitleOffset(2)
             powhegcopy.GetYaxis().SetTitleOffset(1.3)
 
-        trueCopy.GetXaxis().SetTickLength(0.5)
+        if options.plotTheoryAndMC < 2 :
+            trueCopy.GetXaxis().SetTickLength(0.5)
+            
         datPDF.SetMinimum(0.5)
         datPDF.SetMaximum(1.5)
         datPDF.GetYaxis().SetNdivisions(2,4,0,False)
@@ -1405,15 +1449,14 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datStat.GetYaxis().SetLabelOffset(0.01)
         datStat.GetYaxis().SetLabelSize(28)
         datStat.GetXaxis().SetLabelSize(28)
-		
-		
-        trueCopy.SetLineStyle(2)
-        trueCopy.SetLineColor(1)
-        trueCopy.SetLineWidth(3)
+        if options.plotTheoryAndMC < 2 :
+            trueCopy.SetLineStyle(2)
+            trueCopy.SetLineColor(1)
+            trueCopy.SetLineWidth(3)
 
-        herwigCopy.SetLineStyle(8)
-        herwigCopy.SetLineColor(ROOT.kMagenta + 1)
-        herwigCopy.SetLineWidth(3)
+            herwigCopy.SetLineStyle(8)
+            herwigCopy.SetLineColor(ROOT.kMagenta + 1)
+            herwigCopy.SetLineWidth(3)
 
         #if i < 11 and options.isSoftDrop and isData:
         #    theorycopy.SetLineStyle(2)
@@ -1461,229 +1504,246 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.Draw('e2 ][ ')
         datPDF.GetXaxis().SetTickLength(0.10)
         datPDF.GetXaxis().SetNoExponent()
+        datPDF.GetXaxis().SetRange( minmassbin,hRecoPDF.GetXaxis().FindBin(1000) )
+        #datPDF.GetXaxis().SetMoreLogLabels( True )
         datStat.Draw('e2 ][ same')
-        trueCopy.Draw("hist ][ same")
-        herwigCopy.Draw("hist ][ same")
-        if i < 11 and options.isSoftDrop and isData:
-            theorycopygraph = getGraph( theorycopy, width=3 )
-            theorycopygraph.Draw("L3 same")
-            theory2copygraph = getGraph( theory2copy, width=3 )
-            theory2copygraph.Draw("L3 same")
-            #theorycopy.Draw("C E5 same")
-            #theory2copy.Draw("C E5 same")
-            #theorycopydumb = theorycopy.Clone( theorycopy.GetName() + "_dumb")
-            #theory2copydumb = theory2copy.Clone( theorycopy.GetName() + "_dumb")
-            #theorycopydumb.SetFillStyle(0)
-            #theory2copydumb.SetFillStyle(0)
-            #theorycopydumb.Draw("C hist same")
-            #theorycopydumb.GetXaxis().SetRangeUser(5, 100000)
-            #theory2copydumb.Draw("C hist same")
-        if i < 11:
-            powhegcopy.Draw("hist ][ same")
+
+        if options.plotTheoryAndMC < 2 : 
+            trueCopy.Draw("hist ][ same")
+            herwigCopy.Draw("hist ][ same")
+            if i < 11:
+                powhegcopy.Draw("hist ][ same")
+            
+        if options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2 :
+            if i < 11 and options.isSoftDrop and isData:
+                theorycopygraph = getGraph( theorycopy, width=3, minmassbin=minmassbin )
+                theorycopygraph.Draw("L3 0 same")
+                theory2copygraph = getGraph( theory2copy, width=3, minmassbin=minmassbin )
+                theory2copygraph.Draw("L3 0 same")
+                #theorycopy.Draw("C E5 same")
+                #theory2copy.Draw("C E5 same")
+                #theorycopydumb = theorycopy.Clone( theorycopy.GetName() + "_dumb")
+                #theory2copydumb = theory2copy.Clone( theorycopy.GetName() + "_dumb")
+                #theorycopydumb.SetFillStyle(0)
+                #theory2copydumb.SetFillStyle(0)
+                #theorycopydumb.Draw("C hist same")
+                #theorycopydumb.GetXaxis().SetRangeUser(5, 100000)
+                #theory2copydumb.Draw("C hist same")
         keephists.append([datPDF])
         pads_list[i][0].Update()
         pads_list[i][0].RedrawAxis()
         pads_list[i][1].Update()
         pads_list[i][1].RedrawAxis()
         canvas_list[i].Draw()
-        canvas_list[i].SaveAs(outname_str + str(i) + ".png")
-        canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
-        hRecoKS = hRecoPDF.Clone( hRecoPDF.GetName() + "_KS")
-        hMCKS = MC_list[i].Clone( MC_list[i].GetName() + "_KS")
-        hMCKS_Herwig = herwig_gen.Clone( herwig_gen.GetName() + "_KS")
-
-
-
-        hRecoKS.GetXaxis().SetRangeUser( expected_agreement()[i][0], 10000)
-        hMCKS.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
-        hMCKS_Herwig.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
-        hRecoKS.Scale( 1.0 / hRecoKS.Integral("width") )
-        hMCKS.Scale( 1.0 / hMCKS.Integral("width") )
-        hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral("width") )
-
-        ## for ihwbin in xrange( 1, hMCKS.GetNbinsX() ) :
-        ##     val_py = hMCKS.GetBinContent(ihwbin)
-        ##     val_hw = hMCKS_Herwig.GetBinContent(ihwbin)
-        ##     val_data = hRecoKS.GetBinContent(ihwbin)
-        ##     err_py = hMCKS.GetBinError(ihwbin)
-        ##     err_hw = hMCKS_Herwig.GetBinError(ihwbin)
-        ##     err_data = hRecoKS.GetBinError(ihwbin)
-        ##     if val_py > 1e-10 and val_hw > 1e-10 :
-        ##         err1 = err_py / val_py
-        ##         err2 = err_hw / val_hw
-        ##         valdiff_hw = (val_data - val_hw) / err_hw
-        ##         valdiff_py = (val_data - val_py) / err_py
-             
-        ##         errtot = err1 * val_hw
-
-        ##         hMCKS_Herwig.SetBinError( ihwbin, errtot )
-        
-        chi2_pythia.append(hRecoKS.Chi2Test(hMCKS, "WW"))
-        chi2_herwig.append(hRecoKS.Chi2Test(hMCKS_Herwig, "WW"))
-        if options.isSoftDrop and i < 12:
-            theoryKS = theory.Clone(theory.GetName() + "_KS")
-            theory2KS = theory2.Clone(theory2.GetName() + "_KS")
-            theoryKS.GetXaxis().SetRangeUser(expected_agreement()[i][0], expected_agreement()[i][1])
-            theory2KS.GetXaxis().SetRangeUser(expected_agreement()[i][0],expected_agreement()[i][1])
-            #theory2KS.Scale( 1.0 / theory2KS.Integral("width") )
-            theoryKS.Scale( 1.0 / theoryKS.Integral("width") )
-            chi2_marzani.append(theory2KS.Chi2Test(hRecoKS, "WW"))
-            chi2_harvard.append(theoryKS.Chi2Test(hRecoKS, "WW"))
-                    
-    stack_canvas.cd()
-    stack_canvas.SetLogy()
-    stack_canvas.SetLogx()
-    #for hist in build_the_stack_band:
-    #    hist.Draw('same E5')
-    for ihist in xrange( 1, len(build_the_stack), 2) :
-        hist = build_the_stack[ihist]
-        mchist = build_the_stack[ihist - 1]
-        mchist[0].SetLineColor(2)
-        ptbin_stack = ihist/2
-        for errbin in xrange ( 1, hist[0].GetNbinsX() + 1):
-            ierr = hist[0].GetBinError( errbin )
-            ival = hist[0].GetBinContent( errbin )
-            if options.isSoftDrop == False and hist[0].GetXaxis().GetBinUpEdge(errbin) <= 20.0 :
-                hist[0].SetBinContent(errbin,0.0)
-                hist[0].SetBinError( errbin, 0.0 )
-                mchist[0].SetBinContent(errbin,0.0)
-                mchist[0].SetBinError( errbin, 0.0 )                
-            if ival > 0.0 and ierr / ival > 0.6 :
-                hist[0].SetBinContent(errbin,0.0)
-                hist[0].SetBinError( errbin, 0.0 )
-                mchist[0].SetBinContent(errbin,0.0)
-                mchist[0].SetBinError( errbin, 0.0 )
-            if ival == 0.0 :
-                mchist[0].SetBinContent(errbin,0.0)
-                mchist[0].SetBinError( errbin, 0.0 )
-            if options.isSoftDrop==False and errbin < minmassbin_ungroomed(ptbin_stack) :
-                hist[0].SetBinContent(errbin,0.0)
-                hist[0].SetBinError( errbin, 0.0 )
-                mchist[0].SetBinContent(errbin,0.0)
-                mchist[0].SetBinError( errbin, 0.0 )
-            if options.isSoftDrop==True and errbin < minmassbin_groomed(ptbin_stack) :
-                hist[0].SetBinContent(errbin,0.0)
-                hist[0].SetBinError( errbin, 0.0 )
-                mchist[0].SetBinContent(errbin,0.0)
-                mchist[0].SetBinError( errbin, 0.0 )
-                
-        the_stack.Add(hist[0], hist[1])
-        the_stack.Add(mchist[0], mchist[1])
-
-        
-    the_stack.Draw("][ nostack")
-    if options.isSoftDrop == False :
-        the_stack.GetXaxis().SetRangeUser(1, 1000)
-    else :
-        the_stack.GetXaxis().SetRangeUser(1, 1000)
-    the_stack.GetXaxis().SetNoExponent()
-    the_stack.SetMinimum(1e-14)
-    the_stack.SetMaximum(1e4)
-    stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
-    stackleg.Draw()
-    if(not options.isSoftDrop):
-        the_stack.SetTitle(";Jet mass(GeV);Normalized cross section")
-    else:
-        the_stack.SetTitle(";Groomed jet mass(GeV);Normalized cross section")
-    latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
-    latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
-
-    the_stack.GetYaxis().SetTitleSize(30)
-    the_stack.GetYaxis().SetTitleOffset(1.3)
-    the_stack.GetYaxis().SetLabelOffset(0.0001)
-    the_stack.GetYaxis().SetLabelSize(28)
-    stack_canvas.Update()
-    if(not options.isSoftDrop):
-        stack_canvas.SaveAs("fullstack.png")
-        stack_canvas.SaveAs("fullstack.pdf")
-    else:
-        stack_canvas.SaveAs("fullstacksoftdrop.png")
-        stack_canvas.SaveAs("fullstacksoftdrop.pdf")
-
-
-    # Make plots of chi2
-    print "The KS values for Pythia8 Generator are "
-    for chi2val in chi2_pythia :
-        print ' %6.2f & ' % ( round( chi2val, 2) )
-    print "The KS values for Herwig Generator are "
-    for chi2val in chi2_herwig :
-        print ' %6.2f & ' % ( round( chi2val, 2) )
-    if options.isSoftDrop:
-        print "The KS values for Marzani predicitons are "
-        for chi2val in chi2_marzani :
-            print ' %6.2f & ' % ( round( chi2val, 2) )
-        print "The KS values for Harvard predictions are "
-        for chi2val in chi2_harvard :
-            print ' %6.2f & ' % ( round( chi2val, 2) )
-
-
-    chi2_canvas = TCanvas("cchi2", "cchi2" )
-    chi2_canvas.SetLeftMargin(0.15)
-    if options.isSoftDrop: 
-        chi2_legend = ROOT.TLegend( 0.35, 0.17, 0.57, 0.4 )
-    else :
-        chi2_legend = ROOT.TLegend( 0.68, 0.16, 0.88, 0.38 )
-    chi2_legend.SetFillColor(0)
-    chi2_legend.SetBorderSize(0)
-
-    
-    chi2_0 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_pythia ) )
-    chi2_0.SetName("chi2_0")
-    chi2_0.SetLineWidth(3)
-    chi2_0.Draw('al')
-    graphs.append( chi2_0 )
-    chi2_legend.AddEntry( chi2_0, "PYTHIA8", 'l')
-    chi2_1 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_herwig ) )
-    chi2_1.SetName("chi2_1")
-    chi2_1.SetLineWidth(3)
-    chi2_1.SetLineStyle(4)
-    chi2_1.SetLineColor(ROOT.kMagenta + 1)
-    chi2_1.Draw('l')
-    graphs.append( chi2_1 )
-    chi2_legend.AddEntry( chi2_1, "HERWIG++", 'l')
-
-        
-    if options.isSoftDrop :     
-        chi2_2 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_marzani ) )
-        chi2_2.SetName("chi2_2")
-        chi2_2.SetLineColor(ROOT.kOrange + 7)
-        chi2_2.SetLineStyle(2)
-        chi2_2.SetLineWidth(3)
-        chi2_3 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_harvard ) )
-        chi2_3.SetName("chi2_3")
-        chi2_3.SetLineColor(ROOT.kBlue)
-        chi2_3.SetLineStyle(3)
-        chi2_3.SetLineWidth(3)
-        chi2_3.Draw('l')
-        chi2_2.Draw('l')
-        graphs.append( chi2_2 )
-        graphs.append( chi2_3 )
-        chi2_legend.AddEntry( chi2_3, "Frye et al", 'l')
-        chi2_legend.AddEntry( chi2_2, "Marzani et al", 'l')
-    
-        
-    chi2_canvas.SetTopMargin(0.1)
-    chi2_canvas.SetBottomMargin(0.15)
-    chi2_0.SetMaximum(1.0)
-    chi2_0.SetMinimum(0.0)
-    chi2_0.SetTitle(';Jet p_{T} (GeV);Probability')
-
-    chi2_0.GetXaxis().SetNoExponent()
-    latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
-    latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
-
-    chi2_legend.Draw()
-
-    if isData : 
-        if options.unrestrictedChi2 : 
-            chi2_canvas.Print('chi2prob_unrestricted.png', 'png')
-            chi2_canvas.Print('chi2prob_unrestricted.pdf', 'pdf')
+        if options.plotTheoryAndMC == 0 : 
+            canvas_list[i].SaveAs(outname_str + str(i) + ".png")
+            canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
         else :
-            chi2_canvas.Print('chi2prob.png', 'png')
-            chi2_canvas.Print('chi2prob.pdf', 'pdf')
+            canvas_list[i].SaveAs(outname_str + str(i) + '_' + str(options.plotTheoryAndMC) + ".png")
+            canvas_list[i].SaveAs(outname_str + str(i) + '_' + str(options.plotTheoryAndMC) + ".pdf")
 
-    canvas_list.append( chi2_canvas )
-    legends_list.append( chi2_legend )
+
+
+        if options.plotTheoryAndMC == 0 : 
+            hRecoKS = hRecoPDF.Clone( hRecoPDF.GetName() + "_KS")
+            hMCKS = MC_list[i].Clone( MC_list[i].GetName() + "_KS")
+            hMCKS_Herwig = herwig_gen.Clone( herwig_gen.GetName() + "_KS")
+
+
+
+            hRecoKS.GetXaxis().SetRangeUser( expected_agreement()[i][0], 10000)
+            hMCKS.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
+            hMCKS_Herwig.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
+            hRecoKS.Scale( 1.0 / hRecoKS.Integral("width") )
+            hMCKS.Scale( 1.0 / hMCKS.Integral("width") )
+            hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral("width") )
+
+            ## for ihwbin in xrange( 1, hMCKS.GetNbinsX() ) :
+            ##     val_py = hMCKS.GetBinContent(ihwbin)
+            ##     val_hw = hMCKS_Herwig.GetBinContent(ihwbin)
+            ##     val_data = hRecoKS.GetBinContent(ihwbin)
+            ##     err_py = hMCKS.GetBinError(ihwbin)
+            ##     err_hw = hMCKS_Herwig.GetBinError(ihwbin)
+            ##     err_data = hRecoKS.GetBinError(ihwbin)
+            ##     if val_py > 1e-10 and val_hw > 1e-10 :
+            ##         err1 = err_py / val_py
+            ##         err2 = err_hw / val_hw
+            ##         valdiff_hw = (val_data - val_hw) / err_hw
+            ##         valdiff_py = (val_data - val_py) / err_py
+
+            ##         errtot = err1 * val_hw
+
+            ##         hMCKS_Herwig.SetBinError( ihwbin, errtot )
+
+            chi2_pythia.append(hRecoKS.Chi2Test(hMCKS, "WW"))
+            chi2_herwig.append(hRecoKS.Chi2Test(hMCKS_Herwig, "WW"))
+            if options.isSoftDrop and i < 12:
+                theoryKS = theory.Clone(theory.GetName() + "_KS")
+                theory2KS = theory2.Clone(theory2.GetName() + "_KS")
+                theoryKS.GetXaxis().SetRangeUser(expected_agreement()[i][0], expected_agreement()[i][1])
+                theory2KS.GetXaxis().SetRangeUser(expected_agreement()[i][0],expected_agreement()[i][1])
+                #theory2KS.Scale( 1.0 / theory2KS.Integral("width") )
+                theoryKS.Scale( 1.0 / theoryKS.Integral("width") )
+                chi2_marzani.append(theory2KS.Chi2Test(hRecoKS, "WW"))
+                chi2_harvard.append(theoryKS.Chi2Test(hRecoKS, "WW"))
+
+            stack_canvas.cd()
+            stack_canvas.SetLogy()
+            stack_canvas.SetLogx()
+            #for hist in build_the_stack_band:
+            #    hist.Draw('same E5')
+            for ihist in xrange( 1, len(build_the_stack), 2) :
+                hist = build_the_stack[ihist]
+                mchist = build_the_stack[ihist - 1]
+                mchist[0].SetLineColor(2)
+                ptbin_stack = ihist/2
+                for errbin in xrange ( 1, hist[0].GetNbinsX() + 1):
+                    ierr = hist[0].GetBinError( errbin )
+                    ival = hist[0].GetBinContent( errbin )
+                    if options.isSoftDrop == False and hist[0].GetXaxis().GetBinUpEdge(errbin) <= 20.0 :
+                        hist[0].SetBinContent(errbin,0.0)
+                        hist[0].SetBinError( errbin, 0.0 )
+                        mchist[0].SetBinContent(errbin,0.0)
+                        mchist[0].SetBinError( errbin, 0.0 )                
+                    if ival > 0.0 and ierr / ival > 0.6 :
+                        hist[0].SetBinContent(errbin,0.0)
+                        hist[0].SetBinError( errbin, 0.0 )
+                        mchist[0].SetBinContent(errbin,0.0)
+                        mchist[0].SetBinError( errbin, 0.0 )
+                    if ival == 0.0 :
+                        mchist[0].SetBinContent(errbin,0.0)
+                        mchist[0].SetBinError( errbin, 0.0 )
+                    if options.isSoftDrop==False and errbin < minmassbin_ungroomed(ptbin_stack) :
+                        hist[0].SetBinContent(errbin,0.0)
+                        hist[0].SetBinError( errbin, 0.0 )
+                        mchist[0].SetBinContent(errbin,0.0)
+                        mchist[0].SetBinError( errbin, 0.0 )
+                    if options.isSoftDrop==True and errbin < minmassbin_groomed(ptbin_stack) :
+                        hist[0].SetBinContent(errbin,0.0)
+                        hist[0].SetBinError( errbin, 0.0 )
+                        mchist[0].SetBinContent(errbin,0.0)
+                        mchist[0].SetBinError( errbin, 0.0 )
+
+                the_stack.Add(hist[0], hist[1])
+                the_stack.Add(mchist[0], mchist[1])
+
+
+    if options.plotTheoryAndMC == 0 : 
+        the_stack.Draw("][ nostack")
+        if options.isSoftDrop == False :
+            the_stack.GetXaxis().SetRangeUser(10, 1000)
+            the_stack.GetXaxis().SetMoreLogLabels(True)
+        else :
+            the_stack.GetXaxis().SetRangeUser(10, 1000)
+            the_stack.GetXaxis().SetMoreLogLabels(True)
+        the_stack.GetXaxis().SetNoExponent()
+        the_stack.SetMinimum(1e-14)
+        the_stack.SetMaximum(1e4)
+        stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
+        stackleg.Draw()
+        if(not options.isSoftDrop):
+            the_stack.SetTitle(";Jet mass(GeV);Normalized cross section")
+        else:
+            the_stack.SetTitle(";Groomed jet mass(GeV);Normalized cross section")
+        latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
+        latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
+
+        the_stack.GetYaxis().SetTitleSize(30)
+        the_stack.GetYaxis().SetTitleOffset(1.3)
+        the_stack.GetYaxis().SetLabelOffset(0.0001)
+        the_stack.GetYaxis().SetLabelSize(28)
+        stack_canvas.Update()
+        if(not options.isSoftDrop):
+            stack_canvas.SaveAs("fullstack.png")
+            stack_canvas.SaveAs("fullstack.pdf")
+        else:
+            stack_canvas.SaveAs("fullstacksoftdrop.png")
+            stack_canvas.SaveAs("fullstacksoftdrop.pdf")
+
+
+        # Make plots of chi2
+        print "The KS values for Pythia8 Generator are "
+        for chi2val in chi2_pythia :
+            print ' %6.2f & ' % ( round( chi2val, 2) )
+        print "The KS values for Herwig Generator are "
+        for chi2val in chi2_herwig :
+            print ' %6.2f & ' % ( round( chi2val, 2) )
+        if options.isSoftDrop:
+            print "The KS values for Marzani predicitons are "
+            for chi2val in chi2_marzani :
+                print ' %6.2f & ' % ( round( chi2val, 2) )
+            print "The KS values for Harvard predictions are "
+            for chi2val in chi2_harvard :
+                print ' %6.2f & ' % ( round( chi2val, 2) )
+
+
+        chi2_canvas = TCanvas("cchi2", "cchi2" )
+        chi2_canvas.SetLeftMargin(0.15)
+        if options.isSoftDrop: 
+            chi2_legend = ROOT.TLegend( 0.35, 0.17, 0.57, 0.4 )
+        else :
+            chi2_legend = ROOT.TLegend( 0.68, 0.16, 0.88, 0.38 )
+        chi2_legend.SetFillColor(0)
+        chi2_legend.SetBorderSize(0)
+
+
+        chi2_0 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_pythia ) )
+        chi2_0.SetName("chi2_0")
+        chi2_0.SetLineWidth(3)
+        chi2_0.Draw('al')
+        graphs.append( chi2_0 )
+        chi2_legend.AddEntry( chi2_0, "PYTHIA8", 'l')
+        chi2_1 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_herwig ) )
+        chi2_1.SetName("chi2_1")
+        chi2_1.SetLineWidth(3)
+        chi2_1.SetLineStyle(4)
+        chi2_1.SetLineColor(ROOT.kMagenta + 1)
+        chi2_1.Draw('l')
+        graphs.append( chi2_1 )
+        chi2_legend.AddEntry( chi2_1, "HERWIG++", 'l')
+
+
+        if options.isSoftDrop :     
+            chi2_2 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_marzani ) )
+            chi2_2.SetName("chi2_2")
+            chi2_2.SetLineColor(ROOT.kOrange + 7)
+            chi2_2.SetLineStyle(2)
+            chi2_2.SetLineWidth(3)
+            chi2_3 = ROOT.TGraph(11, get_pt_bin_vals(), array.array('d', chi2_harvard ) )
+            chi2_3.SetName("chi2_3")
+            chi2_3.SetLineColor(ROOT.kBlue)
+            chi2_3.SetLineStyle(3)
+            chi2_3.SetLineWidth(3)
+            chi2_3.Draw('l')
+            chi2_2.Draw('l')
+            graphs.append( chi2_2 )
+            graphs.append( chi2_3 )
+            chi2_legend.AddEntry( chi2_3, "Frye et al", 'l')
+            chi2_legend.AddEntry( chi2_2, "Marzani et al", 'l')
+
+
+        chi2_canvas.SetTopMargin(0.1)
+        chi2_canvas.SetBottomMargin(0.15)
+        chi2_0.SetMaximum(1.0)
+        chi2_0.SetMinimum(0.0)
+        chi2_0.SetTitle(';Jet p_{T} (GeV);Probability')
+
+        chi2_0.GetXaxis().SetNoExponent()
+        latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
+        latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
+
+        chi2_legend.Draw()
+
+        if isData : 
+            if options.unrestrictedChi2 : 
+                chi2_canvas.Print('chi2prob_unrestricted.png', 'png')
+                chi2_canvas.Print('chi2prob_unrestricted.pdf', 'pdf')
+            else :
+                chi2_canvas.Print('chi2prob.png', 'png')
+                chi2_canvas.Print('chi2prob.pdf', 'pdf')
+
+        canvas_list.append( chi2_canvas )
+        legends_list.append( chi2_legend )
     
     # Close the files
     theoryfile.Close()
