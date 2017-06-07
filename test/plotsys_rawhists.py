@@ -28,7 +28,7 @@ import array
 import math
 import random
 
-
+ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(000000)
 #ROOT.gROOT.Macro("rootlogon.C")
 #ROOT.gStyle.SetPadRightMargin(0.15)
@@ -44,7 +44,17 @@ ROOT.gStyle.SetLabelSize(24, "XYZ")
 
 ptBinA = array.array('i', [  200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 13000])
 
+mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
 
+
+def minmassbin_ungroomed(ibin) :
+    if ptBinA[ibin] < 760:
+        return 5
+    else :
+        return 6
+
+def minmassbin_groomed(ibin) :
+    return 4
 
 def getProjsY( name, h, norm=True ) :
     projs = []
@@ -139,17 +149,29 @@ for iptbin in xrange( len(dataprojs) ) :
     pads[0].cd()
     pads[0].SetLogx()
     axisrange = []
+
+
+    if 'AK8SD' in options.hist :
+        minmassbin = minmassbin_groomed( iptbin )
+    else : 
+        minmassbin = minmassbin_ungroomed( iptbin )
+    
+    
     if iptbin == 11:
-        axisrange = [1,2000]
+        axisrange = [mBinA[minmassbin],2000]
     elif iptbin > 7 and iptbin < 11:
-        axisrange = [1,900]
+        axisrange = [mBinA[minmassbin],1100]
     elif iptbin > 3 and iptbin < 8:
-        axisrange = [1,600]
+        axisrange = [mBinA[minmassbin],1100]
     elif iptbin < 4:
-        axisrange = [1,400]
+        axisrange = [mBinA[minmassbin],1100]
 
 
-    for imbin in xrange( 1,dataprojs[iptbin].GetNbinsX()+1 ) :
+    for imbin in xrange( 1, minmassbin ) :
+        pyprojs[iptbin].SetBinContent( imbin, 0.0 )
+        pyprojs[iptbin].SetBinError( imbin, 0.0 )
+
+    for imbin in xrange( minmassbin,dataprojs[iptbin].GetNbinsX()+1 ) :
         val = pyprojs[iptbin].GetBinContent( imbin )
 
 
@@ -192,7 +214,7 @@ for iptbin in xrange( len(dataprojs) ) :
     hwprojs[iptbin].SetLineColor(2)
     #hwprojs[iptbin].SetLineWidth(2)
     dataprojs[iptbin].SetMarkerStyle(20)
-    stack = ROOT.THStack( "stack" + str(iptbin), ";;Yield (1/GeV)" )
+    stack = ROOT.THStack( "stack" + str(iptbin), ";;Normalized yield (1/GeV)" )
     stack.Add( pyprojs[iptbin], "e2 ][" )
     stack.Add( pyprojsclone[iptbin], "hist ][" )
     stack.Add( hwprojs[iptbin], "hist ][")
@@ -200,11 +222,16 @@ for iptbin in xrange( len(dataprojs) ) :
 
     #pyprojs[iptbin].Draw("e2 same")
     #pyprojs[iptbin].GetXaxis().SetRangeUser(1,1300)
-    #dataprojs[iptbin].Draw("e same")
-    stack.Draw("nostack")
-    maxval = stack.GetMaximum()
-    #stack.SetMaximum( maxval * 0.6 )
+    #dataprojs[iptbin].Draw("e same")    
+    stack.Draw("nostack")    
     stack.GetXaxis().SetRangeUser(axisrange[0],axisrange[1])
+    if 'AK8SD' in options.hist :
+        maxval = dataprojs[iptbin].GetBinContent( minmassbin + 1)
+        stack.SetMaximum( maxval * 1.5 )
+    else :
+        maxval = dataprojs[iptbin].GetMaximum()
+        stack.SetMaximum( maxval * 1.5  )
+
     stack.GetXaxis().SetTickLength(0.05)
     stacks.append(stack)
     tlx.DrawLatex(0.2, 0.926, "CMS Preliminary")
@@ -212,12 +239,12 @@ for iptbin in xrange( len(dataprojs) ) :
 
     
 
-    if 'AK8SD' not in options.hist :
-        tlx2.DrawLatex( 0.3, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
-        leg = ROOT.TLegend(0.3, 0.6, 0.55, 0.85)
-    elif 'AK8SD' in options.hist :
-        tlx2.DrawLatex( 0.6, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
-        leg = ROOT.TLegend(0.6, 0.6, 0.85, 0.85)
+    #if 'AK8SD' not in options.hist :
+    #    tlx2.DrawLatex( 0.3, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
+    #    leg = ROOT.TLegend(0.3, 0.6, 0.55, 0.85)
+    #elif 'AK8SD' in options.hist :
+    tlx2.DrawLatex( 0.6, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
+    leg = ROOT.TLegend(0.6, 0.6, 0.85, 0.85)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     leg.AddEntry( dataprojs[iptbin], 'Data', 'p')
@@ -254,6 +281,7 @@ for iptbin in xrange( len(dataprojs) ) :
     ratio.GetYaxis().SetRangeUser(0.5,1.5)
     ratio.GetXaxis().SetTickLength(0.09)
     ratio.GetXaxis().SetNoExponent()
+    #ratio.GetXaxis().SetMoreLogLabels(True)
     ratio.SetMarkerStyle(0)
     ratio.SetMarkerSize(0)
     ratio.Draw("e2")

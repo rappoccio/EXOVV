@@ -9,6 +9,8 @@ from optparse import OptionParser
 from sysvar import plot_vars, reset
 import pickle
 parser = OptionParser()
+
+ROOT.gROOT.SetBatch()
                                  
 (options, args) = parser.parse_args()
 

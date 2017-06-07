@@ -5,6 +5,24 @@ from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
 from plot_tools import unpinch_vals, smooth
 
+import array
+
+ptBinA = array.array('i', [  200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 13000])
+
+mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
+
+
+
+def minmassbin_ungroomed(ibin) :
+    if ptBinA[ibin] < 760:
+        return 5
+    else :
+        return 6
+
+def minmassbin_groomed(ibin) :
+    return 4
+
+
 def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, puup_list, pudn_list,ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, histname = "Ungroomed "):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
@@ -223,26 +241,15 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             hRMSup.GetXaxis().SetTitle("Groomed jet mass (GeV)")
         hRMSup.SetMinimum(0.0)
         hRMSup.SetMaximum(0.5)
-        if i == 18:
-            hRMSup.SetAxisRange(1, 1900,"X")
-        elif i >= 15 and i < 18:
-            hRMSup.SetAxisRange(1, 1000, "X")
-        elif i >= 10 and i < 15:
-            hRMSup.SetAxisRange(1, 600, "X")
-        elif i >= 9 and i < 10:
-            hRMSup.SetAxisRange(1, 500, "X")
-        elif i >= 7 and i < 9:
-            hRMSup.SetAxisRange(1, 500, "X")
-        elif i >= 6 and i < 7:
-            hRMSup.SetAxisRange(1, 400, "X")
-        elif i >= 5 and i < 6:
-            hRMSup.SetAxisRange(1, 300, "X")
-        elif i >= 3 and i < 5:
-            hRMSup.SetAxisRange(1, 250, "X")
-        elif i >= 2 and i < 3 :
-            hRMSup.SetAxisRange(1, 200,"X")
-        elif i < 2:
-            hRMSup.SetAxisRange(1, 100,"X")
+
+        if histname != "Soft Drop ":
+            minmassbin = minmassbin_ungroomed( i )
+        else : 
+            minmassbin = minmassbin_groomed( i )
+
+        
+
+        hRMSup.SetAxisRange(mBinA[minmassbin], 1000,"X")
 
         if histname != "Soft Drop " : 
             unpinch_vals( hRMSup, xval=maxbin )
@@ -289,11 +296,14 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         smooth( hRecoPDFdn, delta=2 )
 
 
+        
+
         hRMSup.SetMaximum(1000)
         hRMSup.SetMinimum(1e-4)
         hRMSup.GetXaxis().SetTitleOffset(1.2)
         hRMSup.GetYaxis().SetTitleOffset(1.2)
         hRMSup.GetXaxis().SetNoExponent()
+        #hRMSup.GetXaxis().SetMoreLogLabels(True)
         hRMSup.Draw('hist ][')
         #hRMSdn.Draw('hist same')
         hRecoup.Draw('hist same ][')
