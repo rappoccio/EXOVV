@@ -15,12 +15,12 @@ mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 
 
 def minmassbin_ungroomed(ibin) :
     if ptBinA[ibin] < 760:
-        return 5
+        return 4
     else :
-        return 6
+        return 5
 
 def minmassbin_groomed(ibin) :
-    return 4
+    return 3
 
 
 def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, puup_list, pudn_list,ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, histname = "Ungroomed "):

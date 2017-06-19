@@ -108,7 +108,7 @@ ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
 
 #colors = array.array("i", [ROOT.kBlue, ROOT.kWhite, ROOT.kOrange + 7] )
 
-#ROOT.gStyle.SetPalette(ROOT.kDarkBodyRadiator)
+
 #ROOT.gStyle.SetPalette(3, colors)#
 
 ptbins =[  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300]
@@ -118,6 +118,66 @@ for ibin in xrange(len(ptbins)):
     axislabels.GetXaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
     axislabels.GetYaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
 
+
+
+    
+cor_canvas = ROOT.TCanvas("cor_canvas", "response", 800, 800)
+cor_canvas.SetRightMargin(0.15)
+cor_canvas.SetLeftMargin(0.15)
+cor_canvas.SetBottomMargin(0.15)
+cor_canvas.SetTopMargin(0.15)
+cor_canvas.SetGrid()
+axislabels.GetYaxis().SetTitleOffset(1.5)
+#axislabels.SetTitle(';Response Matrix Reconstructed p_{T} Bins (GeV);Response Matrix Generated p_{T} Bins (GeV)')
+axislabels.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetXaxis().SetTitleOffset(1.5)
+axislabels.GetYaxis().SetTitleOffset(1.5)
+axislabels.Draw("axis")
+cor.SetMinimum(-1.0)
+cor.SetMaximum(1.0)
+#cor.SetTitle(';Reconstructed bin;Generated bin')
+cor.Draw("colz same")
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(43)
+tlx.SetTextSize(30)
+tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
+tlx.SetTextSize(22)
+tlx.DrawLatex(0.2, 0.6, "Ungroomed Jets")
+cor_canvas.Update()
+cor_canvas.Print("CorrelationMatrix.png", "png")
+cor_canvas.Print("CorrelationMatrix.pdf", "pdf")
+
+corSD_canvas=TCanvas("corSDcanvas", "corSDcanvas", 800, 800)
+corSD_canvas.SetRightMargin(0.15)
+corSD_canvas.SetLeftMargin(0.15)
+corSD_canvas.SetBottomMargin(0.15)
+corSD_canvas.SetTopMargin(0.15)
+corSD_canvas.SetGrid()
+corSD_canvas.cd()
+axislabels.Draw("axis")
+corSD.SetMinimum(-1.0)
+corSD.SetMaximum(1.0)
+#corSD.SetTitle(';Reconstructed bin;Generated bin')
+corSD.Draw("colz same")
+tlx = ROOT.TLatex()
+tlx.SetNDC()
+tlx.SetTextFont(43)
+tlx.SetTextSize(30)
+tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
+tlx.SetTextSize(22)
+tlx.DrawLatex(0.2, 0.6, "Soft Drop Jets")
+
+corSD_canvas.Update()
+corSD_canvas.Print("CorrelationMatrixSD.png", "png")
+corSD_canvas.Print("CorrelationMatrixSD.pdf", "pdf")
+###################
+
+
+ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 cov_canvas = ROOT.TCanvas("cov_canvas", "response", 800, 800)
 cov_canvas.SetRightMargin(0.15)
 cov_canvas.SetLeftMargin(0.15)
@@ -131,10 +191,9 @@ axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
 axislabels.GetXaxis().SetTitleOffset(1.5)
 axislabels.GetYaxis().SetTitleOffset(1.5)
 axislabels.Draw("axis")
-cor.SetMinimum(-1.0)
-cor.SetMaximum(1.0)
-cor.SetTitle(';Reconstructed bin;Generated bin')
-cor.Draw("colz same")
+#cor.SetMaximum(1.0)
+#cov.SetTitle(';Reconstructed bin;Generated bin')
+cov.Draw("colz same")
 tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
@@ -143,6 +202,7 @@ tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
 tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
 tlx.SetTextSize(22)
 tlx.DrawLatex(0.2, 0.6, "Ungroomed Jets")
+cov_canvas.SetLogz()
 cov_canvas.Update()
 cov_canvas.Print("CovarianceMatrix.png", "png")
 cov_canvas.Print("CovarianceMatrix.pdf", "pdf")
@@ -155,10 +215,9 @@ covSD_canvas.SetTopMargin(0.15)
 covSD_canvas.SetGrid()
 covSD_canvas.cd()
 axislabels.Draw("axis")
-corSD.SetMinimum(-1.0)
-corSD.SetMaximum(1.0)
-corSD.SetTitle(';Reconstructed bin;Generated bin')
-corSD.Draw("colz same")
+#covSD.SetMaximum(1.0)
+#covSD.SetTitle(';Reconstructed bin;Generated bin')
+covSD.Draw("colz same")
 tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
@@ -167,13 +226,11 @@ tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
 tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
 tlx.SetTextSize(22)
 tlx.DrawLatex(0.2, 0.6, "Soft Drop Jets")
-
+covSD_canvas.SetLogz()
 covSD_canvas.Update()
 covSD_canvas.Print("CovarianceMatrixSD.png", "png")
 covSD_canvas.Print("CovarianceMatrixSD.pdf", "pdf")
 ###################
-
-
 
 
 
@@ -231,6 +288,15 @@ for i, canvas in enumerate(canvasesSD):
     canvas.SaveAs('hists/unfolded_closure_softdrop_preplotter_' + pt_bin[i] + options.extension + '.png')    
 
 
+
+
+
+
+
+
+
+
+    
 outfile = TFile('2DClosure' + options.extension + '.root', 'RECREATE')
 outfile.cd()
 for hists in namesreco:

@@ -246,17 +246,17 @@ for x in range(0, nptbin):
                 
     else:            
         if x < 4:
-            alegends.append(TLegend(.60, .40, .90, .80))
-            alegendsSD.append(TLegend(.60, .40, .90, .80))
+            alegends.append(TLegend(.58, .30, .88, .80))
+            alegendsSD.append(TLegend(.58, .40, .88, .80))
         else:
-            alegends.append(TLegend(.58, .30, .90, .80))
-            alegendsSD.append(TLegend(.58, .30, .90, .80))
+            alegends.append(TLegend(.58, .30, .88, .80))
+            alegendsSD.append(TLegend(.58, .30, .88, .80))
         if x == 0:
-            alegends_fullband.append(TLegend(.55, .29, .89, .80))
-            alegends_fullbandSD.append(TLegend(.55, .29, .89, .80))
+            alegends_fullband.append(TLegend(.58, .30, .88, .80))
+            alegends_fullbandSD.append(TLegend(.55, .29, .88, .80))
         else:
-            alegends_fullband.append(TLegend(.55, .29, .89, .80))
-            alegends_fullbandSD.append(TLegend(.55, .29, .89, .80))
+            alegends_fullband.append(TLegend(.58, .30, .88, .80))
+            alegends_fullbandSD.append(TLegend(.55, .29, .88, .80))
 
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
