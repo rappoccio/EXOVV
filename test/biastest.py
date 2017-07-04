@@ -31,7 +31,7 @@ parser.add_option('--isBottomLine', action='store_true',
 (options, args) = parser.parse_args()
 argv = []
 
-myfile = TFile('qcdmc_stitched_withpdf_qcdmc.root')
+myfile = TFile('responses_rejec_tightgen_otherway_qcdmc_2dplots.root')
 datfile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 outtext = ''
 outfile = None
@@ -76,7 +76,7 @@ c_refoldeds = []
 refolded_hists = []
 c_sanitys = []
 sanity_hists = []
-for i in range(1,20,1) :
+for i in range(1,6,1) :
     print '--------- i = ', i
     unfoldreco = RooUnfoldBayes(response, reco, i)
     reco_unfolded = unfoldreco.Vreco()
