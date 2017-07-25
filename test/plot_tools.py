@@ -16,6 +16,11 @@ parser.add_option('--isSoftDrop', action='store_true',
                   dest='isSoftDrop',
                   help='theory curves on plots')
 
+parser.add_option('--extra_massy', action='store_true',
+                  default = False,
+                  dest='extra_massy',
+                  help='multiply by m of each bin')
+
 parser.add_option('--logy', action='store_true',
                   default = False,
                   dest='logy',
@@ -986,6 +991,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
             hStat.SetBinError(ibin, hStat.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
             hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin) , ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) ]) )
+
         hReco = hRMS.Clone()
 
         
@@ -1007,6 +1013,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             if i < 11:
                 powheglist[i].SetBinContent(ibin, powheglist[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
                 powheglistSD[i].SetBinContent(ibin, powheglistSD[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+
+
+
 ########################################################################################## Add JER and JES Uncertainties
         for ibin in xrange(1,hReco.GetNbinsX()):
             val = float(hReco.GetBinContent(ibin))
@@ -1094,6 +1103,19 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoBarePdf.SetLineColor( hStat.GetLineColor() )
         hRecoBarePdf.SetFillStyle(0)
 
+
+
+        histlist = [puup, pudn, jmrup, jmrdn, jmrnom, jesUP, jeOWN, jerUP, jerDOWN, nom, MC_list[i], herwig_genlist[i], herwig_genlistSD[i], hRMS, hStat, hReco, hRecoBarePdf, hRecoPDF]
+
+
+        if options.extra_massy:
+            for ihist in histlist:
+                for ibin in xrange(1, ihist.GetNbinsX()) :
+                    xval = ihist.GetBinCenter(ibin)
+                    yval = ihist.GetBinContent(ibin)
+                    yerr = ihist.GetBinError(ibin)
+                    ihist.SetBinContent( ibin, xval * yval )
+                    ihist.SetBinError( ibin, xval * yerr )
         
         print '-------- integral : ' + str( hRecoPDF.Integral(0, hRecoPDF.GetNbinsX(), "width" ) )
         iisum = 0.
@@ -1163,7 +1185,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         MC_list[i].SetLineColor(1)
         MC_list[i].SetLineStyle(2)
         MC_list[i].SetLineWidth(3)
-        MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
+#MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
         if options.plotTheoryAndMC < 2 : 
             MC_list[i].Draw( "hist ][ SAME" )
         
@@ -1179,7 +1201,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 herwig_gen = herwig_genlistSD[i]
             else:
                 herwig_gen = herwig_genlist[i]
-            herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
+            #herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
             herwig_gen.SetLineStyle(8)
             herwig_gen.SetLineColor(ROOT.kMagenta + 1)
             herwig_gen.SetLineWidth(3)
@@ -1194,7 +1216,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 powheg = powheglistSD[i]
             else:
                 powheg = powheglist[i]
-            powheg.Scale(1.0/powheg.Integral("width"))
+            #powheg.Scale(1.0/powheg.Integral("width"))
             powheg.SetLineStyle(4)
             powheg.SetLineColor(ROOT.kGreen + 2)
             powheg.SetLineWidth(3)

@@ -10,6 +10,10 @@ parser.add_option('--oneband', action='store_true',
                   dest='oneband',
                   help='one band plots')
 
+parser.add_option('--extra_massy', action='store_true',
+                  default = False,
+                  dest='extra_massy',
+                  help='multiply by m of each bin')
 
 parser.add_option('--isSoftDrop', action='store_true',
                   default = False,
