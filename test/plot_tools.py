@@ -375,7 +375,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
 
         ####################################################################################### PDF Drawn Here
         #hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
-        hRecoPDF.SetTitle(";;Normalized cross section")
+
         hRecoPDF.GetYaxis().SetTitleSize(30)
         hRecoPDF.GetYaxis().SetTitleOffset(1.3)
         hRecoPDF.GetYaxis().SetLabelOffset(0.0001)
@@ -406,7 +406,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         #hRecoPDF.Draw("E same")
         ####################################################################################### PS Drawn Here
         #hRecoCopy.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
-        hRecoCopy.SetTitle(";;Normalized cross section")
+        #hRecoCopy.SetTitle(";;Normalized cross section")
         hRecoCopy.GetYaxis().SetTitleSize(30)
         hRecoCopy.GetYaxis().SetTitleOffset(1.3)
         hRecoCopy.GetYaxis().SetLabelOffset(0.0001)
@@ -417,7 +417,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy.Draw(" E2 ][ same")
         ####################################################################################### JMR Drawn Here
         hRecoJMR.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
-        hRecoJMR.SetTitle(";;Normalized cross section")
+        #hRecoJMR.SetTitle(";;Normalized cross section")
         hRecoJMR.GetYaxis().SetTitleSize(30)
         hRecoJMR.GetYaxis().SetTitleOffset(1.3)
         hRecoJMR.GetYaxis().SetLabelOffset(0.0001)
@@ -428,7 +428,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoJMR.Draw("E2 ][ same")    
         ####################################################################################### JES and JER Drawn Here
         hReco.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
-        hReco.SetTitle(";;Normalized cross section")
+        #hReco.SetTitle(";;Normalized cross section")
         hReco.GetYaxis().SetTitleSize(30)
         hReco.GetYaxis().SetTitleOffset(1.3)
         hReco.GetYaxis().SetLabelOffset(0.0001)
@@ -441,7 +441,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
 
         ####################################################################################### PU Drawn Here
         hRecoPU.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
-        hRecoPU.SetTitle(";;Normalized cross section")
+        #hRecoPU.SetTitle(";;Normalized cross section")
         hRecoPU.GetYaxis().SetTitleSize(30)
         hRecoPU.GetYaxis().SetTitleOffset(1.3)
         hRecoPU.GetYaxis().SetLabelOffset(0.0001)
@@ -453,7 +453,7 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         
         keephists.append([hReco, hRecoPDF])
         ####################################################################################### Stat Drawn Here
-        hRMS.SetTitle(";;Normalized cross section")
+        #hRMS.SetTitle(";;Normalized cross section")
         hRMS.GetYaxis().SetTitleSize(30)
         hRMS.GetYaxis().SetTitleOffset(1.3)
         hRMS.GetYaxis().SetLabelOffset(0.0001)
@@ -1061,7 +1061,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) ]))
         ####################################################################################### PDF Drawn Here
         hReco.Scale(1.0/hReco.Integral("width"))
-        hRecoPDF.SetTitle(";;Normalized cross section")
+        #hRecoPDF.SetTitle(";;Normalized cross section")
         hRecoPDF.GetYaxis().SetTitleSize(30)
         hRecoPDF.GetYaxis().SetTitleOffset(1.3)
         hRecoPDF.GetYaxis().SetLabelOffset(0.01)
@@ -1070,7 +1070,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kGray)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral("width"))
-        hStat.SetTitle(";;Normalized cross section")
+        #hStat.SetTitle(";;Normalized cross section")
         hStat.GetYaxis().SetTitleSize(30)
         hStat.GetYaxis().SetTitleOffset(1.3)
         hStat.GetYaxis().SetLabelOffset(0.0001)
@@ -1105,7 +1105,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
 
 
-        histlist = [puup, pudn, jmrup, jmrdn, jmrnom, jesUP, jeOWN, jerUP, jerDOWN, nom, MC_list[i], herwig_genlist[i], herwig_genlistSD[i], hRMS, hStat, hReco, hRecoBarePdf, hRecoPDF]
+        histlist = [puup, pudn, jmrup, jmrdn, jmrnom, jesUP, jeOWN, jerUP, jerDOWN, nom, hRMS, hStat, hReco, hRecoBarePdf, hRecoPDF ]
 
 
         if options.extra_massy:
@@ -1128,7 +1128,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         ##     hStat.SetBinContent( ibin, hStat.GetBinContent(ibin) * hStat.GetBinCenter(ibin) )
         ##     hRecoBarePdf.SetBinContent( ibin, hRecoBarePdf.GetBinContent(ibin) * hRecoBarePdf.GetBinCenter(ibin) )
 
-        
+        for titlehist in [hRecoPDF, hRecoBarePdf, hRecoCopy, hRecoJMR, hReco, hRecoPU, hRMS, ] : 
+            if not options.extra_massy : 
+                titlehist.SetTitle(";;Normalized cross section")
+            else :
+                titlehist.SetTitle(";;#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")
+                        
         hRecoPDF.Draw("E2 ][")
         
         if options.isSoftDrop : 
@@ -1185,7 +1190,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         MC_list[i].SetLineColor(1)
         MC_list[i].SetLineStyle(2)
         MC_list[i].SetLineWidth(3)
-#MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
+        MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
         if options.plotTheoryAndMC < 2 : 
             MC_list[i].Draw( "hist ][ SAME" )
         
@@ -1193,7 +1198,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         legends_list[i].AddEntry(hRecoPDF, 'Data', 'p')
         legends_list[i].AddEntry(hRecoPDF, 'Stat. + Syst. Unc.', 'f')
         legends_list[i].AddEntry(hStat, 'Stat. Unc.', 'f')
-
+ 
+        
         if options.plotTheoryAndMC < 2 : 
             legends_list[i].AddEntry(MC_list[i], 'Pythia8', 'l')
             herwig_gen = None
@@ -1201,7 +1207,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 herwig_gen = herwig_genlistSD[i]
             else:
                 herwig_gen = herwig_genlist[i]
-            #herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
+            herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
             herwig_gen.SetLineStyle(8)
             herwig_gen.SetLineColor(ROOT.kMagenta + 1)
             herwig_gen.SetLineWidth(3)
@@ -1216,7 +1222,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 powheg = powheglistSD[i]
             else:
                 powheg = powheglist[i]
-            #powheg.Scale(1.0/powheg.Integral("width"))
+            powheg.Scale(1.0/powheg.Integral("width"))
             powheg.SetLineStyle(4)
             powheg.SetLineColor(ROOT.kGreen + 2)
             powheg.SetLineWidth(3)
@@ -1227,6 +1233,17 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             powhegcopy.SetLineStyle(4)
             powhegcopy.SetLineColor(ROOT.kGreen + 2)
             powhegcopy.SetLineWidth(3)
+             
+    
+
+        if options.extra_massy: 
+            for ihist in [MC_list[i], herwig_gen, herwigCopy, powheg, powhegcopy, theorylist[i], theorylist2[i]] :
+                for ibin in xrange(1, ihist.GetNbinsX()) :
+                    xval = ihist.GetBinCenter(ibin)
+                    yval = ihist.GetBinContent(ibin)
+                    yerr = ihist.GetBinError(ibin)
+                    ihist.SetBinContent( ibin, xval * yval )
+                    ihist.SetBinError( ibin, xval * yerr )  
             
         if i < 11 and options.isSoftDrop and (options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2) : #and isData:
             theory = theorylist[i]
@@ -1659,14 +1676,24 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             the_stack.GetXaxis().SetRangeUser(10, 1000)
             the_stack.GetXaxis().SetMoreLogLabels(True)
         the_stack.GetXaxis().SetNoExponent()
-        the_stack.SetMinimum(1e-14)
-        the_stack.SetMaximum(1e4)
-        stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
-        stackleg.Draw()
-        if(not options.isSoftDrop):
-            the_stack.SetTitle(";Jet mass(GeV);Normalized cross section")
-        else:
-            the_stack.SetTitle(";Groomed jet mass(GeV);Normalized cross section")
+        if not options.extra_massy : 
+            the_stack.SetMinimum(1e-14)
+            the_stack.SetMaximum(1e4)
+            stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
+            stackleg.Draw()
+            if(not options.isSoftDrop):
+                the_stack.SetTitle(";Jet mass(GeV);Normalized cross section")
+            else:
+                the_stack.SetTitle(";Groomed jet mass(GeV);Normalized cross section")
+        else :
+            the_stack.SetMinimum(1e-12)
+            the_stack.SetMaximum(1e6)
+            stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
+            stackleg.Draw()
+            if(not options.isSoftDrop):
+                the_stack.SetTitle(";Jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")
+            else:
+                the_stack.SetTitle(";Groomed jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")            
         latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
         latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
@@ -1675,12 +1702,16 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         the_stack.GetYaxis().SetLabelOffset(0.0001)
         the_stack.GetYaxis().SetLabelSize(28)
         stack_canvas.Update()
+        if not options.extra_massy :
+            mstr = ''
+        else :
+            mstr = '_mdsigmadm'
         if(not options.isSoftDrop):
-            stack_canvas.SaveAs("fullstack.png")
-            stack_canvas.SaveAs("fullstack.pdf")
+            stack_canvas.SaveAs("fullstack" + mstr + ".png")
+            stack_canvas.SaveAs("fullstack" + mstr + ".pdf")
         else:
-            stack_canvas.SaveAs("fullstacksoftdrop.png")
-            stack_canvas.SaveAs("fullstacksoftdrop.pdf")
+            stack_canvas.SaveAs("fullstacksoftdrop" + mstr + ".png")
+            stack_canvas.SaveAs("fullstacksoftdrop" + mstr + ".pdf")
 
 
         # Make plots of chi2
