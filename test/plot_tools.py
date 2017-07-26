@@ -232,7 +232,7 @@ def unpinch_vals( hist, delta = 2, xval = None ) :
 
 def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, puup_list, pudn_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
-    mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
+
     theoryfile = ROOT.TFile("theory_predictions.root")
     theorylist = []
     theoryfile2 = ROOT.TFile("theory_predictions_marzani_newpred.root")
@@ -303,30 +303,30 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
 
 
         for ibin in xrange(1, hRMS.GetNbinsX()):
-            hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
-            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
-            hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin), ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) ]) )
+            hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / hRMS.GetBinWidth(ibin))
+            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / hRMS.GetBinWidth(ibin))
+            hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin), ((jackknifeRMS[i][ibin-1])*scales[i]*(1./hRMS.GetBinWidth(ibin)) ) ]) )
         hReco = hRMS.Clone()
         ########################################################################################## Scale the hists for mass bins
         for ibin in xrange(1, hReco.GetNbinsX()):
-            jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
 
-            jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            puUP.SetBinContent(ibin, puUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            puDOWN.SetBinContent(ibin, puDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])            
-            nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            puUP.SetBinContent(ibin, puUP.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            puDOWN.SetBinContent(ibin, puDOWN.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))            
+            nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
             
-            herwig_genlist[i].SetBinContent(ibin, herwig_genlist[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            herwig_genlistSD[i].SetBinContent(ibin, herwig_genlistSD[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            herwig_genlist[i].SetBinContent(ibin, herwig_genlist[i].GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+            herwig_genlistSD[i].SetBinContent(ibin, herwig_genlistSD[i].GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
             if i < 11:
-                powheglist[i].SetBinContent(ibin, powheglist[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-                powheglistSD[i].SetBinContent(ibin, powheglistSD[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+                powheglist[i].SetBinContent(ibin, powheglist[i].GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
+                powheglistSD[i].SetBinContent(ibin, powheglistSD[i].GetBinContent(ibin) * 1./hReco.GetBinWidth(ibin))
         ########################################################################################## Add JER and JES Uncertainties
         for ibin in xrange(1,hReco.GetNbinsX()):
             val = float(hReco.GetBinContent(ibin))
@@ -366,12 +366,12 @@ def plotter(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, 
         hRecoCopy = hRecoPU.Clone()
         for ibin in xrange(1, hRecoCopy.GetNbinsX()):
             temp = hRecoCopy.GetBinError(ibin)
-            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) ]) )            
+            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ hReco.GetBinWidth(ibin)) ]) )            
         ######################################################################################## Add PDF Uncertainties
         hRecoPDF = hRecoCopy.Clone()
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             temp = hRecoPDF.GetBinError(ibin)
-            hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] )] ))
+            hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ hReco.GetBinWidth(ibin) )] ))
 
         ####################################################################################### PDF Drawn Here
         #hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2} #sigma}{dm dp_{T} } (#frac{1}{GeV})")
@@ -986,33 +986,33 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         #zero_hist_bins( 0, 1, [hRMS,hStat,puup,pudn,jmrup,jmrdn,jmrnom,jesUP,jeOWN,jerUP,jerDOWN,nom] )
 
         for ibin in xrange(1, hRMS.GetNbinsX()):
-            hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / mbinwidths[ibin-1])
-            hStat.SetBinContent(ibin, hStat.GetBinContent(ibin)* 1. / mbinwidths[ibin-1])
-            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
-            hStat.SetBinError(ibin, hStat.GetBinError(ibin) * 1. / mbinwidths[ibin-1])
-            hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin) , ((jackknifeRMS[i][ibin-1])*scales[i]*(1./mbinwidths[ibin-1]) ) ]) )
+            hRMS.SetBinContent(ibin, hRMS.GetBinContent(ibin) * 1. / hRMS.GetBinWidth(ibin))
+            hStat.SetBinContent(ibin, hStat.GetBinContent(ibin)* 1. / hRMS.GetBinWidth(ibin))
+            hRMS.SetBinError(ibin, hRMS.GetBinError(ibin) * 1. / hRMS.GetBinWidth(ibin))
+            hStat.SetBinError(ibin, hStat.GetBinError(ibin) * 1. / hRMS.GetBinWidth(ibin))
+            hRMS.SetBinError(ibin, add_quadrature( [hRMS.GetBinError(ibin) , ((jackknifeRMS[i][ibin-1])*scales[i]*(1./hRMS.GetBinWidth(ibin)) ) ]) )
 
         hReco = hRMS.Clone()
 
         
         ########################################################################################## Scale the hists for mass bins
         for ibin in xrange(1, hReco.GetNbinsX()):
-            puup.SetBinContent(ibin, puup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            pudn.SetBinContent(ibin, pudn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            herwig_genlist[i].SetBinContent(ibin, herwig_genlist[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            herwig_genlistSD[i].SetBinContent(ibin, herwig_genlistSD[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            puup.SetBinContent(ibin, puup.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            pudn.SetBinContent(ibin, pudn.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jerDOWN.SetBinContent(ibin, jerDOWN.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            nom.SetBinContent(ibin, nom.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            MC_list[i].SetBinContent(ibin, MC_list[i].GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            herwig_genlist[i].SetBinContent(ibin, herwig_genlist[i].GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            herwig_genlistSD[i].SetBinContent(ibin, herwig_genlistSD[i].GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
             if i < 11:
-                powheglist[i].SetBinContent(ibin, powheglist[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-                powheglistSD[i].SetBinContent(ibin, powheglistSD[i].GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+                powheglist[i].SetBinContent(ibin, powheglist[i].GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+                powheglistSD[i].SetBinContent(ibin, powheglistSD[i].GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
 
 
 
@@ -1053,12 +1053,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         hRecoCopy = hRecoPU.Clone()
         for ibin in xrange(1, hRecoCopy.GetNbinsX()):
             temp = hRecoCopy.GetBinError(ibin)
-            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1]) ]))
+            hRecoCopy.SetBinError(ibin, add_quadrature( [temp , (psdif_list[i][ibin-1] * 1./ hRMS.GetBinWidth(ibin)) ]))
         ######################################################################################## Add PDF Uncertainties
         hRecoPDF = hRecoCopy.Clone()
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             temp = hRecoPDF.GetBinError(ibin)
-            hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) ]))
+            hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ hRMS.GetBinWidth(ibin) ) ]))
         ####################################################################################### PDF Drawn Here
         hReco.Scale(1.0/hReco.Integral("width"))
         #hRecoPDF.SetTitle(";;Normalized cross section")
@@ -1907,10 +1907,10 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         postData.SetName( postData.GetName()+"_copy" )
         postData.Scale(1.0/postData.Integral("width"))
         for ibin in xrange(1, preMC.GetNbinsX()):
-            preMC.SetBinContent(ibin, preMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            postMC.SetBinContent(ibin, postMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            preData.SetBinContent(ibin, preData.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            postData.SetBinContent(ibin, postData.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            preMC.SetBinContent(ibin, preMC.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            postMC.SetBinContent(ibin, postMC.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            preData.SetBinContent(ibin, preData.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            postData.SetBinContent(ibin, postData.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
 
         
         postMC.Divide( postMC, preMC, 1.0, 1.0 )
@@ -1960,10 +1960,10 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         postData2.Scale(1.0/postData2.Integral("width"))
         
         for ibin in xrange(1, preMC.GetNbinsX()):
-            preMC2.SetBinContent(ibin, preMC2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            genMC.SetBinContent(ibin, genMC.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            preData2.SetBinContent(ibin, preData2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
-            postData2.SetBinContent(ibin, postData2.GetBinContent(ibin) * 1./mbinwidths[ibin-1])
+            preMC2.SetBinContent(ibin, preMC2.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            genMC.SetBinContent(ibin, genMC.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            preData2.SetBinContent(ibin, preData2.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            postData2.SetBinContent(ibin, postData2.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
 
         genMC.Divide( genMC, postData2, 1.0, 1.0 )
         preMC2.Divide( preMC2, preData2, 1.0, 1.0 )
