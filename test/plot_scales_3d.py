@@ -73,16 +73,24 @@ for ihist in xrange( len(histstrs) ):
     htemp = f.Get(histstrs[ihist])
 
     totresc = ROOT.TCanvas("totresc_" +str(ihist), "totresc_" + str(ihist) )
+    totresc2 = ROOT.TCanvas("totresc2_" +str(ihist), "totresc2_" + str(ihist) )
     mg = ROOT.TMultiGraph()
+    rg = ROOT.TMultiGraph()
     canvs.append(totresc)
-    multigraphs.append(mg)
+    multigraphs.append([mg,rg])
     leg = ROOT.TLegend(0.16, 0.64, 0.84, 0.84)
     leg.SetHeader("p_{T} Bins")
     leg.SetNColumns(4)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     legs.append(leg)
-
+    leg2 = ROOT.TLegend(0.16, 0.64, 0.84, 0.84)
+    leg2.SetHeader("p_{T} Bins")
+    leg2.SetNColumns(4)
+    leg2.SetFillColor(0)
+    leg2.SetBorderSize(0)
+    legs.append(leg2)
+    
     for ptbin in xrange( 1, htemp.GetNbinsX() ) :
 
         print 'processing ptbin ', ptbin
@@ -137,7 +145,7 @@ for ihist in xrange( len(histstrs) ):
         #massres = ROOT.TGraphErrors( len(graphX), graphX, graphY, graphDX, graphDY )
         massres = ROOT.TGraph( len(graphX), graphX, graphY )
         massres.SetName("massres_" + str(ptbin))
-        massres.SetTitle(";Jet mass (GeV);Fitted m_{reco}/m_{gen}")
+        massres.SetTitle(";Jet mass (GeV);JMS")
         leg.AddEntry( massres, ptquickstrs[ptbin-1], "l" )
         #massres.SetFillColor(colors[ptbin])
         massres.SetLineColor(colors[ptbin-1])
@@ -168,11 +176,12 @@ for ihist in xrange( len(histstrs) ):
         resc2 = ROOT.TCanvas("resc2_" +str(ihist) + "_" + str(ptbin), "resc2_" + str(ptbin) )
         massres2 = ROOT.TGraph( len(graphX), graphX, graphDY )
         massres2.SetName("massres2_" + str(ptbin))
-        massres2.SetTitle("p_{T} = " + ptbinstrs[ptbin] +"-" + ptbinstrs[ptbin] + ";Jet mass (GeV);Width of Fitted m_{reco}/m_{gen}")
-        massres2.SetFillColor(ROOT.kBlue)
-        massres2.SetLineColor(ROOT.kBlue)
-        massres2.SetLineWidth(3)
-        massres2.SetFillStyle(3005)
+        massres2.SetTitle(";Jet mass (GeV);JMR")
+        leg2.AddEntry( massres2, ptquickstrs[ptbin-1], "l" )
+        massres2.SetLineColor(colors[ptbin-1])
+        massres2.SetLineWidth(2)
+        massres2.SetLineStyle(styles[ptbin-1])
+
         massres2.Draw("AL")
         resc2.SetLogx()
         resc2.SetLogy()
@@ -184,6 +193,8 @@ for ihist in xrange( len(histstrs) ):
         line.SetLineColor(2)
         line.DrawLine(1,0.5,2000.,0.5)
         lines.append(line)
+        rg.Add(massres2)
+        
         if ihist == 0 : 
             resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.png", "png")
             resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.pdf", "pdf")
@@ -202,10 +213,16 @@ for ihist in xrange( len(histstrs) ):
 
     totresc.cd()
     mg.Draw("AL")
-    mg.SetTitle(";Groomed jet mass (GeV);JMS")
-    mg.SetMinimum(0.8)
-    mg.SetMaximum(1.2)
-    mg.GetXaxis().SetRangeUser(10., 1000.)
+    if ihist == 0 :
+        mg.SetTitle(";Ungroomed jet mass (GeV);JMS")
+        mg.SetMinimum(0.0)
+        mg.SetMaximum(3.0)
+        mg.GetXaxis().SetRangeUser(20., 1000.)
+    else : 
+        mg.SetTitle(";Groomed jet mass (GeV);JMS")
+        mg.SetMinimum(0.7)
+        mg.SetMaximum(1.3)
+        mg.GetXaxis().SetRangeUser(10., 1000.)
     totresc.SetLogx()
     #tlx.DrawLatex ( 0.6, 0.830, ptbinstrs[ptbin])
     prelim.DrawLatex( 0.2, 0.926, "CMS Simulation" )
@@ -213,8 +230,37 @@ for ihist in xrange( len(histstrs) ):
     leg.Draw()
     
     if ihist == 0 : 
-        totresc.Print("mreco_mgen_pt_ungroomed.png", "png")
-        totresc.Print("mreco_mgen_pt_ungroomed.pdf", "pdf")
+        totresc.Print("jms_ungroomed.png", "png")
+        totresc.Print("jms_ungroomed.pdf", "pdf")
     else :
-        totresc.Print("mreco_mgen_pt_groomed.png", "png")
-        totresc.Print("mreco_mgen_pt_groomed.pdf", "pdf")
+        totresc.Print("jms_groomed.png", "png")
+        totresc.Print("jms_groomed.pdf", "pdf")
+
+
+
+    totresc2.cd()
+    rg.Draw("AL")
+    if ihist == 0 :
+        rg.SetTitle(";Ungroomed jet mass (GeV);JMR")
+        rg.SetMinimum(0.0)
+        rg.SetMaximum(0.6)
+        rg.GetXaxis().SetRangeUser(20., 1000.)
+    else : 
+        rg.SetTitle(";Groomed jet mass (GeV);JMR")
+        rg.SetMinimum(0.0)
+        rg.SetMaximum(0.6)        
+        rg.GetXaxis().SetRangeUser(10., 1000.)
+    totresc2.SetLogx()
+    #tlx.DrawLatex ( 0.6, 0.830, ptbinstrs[ptbin])
+    prelim.DrawLatex( 0.2, 0.926, "CMS Simulation" )
+    prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
+    leg2.Draw()
+    
+    if ihist == 0 : 
+        totresc2.Print("jmr_ungroomed.png", "png")
+        totresc2.Print("jmr_ungroomed.pdf", "pdf")
+    else :
+        totresc2.Print("jmr_groomed.png", "png")
+        totresc2.Print("jmr_groomed.pdf", "pdf")
+
+        
