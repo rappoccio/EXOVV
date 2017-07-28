@@ -4,7 +4,7 @@ ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
-from plot_tools import plotter, setup, get_ptbins, smooth
+from plot_tools import setup, get_ptbins, smooth
 from optparse import OptionParser
 from sysvar import plot_vars, reset
 import pickle
