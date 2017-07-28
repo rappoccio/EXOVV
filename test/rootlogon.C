@@ -41,7 +41,7 @@
 
   tdrStyle->SetEndErrorSize(2);
   //tdrStyle->SetErrorMarker(20);
-  tdrStyle->SetErrorX(0.);
+  //tdrStyle->SetErrorX(0.);
   
   tdrStyle->SetMarkerStyle(20);
 
@@ -125,7 +125,7 @@
   tdrStyle->SetOptLogy(0);
   tdrStyle->SetOptLogz(0);
 
-  tdrStyle->SetPalette(1,0);
+  tdrStyle->SetPalette(kBird);
 
 // Postscript options:
   // tdrStyle->SetPaperSize(15.,15.);
