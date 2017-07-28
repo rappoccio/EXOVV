@@ -119,13 +119,44 @@ class RooUnfoldUnfolder:
         #### FIXME FIXME FIXME FIXME : the PDF up and down should be 0.5*(up-dn), not (up-dn)
 
         # Parton shower: Half the difference between pythia and herwig
+        # However : There is a different pt spectrum, so need to correct per pt bin to
+        # just get the mass differences
         self.files['_ps'] = ROOT.TFile("PS_hists.root")
         self.responses['_ps'] = self.files['_ps'].Get( 'unfold_ps_data' + postfix1 + '_herwig' )
         hps = self.responses['_ps'].Hreco()
-        normalizeHist( hps, normalizeUnity = self.normalizeUnity, normalizeEachPtBin = self.normalizeEachPtBin  )
+        normalizeHist( hps, normalizeUnity = True, normalizeEachPtBin = True  )
+
+        print '----------- Pythia value, Herwig dsigma/dm, pythia dsigma/dm, fractional uncertainty:'
+        for ix in xrange(1,10) :
+            print " %8.1e" % ( self.nom.GetBinContent(ix, 2) ),
+        print ''
+        for ix in xrange(1,10) :
+            print " %8.1e" % ( hps.GetBinContent(ix, 2) ),
+        print ''
+        nomForPS = self.nom.Clone( self.nom.GetName() + "_normalizingPS")
+        normalizeHist( nomForPS, normalizeUnity = False, normalizeEachPtBin = True  ) # Normalization to unity already done
+        for ix in xrange(1,10) :
+            print " %8.1e" % ( nomForPS.GetBinContent(ix, 2) ),
+        print ''
+        
+        # This holds 0.5 * [ (dsigma/dm)_pythia - (dsigma/dm)_herwig ]
+        hps.Add( nomForPS, -1.0 )
+        hps.Scale(0.5)
+        for ix in xrange(1,10) :
+            print " %8.1e" % ( hps.GetBinContent(ix, 2) ),
+        print ''
+
+        # Now set up the PS uncertainties themselves:
         self.uncertainties['_ps'] = self.nom.Clone( self.nom.GetName() + "_ps" )
-        self.uncertainties['_ps'].Add( hps, -0.5 )
-        self.uncertainties['_ps'].Divide( self.nom )
+        for ix in xrange(1,self.nom.GetNbinsX()+1) :
+            for iy in xrange(1,self.nom.GetNbinsY()+1) :
+                value = abs(hps.GetBinContent(ix,iy))
+                self.uncertainties['_ps'].SetBinContent(ix,iy,value)
+
+                
+                
+        #self.uncertainties['_ps'].Add( hps, -0.5 )
+        #self.uncertainties['_ps'].Divide( self.nom )
 
 
         RMS_vals = pickle.load(open("ungroomeddataJackKnifeRMS.p", "rb"))         ########
@@ -174,20 +205,3 @@ class RooUnfoldUnfolder:
         self.nom.GetYaxis().SetRangeUser(200, 1300)
         self.nom.GetXaxis().SetRangeUser(0, 800)
         self.histDriver_.stampCMS( c, "CMS Preliminary")
-        
-    def drawUncertainties(self, postfix ):
-        c = ROOT.TCanvas("cunc" + postfix, "cunc" + postfix)
-        c.SetLogx()
-        
-        self.histDriver_.canvs_.append(c)
-        
-        stack = ROOT.THStack( self.nom.GetName() + "_uncstack", self.nom.GetTitle() )
-        iunc = 1
-        for unc in self.uncertainties.itervalues() :
-            setStyles( unc, lineStyle= iunc, lineColor=iunc )
-            iunc += 1
-            stack.Add( unc )
-        stack.Draw("nostack hist")
-        self.histDriver_.stampCMS( c, "CMS Preliminary")
-        self.histDriver_.stacks_.append(stack)
-        self.histDriver_.canvs_.append(c)

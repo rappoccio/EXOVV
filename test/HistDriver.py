@@ -15,8 +15,8 @@ class HistDriver :
         self.stampCMSVal.SetTextFont(43)
         self.stampCMSVal.SetTextSize(25)
         self.markerStyles = [20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28, 29]
-        self.lineStyles = [1,2,3,4,5,6,8,9]
-        self.lineColors = [ROOT.kBlack, ROOT.kRed, ROOT.kBlue, ROOT.kGreen+3, ROOT.kViolet, ROOT.kMagenta, ROOT.kCyan+2]
+        self.lineStyles = [3,3,5,7,6,4,2,1,1,1,1]
+        self.lineColors = [ROOT.kRed, ROOT.kRed, ROOT.kBlue, ROOT.kCyan+1, ROOT.kMagenta, ROOT.kGreen+2, ROOT.kBlack, ROOT.kBlack, ROOT.kBlack]
         
 
     def plotFullXS( self, hist, postfix="" ):
@@ -25,7 +25,7 @@ class HistDriver :
         self.canvs_.append(c)
         stack = ROOT.THStack( hist.GetName() + "_stack", hist.GetTitle() )
         for iy in xrange(1,hist.GetNbinsY()+1):
-            proj = hist.ProjectionX('proj_' + hist.GetName() + str(iy), iy,iy )
+            proj = hist.ProjectionX('proj_' + hist.GetName() + postfix + str(iy), iy,iy )
             setStyles( proj, markerStyle=self.markerStyles[iy-1], fillColor=ROOT.kGray, fillStyle=1001 )            
             stack.Add( proj )
 
@@ -44,11 +44,11 @@ class HistDriver :
             c = ROOT.TCanvas("c" + str(iy) + postfix, "c" + str(iy) + postfix)
             self.canvs_.append(c)
             
-            proj = hist.ProjectionX('proj_' + hist.GetName() + str(iy), iy,iy, "e" )
+            proj = hist.ProjectionX('proj_' + hist.GetName() + postfix + str(iy), iy,iy, "e" )
             setStyles( proj, markerStyle=self.markerStyles[iy-1], fillColor=ROOT.kGray, fillStyle=1001 )            
             proj.Draw("e2")
             if histStat != None :
-                projStat = histStat.ProjectionX('proj_' + histStat.GetName() + str(iy), iy,iy, "e" )
+                projStat = histStat.ProjectionX('proj_' + histStat.GetName() + postfix + str(iy), iy,iy, "e" )
                 setStyles( projStat, markerStyle=self.markerStyles[iy-1], fillColor=ROOT.kGray+3, fillStyle=1001 )
                 projStat.Draw("e2 same")
             c.SetLogx()
@@ -71,13 +71,15 @@ class HistDriver :
 
             stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), hists.values()[0].GetTitle() )
             for ihist,hist in enumerate(hists.values()) :
-                        
-                proj = hist.ProjectionX('proj_' + hist.GetName() + str(iy), iy,iy, "e" )
-                setStyles( proj, lineStyle=self.lineStyles[ihist], lineColor=self.lineColors[ihist] )
+
+                proj = hist.ProjectionX('proj_' + hist.GetName()+ postfix + str(iy), iy,iy, "e" )
+                setStyles( proj, lineWidth=3, lineStyle=self.lineStyles[ihist], lineColor=self.lineColors[ihist] )
                 self.hists_.append(proj)
                 stack.Add( proj )
                 
             stack.Draw("nostack hist")
+            stack.SetMinimum(1e-4)
+            stack.SetMaximum(1e3)
             self.stacks_.append(stack)
             c.SetLogy()
             c.SetLogx()
@@ -165,7 +167,7 @@ def getGraph( hist, width=None, minmassbin=None ) :
     graph.SetFillStyle( hist.GetFillStyle() )
     return graph
 
-def normalizeHist(hist, normalizeUnity=True, normalizeEachPtBin=False):
+def normalizeHist(hist, normalizeUnity=True, normalizeEachPtBin=False, divideByBinWidths=True):
     '''
       1. Normalize to unity if desired.
       2. Divide all bins by bin width.
@@ -173,7 +175,8 @@ def normalizeHist(hist, normalizeUnity=True, normalizeEachPtBin=False):
     '''
     if normalizeUnity and hist.Integral("width") > 0.0 :
         hist.Scale( 1.0 / hist.Integral("width") )
-    divideByBinWidthsXY( hist )
+    if divideByBinWidths : 
+        divideByBinWidthsXY( hist )
     if normalizeEachPtBin :
         normalizeYSlices( hist )
 
