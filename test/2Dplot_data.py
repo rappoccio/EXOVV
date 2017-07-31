@@ -24,7 +24,7 @@ parser.add_option('--plotTheoryAndMC', action='store', type = 'int',
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
-                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom : _puup : _pudn or nothing at all to get the nominal')
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom : _jmsup : _jmsdn : _puup : _pudn or nothing at all to get the nominal')
 
 
 parser.add_option('--unrestrictedChi2', action='store_true',
@@ -77,6 +77,8 @@ jernomaF = []
 jmrdnaF = []
 jmrupaF = []
 jmrnomaF = []
+jmsdnaF = []
+jmsupaF = []
 pudnaF = []
 puupaF = []
 
@@ -88,6 +90,8 @@ jernomaFSD = []
 jmrdnaFSD = []
 jmrupaFSD = []
 jmrnomaFSD = []
+jmsdnaFSD = []
+jmsupaFSD = []
 pudnaFSD = []
 puupaFSD = []
 
@@ -99,6 +103,8 @@ jernoma = []
 jmrdna = []
 jmrupa = []
 jmrnoma = []
+jmsdna = []
+jmsupa = []
 pudna = []
 puupa = []
 
@@ -110,6 +116,8 @@ jernomaSD = []
 jmrdnaSD = []
 jmrupaSD = []
 jmrnomaSD = []
+jmsdnaSD = []
+jmsupaSD = []
 pudnaSD = []
 puupaSD = []
 
@@ -127,6 +135,8 @@ jernom = ROOT.TFile('2DData_jernom.root')
 jmrupfile = ROOT.TFile('2DData_jmrup.root')
 jmrdnfile = ROOT.TFile('2DData_jmrdn.root')
 jmrnomfile= ROOT.TFile('2DData_jmrnom.root')
+jmsupfile = ROOT.TFile('2DData_jmsup.root')
+jmsdnfile = ROOT.TFile('2DData_jmsdn.root')
 pudn = ROOT.TFile('2DData_pudn.root')
 puup = ROOT.TFile('2DData_puup.root')
 
@@ -140,6 +150,8 @@ for i in range(0, nptbin):
     jmrupa.append(jmrupfile.Get('mass' + str(i)))
     jmrdna.append(jmrdnfile.Get('mass' + str(i)))
     jmrnoma.append(jmrnomfile.Get('mass' + str(i)))
+    jmsupa.append(jmsupfile.Get('mass' + str(i)))
+    jmsdna.append(jmsdnfile.Get('mass' + str(i)))
     pudna.append(pudn.Get('mass' + str(i)))
     puupa.append(puup.Get('mass' + str(i)))
 
@@ -152,6 +164,8 @@ for i in range(0, nptbin):
     jmrupaSD.append(jmrupfile.Get('massSD' + str(i)))
     jmrdnaSD.append(jmrdnfile.Get('massSD' + str(i)))
     jmrnomaSD.append(jmrnomfile.Get('massSD' + str(i)))
+    jmsupaSD.append(jmsupfile.Get('massSD' + str(i)))
+    jmsdnaSD.append(jmsdnfile.Get('massSD' + str(i)))
     pudnaSD.append(pudn.Get('massSD' + str(i)))
     puupaSD.append(puup.Get('massSD' + str(i)))
 
@@ -164,6 +178,8 @@ for i in range(0, nptbin):
     jmrupaF.append(jmrupfile.Get('mass' + str(i)))
     jmrdnaF.append(jmrdnfile.Get('mass' + str(i)))
     jmrnomaF.append(jmrnomfile.Get('mass' + str(i)))
+    jmsupaF.append(jmsupfile.Get('mass' + str(i)))
+    jmsdnaF.append(jmsdnfile.Get('mass' + str(i)))
     pudnaF.append(pudn.Get('mass' + str(i)))
     puupaF.append(puup.Get('mass' + str(i)))
         
@@ -175,6 +191,8 @@ for i in range(0, nptbin):
     jmrupaFSD.append(jmrupfile.Get('massSD' + str(i)))
     jmrdnaFSD.append(jmrdnfile.Get('massSD' + str(i)))
     jmrnomaFSD.append(jmrnomfile.Get('massSD' + str(i)))
+    jmsupaFSD.append(jmsupfile.Get('massSD' + str(i)))
+    jmsdnaFSD.append(jmsdnfile.Get('massSD' + str(i)))
     pudnaFSD.append(pudn.Get('massSD' + str(i)))
     puupaFSD.append(puup.Get('massSD' + str(i)))
     
@@ -357,7 +375,7 @@ setup(datacanvases_fullbandSD, pads_fullbandSD)
 histstokeep = []
 
 if options.isSoftDrop:
-    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, puupaFSD, pudnaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldeddata_softdrop_fullband_" + mstr, jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=True)
+    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, puupaFSD, pudnaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldeddata_softdrop_fullband_" + mstr, jmrupaFSD, jmrdnaFSD, jmrnomaFSD, jmsupaFSD, jmsdnaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=True)
 else:
-    plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, puupaF, pudnaF, ps_differences, pdf_differences, alegends_fullband, "unfoldeddata_fullband_" + mstr, jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=True)
+    plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, puupaF, pudnaF, ps_differences, pdf_differences, alegends_fullband, "unfoldeddata_fullband_" + mstr, jmrupaF, jmrdnaF, jmrnomaF, jmsupaF, jmsdnaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=True)
 del histstokeep[:]
