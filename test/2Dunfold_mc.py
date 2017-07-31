@@ -16,12 +16,12 @@ parser = OptionParser()
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
-                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom : _jmsup : _jmsdn : or nothing at all to get the nominal')
 
                                 
 (options, args) = parser.parse_args()
 
-myfile = TFile('responses_rejec_tightgen_otherway_qcdmc_2dplots.root')
+myfile = TFile('responses_rejec_fixjmr_otherway_qcdmc_2dplots.root')
 
 
 response = myfile.Get('2d_response' + options.extension )
