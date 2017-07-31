@@ -28,7 +28,7 @@ parser.add_option('--plotTheoryAndMC', action='store', type = 'int',
 parser.add_option('--extension', action ='store', type = 'string',
                  default ='',
                  dest='extension',
-                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom or nothing at all to get the nominal')
+                 help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom : _jmsup : _jmsdn : _puup : _pudn or nothing at all to get the nominal')
 
 parser.add_option('--unrestrictedChi2', action='store_true',
                   default = False,
@@ -232,7 +232,7 @@ def setup(canvases_to_use, pads_to_use):
         pad2.Draw()
         pads_to_use.append( [pad1,pad2] )
 
-def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, puup_list, pudn_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
+def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, puup_list, pudn_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, jmsup_list, jmsdn_list, latex_list, latexpt_list, ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, isData = False):
     
     the_stack = THStack("stack", "")
     build_the_stack = []
@@ -298,6 +298,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         jmrup = jmrup_list[i]
         jmrdn = jmrdn_list[i]
         jmrnom = jmrnom_list[i]
+        ########################################################################################## Get JMS hists
+        jmsup = jmsup_list[i]
+        jmsdn = jmsdn_list[i]
         ########################################################################################## Get PU hists
         puup = puup_list[i]
         pudn = pudn_list[i]
@@ -307,6 +310,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         jmrup.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
         jmrdn.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
         jmrnom.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
+        jmsup.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
+        jmsdn.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
         jesUP.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
         jeOWN.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
         jerUP.Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
@@ -333,6 +338,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             jmrup.SetBinContent(ibin, jmrup.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
             jmrdn.SetBinContent(ibin, jmrdn.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
             jmrnom.SetBinContent(ibin, jmrnom.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jmsup.SetBinContent(ibin, jmsup.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
+            jmsdn.SetBinContent(ibin, jmsdn.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
             jesUP.SetBinContent(ibin, jesUP.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
             jeOWN.SetBinContent(ibin, jeOWN.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
             jerUP.SetBinContent(ibin, jerUP.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
@@ -370,8 +377,20 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             err = add_quadrature( [err1 , sys] )
             hRecoJMR.SetBinError(ibin, err)
 
+        ####################################################################################### Add Jet mass scale Band
+        hRecoJMS = hRecoJMR.Clone()
+        for ibin in xrange(1, hRecoJMS.GetNbinsX()):
+            val = float(hRecoJMS.GetBinContent(ibin))
+            err1 = float(hRecoJMS.GetBinError(ibin))
+            upjms = float(abs(jmsup.GetBinContent(ibin) - nom.GetBinContent(ibin)))
+            downjms = float(abs(nom.GetBinContent(ibin) - jmsdn.GetBinContent(ibin)))
+            sys = float(((upjms + downjms)/2.))
+            err = add_quadrature( [err1 , sys] )
+            hRecoJMS.SetBinError(ibin, err)
+
+            
         ####################################################################################### Add Jet mass Resolution Band
-        hRecoPU = hRecoJMR.Clone()
+        hRecoPU = hRecoJMS.Clone()
         for ibin in xrange(1, hRecoPU.GetNbinsX()):
             val = float(hRecoPU.GetBinContent(ibin))
             err1 = float(hRecoPU.GetBinError(ibin))
@@ -436,7 +455,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
 
 
-        histlist = [puup, pudn, jmrup, jmrdn, jmrnom, jesUP, jeOWN, jerUP, jerDOWN, nom, hRMS, hStat, hReco, hRecoBarePdf, hRecoPDF ]
+        histlist = [puup, pudn, jmrup, jmrdn, jmrnom, jmsup, jmsdn, jesUP, jeOWN, jerUP, jerDOWN, nom, hRMS, hStat, hReco, hRecoBarePdf, hRecoPDF ]
 
 
         if options.extra_massy:
@@ -459,7 +478,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         ##     hStat.SetBinContent( ibin, hStat.GetBinContent(ibin) * hStat.GetBinCenter(ibin) )
         ##     hRecoBarePdf.SetBinContent( ibin, hRecoBarePdf.GetBinContent(ibin) * hRecoBarePdf.GetBinCenter(ibin) )
 
-        for titlehist in [hRecoPDF, hRecoBarePdf, hRecoCopy, hRecoJMR, hReco, hRecoPU, hRMS, ] : 
+        for titlehist in [hRecoPDF, hRecoBarePdf, hRecoCopy, hRecoJMR, hRecoJMS, hReco, hRecoPU, hRMS, ] : 
             if not options.extra_massy : 
                 titlehist.SetTitle(";;Normalized cross section")
             else :
