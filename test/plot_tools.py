@@ -19,7 +19,7 @@ parser.add_option('--extra_massy', action='store_true',
 
 
 parser.add_option('--plotTheoryAndMC', action='store', type = 'int',
-                  default = 0, # 0 = plot both, 1 = plot only MC, 2 = plot only theory
+herw                  default = 0, # 0 = plot both, 1 = plot only MC, 2 = plot only theory
                   dest='plotTheoryAndMC',
                   help='Plot theory and MC (0), just MC (1), or just theory (2)')
 
@@ -483,7 +483,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 titlehist.SetTitle(";;Normalized cross section")
             else :
                 titlehist.SetTitle(";;#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")
-                        
+
+
+        print 'hRecoPDF ', i
+        for ixxx in xrange(1,hRecoPDF.GetNbinsX()+1 ):
+            print ' %3d: %6.1e +- %6.1e' % ( ixxx, hRecoPDF.GetBinContent(ixxx), hRecoPDF.GetBinError(ixxx) ),
+        print ''
         hRecoPDF.Draw("E2 ][")
         
         if options.isSoftDrop : 

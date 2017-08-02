@@ -207,6 +207,16 @@ datacanvases= []
 
 datacanvases_fullband = []
 datacanvases_fullbandSD = []
+
+for hists in [
+    jecdnaF, jecupaF, jerdnaF, jerupaF, jernomaF, jmrdnaF, jmrupaF, jmrnomaF, jmsdnaF, jmsupaF, pudnaF, puupaF, 
+    jecdnaFSD, jecupaFSD, jerdnaFSD, jerupaFSD, jernomaFSD, jmrdnaFSD, jmrupaFSD, jmrnomaFSD, jmsdnaFSD, jmsupaFSD, pudnaFSD, puupaFSD, 
+    jecdna, jecupa, jerdna, jerupa, jernoma, jmrdna, jmrupa, jmrnoma, jmsdna, jmsupa, pudna, puupa, 
+    jecdnaSD, jecupaSD, jerdnaSD, jerupaSD, jernomaSD, jmrdnaSD, jmrupaSD, jmrnomaSD, jmsdnaSD, jmsupaSD, pudnaSD, puupaSD ] :
+    for hist in hists:
+        if hist.Integral() > 0 :
+            hist.Scale(1.0 / hist.Integral() )
+
 ################################################################################# generate canvases 
 
 

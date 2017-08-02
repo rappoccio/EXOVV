@@ -8,6 +8,21 @@ from ROOT import RooUnfold
 from ROOT import RooUnfoldBayes
 from ROOT import TCanvas
 # dict used later for labels
+
+
+
+from optparse import OptionParser
+parser = OptionParser()
+
+parser.add_option('--scale', action ='store_true', 
+                 default =False,
+                 dest='scale',
+                 help='Scale hists to unity?')
+
+(options, args) = parser.parse_args()
+ 
+
+
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
 nptbin = 11
 
@@ -35,21 +50,24 @@ pdfmstw_response_softdrop = pdffile.Get('2d_response_softdrop_mstw')
 data_reco = datafile.Get('PFJet_pt_m_AK8')
 data_reco_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
 
-data_reco.Scale(1./data_reco.Integral())
-data_reco_softdrop.Scale(1./data_reco_softdrop.Integral())
+if options.scale != None and options.scale : 
+    data_reco.Scale(1./data_reco.Integral())
+    data_reco_softdrop.Scale(1./data_reco_softdrop.Integral())
 
 # get pythia 8 reco and normalize
 pdf_reco = pdffile.Get('PFJet_pt_m_AK8')
 pdf_reco_softdrop = pdffile.Get('PFJet_pt_m_AK8SD')
 
-pdf_reco.Scale(1./pdf_reco.Integral())
-pdf_reco_softdrop.Scale(1./pdf_reco_softdrop.Integral())
+if options.scale != None and options.scale : 
+    pdf_reco.Scale(1./pdf_reco.Integral())
+    pdf_reco_softdrop.Scale(1./pdf_reco_softdrop.Integral())
 
 # get truth and normalize it
 pdf_gen = pdffile.Get('PFJet_pt_m_AK8Gen')
 pdf_gen_softdrop = pdffile.Get('PFJet_pt_m_AK8SDgen')
-pdf_gen.Scale(1./pdf_gen.Integral())
-pdf_gen_softdrop.Scale(1./pdf_gen_softdrop.Integral())
+if options.scale != None and options.scale : 
+    pdf_gen.Scale(1./pdf_gen.Integral())
+    pdf_gen_softdrop.Scale(1./pdf_gen_softdrop.Integral())
 
 ##################################################################################################### Unfold Pythia8 with PDF-UP
 unfold_pdfup = RooUnfoldBayes(pdfup_response, pdf_reco, 4)
@@ -68,7 +86,8 @@ for i, canvas in enumerate(canvases_up) :
     canvas.cd()
     namesreco_up[i] = unfolded_pdfup.ProjectionX('pdf_up' + str(i), i+1, i+1)
     namesreco_up[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_up[i].Scale(1.0 / namesreco_up[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_up[i].Scale(1.0 / namesreco_up[i].Integral() )
     namesreco_up[i].Draw('hist')
     legends_up[i].AddEntry(namesreco_up[i], 'Reco_pdfup', 'l')
     legends_up[i].Draw()
@@ -91,7 +110,8 @@ for i, canvas in enumerate(canvases_up_softdrop):
     canvas.cd()
     namesreco_up_softdrop[i] = unfolded_pdfup_softdrop.ProjectionX('pdf_up_softdrop' + str(i), i+1, i+1)
     namesreco_up_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_up_softdrop[i].Scale( 1.0 / namesreco_up_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_up_softdrop[i].Scale( 1.0 / namesreco_up_softdrop[i].Integral() )
     namesreco_up_softdrop[i].Draw('hist')
     legends_up_softdrop[i].AddEntry(namesreco_up_softdrop[i], 'Reco_pdfup_sd', 'l')
     legends_up_softdrop[i].Draw()
@@ -115,7 +135,8 @@ for i, canvas in enumerate(canvases_dn):
     canvas.cd()
     namesreco_dn[i] = unfolded_pdfdn.ProjectionX('pdf_dn' + str(i), i+1, i+1)
     namesreco_dn[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_dn[i].Scale(1.0 / namesreco_dn[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_dn[i].Scale(1.0 / namesreco_dn[i].Integral() )
     namesreco_dn[i].Draw('hist')
     legends_dn[i].AddEntry(namesreco_dn[i], 'Reco_pdfdn', 'l')
     legends_dn[i].Draw()
@@ -138,7 +159,8 @@ for i, canvas in enumerate(canvases_dn):
     canvas.cd()
     namesreco_dn_softdrop[i] = unfolded_pdfdn_softdrop.ProjectionX('pdf_dn_softdrop' + str(i), i+1, i+1)
     namesreco_dn_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_dn_softdrop[i].Scale( 1.0 / namesreco_dn_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_dn_softdrop[i].Scale( 1.0 / namesreco_dn_softdrop[i].Integral() )
     namesreco_dn_softdrop[i].Draw('hist')
     legends_dn_softdrop[i].AddEntry(namesreco_dn[i], 'Reco_pdfdn_sd', 'l')
     legends_dn_softdrop[i].Draw()
@@ -161,7 +183,8 @@ for i, canvas in enumerate(canvases_data_up) :
     canvas.cd()
     namesreco_data_up[i] = unfolded_data_pdfup.ProjectionX('pdf_data_up' + str(i), i+1, i+1)
     namesreco_data_up[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_up[i].Scale( 1.0 / namesreco_data_up[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_up[i].Scale( 1.0 / namesreco_data_up[i].Integral() )
     namesreco_data_up[i].Draw('hist')
     legends_data_up[i].AddEntry(namesreco_data_up[i], 'Reco_pdfup', 'l')
     legends_data_up[i].Draw()
@@ -183,7 +206,8 @@ for i, canvas in enumerate(canvases_data_up_softdrop):
     canvas.cd()
     namesreco_data_up_softdrop[i] = unfolded_data_pdfup_softdrop.ProjectionX('pdf_data_up_softdrop' + str(i), i+1, i+1)
     namesreco_data_up_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_up_softdrop[i].Scale( 1.0 / namesreco_data_up_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_up_softdrop[i].Scale( 1.0 / namesreco_data_up_softdrop[i].Integral() )
     namesreco_data_up_softdrop[i].Draw('hist')
     legends_data_up_softdrop[i].AddEntry(namesreco_data_up_softdrop[i], 'Reco_pdfup_sd', 'l')
     legends_data_up_softdrop[i].Draw()
@@ -207,7 +231,8 @@ for i, canvas in enumerate(canvases_data_dn):
     canvas.cd()
     namesreco_data_dn[i] = unfolded_data_pdfdn.ProjectionX('pdf_data_dn' + str(i), i+1, i+1)
     namesreco_data_dn[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_dn[i].Scale(1.0 / namesreco_data_dn[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_dn[i].Scale(1.0 / namesreco_data_dn[i].Integral() )
     namesreco_data_dn[i].Draw('hist')
     legends_data_dn[i].AddEntry(namesreco_data_dn[i], 'Reco_pdfdn', 'l')
     legends_data_dn[i].Draw()
@@ -231,7 +256,8 @@ for i, canvas in enumerate(canvases_data_dn_softdrop):
     canvas.cd()
     namesreco_data_dn_softdrop[i] = unfolded_data_pdfdn_softdrop.ProjectionX('pdf_data_dn_softdrop' + str(i), i+1, i+1)
     namesreco_data_dn_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_dn_softdrop[i].Scale( 1.0 / namesreco_data_dn_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_dn_softdrop[i].Scale( 1.0 / namesreco_data_dn_softdrop[i].Integral() )
     namesreco_data_dn_softdrop[i].Draw('hist')
     legends_data_dn_softdrop[i].AddEntry(namesreco_data_dn_softdrop[i], 'Reco_pdfdn_sd', 'l')
     legends_data_dn_softdrop[i].Draw()
@@ -259,7 +285,8 @@ for i, canvas in enumerate(canvases_cteq) :
     canvas.cd()
     namesreco_cteq[i] = unfolded_pdfcteq.ProjectionX('pdf_cteq' + str(i), i+1, i+1)
     namesreco_cteq[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_cteq[i].Scale( 1.0 / namesreco_cteq[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_cteq[i].Scale( 1.0 / namesreco_cteq[i].Integral() )
     namesreco_cteq[i].Draw('hist')
     legends_cteq[i].AddEntry(namesreco_cteq[i], 'Reco_pdfcteq', 'l')
     legends_cteq[i].Draw()
@@ -282,7 +309,8 @@ for i, canvas in enumerate(canvases_cteq_softdrop):
     canvas.cd()
     namesreco_cteq_softdrop[i] = unfolded_pdfcteq_softdrop.ProjectionX('pdf_cteq_softdrop' + str(i), i+1, i+1)
     namesreco_cteq_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_cteq_softdrop[i].Scale( 1.0 / namesreco_cteq_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_cteq_softdrop[i].Scale( 1.0 / namesreco_cteq_softdrop[i].Integral() )
     namesreco_cteq_softdrop[i].Draw('hist')
     legends_cteq_softdrop[i].AddEntry(namesreco_cteq_softdrop[i], 'Reco_pdfcteq_sd', 'l')
     legends_cteq_softdrop[i].Draw()
@@ -309,7 +337,8 @@ for i, canvas in enumerate(canvases_mstw) :
     canvas.cd()
     namesreco_mstw[i] = unfolded_pdfmstw.ProjectionX('pdf_mstw' + str(i), i+1, i+1)
     namesreco_mstw[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_mstw[i].Scale(1.0 / namesreco_mstw[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_mstw[i].Scale(1.0 / namesreco_mstw[i].Integral() )
     namesreco_mstw[i].Draw('hist')
     legends_mstw[i].AddEntry(namesreco_mstw[i], 'Reco_pdfmstw', 'l')
     legends_mstw[i].Draw()
@@ -332,7 +361,8 @@ for i, canvas in enumerate(canvases_mstw_softdrop):
     canvas.cd()
     namesreco_mstw_softdrop[i] = unfolded_pdfmstw_softdrop.ProjectionX('pdf_mstw_softdrop' + str(i), i+1, i+1)
     namesreco_mstw_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_mstw_softdrop[i].Scale( 1.0 / namesreco_mstw_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_mstw_softdrop[i].Scale( 1.0 / namesreco_mstw_softdrop[i].Integral() )
     namesreco_mstw_softdrop[i].Draw('hist')
     legends_mstw_softdrop[i].AddEntry(namesreco_mstw_softdrop[i], 'Reco_pdfmstw_sd', 'l')
     legends_mstw_softdrop[i].Draw()
@@ -359,7 +389,8 @@ for i, canvas in enumerate(canvases_data_cteq) :
     canvas.cd()
     namesreco_data_cteq[i] = unfolded_data_pdfcteq.ProjectionX('pdf_data_cteq' + str(i), i+1, i+1)
     namesreco_data_cteq[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_cteq[i].Scale( 1.0 / namesreco_data_cteq[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_cteq[i].Scale( 1.0 / namesreco_data_cteq[i].Integral() )
     namesreco_data_cteq[i].Draw('hist')
     legends_data_cteq[i].AddEntry(namesreco_data_cteq[i], 'Reco_pdfcteq', 'l')
     legends_data_cteq[i].Draw()
@@ -381,7 +412,8 @@ for i, canvas in enumerate(canvases_data_cteq_softdrop):
     canvas.cd()
     namesreco_data_cteq_softdrop[i] = unfolded_data_pdfcteq_softdrop.ProjectionX('pdf_data_cteq_softdrop' + str(i), i+1, i+1)
     namesreco_data_cteq_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_cteq_softdrop[i].Scale( 1.0 / namesreco_data_cteq_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_cteq_softdrop[i].Scale( 1.0 / namesreco_data_cteq_softdrop[i].Integral() )
     namesreco_data_cteq_softdrop[i].Draw('hist')
     legends_data_cteq_softdrop[i].AddEntry(namesreco_data_cteq_softdrop[i], 'Reco_pdfcteq_sd', 'l')
     legends_data_cteq_softdrop[i].Draw()
@@ -406,7 +438,8 @@ for i, canvas in enumerate(canvases_data_mstw) :
     canvas.cd()
     namesreco_data_mstw[i] = unfolded_data_pdfmstw.ProjectionX('pdf_data_mstw' + str(i), i+1, i+1)
     namesreco_data_mstw[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_mstw[i].Scale( 1.0 / namesreco_data_mstw[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_mstw[i].Scale( 1.0 / namesreco_data_mstw[i].Integral() )
     namesreco_data_mstw[i].Draw('hist')
     legends_data_mstw[i].AddEntry(namesreco_data_mstw[i], 'Reco_pdfmstw', 'l')
     legends_data_mstw[i].Draw()
@@ -428,7 +461,8 @@ for i, canvas in enumerate(canvases_data_mstw_softdrop):
     canvas.cd()
     namesreco_data_mstw_softdrop[i] = unfolded_data_pdfmstw_softdrop.ProjectionX('pdf_data_mstw_softdrop' + str(i), i+1, i+1)
     namesreco_data_mstw_softdrop[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i]+ ' GeV')
-    namesreco_data_mstw_softdrop[i].Scale( 1.0 / namesreco_data_mstw_softdrop[i].Integral() )
+    if options.scale != None and options.scale : 
+        namesreco_data_mstw_softdrop[i].Scale( 1.0 / namesreco_data_mstw_softdrop[i].Integral() )
     namesreco_data_mstw_softdrop[i].Draw('hist')
     legends_data_mstw_softdrop[i].AddEntry(namesreco_data_mstw_softdrop[i], 'Reco_pdfmstw_sd', 'l')
     legends_data_mstw_softdrop[i].Draw()
