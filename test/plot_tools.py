@@ -19,7 +19,7 @@ parser.add_option('--extra_massy', action='store_true',
 
 
 parser.add_option('--plotTheoryAndMC', action='store', type = 'int',
-herw                  default = 0, # 0 = plot both, 1 = plot only MC, 2 = plot only theory
+                  default = 0, # 0 = plot both, 1 = plot only MC, 2 = plot only theory
                   dest='plotTheoryAndMC',
                   help='Plot theory and MC (0), just MC (1), or just theory (2)')
 
@@ -35,6 +35,11 @@ parser.add_option('--unrestrictedChi2', action='store_true',
                   dest='unrestrictedChi2',
                   help='If true, do not restrict range in chi2 calculation')
 
+
+parser.add_option('--scale', action='store_true',
+                  default = False,
+                  dest='scale',
+                  help='Scale to unity')
 
 (options, args) = parser.parse_args()
 
@@ -191,7 +196,8 @@ def unpinch( hist, delta = 2, xval = None ) :
             if val > 0.0 :
                 avg += err/val
                 navg += 1
-        avg = avg / navg
+        if navg > 0: 
+            avg = avg / navg
         for ibin in xrange(binlo, binhi) :
             val = hist.GetBinContent( ibin )
             err = hist.GetBinError( ibin )
@@ -545,7 +551,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         MC_list[i].SetLineColor(1)
         MC_list[i].SetLineStyle(2)
         MC_list[i].SetLineWidth(3)
-        MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
+        if MC_list[i].Integral("width") > 0.0 : 
+            MC_list[i].Scale(1.0/MC_list[i].Integral("width"))
         if options.plotTheoryAndMC < 2 : 
             MC_list[i].Draw( "hist ][ SAME" )
         
@@ -562,7 +569,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 herwig_gen = herwig_genlistSD[i]
             else:
                 herwig_gen = herwig_genlist[i]
-            herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
+            if herwig_gen.Integral("width") > 0.0 : 
+                herwig_gen.Scale(1.0/herwig_gen.Integral("width"))
             herwig_gen.SetLineStyle(8)
             herwig_gen.SetLineColor(ROOT.kMagenta + 1)
             herwig_gen.SetLineWidth(3)
@@ -577,7 +585,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 powheg = powheglistSD[i]
             else:
                 powheg = powheglist[i]
-            powheg.Scale(1.0/powheg.Integral("width"))
+            if powheg.Integral("width") > 0.0 : 
+                powheg.Scale(1.0/powheg.Integral("width"))
             powheg.SetLineStyle(4)
             powheg.SetLineColor(ROOT.kGreen + 2)
             powheg.SetLineWidth(3)
@@ -602,7 +611,8 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             
         if i < 11 and options.isSoftDrop and (options.plotTheoryAndMC == 0 or options.plotTheoryAndMC == 2) : #and isData:
             theory = theorylist[i]
-            theory.Scale(1.0/theory.Integral("width"))
+            if theory.Integral("width") > 0.0: 
+                theory.Scale(1.0/theory.Integral("width"))
             #theory.Scale(1.0/(20.*theory.GetBinContent(7)))
             print 'i = ', i
             ratio_bin = float(hReco.GetBinContent( hReco.GetXaxis().FindBin(50.))/theory.GetBinContent( theory.GetXaxis().FindBin(50.)))
@@ -676,7 +686,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             #build_the_stack.append(theory2c)
             #build_the_stack.append(powhegc)
         legends_list[i].Draw()
-        latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
+        latex_list[i].DrawLatex(0.2, 0.926, "CMS")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
         if options.isSoftDrop:
             latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
@@ -942,9 +952,12 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRecoKS.GetXaxis().SetRangeUser( expected_agreement()[i][0], 10000)
             hMCKS.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
             hMCKS_Herwig.GetXaxis().SetRangeUser(expected_agreement()[i][0],10000)
-            hRecoKS.Scale( 1.0 / hRecoKS.Integral("width") )
-            hMCKS.Scale( 1.0 / hMCKS.Integral("width") )
-            hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral("width") )
+            if hRecoKS.Integral("width") > 0.0 : 
+                hRecoKS.Scale( 1.0 / hRecoKS.Integral("width") )
+            if hMCKS.Integral("width") > 0.0 : 
+                hMCKS.Scale( 1.0 / hMCKS.Integral("width") )
+            if hMCKS_Herwig.Integral("width") > 0.0 : 
+                hMCKS_Herwig.Scale( 1.0 / hMCKS_Herwig.Integral("width") )
 
             ## for ihwbin in xrange( 1, hMCKS.GetNbinsX() ) :
             ##     val_py = hMCKS.GetBinContent(ihwbin)
@@ -1043,7 +1056,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 the_stack.SetTitle(";Jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")
             else:
                 the_stack.SetTitle(";Groomed jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")            
-        latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
+        latex_list[0].DrawLatex(0.2, 0.926, "CMS")
         latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
         the_stack.GetYaxis().SetTitleSize(30)
@@ -1131,7 +1144,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         chi2_0.SetTitle(';Jet p_{T} (GeV);Probability')
 
         chi2_0.GetXaxis().SetNoExponent()
-        latex_list[0].DrawLatex(0.2, 0.926, "CMS Preliminary")
+        latex_list[0].DrawLatex(0.2, 0.926, "CMS")
         latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
         chi2_legend.Draw()
@@ -1243,16 +1256,20 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         
         preMC = pre_MC_list[i].Clone()
         preMC.SetName( preMC.GetName()+"_copy" )
-        preMC.Scale(1.0/preMC.Integral("width"))
+        if preMC.Integral("width") > 0.0: 
+            preMC.Scale(1.0/preMC.Integral("width"))
         postMC = post_MC_list[i].Clone()
         postMC.SetName( postMC.GetName()+"_copy" )
-        postMC.Scale(1.0/postMC.Integral("width"))
+        if postMC.Integral("width") > 0.0 : 
+            postMC.Scale(1.0/postMC.Integral("width"))
         preData = pre_data_list[i].Clone()
         preData.SetName( preData.GetName()+"_copy" )
-        preData.Scale(1.0/preData.Integral("width"))
+        if preData.Integral("width") > 0.0 : 
+            preData.Scale(1.0/preData.Integral("width"))
         postData = post_data_list[i].Clone()
         postData.SetName( postData.GetName()+"_copy" )
-        postData.Scale(1.0/postData.Integral("width"))
+        if postData.Integral("width") > 0.0 : 
+            postData.Scale(1.0/postData.Integral("width"))
         for ibin in xrange(1, preMC.GetNbinsX()):
             preMC.SetBinContent(ibin, preMC.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
             postMC.SetBinContent(ibin, postMC.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
@@ -1286,7 +1303,7 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
             latexpt_list[i].DrawLatex(0.40, 0.830, ptbins_dict[i])
         else:
             latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
-        latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
+        latex_list[i].DrawLatex(0.2, 0.926, "CMS")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")            
         canvas.SaveAs(outname_str + str(i) + ".pdf")
 
@@ -1295,16 +1312,20 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
 
         genMC = genMC_list[i].Clone()
         genMC.SetName( genMC.GetName()+"_copy" )
-        genMC.Scale(1.0/genMC.Integral("width"))
+        if genMC.Integral("width") > 0.0 : 
+            genMC.Scale(1.0/genMC.Integral("width"))            
         preMC2 = pre_MC_list[i].Clone()
         preMC2.SetName( preMC2.GetName()+"_copy2" )
-        preMC2.Scale(1.0/preMC2.Integral("width"))
+        if preMC2.Integral("width") > 0.0 : 
+            preMC2.Scale(1.0/preMC2.Integral("width"))
         preData2 = pre_data_list[i].Clone()
         preData2.SetName( preData2.GetName()+"_copy2" )
-        preData2.Scale(1.0/preData2.Integral("width"))
+        if preData2.Integral("width") > 0.0 : 
+            preData2.Scale(1.0/preData2.Integral("width"))
         postData2 = post_data_list[i].Clone()
         postData2.SetName( postData2.GetName()+"_copy2" )
-        postData2.Scale(1.0/postData2.Integral("width"))
+        if postData2.Integral("width") > 0.0 : 
+            postData2.Scale(1.0/postData2.Integral("width"))
         
         for ibin in xrange(1, preMC.GetNbinsX()):
             preMC2.SetBinContent(ibin, preMC2.GetBinContent(ibin) * 1./hRMS.GetBinWidth(ibin))
@@ -1324,7 +1345,7 @@ def PlotRatios(ratio_canvas_list, post_data_list, post_MC_list, pre_data_list, p
         legends_list2[i].AddEntry(genMC, '(gen level/unfolded data)/(reco MC/reco data) '+softdrop, 'l')
         legends_list2[i].Draw()
         latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
-        latex_list[i].DrawLatex(0.2, 0.926, "CMS Preliminary")
+        latex_list[i].DrawLatex(0.2, 0.926, "CMS")
         latex_list[i].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")        
         genMC.SetTitle(";" + xlabeloption + "et mass (GeV);(Gen/Unfolded Data)/(Preunfolded MC/Preunfolded Data)")
         canvas2.SaveAs("gen"+ outname_str + str(i) + ".pdf")

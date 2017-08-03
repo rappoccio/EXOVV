@@ -264,7 +264,10 @@ for x in range(0, nptbin):
         alegends_fullband.append(TLegend(0.64, 0.5, 0.89, 0.89))        
         alegends_fullbandSD.append(TLegend(0.25, 0.5, 0.5, 0.89))
             
-
+for hists in [datalistSD,datalist,MCtruth,MCtruthSD] :
+    for hist in hists:
+        if hist.Integral() > 0 :
+            hist.Scale(1.0 / hist.Integral() )
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
 ps_differences_softdrop = []
@@ -273,7 +276,12 @@ for i in range(0, nptbin):
     temp_softdrop_diff = []
     ps.append(parton_shower.Get('data_unfolded_by_herwig'+str(i)))
     ps_softdrop.append(parton_shower.Get('data_unfolded_by_herwig_softdrop'+str(i)))
-      
+
+    if ps[i].Integral() > 0.0 : 
+        ps[i].Scale(1.0 / ps[i].Integral() )
+    if ps_softdrop[i].Integral() > 0.0 : 
+        ps_softdrop[i].Scale(1.0 / ps_softdrop[i].Integral() )
+    
     temp_unc = 0.5 * (ps[i] - datalist[i])
     temp_softdrop_unc = 0.5 * (ps_softdrop[i] - datalistSD[i])
     temp_unc.Scale(scales[i])
@@ -292,9 +300,13 @@ pdf_differences_softdrop = []
 
 pdf_up = []
 pdf_dn = []
+pdf_cteq = []
+pdf_mstw = []
 
 pdf_upsd = []
 pdf_dnsd = []
+pdf_cteqsd = []
+pdf_mstwsd = []
 comparisons_softdrop = []
 
 complegends = []
@@ -311,14 +323,54 @@ for i in range(0, nptbin):
     pdf_dn.append(pdfs.Get('pdf_data_dn'+str(i)))
     pdf_upsd.append(pdfs.Get('pdf_data_up_softdrop'+str(i)))
     pdf_dnsd.append(pdfs.Get('pdf_data_dn_softdrop'+str(i)))
+    pdf_cteq.append(pdfs.Get('pdf_data_cteq'+str(i)))
+    pdf_cteqsd.append(pdfs.Get('pdf_data_cteq_softdrop'+str(i)))
+    pdf_mstw.append(pdfs.Get('pdf_data_mstw'+str(i)))
+    pdf_mstwsd.append(pdfs.Get('pdf_data_mstw_softdrop'+str(i)))
 
-     
-    temp_unc = (pdf_up[i] - pdf_dn[i])
+    for hist in [pdf_up[i], pdf_dn[i], pdf_upsd[i], pdf_dnsd[i], pdf_cteq[i], pdf_cteqsd[i], pdf_mstw[i], pdf_mstwsd[i]]:
+        if hist.Integral() > 0:
+            hist.Scale(1.0 / hist.Integral() )
+    
+
+    temp_diffcteq = (pdf_cteq[i] - MCtruth[i])
+    temp_diffmstw = (pdf_mstw[i] - MCtruth[i])
+    temp_diffcteqsd = (pdf_cteqsd[i] - MCtruthSD[i])
+    temp_diffmstwsd = (pdf_mstwsd[i] - MCtruthSD[i])
+
+    
+    temp_unc = (pdf_up[i] - pdf_dn[i]) 
     temp_unc_softdrop = (pdf_upsd[i] - pdf_dnsd[i])
+    temp_unc.Scale( 0.5 )
+    temp_unc_softdrop.Scale(0.5)
+
     temp_unc.Scale(scales[i])
     temp_unc_softdrop.Scale(scales[i])
+    temp_diffcteq.Scale(scales[i])
+    temp_diffmstw.Scale(scales[i])
+    temp_diffcteqsd.Scale(scales[i])
+    temp_diffmstwsd.Scale(scales[i])
     for ibin in xrange(1, temp_unc.GetNbinsX()):
-        temp_pdf_diff.append(abs(temp_unc.GetBinContent(ibin)))
+        diff1 = abs(temp_unc.GetBinContent(ibin))
+        diff2 = abs(temp_diffcteq.GetBinContent(ibin))
+        diff3 = abs(temp_diffmstw.GetBinContent(ibin))
+        if diff1 > diff2 and diff1 > diff3 : 
+            temp_pdf_diff.append(diff1)
+        elif diff2 > diff1 and diff2 > diff3 :
+            temp_pdf_diff.append(diff2)
+        else :
+            temp_pdf_diff.append(diff3)
+
+        diffSD1 = abs(temp_unc_softdrop.GetBinContent(ibin))
+        diffSD2 = abs(temp_diffcteqsd.GetBinContent(ibin))
+        diffSD3 = abs(temp_diffmstwsd.GetBinContent(ibin))
+        if diffSD1 > diffSD2 and diffSD1 > diffSD3 : 
+            temp_softdrop_pdf_diff.append(diffSD1)
+        elif diffSD2 > diffSD1 and diffSD2 > diffSD3 :
+            temp_softdrop_pdf_diff.append(diffSD2)
+        else :
+            temp_softdrop_pdf_diff.append(diffSD3)
+                        
         temp_softdrop_pdf_diff.append(abs(temp_unc_softdrop.GetBinContent(ibin)))
     pdf_differences.append(temp_pdf_diff)
     pdf_differences_softdrop.append(temp_softdrop_pdf_diff)

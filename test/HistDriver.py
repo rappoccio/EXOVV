@@ -44,8 +44,8 @@ class HistDriver :
             'pythia':'PYTHIA8', 'herwig':'HERWIG++', 'powheg':'POWHEG+PYTHIA8'
             }
         
-        self.lineStyles = [3,3,5,7,6,4,2,1,1,1,1]
-        self.lineColors = [ROOT.kRed, ROOT.kRed, ROOT.kBlue, ROOT.kCyan+1, ROOT.kMagenta, ROOT.kGreen+2, ROOT.kBlack, ROOT.kBlack, ROOT.kBlack]
+        self.lineStyles = [3,3,5,5,7,6,4,2,1,1,1,1]
+        self.lineColors = [ROOT.kRed, ROOT.kRed, ROOT.kBlue, ROOT.kBlue, ROOT.kCyan+1, ROOT.kMagenta, ROOT.kGreen+2, ROOT.kBlack, ROOT.kBlack, ROOT.kBlack]
 
         
         

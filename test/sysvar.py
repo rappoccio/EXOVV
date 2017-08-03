@@ -373,7 +373,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         tlx.SetTextFont(43)
         tlx.SetTextSize(24)
 
-        tlx.DrawLatex(0.15, 0.926, "CMS Preliminary")
+        tlx.DrawLatex(0.15, 0.926, "CMS Simulation")
         tlx.DrawLatex(0.69, 0.926, "2.3 fb^{-1} (13 TeV)")
 
         tlx2 = ROOT.TLatex()

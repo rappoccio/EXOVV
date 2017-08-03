@@ -4,7 +4,7 @@ ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
-from plot_tools import plotter, setup, get_ptbins, plot_OneBand
+from plot_tools import setup, get_ptbins, plot_OneBand
 from optparse import OptionParser
 import pickle
 parser = OptionParser()
@@ -70,6 +70,8 @@ jernoma = []
 jmrdna = []
 jmrupa = []
 jmrnoma = []
+jmsdna = []
+jmsupa = []
 pudna = []
 puupa = []
 
@@ -81,6 +83,8 @@ jernomaSD = []
 jmrdnaSD = []
 jmrupaSD = []
 jmrnomaSD = []
+jmsdnaSD = []
+jmsupaSD = []
 pudnaSD = []
 puupaSD = []
 
@@ -93,6 +97,8 @@ jernomaF = []
 jmrdnaF = []
 jmrupaF = []
 jmrnomaF = []
+jmsdnaF = []
+jmsupaF = []
 pudnaF = []
 puupaF = []
 
@@ -104,6 +110,8 @@ jernomaFSD = []
 jmrdnaFSD = []
 jmrupaFSD = []
 jmrnomaFSD = []
+jmsdnaFSD = []
+jmsupaFSD = []
 pudnaFSD = []
 puupaFSD = []
 
@@ -121,6 +129,8 @@ jernom = ROOT.TFile('2DClosure_jernom.root')
 jmrupfile = ROOT.TFile('2DClosure_jmrup.root')
 jmrdnfile = ROOT.TFile('2DClosure_jmrdn.root')
 jmrnomfile= ROOT.TFile('2DClosure_jmrnom.root')
+jmsupfile = ROOT.TFile('2DClosure_jmsup.root')
+jmsdnfile = ROOT.TFile('2DClosure_jmsdn.root')
 puupfile = ROOT.TFile('2DClosure_puup.root')
 pudnfile = ROOT.TFile('2DClosure_pudn.root')
 
@@ -135,6 +145,8 @@ for i in range(0, nptbin):
     jmrupa.append(jmrupfile.Get('pythia8_mass' + str(i)))
     jmrdna.append(jmrdnfile.Get('pythia8_mass' + str(i)))
     jmrnoma.append(jmrnomfile.Get('pythia8_mass' + str(i)))
+    jmsupa.append(jmsupfile.Get('pythia8_mass' + str(i)))
+    jmsdna.append(jmsdnfile.Get('pythia8_mass' + str(i)))
     puupa.append(puupfile.Get('pythia8_mass' + str(i)))
     pudna.append(pudnfile.Get('pythia8_mass' + str(i)))
 
@@ -147,6 +159,8 @@ for i in range(0, nptbin):
     jmrupaSD.append(jmrupfile.Get('pythia8_massSD' + str(i)))
     jmrdnaSD.append(jmrdnfile.Get('pythia8_massSD' + str(i)))
     jmrnomaSD.append(jmrnomfile.Get('pythia8_massSD' + str(i)))
+    jmsupaSD.append(jmsupfile.Get('pythia8_massSD' + str(i)))
+    jmsdnaSD.append(jmsdnfile.Get('pythia8_massSD' + str(i)))
     puupaSD.append(puupfile.Get('pythia8_massSD' + str(i)))
     pudnaSD.append(pudnfile.Get('pythia8_massSD' + str(i)))
     
@@ -158,6 +172,8 @@ for i in range(0, nptbin):
     jmrupaF.append(jmrupfile.Get('pythia8_mass'  + str(i)))
     jmrdnaF.append(jmrdnfile.Get('pythia8_mass'  + str(i)))
     jmrnomaF.append(jmrnomfile.Get('pythia8_mass'  + str(i)))
+    jmsupaF.append(jmsupfile.Get('pythia8_mass'  + str(i)))
+    jmsdnaF.append(jmsdnfile.Get('pythia8_mass'  + str(i)))
     puupaF.append(puupfile.Get('pythia8_mass'  + str(i)))
     pudnaF.append(pudnfile.Get('pythia8_mass'  + str(i)))
         
@@ -169,6 +185,8 @@ for i in range(0, nptbin):
     jmrupaFSD.append(jmrupfile.Get('pythia8_mass'  + str(i)))
     jmrdnaFSD.append(jmrdnfile.Get('pythia8_mass'  + str(i)))
     jmrnomaFSD.append(jmrnomfile.Get('pythia8_mass'  + str(i)))
+    jmsupaFSD.append(jmsupfile.Get('pythia8_mass'  + str(i)))
+    jmsdnaFSD.append(jmsdnfile.Get('pythia8_mass'  + str(i)))
     puupaFSD.append(puupfile.Get('pythia8_mass'  + str(i)))
     pudnaFSD.append(pudnfile.Get('pythia8_mass'  + str(i)))
     
@@ -184,6 +202,16 @@ datacanvases= []
 
 datacanvases_fullband = []
 datacanvases_fullbandSD = []
+
+
+for hists in [
+    jecdnaF, jecupaF, jerdnaF, jerupaF, jernomaF, jmrdnaF, jmrupaF, jmrnomaF, jmsdnaF, jmsupaF, pudnaF, puupaF, 
+    jecdnaFSD, jecupaFSD, jerdnaFSD, jerupaFSD, jernomaFSD, jmrdnaFSD, jmrupaFSD, jmrnomaFSD, jmsdnaFSD, jmsupaFSD, pudnaFSD, puupaFSD, 
+    jecdna, jecupa, jerdna, jerupa, jernoma, jmrdna, jmrupa, jmrnoma, jmsdna, jmsupa, pudna, puupa, 
+    jecdnaSD, jecupaSD, jerdnaSD, jerupaSD, jernomaSD, jmrdnaSD, jmrupaSD, jmrnomaSD, jmsdnaSD, jmsupaSD, pudnaSD, puupaSD ] :
+    for hist in hists:
+        if hist.Integral() > 0 :
+            hist.Scale(1.0 / hist.Integral() )
 
 ################################################################################# generate canvases 
 
@@ -253,6 +281,15 @@ for x in range(0, nptbin):
             alegends_fullbandSD.append(TLegend(.60, .50, .90, .80))
         else:
             alegends_fullbandSD.append(TLegend(.58, .30, .90, .80))
+
+
+
+for hists in [datalistSD,datalist,MCtruth,MCtruthSD] :
+    for hist in hists:
+        if hist.Integral() > 0 :
+            hist.Scale(1.0 / hist.Integral() )
+
+                        
 ################################################################################################################# Get Parton Showering Unc.
 ps_differences = []
 ps_differences_softdrop = []
@@ -261,7 +298,12 @@ for i in range(0, nptbin):
     temp_softdrop_diff = []
     ps.append(parton_shower.Get('pythia8_unfolded_by_herwig'+str(i)))
     ps_softdrop.append(parton_shower.Get('pythia8_unfolded_by_herwig_softdrop'+str(i)))
-      
+
+    if ps[i].Integral() > 0.0 : 
+        ps[i].Scale(1.0 / ps[i].Integral() )
+    if ps_softdrop[i].Integral() > 0.0 : 
+        ps_softdrop[i].Scale(1.0 / ps_softdrop[i].Integral() )
+              
     temp_unc = 0.5 * (ps[i] - datalist[i])
     temp_softdrop_unc = 0.5 * (ps_softdrop[i] - datalistSD[i])
     temp_unc.Scale(scales[i])
@@ -280,13 +322,14 @@ pdf_differences_softdrop = []
 
 pdf_up = []
 pdf_dn = []
+pdf_cteq = []
+pdf_mstw = []
 
 pdf_upsd = []
 pdf_dnsd = []
+pdf_cteqsd = []
+pdf_mstwsd = []
 comparisons_softdrop = []
-
-complegends = []
-complegendssd = []
 
 for i in range(0, nptbin):
 #    complegends.append(ROOT.TLegend(.5, .7, .85, .85))
@@ -299,41 +342,55 @@ for i in range(0, nptbin):
     pdf_dn.append(pdfs.Get('pdf_dn'+str(i)))
     pdf_upsd.append(pdfs.Get('pdf_up_softdrop'+str(i)))
     pdf_dnsd.append(pdfs.Get('pdf_dn_softdrop'+str(i)))
+    pdf_cteq.append(pdfs.Get('pdf_cteq'+str(i)))
+    pdf_cteqsd.append(pdfs.Get('pdf_cteq_softdrop'+str(i)))
+    pdf_mstw.append(pdfs.Get('pdf_mstw'+str(i)))
+    pdf_mstwsd.append(pdfs.Get('pdf_mstw_softdrop'+str(i)))
 
-#####################################################################
-#    pdf_up[i].Draw('hist')
-#    pdf_dn[i].SetLineColor(3)
-#    pdf_dn[i].Draw('same hist')
-#    complegends[i].AddEntry(pdf_up[i], "Ungroomed Up", 'l')
-#    complegends[i].AddEntry(pdf_dn[i], "Ungroomed Down", 'l')
-#    complegends[i].Draw('same')
-#    comparisons[i].SaveAs('ungroomedpdf_comp' + str(i)+'.png')
-#    
-#    comparisons_softdrop.append(TCanvas('compsd'+str(i)))
-#    comparisons_softdrop[i].cd()    
-#    pdf_upsd[i].Draw('hist')
-#    pdf_dnsd[i].SetLineColor(3)
-#    pdf_dnsd[i].Draw('hist same')
-#    complegendssd[i].AddEntry(pdf_upsd[i], "SoftDrop Up", 'l')
-#    complegendssd[i].AddEntry(pdf_dnsd[i], "SoftDrop Down", 'l')
-#    complegendssd[i].Draw('same')
-#    comparisons_softdrop[i].SaveAs('softdroppdf_comp'+str(i)+'.png')
-#####################################################################  
-     
-    temp_unc = (pdf_up[i] - pdf_dn[i])
+    for hist in [pdf_up[i], pdf_dn[i], pdf_upsd[i], pdf_dnsd[i], pdf_cteq[i], pdf_cteqsd[i], pdf_mstw[i], pdf_mstwsd[i]]:
+        if hist.Integral() > 0:
+            hist.Scale(1.0 / hist.Integral() )    
+
+    temp_diffcteq = (pdf_cteq[i] - MCtruth[i])
+    temp_diffmstw = (pdf_mstw[i] - MCtruth[i])
+    temp_diffcteqsd = (pdf_cteqsd[i] - MCtruthSD[i])
+    temp_diffmstwsd = (pdf_mstwsd[i] - MCtruthSD[i])
+
+    
+    temp_unc = (pdf_up[i] - pdf_dn[i]) 
     temp_unc_softdrop = (pdf_upsd[i] - pdf_dnsd[i])
+    temp_unc.Scale( 0.5 )
+    temp_unc_softdrop.Scale(0.5)
+
     temp_unc.Scale(scales[i])
     temp_unc_softdrop.Scale(scales[i])
+    temp_diffcteq.Scale(scales[i])
+    temp_diffmstw.Scale(scales[i])
+    temp_diffcteqsd.Scale(scales[i])
+    temp_diffmstwsd.Scale(scales[i])
     for ibin in xrange(1, temp_unc.GetNbinsX()):
-        temp_pdf_diff.append(abs(temp_unc.GetBinContent(ibin)))
-        temp_softdrop_pdf_diff.append(abs(temp_unc_softdrop.GetBinContent(ibin)))
+        diff1 = abs(temp_unc.GetBinContent(ibin))
+        diff2 = abs(temp_diffcteq.GetBinContent(ibin))
+        diff3 = abs(temp_diffmstw.GetBinContent(ibin))
+        if diff1 > diff2 and diff1 > diff3 : 
+            temp_pdf_diff.append(diff1)
+        elif diff2 > diff1 and diff2 > diff3 :
+            temp_pdf_diff.append(diff2)
+        else :
+            temp_pdf_diff.append(diff3)
+
+        diffSD1 = abs(temp_unc_softdrop.GetBinContent(ibin))
+        diffSD2 = abs(temp_diffcteqsd.GetBinContent(ibin))
+        diffSD3 = abs(temp_diffmstwsd.GetBinContent(ibin))
+        if diffSD1 > diffSD2 and diffSD1 > diffSD3 : 
+            temp_softdrop_pdf_diff.append(diffSD1)
+        elif diffSD2 > diffSD1 and diffSD2 > diffSD3 :
+            temp_softdrop_pdf_diff.append(diffSD2)
+        else :
+            temp_softdrop_pdf_diff.append(diffSD3)
     pdf_differences.append(temp_pdf_diff)
     pdf_differences_softdrop.append(temp_softdrop_pdf_diff)
 
-#    print "ungroomed"
-#    print temp_pdf_diff
-#    print "softdrop now"
-#    print  temp_softdrop_pdf_diff
 
 # Canvases
 ptbins = ['#bf{p_{T} 200-260 GeV}','#bf{p_{T} 260-350 GeV}','#bf{p_{T} 350-460 GeV}','#bf{p_{T} 460-550 GeV}','#bf{p_{T} 550-650 GeV}','#bf{p_{T} 650-760 GeV}', '#bf{p_{T} >760 GeV}']
@@ -375,88 +432,22 @@ for leg in alegends_fullbandSD :
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
 
-if options.logy:
-    if options.oneband:
-        
-        for x in range(0, nptbin):
-            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
-            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, nptbin):
-            datacanvases_fullband[x].SetLeftMargin(0.15)
-            datacanvases_fullbandSD[x].SetLeftMargin(0.15)
-    
-        setup(datacanvases_fullband, pads_fullband)
-        setup(datacanvases_fullbandSD, pads_fullbandSD)
-        
-        
-        histstokeep = []
-        if options.isSoftDrop:
-            plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, puupaFSD, pudnaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_softdrop_fullband_logy_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD,  atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
-        else:
-            plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, puupaF, pudnaF, ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_logy_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
-        del histstokeep[:]
-    
-    else:
-        
-        for x in range(0, nptbin):
-            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
-            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, nptbin):
-            datacanvases[x].SetLeftMargin(0.15)
-            datacanvasesSD[x].SetLeftMargin(0.15)
-    
-    
-        setup(datacanvases, pads)
-        setup(datacanvasesSD, padsSD)
-        
-        histstokeep = []
-        if options.isSoftDrop:
-            plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, puupaSD, pudnaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_logy_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
 
-        else:
-            plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, puupa, pudna, ps_differences, pdf_differences, alegends, "unfoldedclosure_logy_", jmrupa, jmrdna, jmrnoma, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
+for x in range(0, nptbin):
+    datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
+    datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
+for x in range(0, nptbin):
+    datacanvases_fullband[x].SetLeftMargin(0.15)
+    datacanvases_fullbandSD[x].SetLeftMargin(0.15)
 
+setup(datacanvases_fullband, pads_fullband)
+setup(datacanvases_fullbandSD, pads_fullbandSD)
+
+
+histstokeep = []
+
+if options.isSoftDrop:
+    plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, puupaFSD, pudnaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD,jmsupaFSD, jmsdnaFSD,  atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
 else:
-    if options.oneband:
-        
-        for x in range(0, nptbin):
-            datacanvases_fullband.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
-            datacanvases_fullbandSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, nptbin):
-            datacanvases_fullband[x].SetLeftMargin(0.15)
-            datacanvases_fullbandSD[x].SetLeftMargin(0.15)
-        
-        setup(datacanvases_fullband, pads_fullband)
-        setup(datacanvases_fullbandSD, pads_fullbandSD)
-        
-        
-        histstokeep = []
-        
-        if options.isSoftDrop:
-            plot_OneBand(datacanvases_fullbandSD, pads_fullbandSD, datalistSD, MCtruthSD, jecupaFSD, jecdnaFSD, jerupaFSD, jerdnaFSD, jernomaFSD, puupaFSD, pudnaFSD, ps_differences_softdrop, pdf_differences_softdrop, alegends_fullbandSD, "unfoldedclosure_softdrop_fullband_", jmrupaFSD, jmrdnaFSD, jmrnomaFSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
-        else:
-            plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, puupaF, pudnaF,  ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_", jmrupaF, jmrdnaF, jmrnomaF, atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
-        del histstokeep[:]
-
-    else:
-        
-        for x in range(0, nptbin):
-            datacanvases.append(TCanvas("ddist_full"+str(x), "ddist_full"+str(x), 800, 600))
-            datacanvasesSD.append(TCanvas("ddist_full" + str(x) + "SD", "ddist_full"+str(x)+"SD", 800, 600))
-        for x in range(0, nptbin):
-            datacanvases[x].SetLeftMargin(0.15)
-            datacanvasesSD[x].SetLeftMargin(0.15)
-        
-        
-        setup(datacanvases, pads)
-        setup(datacanvasesSD, padsSD)
-        
-        histstokeep = []
-        
-        if options.isSoftDrop:
-            plotter(datacanvasesSD, padsSD, datalistSD, MCtruthSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, puupaSD, pudnaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "unfoldedclosure_softdrop_", jmrupaSD, jmrdnaSD, jmrnomaSD, atlxSD, atlxSDpt, get_ptbins(), softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, isData=False)
-        else:
-            plotter(datacanvases, pads, datalist, MCtruth, jecupa, jecdna, jerupa, jerdna, jernoma, puupa, pudna, ps_differences, pdf_differences, alegends, "unfoldedclosure_", jmrupa, jmrdna, jmrnoma,  atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
-
-
-
+    plot_OneBand(datacanvases_fullband, pads_fullband, datalist, MCtruth, jecupaF, jecdnaF, jerupaF, jerdnaF, jernomaF, puupaF, pudnaF,  ps_differences, pdf_differences, alegends_fullband, "unfoldedclosure_fullband_", jmrupaF, jmrdnaF, jmrnomaF, jmsupaF, jmsdnaF,atlx, atlxpt, get_ptbins(), keephists=histstokeep, jackknifeRMS=RMS_vals, isData=False)
+del histstokeep[:]

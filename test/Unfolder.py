@@ -57,12 +57,12 @@ class RooUnfoldUnfolder:
                 ]
         else :
             self.xAxisRanges = [
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
+                [10,1000],
+                [10,1000],
+                [10,1000],
+                [10,1000],
+                [10,1000],
+                [10,1000],
                 [10,1000],
                 [10,1000],
                 [10,1000],
@@ -146,7 +146,6 @@ class RooUnfoldUnfolder:
         fpdf = ROOT.TFile("unfoldedpdf.root")
         self.files['_pdf'] =  fpdf 
 
-        
         mpdfup = fpdf.Get( '2d_response' + self.postfix1 + '_pdfup' )
         mpdfdn  = fpdf.Get( '2d_response' + self.postfix1 + '_pdfdn' )
         mmstw = fpdf.Get( '2d_response' + self.postfix1 + '_mstw' )
@@ -162,17 +161,29 @@ class RooUnfoldUnfolder:
         hcteq = mcteq.Hreco()
         for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
             self.histDriver_.normalizeHist( hist, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
-
-        
         hpdfup.Add( self.nom, -1.0 )
-        hpdfdn.Add( self.nom, -1.0 )
+        hpdfdn.Add( self.nom, -1.0 )        
+        hpdfup.Scale(0.5)
+        hpdfdn.Scale(0.5)
+        hmstw.Add( self.nom, -1.0 )
+        hcteq.Add( self.nom, -1.0 )
+
             
         self.uncertainties['_pdf'] = hpdfup.Clone( self.nom.GetName() + "_pdf")
-        setToAverage( self.uncertainties['_pdf'], hpdfup, hpdfup )    
-        self.uncertainties['_pdf'].Divide( self.nom )
+        setToAverage( self.uncertainties['_pdf'], hpdfup, hpdfup )
 
-        #### FIXME FIXME FIXME FIXME : the uncertainties for CTEQ and MSTW still need to be included!!
-        #### FIXME FIXME FIXME FIXME : the PDF up and down should be 0.5*(up-dn), not (up-dn)
+
+        for ix in xrange(0,hpdfup.GetNbinsX()+2) :
+            for iy in xrange(0,hpdfup.GetNbinsY()+2) :
+                diff1 = abs(self.uncertainties['_pdf'].GetBinContent(ix,iy))
+                diff2 = abs(hmstw.GetBinContent(ix,iy))
+                diff3 = abs(hcteq.GetBinContent(ix,iy))
+                if diff2 > diff1 and diff2 > diff3 :
+                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff2)
+                if diff3 > diff1 and diff3 > diff2 :
+                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)
+        
+        self.uncertainties['_pdf'].Divide( self.nom )
 
         # Parton shower: Half the difference between pythia and herwig
         # However : There is a different pt spectrum, so need to correct per pt bin to
@@ -207,8 +218,13 @@ class RooUnfoldUnfolder:
         #self.uncertainties['_ps'].Divide( self.nom )
 
 
-        RMS_vals = pickle.load(open("ungroomeddataJackKnifeRMS.p", "rb"))         ########
-        RMS_vals_softdrop = pickle.load(open("softdropdataJackKnifeRMS.p", "rb")) ########
+        if self.normalizeUnity : 
+            RMS_vals = pickle.load(open("ungroomeddataJackKnifeRMS.p", "rb"))         ########
+            RMS_vals_softdrop = pickle.load(open("softdropdataJackKnifeRMS.p", "rb")) ########
+        else :
+            RMS_vals = pickle.load(open("ungroomeddataJackKnifeRMS_absolute.p", "rb"))         ########
+            RMS_vals_softdrop = pickle.load(open("softdropdataJackKnifeRMS_absolute.p", "rb")) ########
+
         if not self.useSoftDrop :
             mcStatVals = RMS_vals
         else :
@@ -254,7 +270,8 @@ class RooUnfoldUnfolder:
             self.pythiaHist = self.pythiaFile.Get("PFJet_pt_m_AK8Gen").Clone( "pythia" + "PFJet_pt_m_AK8gen")
         setStylesClass( hist=self.pythiaHist, istyle=self.histDriver_.styles['pythia'] )
         self.histDriver_.normalizeHist( self.pythiaHist, normalizeUnity = True, scalePtBins = self.scalePtBins )
-        self.pythiaHist.Scale( self.nomNorm )
+        if not self.normalizeUnity : 
+            self.pythiaHist.Scale( self.nomNorm )
 
     def readHerwig(self):
         self.herwigFile = ROOT.TFile( self.herwigInputs )
@@ -264,7 +281,8 @@ class RooUnfoldUnfolder:
             self.herwigHist = self.herwigFile.Get("PFJet_pt_m_AK8Gen").Clone( "herwig" + "PFJet_pt_m_AK8gen")
         setStylesClass( hist=self.herwigHist, istyle=self.histDriver_.styles['herwig'] )
         self.histDriver_.normalizeHist( self.herwigHist, normalizeUnity = True, scalePtBins = self.scalePtBins )
-        self.herwigHist.Scale( self.nomNorm )
+        if not self.normalizeUnity : 
+            self.herwigHist.Scale( self.nomNorm )
 
     def readPowheg(self):
         self.powhegFile = ROOT.TFile( self.powhegInputs )
@@ -288,7 +306,8 @@ class RooUnfoldUnfolder:
             
         setStylesClass( hist=self.powhegHist, istyle=self.histDriver_.styles['powheg'] )
         self.histDriver_.normalizeHist( self.powhegHist, normalizeUnity = True, scalePtBins = self.scalePtBins )
-        self.powhegHist.Scale( self.nomNorm )
+        if not self.normalizeUnity : 
+            self.powhegHist.Scale( self.nomNorm )
         
     def draw2D(self, postfix):
         c = ROOT.TCanvas("c" + postfix, "c" + postfix)
@@ -412,9 +431,12 @@ class RooUnfoldUnfolder:
                     if projx.GetMaximum() * 1.2 > maxval :
                         maxval = projx.GetMaximum() * 1.2
                 else :
-                    if projx.GetBinContent(4) * 1.4 > maxval :
-                        maxval = projx.GetBinContent(4) * 1.4
-                projx.GetYaxis().SetTitle("#frac{d^{2}#sigma}{dm dp_{T}} (pb/GeV^{2})")
+                    if projx.GetBinContent( projx.GetXaxis().FindBin(10.0) ) * 1.2 > maxval :
+                        maxval = projx.GetBinContent(projx.GetXaxis().FindBin(10.0)) * 1.2
+                if not self.normalizeUnity : 
+                    projx.GetYaxis().SetTitle("#frac{d^{2}#sigma}{dm dp_{T}} (pb/GeV^{2})")
+                else : 
+                    projx.GetYaxis().SetTitle("Normalized cross section (1/GeV)")
 
                 
                 self.histDriver_.hists_.append(projx)
@@ -471,3 +493,5 @@ class RooUnfoldUnfolder:
             c.SetLogy()
             c.SetLogx()
             self.histDriver_.stampCMS(c, "CMS")
+            c.Print("uncertainties_" + postfix + str(iy) + ".png", "png")
+            c.Print("uncertainties_" + postfix + str(iy) + ".pdf", "pdf")

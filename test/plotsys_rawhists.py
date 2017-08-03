@@ -91,8 +91,8 @@ pyhists = []
 hwhists = []
 
 fdata = ROOT.TFile("jetht_weighted_dataplots_otherway_rejec.root")
-fpythia8 = ROOT.TFile("responses_rejec_otherway_qcdmc_2dplots.root")
-fherwig = ROOT.TFile("qcdmc_herwig_otherway_rejec_2dplots.root")
+fpythia8 = ROOT.TFile("responses_rejec_fixjmr_otherway_qcdmc_2dplots.root")
+fherwig = ROOT.TFile("qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root")
 
 systs = [
     'jecup', 'jecdn', 'jerup', 'jerdn', 'jmrup', 'jmrdn', 'puup', 'pudn', 'pdfup', 'pdfdn'
@@ -234,7 +234,7 @@ for iptbin in xrange( len(dataprojs) ) :
 
     stack.GetXaxis().SetTickLength(0.05)
     stacks.append(stack)
-    tlx.DrawLatex(0.2, 0.926, "CMS Preliminary")
+    tlx.DrawLatex(0.2, 0.926, "CMS")
     tlx.DrawLatex(0.72, 0.926, "2.3 fb^{-1} (13 TeV)")
 
     

@@ -5,8 +5,10 @@ from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
 from plot_tools import setup, get_ptbins
-from optparse import OptionParser
 import pickle
+
+
+from optparse import OptionParser
 
 ############################################################################
 ############################################################################
@@ -14,14 +16,13 @@ import pickle
 ############################################################################
 ############################################################################
 
-
-from optparse import OptionParser
 parser = OptionParser()
 
-parser.add_option('--scale', action ='store_true', 
-                 default =False,
-                 dest='scale',
-                 help='Scale hists to unity?')
+parser.add_option('--scale', action='store_true',
+                  default = False,
+                  dest='scale',
+                  help='Scale to unity')
+
 
 (options, args) = parser.parse_args()
  
@@ -103,9 +104,13 @@ def unfold_jackknife( unfoldedlist, pickleoutputname):
             RMS_vals[y].append(9./10.*sqrt(1./10. * ((massnums[0][y][numbers] - mu)**2 + (massnums[1][y][numbers]- mu)**2 + (massnums[2][y][numbers]- mu)**2 + (massnums[3][y][numbers]- mu)**2 + (massnums[4][y][numbers]- mu)**2 + (massnums[5][y][numbers]- mu)**2 + (massnums[6][y][numbers]- mu)**2 +     (massnums[7][y][numbers]- mu)**2 + (massnums[8][y][numbers]- mu)**2 + (massnums[9][y][numbers]- mu)**2)))
     ### serialize in binary format with pickle
     pickle.dump(RMS_vals, open(pickleoutputname+".p", "wb"))
-    
-unfold_jackknife(unfolded, "ungroomedJackKnifeRMS")
-unfold_jackknife(unfolded_softdrop, "softdropJackKnifeRMS")
 
-unfold_jackknife(unfolded_data, "ungroomeddataJackKnifeRMS")
-unfold_jackknife(unfolded_data_softdrop, "softdropdataJackKnifeRMS")
+
+postfix = ''
+if not options.scale :
+    postfix += "_absolute"
+unfold_jackknife(unfolded, "ungroomedJackKnifeRMS" + postfix)
+unfold_jackknife(unfolded_softdrop, "softdropJackKnifeRMS" + postfix)
+
+unfold_jackknife(unfolded_data, "ungroomeddataJackKnifeRMS" + postfix)
+unfold_jackknife(unfolded_data_softdrop, "softdropdataJackKnifeRMS" + postfix)
