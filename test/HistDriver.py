@@ -43,8 +43,16 @@ class HistDriver :
         self.titles = {
             'pythia':'PYTHIA8', 'herwig':'HERWIG++', 'powheg':'POWHEG+PYTHIA8'
             }
-        
-        self.lineStyles = [3,3,5,5,7,6,4,2,1,1,1,1]
+        self.sysStyles = {'_jer'   :StyleDriver(name="_jer",   lineWidth=3,lineStyle=8,lineColor=ROOT.kRed),
+                          '_jec'   :StyleDriver(name="_jec",   lineWidth=3,lineStyle=3,lineColor=ROOT.kRed),
+                          '_jmr'   :StyleDriver(name="_jmr",   lineWidth=3,lineStyle=5,lineColor=ROOT.kBlue),
+                          '_jms'   :StyleDriver(name="_jms",   lineWidth=3,lineStyle=8,lineColor=ROOT.kBlue),
+                          '_pu'    :StyleDriver(name="_pu",    lineWidth=3,lineStyle=7,lineColor=ROOT.kCyan+1),
+                          '_pdf'   :StyleDriver(name="_pdf",   lineWidth=3,lineStyle=6,lineColor=ROOT.kMagenta),
+                          '_ps'    :StyleDriver(name="_ps",    lineWidth=3,lineStyle=4,lineColor=ROOT.kGreen+2),
+                          '_mcStat':StyleDriver(name="_mcStat",lineWidth=3,lineStyle=2,lineColor=ROOT.kBlack),
+                        }
+        self.lineStyles = [3,8,5,9,7,6,4,2,1,1,1,1]
         self.lineColors = [ROOT.kRed, ROOT.kRed, ROOT.kBlue, ROOT.kBlue, ROOT.kCyan+1, ROOT.kMagenta, ROOT.kGreen+2, ROOT.kBlack, ROOT.kBlack, ROOT.kBlack]
 
         

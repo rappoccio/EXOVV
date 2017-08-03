@@ -91,18 +91,20 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             pudn.SetBinContent(ibin, pudn.GetBinContent(ibin) * 1./mbinwidths[ibin-1])            
         ########################################################################################## Get JER and JES Uncertainties
         for ibin in xrange(1,hReco.GetNbinsX()):
-            val = float(hReco.GetBinContent(ibin))
-            err1 = float(hReco.GetBinError(ibin))
             upjes = float(abs(jesUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
             downjes = float(abs(nom.GetBinContent(ibin) - jeOWN.GetBinContent(ibin)))
             sys = float(((upjes + downjes)/2.))
+            hReco.SetBinError(ibin, sys)
+        hRecoJER = hReco.Clone()
+        reset(hRecoJER)
+        for ibin in xrange(1, hRecoJER.GetNbinsX()):
+            
             upjer = float(abs(jerUP.GetBinContent(ibin) - nom.GetBinContent(ibin)))
             downjer = float(abs(nom.GetBinContent(ibin) - jerDOWN.GetBinContent(ibin)))
-            sys2 = float(((upjer + downjer )/2.))
-            err = sqrt(sys*sys + sys2*sys2) + err1  
-            hReco.SetBinError(ibin, err)
+            sys = float(((upjer + downjer)/2.))
+            hRecoJER.SetBinError(ibin, sys)
         ####################################################################################### Get Jet mass Resolution Band
-        hRecoJMR = hReco.Clone()
+        hRecoJMR = hRecoJER.Clone()
         reset(hRecoJMR)
         for ibin in xrange(1, hRecoJMR.GetNbinsX()):
             val = float(hRecoJMR.GetBinContent(ibin))
@@ -147,12 +149,16 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
             hRecoPDF.SetBinError(ibin, (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
 
+
+
+
         ##################################################################################### divide error by bin content and set to unity
         for ibin in xrange(1,hRMS.GetNbinsX()):
             if hRMS.GetBinContent(ibin) > 0: 
                 hRMS.SetBinError(ibin, hRMS.GetBinError(ibin)/hRMS.GetBinContent(ibin))
                 hReco.SetBinError(ibin, hReco.GetBinError(ibin)/hReco.GetBinContent(ibin))
                 hRecoCopy.SetBinError(ibin, hRecoCopy.GetBinError(ibin)/hRecoCopy.GetBinContent(ibin))
+                hRecoJER.SetBinError(ibin, hRecoJER.GetBinError(ibin)/hRecoJER.GetBinContent(ibin))
                 hRecoJMR.SetBinError(ibin, hRecoJMR.GetBinError(ibin)/hRecoJMR.GetBinContent(ibin))
                 hRecoJMS.SetBinError(ibin, hRecoJMS.GetBinError(ibin)/hRecoJMS.GetBinContent(ibin))
                 hRecoPU.SetBinError(ibin, hRecoPU.GetBinError(ibin)/hRecoPU.GetBinContent(ibin))
@@ -161,6 +167,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
                 hRMS.SetBinError(ibin, 0)
                 hReco.SetBinError(ibin, 0)
                 hRecoCopy.SetBinError(ibin, 0)
+                hRecoJER.SetBinError(ibin, 0)
                 hRecoJMR.SetBinError(ibin, 0)
                 hRecoJMS.SetBinError(ibin, 0)
                 hRecoPU.SetBinError(ibin, 0)
@@ -169,10 +176,12 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             hReco.SetBinContent(ibin, 1.0)
             hRecoCopy.SetBinContent(ibin, 1.0)
             hRecoJMR.SetBinContent(ibin, 1.0)
+            hRecoJER.SetBinContent(ibin, 1.0)
             hRecoJMS.SetBinContent(ibin, 1.0)
             hRecoPU.SetBinContent(ibin, 1.0)
             hRecoPDF.SetBinContent(ibin, 1.0)
 
+            
         ######################################################################## Clone em all
         hRMSup = hRMS.Clone()
         hRMSdn = hRMS.Clone()
@@ -180,6 +189,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRecodn = hReco.Clone()
         hRecoCopyup = hRecoCopy.Clone()
         hRecoCopydn = hRecoCopy.Clone()
+        hRecoJERup = hRecoJER.Clone()
+        hRecoJERdn = hRecoJER.Clone()
         hRecoJMRup = hRecoJMR.Clone()
         hRecoJMRdn = hRecoJMR.Clone()
         hRecoJMSup = hRecoJMS.Clone()
@@ -191,20 +202,23 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
         
         for ibin in xrange(1, hRMS.GetNbinsX()):
-            hRMSup.SetBinContent(ibin,  (hRMS.GetBinError(ibin) / 2.0) )
-            hRMSdn.SetBinContent(ibin,  (hRMS.GetBinError(ibin) / 2.0) )
-            hRecoup.SetBinContent(ibin,  (hReco.GetBinError(ibin) / 2.0) )
-            hRecodn.SetBinContent(ibin,  (hReco.GetBinError(ibin) / 2.0) )
-            hRecoCopyup.SetBinContent(ibin,  (hRecoCopy.GetBinError(ibin) / 2.0) )
-            hRecoCopydn.SetBinContent(ibin,  (hRecoCopy.GetBinError(ibin) / 2.0) )
-            hRecoJMRup.SetBinContent(ibin,  (hRecoJMR.GetBinError(ibin) / 2.0) )
-            hRecoJMRdn.SetBinContent(ibin,  (hRecoJMR.GetBinError(ibin) / 2.0) )
-            hRecoJMSup.SetBinContent(ibin,  (hRecoJMS.GetBinError(ibin) / 2.0) )
-            hRecoJMSdn.SetBinContent(ibin,  (hRecoJMS.GetBinError(ibin) / 2.0) )
-            hRecoPDFup.SetBinContent(ibin,  (hRecoPDF.GetBinError(ibin) / 2.0) )
-            hRecoPDFdn.SetBinContent(ibin,  (hRecoPDF.GetBinError(ibin) / 2.0) )
-            hRecoPUup.SetBinContent(ibin,  (hRecoPU.GetBinError(ibin) / 2.0) )
-            hRecoPUdn.SetBinContent(ibin,  (hRecoPU.GetBinError(ibin) / 2.0) )
+            factor = 1.0
+            hRMSup.SetBinContent(ibin,  (hRMS.GetBinError(ibin) * factor) )
+            hRMSdn.SetBinContent(ibin,  (hRMS.GetBinError(ibin) * factor) )
+            hRecoup.SetBinContent(ibin,  (hReco.GetBinError(ibin) * factor) )
+            hRecodn.SetBinContent(ibin,  (hReco.GetBinError(ibin) * factor) )
+            hRecoCopyup.SetBinContent(ibin,  (hRecoCopy.GetBinError(ibin) * factor) )
+            hRecoCopydn.SetBinContent(ibin,  (hRecoCopy.GetBinError(ibin) * factor) )
+            hRecoJERup.SetBinContent(ibin,  (hRecoJER.GetBinError(ibin) * factor) )
+            hRecoJERdn.SetBinContent(ibin,  (hRecoJER.GetBinError(ibin) * factor) )
+            hRecoJMRup.SetBinContent(ibin,  (hRecoJMR.GetBinError(ibin) * factor) )
+            hRecoJMRdn.SetBinContent(ibin,  (hRecoJMR.GetBinError(ibin) * factor) )
+            hRecoJMSup.SetBinContent(ibin,  (hRecoJMS.GetBinError(ibin) * factor) )
+            hRecoJMSdn.SetBinContent(ibin,  (hRecoJMS.GetBinError(ibin) * factor) )
+            hRecoPDFup.SetBinContent(ibin,  (hRecoPDF.GetBinError(ibin) * factor) )
+            hRecoPDFdn.SetBinContent(ibin,  (hRecoPDF.GetBinError(ibin) * factor) )
+            hRecoPUup.SetBinContent(ibin,  (hRecoPU.GetBinError(ibin) * factor) )
+            hRecoPUdn.SetBinContent(ibin,  (hRecoPU.GetBinError(ibin) * factor) )
 
         ######################################################################## Format, Draw, and save
 
@@ -233,6 +247,14 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRecoCopyup.SetLineWidth(3)
         hRecoCopydn.SetLineWidth(3)
 
+        hRecoJERup.SetLineStyle(8)
+        hRecoJERdn.SetLineStyle(8)
+        hRecoJERup.SetLineColor(2)
+        hRecoJERdn.SetLineColor(2)
+        hRecoJERdn.SetLineWidth(3)
+        hRecoJERup.SetLineWidth(3)
+
+        
         hRecoJMRup.SetLineStyle(5)
         hRecoJMRdn.SetLineStyle(5)
         hRecoJMRup.SetLineColor(4)
@@ -242,8 +264,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
         hRecoJMSup.SetLineStyle(8)
         hRecoJMSdn.SetLineStyle(8)
-        hRecoJMSup.SetLineColor(8)
-        hRecoJMSdn.SetLineColor(8)
+        hRecoJMSup.SetLineColor(4)
+        hRecoJMSdn.SetLineColor(4)
         hRecoJMSdn.SetLineWidth(3)
         hRecoJMSup.SetLineWidth(3)
 
@@ -258,8 +280,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         
         hRecoPDFup.SetLineStyle(6)
         hRecoPDFdn.SetLineStyle(6)
-        hRecoPDFup.SetLineColor(ROOT.kOrange+7)
-        hRecoPDFdn.SetLineColor(ROOT.kOrange+7)
+        hRecoPDFup.SetLineColor(ROOT.kMagenta)
+        hRecoPDFdn.SetLineColor(ROOT.kMagenta)
         hRecoPDFup.SetLineWidth(3)
         hRecoPDFdn.SetLineWidth(3)
 
@@ -293,6 +315,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             unpinch_vals( hRecodn, xval=maxbin )
             unpinch_vals( hRecoCopyup, xval=maxbin )
             unpinch_vals( hRecoCopydn, xval=maxbin )
+            unpinch_vals( hRecoJERup, xval=maxbin )
+            unpinch_vals( hRecoJERdn, xval=maxbin )
             unpinch_vals( hRecoJMRup, xval=maxbin )
             unpinch_vals( hRecoJMRdn, xval=maxbin )
             unpinch_vals( hRecoJMSup, xval=maxbin )
@@ -311,6 +335,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         #print '<<<<<<<------ this is the one we want'
         smooth( hRecoCopyup, delta=2, xmin=bin400 )
         smooth( hRecoCopydn, delta=2, xmin=bin400 )
+        smooth( hRecoJERup, delta=2, xmin=bin400 )
+        smooth( hRecoJERdn, delta=2, xmin=bin400 )
         smooth( hRecoJMRup, delta=2, xmin=bin400 )
         smooth( hRecoJMRdn, delta=2, xmin=bin400 )
         smooth( hRecoJMSup, delta=2, xmin=bin400 )
@@ -329,6 +355,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         smooth( hRecoCopydn, delta=2 )
         smooth( hRecoJMRup, delta=2 )
         smooth( hRecoJMRdn, delta=2 )
+        smooth( hRecoJERup, delta=2 )
+        smooth( hRecoJERdn, delta=2 )
         smooth( hRecoJMSup, delta=2 )
         smooth( hRecoJMSdn, delta=2 )
         smooth( hRecoPUup, delta=2 )
@@ -351,6 +379,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         #hRecodn.Draw('hist same')
         hRecoCopyup.Draw('hist same ][')
         #hRecoCopydn.Draw('hist same')
+        hRecoJERup.Draw('hist same ][')
         hRecoJMRup.Draw('hist same ][')
         hRecoJMSup.Draw('hist same ][')
         hRecoPUup.Draw('hist same ][')
@@ -358,13 +387,14 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRecoPDFup.Draw('hist same ][')
         #hRecoPDFdn.Draw('hist same')
         ####################################################################################### Legends Filled
-        legends_list[i].SetNColumns(3)
+        legends_list[i].SetNColumns(2)
+        legends_list[i].AddEntry(hRecoup, 'JES', 'l')
+        legends_list[i].AddEntry(hRecoJERup, 'JER', 'l')
         legends_list[i].AddEntry(hRecoJMRup, 'JMR', 'l')
         legends_list[i].AddEntry(hRecoJMSup, 'JMS', 'l')
         legends_list[i].AddEntry(hRecoPUup, 'PU', 'l')
         legends_list[i].AddEntry(hRecoPDFup, 'PDF', 'l')
-        legends_list[i].AddEntry(hRecoCopyup, 'Physics Model', 'l')
-        legends_list[i].AddEntry(hRecoup, 'JES+JER', 'l')
+        legends_list[i].AddEntry(hRecoCopyup, 'Physics Model', 'l')        
         legends_list[i].AddEntry(hRMSup, 'MC Stat', 'l')
         legends_list[i].Draw()
 

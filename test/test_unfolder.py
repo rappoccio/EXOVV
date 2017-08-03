@@ -62,7 +62,7 @@ uu_norm.plotFullXSProjections( hists=[uu_norm.nom, uu_norm.nomStat,uu_norm.pythi
                               styleNames=['nom','nomStat','pythia','herwig'],
                               postfix="normalized" )
 
-ug_norm_norm = RooUnfoldUnfolder(useSoftDrop=True,
+ug_norm = RooUnfoldUnfolder(useSoftDrop=True,
                        pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
                        herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
                        powhegInputs="CMS_SMP_16_010.root",

@@ -25,8 +25,8 @@ class RooUnfoldUnfolder:
         self.useSoftDrop = useSoftDrop                               # Use soft drop
         self.normalizeUnity = normalizeUnity                         # Normalize total histogram to unity (via Integral("width"))
         self.scalePtBins = scalePtBins                               # Scale each pt bin separately
-        self.expsysnames = [ '_jer', '_jec', '_jmr', '_jms', '_pu' ] # Experimental uncertainties
-        self.thsysnames = ['_pdf', '_ps']                            # Theory uncertainties
+        self.expsysnames = [ '_jec', '_jer', '_jmr', '_jms', '_pu' ] # Experimental uncertainties
+        self.thsysnames = ['_pdf', '_ps', '_mcStat']                 # Theory uncertainties
         self.sysnames = self.expsysnames + self.thsysnames           # All uncertainties
         self.files = dict()                                          # Store files
         self.responses = dict()                                      # RooUnfoldResponse objects
@@ -37,7 +37,10 @@ class RooUnfoldUnfolder:
         self.uncertainties = dict(                                   # TH2D's representing uncertainties
             zip(self.sysnames, [None] * len(self.sysnames) )
             )
+        self.uncertaintyNames = dict( zip( self.sysnames, ['JES', 'JER', 'JMR', 'JMS', 'PU', 'PDF', 'Physics Model', 'MC Stat'] ) )
 
+        self.ptBinNames = ['200 < p_{T} < 260 GeV','260 < p_{T} < 350 GeV','350 < p_{T} < 460 GeV','460 < p_{T} < 550 GeV','550 < p_{T} < 650 GeV','650 < p_{T} < 760 GeV', '760 < p_{T} < 900 GeV', '900 < p_{T} < 1000 GeV', '1000 < p_{T} < 1100 GeV','1100 < p_{T} < 1200 GeV',
+    '1200 < p_{T} < 1300 GeV', 'p_{T} > 1300 GeV']
         if self.useSoftDrop == False : 
             self.xAxisRanges = [
                 [20,1000],
@@ -95,7 +98,8 @@ class RooUnfoldUnfolder:
         self.files['nom'] = fnom
         self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 )
         self.nom = self.responses['nom'].Hreco()
-        
+        self.nomRaw = self.nom.Clone(self.nom.GetName() +"_raw")
+        self.nomForPS = self.nom.Clone( self.nom.GetName() + "_normalizingPS")
         
         self.nom.UseCurrentStyle()
 
@@ -161,29 +165,27 @@ class RooUnfoldUnfolder:
         hcteq = mcteq.Hreco()
         for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
             self.histDriver_.normalizeHist( hist, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
-        hpdfup.Add( self.nom, -1.0 )
-        hpdfdn.Add( self.nom, -1.0 )        
+        hpdfup.Add( hpdfdn, -1.0 )
         hpdfup.Scale(0.5)
-        hpdfdn.Scale(0.5)
         hmstw.Add( self.nom, -1.0 )
         hcteq.Add( self.nom, -1.0 )
 
+        for pdfhist in [hpdfup, hmstw, hcteq] :
+            pdfhist.Divide( self.nom )
             
         self.uncertainties['_pdf'] = hpdfup.Clone( self.nom.GetName() + "_pdf")
-        setToAverage( self.uncertainties['_pdf'], hpdfup, hpdfup )
-
 
         for ix in xrange(0,hpdfup.GetNbinsX()+2) :
             for iy in xrange(0,hpdfup.GetNbinsY()+2) :
                 diff1 = abs(self.uncertainties['_pdf'].GetBinContent(ix,iy))
                 diff2 = abs(hmstw.GetBinContent(ix,iy))
-                diff3 = abs(hcteq.GetBinContent(ix,iy))
+                diff3 = abs(hcteq.GetBinContent(ix,iy))                    
                 if diff2 > diff1 and diff2 > diff3 :
                     self.uncertainties['_pdf'].SetBinContent(ix,iy,diff2)
                 if diff3 > diff1 and diff3 > diff2 :
                     self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)
         
-        self.uncertainties['_pdf'].Divide( self.nom )
+
 
         # Parton shower: Half the difference between pythia and herwig
         # However : There is a different pt spectrum, so need to correct per pt bin to
@@ -195,16 +197,11 @@ class RooUnfoldUnfolder:
         # HAVE to normalize a pythia clone and the herwig to unity per pt bin regardless for systematic
         # uncertainty estimation. 
         self.histDriver_.normalizeHist( hps, normalizeUnity = True, scalePtBins = True  )
-        nomForPS = self.nom.Clone( self.nom.GetName() + "_normalizingPS")
-        self.histDriver_.normalizeHist( nomForPS, normalizeUnity = True, scalePtBins = True) # Normalization to unity already done
+        self.histDriver_.normalizeHist( self.nomForPS, normalizeUnity = True, scalePtBins = True) # Normalization to unity already done
         
         # This holds 0.5 * [ (dsigma/dm)_pythia - (dsigma/dm)_herwig ]
-        hps.Add( nomForPS, -1.0 )
+        hps.Add( self.nomForPS, -1.0 )
         hps.Scale(0.5)
-        #for ix in xrange(1,10) :
-        #    print " %8.1e" % ( hps.GetBinContent(ix, 2) ),
-        #print ''
-
         # Now set up the PS uncertainties themselves:
         self.uncertainties['_ps'] = self.nom.Clone( self.nom.GetName() + "_ps" )
         for ix in xrange(1,self.nom.GetNbinsX()+1) :
@@ -233,27 +230,32 @@ class RooUnfoldUnfolder:
         
         # Set up the stat uncertainties
         self.nomStat = self.nom.Clone( self.nom.GetName() + "_stat" )
-        self.mcStat = self.nom.Clone( self.nom.GetName() + "_mcstat" )
+        self.mcStat = self.nomRaw.Clone( self.nom.GetName() + "_mcstat" )
 
 
         setStyles( self.nom, fillStyle=1001, fillColor=ROOT.kGray, markerStyle=20)
         setStyles( self.nomStat, fillStyle=1001, fillColor=ROOT.kGray+2)
-        
-        # Now sum all of the uncertainties in quadrature
+
         for ix in xrange(1,self.nom.GetNbinsX()+1):
             for iy in xrange(1,self.nom.GetNbinsY()+1):
-                val = self.nom.GetBinContent(ix,iy)
+                val = self.nomRaw.GetBinContent(ix,iy)
                 if val > 0.0 : 
                     mcStatVal = mcStatVals[iy-1][ix-1] / val / self.nom.GetYaxis().GetBinWidth(iy) / self.nom.GetXaxis().GetBinWidth(ix)
                 else :
                     mcStatVal = 0.0
                     
                 self.mcStat.SetBinContent( ix, iy, mcStatVal )
+        self.uncertainties['_mcStat'] = self.mcStat.Clone( self.nom.GetName() + "_mcStat")
+        #self.uncertainties['_mcStat'].Divide( self.nom )
+        
+        # Now sum all of the uncertainties in quadrature
+        for ix in xrange(1,self.nom.GetNbinsX()+1):
+            for iy in xrange(1,self.nom.GetNbinsY()+1):
+                val = self.nom.GetBinContent(ix,iy)
 
                 if abs(val) > 0.0 : 
                     err2 = self.nom.GetBinError(ix,iy) / val 
-                    err2 = err2**2# + mcStatVal**2
-                    #print 'ix,iy=', ix, ', ', iy
+                    err2 = err2**2
                     for isyst,isystval in self.uncertainties.iteritems() :
                         #print '%6s=%6.2e' % ( isyst, abs(isystval.GetBinContent(ix,iy)) ),
                         err2 += (isystval.GetBinContent(ix,iy))**2
@@ -261,6 +263,8 @@ class RooUnfoldUnfolder:
                     self.nom.SetBinError( ix, iy, math.sqrt(err2) * val )
                     #print ' tot=%6.2e/%6.2e' % ( self.nom.GetBinError(ix,iy) , val )
 
+        self.printUnc()
+        
 
     def readPythia(self):
         self.pythiaFile = ROOT.TFile( self.pythiaInputs )
@@ -322,6 +326,15 @@ class RooUnfoldUnfolder:
         self.histDriver_.stampCMS( c, "CMS")
 
 
+    def printUnc( self ) :
+        print '--------'
+        for iy in xrange(1,5): 
+            for n,v in self.uncertainties.iteritems() :
+                print '%3d %8s: ' % (iy, n ),
+                for ix in xrange(1,5):
+                    print ' %6.1e ' % ( v.GetBinContent(ix,iy) ),
+                print ''
+                    
         
     def plotPtDist( self, hists, styleNames, title=None, filename = None) :
 
@@ -474,22 +487,48 @@ class RooUnfoldUnfolder:
 
         canvs = []
         for iy in xrange(1,hists.values()[0].GetNbinsY()+1):
-            c = ROOT.TCanvas("cunc" + str(iy) + postfix, "cunc" + str(iy) + postfix)
+            c = ROOT.TCanvas("cunc" + str(iy) + postfix, "cunc" + str(iy) + postfix, 800, 600)
             self.histDriver_.canvs_.append(c)
             canvs.append(c)
+            leg= ROOT.TLegend( 0.2, 0.6, 0.8, 0.8)
+            leg.SetBorderSize(0)
+            leg.SetFillColor(0)
+            leg.SetNColumns(2)
+            
+            if self.useSoftDrop :
+                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Groomed jet mass (GeV);Fractional Uncertainty" )
+                leg.SetHeader("Groomed " + self.ptBinNames[iy-1])
+            else :
+                leg.SetHeader("Ungroomed " + self.ptBinNames[iy-1])
+                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Jet mass (GeV);Fractional Uncertainty" )
+            
 
-            stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), hists.values()[0].GetTitle() )
-            for ihist,hist in enumerate(hists.values()) :
+
+            for key in self.sysnames :
+                hist = hists[key]
 
                 proj = hist.ProjectionX('proj_' + hist.GetName()+ postfix + str(iy), iy,iy, "e" )
-                setStyles( proj, lineWidth=3, lineStyle=self.histDriver_.lineStyles[ihist], lineColor=self.histDriver_.lineColors[ihist] )
+                leg.AddEntry( proj, self.uncertaintyNames[key] , "l")
+
+                if not self.useSoftDrop :
+                    unpinch_vals( proj, xval=proj.GetXaxis().FindBin(self.xAxisRanges[iy-1][0]) )
+                smooth( proj, delta=2, xmin = proj.GetXaxis().FindBin(500)-1)
+                smooth( proj, delta=2 )
+                    
+                setStylesClass( proj, self.histDriver_.sysStyles[key] )
                 self.histDriver_.hists_.append(proj)
-                stack.Add( proj )
+                stack.Add( proj, "hist ][" )
+
+
                 
-            stack.Draw("nostack hist")
+            stack.Draw("nostack hist ][")
             stack.SetMinimum(1e-4)
             stack.SetMaximum(1e3)
+            stack.GetXaxis().SetRangeUser( self.xAxisRanges[iy-1][0], self.xAxisRanges[iy-1][1] )
+            stack.GetXaxis().SetNoExponent()
+            leg.Draw()
             self.histDriver_.stacks_.append(stack)
+            self.histDriver_.legs_.append(leg)
             c.SetLogy()
             c.SetLogx()
             self.histDriver_.stampCMS(c, "CMS")
