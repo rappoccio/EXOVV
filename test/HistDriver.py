@@ -211,8 +211,8 @@ def normalizeYSlices(hist):
 
     for iy in xrange(0,hist.GetNbinsY()+2):
         proj = hist.ProjectionX("proj_" + str(iy), iy, iy, "e")
-        if proj.Integral("width") > 0.0 : 
-            proj.Scale(1.0 / proj.Integral("width") )
+        if proj.Integral() > 0.0 : 
+            proj.Scale(1.0 / proj.Integral() )
             for ix in xrange(0, hist.GetNbinsX()+2):
                 hist.SetBinContent( ix,iy, proj.GetBinContent(ix,iy) )
                 hist.SetBinError( ix,iy, proj.GetBinError(ix,iy) )
@@ -340,3 +340,32 @@ def printHist( hist ) :
         for iy in xrange(1,hist.GetNbinsY()+1):
             print '%7.2e +- %7.2e' % ( hist.GetBinContent(ix,iy), hist.GetBinError(ix,iy) ),
         print ''
+
+        
+def printHist1D( hist, maxx = None ) :
+    if maxx == None : 
+        for ix in xrange(1,hist.GetNbinsX()+1):
+            print ' %8.2e' % ( hist.GetBinContent(ix) ),
+        print ''
+    else : 
+        for ix in xrange(1,maxx):
+            print ' %8.2e' % ( hist.GetBinContent(ix) ),
+        print ''
+
+        
+def printHist1DErrs( hist, maxx = None ) :
+    if maxx == None : 
+        for ix in xrange(1,hist.GetNbinsX()+1):
+            print ' %8.2e' % ( hist.GetBinError(ix) ),
+        print ''
+    else : 
+        for ix in xrange(1,maxx):
+            print ' %8.2e' % ( hist.GetBinError(ix) ),
+        print ''
+
+def ensureAbs(hist):
+    for ix in xrange(0,hist.GetNbinsX()+2):
+        for iy in xrange(0,hist.GetNbinsY()+2):
+            if hist.GetBinContent(ix,iy) < 0.0 :
+                hist.SetBinContent(ix,iy, -1*hist.GetBinContent(ix,iy) )
+            

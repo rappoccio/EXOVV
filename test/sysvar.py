@@ -1,9 +1,26 @@
+
+from optparse import OptionParser
+
+parser = OptionParser()
+
+
+parser.add_option('--absscale', action ='store_true', 
+                 default =False,
+                 dest='absscale',
+                 help='Use absolute cross section?')
+                                 
+(options, args) = parser.parse_args()
+
+ 
 import ROOT
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout
 from math import sqrt
 from plot_tools import unpinch_vals, smooth
+from HistDriver import printHist1DErrs
+
+
 
 import array
 
@@ -146,8 +163,9 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         ######################################################################################## Get PDF Uncertainties
         hRecoPDF = hRecoCopy.Clone()
         reset(hRecoPDF)
+
         for ibin in xrange(1, hRecoPDF.GetNbinsX()):
-            hRecoPDF.SetBinError(ibin, (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )
+            hRecoPDF.SetBinError(ibin, (pdfdif_list[i][ibin-1] * 1./ mbinwidths[ibin-1] ) )            
 
 
 
@@ -181,6 +199,9 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             hRecoPU.SetBinContent(ibin, 1.0)
             hRecoPDF.SetBinContent(ibin, 1.0)
 
+
+        if i == 1 : 
+            printHist1DErrs( hRecoPDF, maxx=5)
             
         ######################################################################## Clone em all
         hRMSup = hRMS.Clone()
@@ -219,14 +240,10 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
             hRecoPDFdn.SetBinContent(ibin,  (hRecoPDF.GetBinError(ibin) * factor) )
             hRecoPUup.SetBinContent(ibin,  (hRecoPU.GetBinError(ibin) * factor) )
             hRecoPUdn.SetBinContent(ibin,  (hRecoPU.GetBinError(ibin) * factor) )
-
         ######################################################################## Format, Draw, and save
 
         hRMSup.SetLineStyle(2)
-        hRMSdn.SetLineStyle(2)
         hRMSup.SetLineColor(1)
-        hRMSdn.SetLineWidth(3)
-        hRMSdn.SetLineColor(1)
         hRMSup.SetLineWidth(3)
         hRMSup.GetXaxis().SetTitleSize(30)
         hRMSup.GetXaxis().SetTitleOffset(.72)
@@ -234,56 +251,35 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
 
         hRecoup.SetLineStyle(3)
-        hRecodn.SetLineStyle(3)
         hRecoup.SetLineColor(2)
-        hRecodn.SetLineColor(2)
         hRecoup.SetLineWidth(3)
-        hRecodn.SetLineWidth(3)
 
         hRecoCopyup.SetLineStyle(4)
-        hRecoCopydn.SetLineStyle(4)
         hRecoCopyup.SetLineColor(ROOT.kGreen+2)
-        hRecoCopydn.SetLineColor(ROOT.kGreen+2)
         hRecoCopyup.SetLineWidth(3)
-        hRecoCopydn.SetLineWidth(3)
 
         hRecoJERup.SetLineStyle(8)
-        hRecoJERdn.SetLineStyle(8)
         hRecoJERup.SetLineColor(2)
-        hRecoJERdn.SetLineColor(2)
-        hRecoJERdn.SetLineWidth(3)
         hRecoJERup.SetLineWidth(3)
 
         
         hRecoJMRup.SetLineStyle(5)
-        hRecoJMRdn.SetLineStyle(5)
         hRecoJMRup.SetLineColor(4)
-        hRecoJMRdn.SetLineColor(4)
-        hRecoJMRdn.SetLineWidth(3)
         hRecoJMRup.SetLineWidth(3)
 
         hRecoJMSup.SetLineStyle(8)
-        hRecoJMSdn.SetLineStyle(8)
         hRecoJMSup.SetLineColor(4)
-        hRecoJMSdn.SetLineColor(4)
-        hRecoJMSdn.SetLineWidth(3)
         hRecoJMSup.SetLineWidth(3)
 
         
         hRecoPUup.SetLineStyle(7)
-        hRecoPUdn.SetLineStyle(7)
         hRecoPUup.SetLineColor(ROOT.kCyan + 1)
-        hRecoPUdn.SetLineColor(ROOT.kCyan + 1)
-        hRecoPUdn.SetLineWidth(3)
         hRecoPUup.SetLineWidth(3)
 
         
         hRecoPDFup.SetLineStyle(6)
-        hRecoPDFdn.SetLineStyle(6)
         hRecoPDFup.SetLineColor(ROOT.kMagenta)
-        hRecoPDFdn.SetLineColor(ROOT.kMagenta)
         hRecoPDFup.SetLineWidth(3)
-        hRecoPDFdn.SetLineWidth(3)
 
         canvas_list[i].cd()
         hRMSup.SetTitle( '' )
@@ -310,59 +306,33 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
 
         if histname != "Soft Drop " : 
             unpinch_vals( hRMSup, xval=maxbin )
-            unpinch_vals( hRMSdn , xval=maxbin )
             unpinch_vals( hRecoup, xval=maxbin )
-            unpinch_vals( hRecodn, xval=maxbin )
             unpinch_vals( hRecoCopyup, xval=maxbin )
-            unpinch_vals( hRecoCopydn, xval=maxbin )
             unpinch_vals( hRecoJERup, xval=maxbin )
-            unpinch_vals( hRecoJERdn, xval=maxbin )
             unpinch_vals( hRecoJMRup, xval=maxbin )
-            unpinch_vals( hRecoJMRdn, xval=maxbin )
-            unpinch_vals( hRecoJMSup, xval=maxbin )
-            unpinch_vals( hRecoJMSdn, xval=maxbin )            
+            unpinch_vals( hRecoJMSup, xval=maxbin )            
             unpinch_vals( hRecoPUup, xval=maxbin )
-            unpinch_vals( hRecoPUdn, xval=maxbin )
             unpinch_vals( hRecoPDFup, xval=maxbin )
-            unpinch_vals( hRecoPDFdn, xval=maxbin )
 
         bin400 = hRecoCopyup.GetXaxis().FindBin(500.) - 1
         print 'smoothing '
         smooth( hRMSup, delta=2, xmin=bin400 )
-        smooth( hRMSdn , delta=2, xmin=bin400 )
         smooth( hRecoup, delta=2, xmin=bin400 )
-        smooth( hRecodn, delta=2, xmin=bin400 )
-        #print '<<<<<<<------ this is the one we want'
         smooth( hRecoCopyup, delta=2, xmin=bin400 )
-        smooth( hRecoCopydn, delta=2, xmin=bin400 )
         smooth( hRecoJERup, delta=2, xmin=bin400 )
-        smooth( hRecoJERdn, delta=2, xmin=bin400 )
         smooth( hRecoJMRup, delta=2, xmin=bin400 )
-        smooth( hRecoJMRdn, delta=2, xmin=bin400 )
         smooth( hRecoJMSup, delta=2, xmin=bin400 )
-        smooth( hRecoJMSdn, delta=2, xmin=bin400 )
         smooth( hRecoPUup, delta=2, xmin=bin400 )
-        smooth( hRecoPUdn, delta=2, xmin=bin400 )
         smooth( hRecoPDFup, delta=2, xmin=bin400 )
-        smooth( hRecoPDFdn, delta=2, xmin=bin400 )
 
         smooth( hRMSup, delta=2 )
-        smooth( hRMSdn , delta=2 )
         smooth( hRecoup, delta=2 )
-        smooth( hRecodn, delta=2 )
-        #print '<<<<<<<------ this is the one we want'
         smooth( hRecoCopyup, delta=2 )
-        smooth( hRecoCopydn, delta=2 )
         smooth( hRecoJMRup, delta=2 )
-        smooth( hRecoJMRdn, delta=2 )
         smooth( hRecoJERup, delta=2 )
-        smooth( hRecoJERdn, delta=2 )
         smooth( hRecoJMSup, delta=2 )
-        smooth( hRecoJMSdn, delta=2 )
         smooth( hRecoPUup, delta=2 )
-        smooth( hRecoPUdn, delta=2 )
         smooth( hRecoPDFup, delta=2 )
-        smooth( hRecoPDFdn, delta=2 )
 
 
         
@@ -374,16 +344,12 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         hRMSup.GetXaxis().SetNoExponent()
         #hRMSup.GetXaxis().SetMoreLogLabels(True)
         hRMSup.Draw('hist ][')
-        #hRMSdn.Draw('hist same')
         hRecoup.Draw('hist same ][')
-        #hRecodn.Draw('hist same')
         hRecoCopyup.Draw('hist same ][')
-        #hRecoCopydn.Draw('hist same')
         hRecoJERup.Draw('hist same ][')
         hRecoJMRup.Draw('hist same ][')
         hRecoJMSup.Draw('hist same ][')
         hRecoPUup.Draw('hist same ][')
-        #hRecoJMRdn.Draw('hist same')
         hRecoPDFup.Draw('hist same ][')
         #hRecoPDFdn.Draw('hist same')
         ####################################################################################### Legends Filled

@@ -47,8 +47,21 @@ uu.plotPtDist( hists=[uu.nom, uu.nomStat, uu.pythiaHist, uu.herwigHist],
 
 
 # Then plot uncertainties
-uu.plotFullUncs( hists=uu.uncertainties, postfix="ungroomed_absolute")
-ug.plotFullUncs( hists=ug.uncertainties, postfix="softdrop_absolute")
+uumc = RooUnfoldUnfolder(useSoftDrop=False,inputs='2DClosure',
+                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
+                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       powhegInputs="CMS_SMP_16_010.root",
+                       normalizeUnity=False, scalePtBins=False, lumi=lumi)
+ugmc = RooUnfoldUnfolder(useSoftDrop=True,inputs='2DClosure',
+                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
+                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       powhegInputs="CMS_SMP_16_010.root",
+                       normalizeUnity=False, scalePtBins=False, lumi=lumi) 
+
+uumc.plotFullUncs( hists=uu.uncertainties, postfix="ungroomed_absolute")
+ugmc.plotFullUncs( hists=ug.uncertainties, postfix="softdrop_absolute")
+
+
 
 
 # Now normalized cross section
@@ -80,5 +93,19 @@ uu_norm.draw2D("normalized_ungroomed")
 ug_norm.draw2D("normalized_groomed")
 
 # Then plot uncertainties
-uu_norm.plotFullUncs( hists=uu_norm.uncertainties, postfix="ungroomed")
-ug_norm.plotFullUncs( hists=ug_norm.uncertainties, postfix="softdrop")
+
+
+uumc_norm = RooUnfoldUnfolder(useSoftDrop=False, inputs="2DClosure",
+                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
+                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       powhegInputs="CMS_SMP_16_010.root",
+                       normalizeUnity=True, scalePtBins=True, lumi=lumi)
+
+ugmc_norm = RooUnfoldUnfolder(useSoftDrop=True, inputs="2DClosure",
+                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
+                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       powhegInputs="CMS_SMP_16_010.root",
+                       normalizeUnity=True, scalePtBins=True, lumi=lumi)
+
+uumc_norm.plotFullUncs( hists=uumc_norm.uncertainties, postfix="ungroomed")
+ugmc_norm.plotFullUncs( hists=ugmc_norm.uncertainties, postfix="softdrop")

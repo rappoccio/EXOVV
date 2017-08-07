@@ -30,10 +30,10 @@ datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
 
 herwig_response = herwigfile.Get('2d_response')
-herwig_response_softdrop = herwigfile.Get('2d_response_softdrop_nomnom')
+herwig_response_softdrop = herwigfile.Get('2d_response_softdrop')
 
 pythia8_response = pythia8file.Get('2d_response')
-pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop_nomnom')
+pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop')
 
 # Get data hists and normalize
 data_reco = datafile.Get('PFJet_pt_m_AK8')
@@ -45,14 +45,14 @@ if options.scale != None and options.scale :
 
 # get pythia 8 reco and normalize
 pythia8_reco = pythia8file.Get('PFJet_pt_m_AK8')
-pythia8_reco_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD_nomnom')
+pythia8_reco_softdrop = pythia8file.Get('PFJet_pt_m_AK8SD')
 if options.scale != None and options.scale : 
     pythia8_reco.Scale(1./pythia8_reco.Integral())
     pythia8_reco_softdrop.Scale(1./pythia8_reco_softdrop.Integral())
 
 # get herwig reco and normalize
 herwig_reco = herwigfile.Get('PFJet_pt_m_AK8')
-herwig_reco_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD_nomnom')
+herwig_reco_softdrop = herwigfile.Get('PFJet_pt_m_AK8SD')
 if options.scale != None and options.scale : 
     herwig_reco.Scale(1./herwig_reco.Integral())
     herwig_reco_softdrop.Scale(1./herwig_reco_softdrop.Integral())

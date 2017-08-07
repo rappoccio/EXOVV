@@ -94,12 +94,20 @@ class RooUnfoldUnfolder:
             
     def readExp(self) :
         # Nominal value :
-        fnom = ROOT.TFile(self.inputs + '.root')
+        fnom = ROOT.TFile(self.inputs + '_nomnom.root')
+        fraw = ROOT.TFile(self.inputs + '.root')
         self.files['nom'] = fnom
-        self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 )
+        self.files['raw'] = fraw
+        self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' )
+        self.responses['raw'] = fraw.Get('2d_response' + self.postfix1 )
+
         self.nom = self.responses['nom'].Hreco()
-        self.nomRaw = self.nom.Clone(self.nom.GetName() +"_raw")
+        self.raw = self.responses['raw'].Hreco()
+        self.nomUncorr = self.nom.Clone(self.nom.GetName() +"_uncorr")
         self.nomForPS = self.nom.Clone( self.nom.GetName() + "_normalizingPS")
+        self.rawForPS = self.raw.Clone( self.raw.GetName() + "_normalizingPSRaw")
+        self.histDriver_.normalizeHist( self.nomForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
+        self.histDriver_.normalizeHist( self.rawForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
         
         self.nom.UseCurrentStyle()
 
@@ -112,7 +120,7 @@ class RooUnfoldUnfolder:
 
         self.histDriver_.normalizeHist( self.nom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
-        self.nomNorm = self.nom.Integral("width")
+        self.nomNorm = self.nom.Integral()
         
         # Each experimental uncertainty has an "up" and a "down" variation, so
         # the (absolute) uncertainty is (up-down)/2   (factor of 2 will come later)
@@ -148,12 +156,19 @@ class RooUnfoldUnfolder:
         # double sided, so (absolute) uncertainty is (up-down)/2 again (factor of 2 will come later). 
         # For the CTEQ and MSTW, the uncertainty is |sys-nom|.
         fpdf = ROOT.TFile("unfoldedpdf.root")
-        self.files['_pdf'] =  fpdf 
+        self.files['_pdf'] =  fpdf
 
-        mpdfup = fpdf.Get( '2d_response' + self.postfix1 + '_pdfup' )
-        mpdfdn  = fpdf.Get( '2d_response' + self.postfix1 + '_pdfdn' )
-        mmstw = fpdf.Get( '2d_response' + self.postfix1 + '_mstw' )
-        mcteq = fpdf.Get( '2d_response' + self.postfix1 + '_cteq' )
+        pdfpostfix = ''
+        if "Data" in self.inputs :
+            pdfpostfix = '_data'
+
+
+        #print 'Getting PDFs:'
+        #print 'unfold' + pdfpostfix + '_mstw' + self.postfix1 
+        mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 )
+        mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 )        
+        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  )
+        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  )
         
         self.responses['_pdfup'] =  mpdfup 
         self.responses['_pdfdn'] =  mpdfdn 
@@ -163,64 +178,73 @@ class RooUnfoldUnfolder:
         hpdfdn = mpdfdn.Hreco()
         hmstw = mmstw.Hreco()
         hcteq = mcteq.Hreco()
+                    
         for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
-            self.histDriver_.normalizeHist( hist, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
-        hpdfup.Add( hpdfdn, -1.0 )
-        hpdfup.Scale(0.5)
-        hmstw.Add( self.nom, -1.0 )
-        hcteq.Add( self.nom, -1.0 )
+            self.histDriver_.normalizeHist( hist, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True )
 
-        for pdfhist in [hpdfup, hmstw, hcteq] :
-            pdfhist.Divide( self.nom )
-            
-        self.uncertainties['_pdf'] = hpdfup.Clone( self.nom.GetName() + "_pdf")
 
-        for ix in xrange(0,hpdfup.GetNbinsX()+2) :
-            for iy in xrange(0,hpdfup.GetNbinsY()+2) :
-                diff1 = abs(self.uncertainties['_pdf'].GetBinContent(ix,iy))
+        hpdfdiff = hpdfup.Clone(hpdfup.GetName() + "_difftodn")
+        hpdfdiff.Add( hpdfdn, -1.0 )
+        hpdfdiff.Scale(0.5)
+
+        hmstw.Add( self.nomForPS, -1.0 )
+        hcteq.Add( self.nomForPS, -1.0 )
+                             
+        self.uncertainties['_pdf'] = hpdfdiff.Clone( self.nom.GetName() + "_pdf")
+        
+        
+        for iy in xrange(0,hpdfdiff.GetNbinsY()+2) :
+
+            for ix in xrange(0,hpdfup.GetNbinsX()+2) :
+                diff1 = abs(hpdfdiff.GetBinContent(ix,iy))
                 diff2 = abs(hmstw.GetBinContent(ix,iy))
                 diff3 = abs(hcteq.GetBinContent(ix,iy))                    
                 if diff2 > diff1 and diff2 > diff3 :
                     self.uncertainties['_pdf'].SetBinContent(ix,iy,diff2)
                 if diff3 > diff1 and diff3 > diff2 :
                     self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)
+
+
+        self.uncertainties['_pdf'].Divide( self.nomForPS )
         
-
-
+                                               
         # Parton shower: Half the difference between pythia and herwig
         # However : There is a different pt spectrum, so need to correct per pt bin to
         # just get the mass differences
         self.files['_ps'] = ROOT.TFile("PS_hists.root")
-        self.responses['_ps'] = self.files['_ps'].Get( 'unfold_ps_data' + self.postfix1 + '_herwig' )
+        if "Data" in self.inputs : 
+            self.responses['_ps'] = self.files['_ps'].Get( 'unfold_ps_data' + self.postfix1 + '_herwig' )
+        else :
+            self.responses['_ps'] = self.files['_ps'].Get( 'unfold_ps' + self.postfix1 + '_herwig' )
         hps = self.responses['_ps'].Hreco()
         
         # HAVE to normalize a pythia clone and the herwig to unity per pt bin regardless for systematic
         # uncertainty estimation. 
-        self.histDriver_.normalizeHist( hps, normalizeUnity = True, scalePtBins = True  )
-        self.histDriver_.normalizeHist( self.nomForPS, normalizeUnity = True, scalePtBins = True) # Normalization to unity already done
-        
+        #self.histDriver_.normalizeHist( hps, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins  )
+        #self.histDriver_.normalizeHist( self.nomForPS, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins)
+        self.histDriver_.normalizeHist( hps, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True  )
+
+      
         # This holds 0.5 * [ (dsigma/dm)_pythia - (dsigma/dm)_herwig ]
+        
         hps.Add( self.nomForPS, -1.0 )
-        hps.Scale(0.5)
+        ensureAbs( hps )
+        #hps.Scale(0.5)
+        
+        #hps.Divide(self.nomForPS)
+        hps.Divide(self.rawForPS)
         # Now set up the PS uncertainties themselves:
-        self.uncertainties['_ps'] = self.nom.Clone( self.nom.GetName() + "_ps" )
-        for ix in xrange(1,self.nom.GetNbinsX()+1) :
-            for iy in xrange(1,self.nom.GetNbinsY()+1) :
-                value = abs(hps.GetBinContent(ix,iy))
-                self.uncertainties['_ps'].SetBinContent(ix,iy,value)
+        self.uncertainties['_ps'] = hps.Clone( self.nom.GetName() + "_ps" )
 
-                
-                
-        #self.uncertainties['_ps'].Add( hps, -0.5 )
-        #self.uncertainties['_ps'].Divide( self.nom )
-
-
+        picklePostfix = ""
+        if "Data" in self.inputs :
+            picklePostfix = "data"
         if self.normalizeUnity : 
-            RMS_vals = pickle.load(open("ungroomeddataJackKnifeRMS.p", "rb"))         ########
-            RMS_vals_softdrop = pickle.load(open("softdropdataJackKnifeRMS.p", "rb")) ########
+            RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS.p", "rb"))         ########
+            RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS.p", "rb")) ########
         else :
-            RMS_vals = pickle.load(open("ungroomeddataJackKnifeRMS_absolute.p", "rb"))         ########
-            RMS_vals_softdrop = pickle.load(open("softdropdataJackKnifeRMS_absolute.p", "rb")) ########
+            RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS_absolute.p", "rb"))         ########
+            RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS_absolute.p", "rb")) ########
 
         if not self.useSoftDrop :
             mcStatVals = RMS_vals
@@ -230,15 +254,15 @@ class RooUnfoldUnfolder:
         
         # Set up the stat uncertainties
         self.nomStat = self.nom.Clone( self.nom.GetName() + "_stat" )
-        self.mcStat = self.nomRaw.Clone( self.nom.GetName() + "_mcstat" )
+        self.mcStat = self.raw.Clone( self.nom.GetName() + "_mcstat" )
 
 
         setStyles( self.nom, fillStyle=1001, fillColor=ROOT.kGray, markerStyle=20)
         setStyles( self.nomStat, fillStyle=1001, fillColor=ROOT.kGray+2)
 
         for ix in xrange(1,self.nom.GetNbinsX()+1):
-            for iy in xrange(1,self.nom.GetNbinsY()+1):
-                val = self.nomRaw.GetBinContent(ix,iy)
+            for iy in xrange(1,self.nom.GetNbinsY()):
+                val = self.raw.GetBinContent(ix,iy)
                 if val > 0.0 : 
                     mcStatVal = mcStatVals[iy-1][ix-1] / val / self.nom.GetYaxis().GetBinWidth(iy) / self.nom.GetXaxis().GetBinWidth(ix)
                 else :
@@ -263,8 +287,9 @@ class RooUnfoldUnfolder:
                     self.nom.SetBinError( ix, iy, math.sqrt(err2) * val )
                     #print ' tot=%6.2e/%6.2e' % ( self.nom.GetBinError(ix,iy) , val )
 
-        self.printUnc()
-        
+        #self.printUnc()
+        for ihist in self.uncertainties.itervalues() :
+            ensureAbs(ihist)
 
     def readPythia(self):
         self.pythiaFile = ROOT.TFile( self.pythiaInputs )

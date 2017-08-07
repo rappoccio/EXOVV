@@ -1,9 +1,6 @@
 from optparse import OptionParser
 import pickle
 parser = OptionParser()
-                                 
-
-
 
 parser.add_option('--extra_massy', action='store_true',
                   default = False,

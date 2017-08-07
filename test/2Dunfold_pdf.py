@@ -71,7 +71,8 @@ if options.scale != None and options.scale :
 
 ##################################################################################################### Unfold Pythia8 with PDF-UP
 unfold_pdfup = RooUnfoldBayes(pdfup_response, pdf_reco, 4)
-unfolded_pdfup = unfold_pdfup.Hreco()
+unfold_pdfup.SetName("unfold_pdfup")
+unfolded_pdfup = unfold_pdfup.Hreco().Clone("2d_response_pdfup_mc")
 
 canvases_up = []
 namesreco_up = []
@@ -95,7 +96,8 @@ for i, canvas in enumerate(canvases_up) :
 
 ##################################################################################################### Unfold Pythia8 with PDF-UP for SoftDrop
 unfold_pdfup_softdrop = RooUnfoldBayes(pdfup_response_softdrop, pdf_reco_softdrop, 4)
-unfolded_pdfup_softdrop = unfold_pdfup_softdrop.Hreco()
+unfold_pdfup_softdrop.SetName("unfold_pdfup_softdrop")
+unfolded_pdfup_softdrop = unfold_pdfup_softdrop.Hreco().Clone("2d_response_pdfup_softdrop_mc")
 
 canvases_up_softdrop = []
 namesreco_up_softdrop = []
@@ -119,7 +121,8 @@ for i, canvas in enumerate(canvases_up_softdrop):
 
 ##################################################################################################### Unfold Pythia8 with PDF-Down 
 unfold_pdfdn = RooUnfoldBayes(pdfdn_response, pdf_reco, 4)
-unfolded_pdfdn = unfold_pdfdn.Hreco()
+unfold_pdfdn.SetName("unfold_pdfdn")
+unfolded_pdfdn = unfold_pdfdn.Hreco().Clone("2d_response_pdfdn_mc")
 
 canvases_dn = []
 namesreco_dn = []
@@ -144,7 +147,8 @@ for i, canvas in enumerate(canvases_dn):
 
 ##################################################################################################### Unfold Pythia8 with PDF-Down for SoftDrop
 unfold_pdfdn_softdrop = RooUnfoldBayes(pdfdn_response_softdrop, pdf_reco_softdrop, 4)
-unfolded_pdfdn_softdrop = unfold_pdfdn_softdrop.Hreco()
+unfold_pdfdn_softdrop.SetName("unfold_pdfdn_softdrop")
+unfolded_pdfdn_softdrop = unfold_pdfdn_softdrop.Hreco().Clone("2d_response_pdfdn_softdrop_mc")
 
 canvases_dn_softdrop = []
 namesreco_dn_softdrop = []
@@ -168,7 +172,8 @@ for i, canvas in enumerate(canvases_dn):
 
 ###################################################################################################### Unfold data with PDF-UP
 unfold_data_pdfup = RooUnfoldBayes(pdfup_response, data_reco, 4)
-unfolded_data_pdfup = unfold_data_pdfup.Hreco()
+unfold_data_pdfup.SetName("unfold_data_pdfup")
+unfolded_data_pdfup = unfold_data_pdfup.Hreco().Clone("2d_response_pdfup_data")
 
 canvases_data_up = []
 namesreco_data_up = []
@@ -192,7 +197,8 @@ for i, canvas in enumerate(canvases_data_up) :
 
 #################################################################################################### Unfold data with PDF-UP for SoftDrop 
 unfold_data_pdfup_softdrop = RooUnfoldBayes(pdfup_response_softdrop, data_reco_softdrop, 4)
-unfolded_data_pdfup_softdrop = unfold_data_pdfup_softdrop.Hreco()
+unfold_data_pdfup_softdrop.SetName("unfold_data_pdfup_softdrop")
+unfolded_data_pdfup_softdrop = unfold_data_pdfup_softdrop.Hreco().Clone("2d_response_pdfup_softdrop_data")
 
 canvases_data_up_softdrop = []
 namesreco_data_up_softdrop = []
@@ -215,7 +221,8 @@ for i, canvas in enumerate(canvases_data_up_softdrop):
 
 ################################################################################################### Unfold data with PDF-DOWN
 unfold_data_pdfdn = RooUnfoldBayes(pdfdn_response, data_reco, 4)
-unfolded_data_pdfdn = unfold_data_pdfdn.Hreco()
+unfold_data_pdfdn.SetName("unfold_data_pdfdn")
+unfolded_data_pdfdn = unfold_data_pdfdn.Hreco().Clone("2d_response_pdfdn_data")
 
 canvases_data_dn = []
 namesreco_data_dn = []
@@ -241,7 +248,8 @@ for i, canvas in enumerate(canvases_data_dn):
 
 ################################################################################################## Unfold data with PDF-Down for SoftDrop
 unfold_data_pdfdn_softdrop = RooUnfoldBayes(pdfdn_response_softdrop, data_reco_softdrop, 4)
-unfolded_data_pdfdn_softdrop = unfold_data_pdfdn_softdrop.Hreco()
+unfold_data_pdfdn_softdrop.SetName("unfold_data_pdfdn_softdrop")
+unfolded_data_pdfdn_softdrop = unfold_data_pdfdn_softdrop.Hreco().Clone("2d_response_pdfdn_softdrop_data")
 
 canvases_data_dn_softdrop = []
 namesreco_data_dn_softdrop = []
@@ -270,7 +278,8 @@ for i, canvas in enumerate(canvases_data_dn_softdrop):
 
 ##################################################################################################### Unfold Pythia8 with PDF-CTEQ
 unfold_pdfcteq = RooUnfoldBayes(pdfcteq_response, pdf_reco, 4)
-unfolded_pdfcteq = unfold_pdfcteq.Hreco()
+unfold_pdfcteq.SetName("unfold_pdfcteq")
+unfolded_pdfcteq = unfold_pdfcteq.Hreco().Clone("2d_response_cteq_mc")
 
 canvases_cteq = []
 namesreco_cteq = []
@@ -294,7 +303,8 @@ for i, canvas in enumerate(canvases_cteq) :
 
 ##################################################################################################### Unfold Pythia8 with PDF-CTEQ for SoftDrop
 unfold_pdfcteq_softdrop = RooUnfoldBayes(pdfcteq_response_softdrop, pdf_reco_softdrop, 4)
-unfolded_pdfcteq_softdrop = unfold_pdfcteq_softdrop.Hreco()
+unfold_pdfcteq_softdrop.SetName("unfold_pdfcteq_softdrop")
+unfolded_pdfcteq_softdrop = unfold_pdfcteq_softdrop.Hreco().Clone("2d_response_cteq_softdrop_mc")
 
 canvases_cteq_softdrop = []
 namesreco_cteq_softdrop = []
@@ -322,7 +332,8 @@ for i, canvas in enumerate(canvases_cteq_softdrop):
 
 ##################################################################################################### Unfold Pythia8 with PDF-MSTW
 unfold_pdfmstw = RooUnfoldBayes(pdfmstw_response, pdf_reco, 4)
-unfolded_pdfmstw = unfold_pdfmstw.Hreco()
+unfold_pdfmstw.SetName("unfold_pdfmstw")
+unfolded_pdfmstw = unfold_pdfmstw.Hreco().Clone("2d_response_mstw_mc")
 
 canvases_mstw = []
 namesreco_mstw = []
@@ -346,7 +357,8 @@ for i, canvas in enumerate(canvases_mstw) :
 
 ##################################################################################################### Unfold Pythia8 with PDF-MSTW for SoftDrop
 unfold_pdfmstw_softdrop = RooUnfoldBayes(pdfmstw_response_softdrop, pdf_reco_softdrop, 4)
-unfolded_pdfmstw_softdrop = unfold_pdfmstw_softdrop.Hreco()
+unfold_pdfmstw_softdrop.SetName("unfold_pdfmstw_softdrop")
+unfolded_pdfmstw_softdrop = unfold_pdfmstw_softdrop.Hreco().Clone("2d_response_mstw_softdrop_mc")
 
 canvases_mstw_softdrop = []
 namesreco_mstw_softdrop = []
@@ -374,7 +386,8 @@ for i, canvas in enumerate(canvases_mstw_softdrop):
 
 ###################################################################################################### Unfold data with PDF-CTEQ
 unfold_data_pdfcteq = RooUnfoldBayes(pdfcteq_response, data_reco, 4)
-unfolded_data_pdfcteq = unfold_data_pdfcteq.Hreco()
+unfold_data_pdfcteq.SetName("unfold_data_pdfcteq")
+unfolded_data_pdfcteq = unfold_data_pdfcteq.Hreco().Clone("2d_response_cteq_data")
 
 canvases_data_cteq = []
 namesreco_data_cteq = []
@@ -398,7 +411,8 @@ for i, canvas in enumerate(canvases_data_cteq) :
 
 #################################################################################################### Unfold data with PDF-CTEQ for SoftDrop 
 unfold_data_pdfcteq_softdrop = RooUnfoldBayes(pdfcteq_response_softdrop, data_reco_softdrop, 4)
-unfolded_data_pdfcteq_softdrop = unfold_data_pdfcteq_softdrop.Hreco()
+unfold_data_pdfcteq_softdrop.SetName("unfold_data_pdfcteq_softdrop")
+unfolded_data_pdfcteq_softdrop = unfold_data_pdfcteq_softdrop.Hreco().Clone("2d_response_cteq_softdrop_data")
 
 canvases_data_cteq_softdrop = []
 namesreco_data_cteq_softdrop = []
@@ -423,7 +437,8 @@ for i, canvas in enumerate(canvases_data_cteq_softdrop):
 
 ###################################################################################################### Unfold data with PDF-MSTW
 unfold_data_pdfmstw = RooUnfoldBayes(pdfmstw_response, data_reco, 4)
-unfolded_data_pdfmstw = unfold_data_pdfmstw.Hreco()
+unfold_data_pdfmstw.SetName("unfold_data_pdfmstw")
+unfolded_data_pdfmstw = unfold_data_pdfmstw.Hreco().Clone("2d_response_mstw_data")
 
 canvases_data_mstw = []
 namesreco_data_mstw = []
@@ -447,7 +462,8 @@ for i, canvas in enumerate(canvases_data_mstw) :
 
 #################################################################################################### Unfold data with PDF-MSTW for SoftDrop 
 unfold_data_pdfmstw_softdrop = RooUnfoldBayes(pdfmstw_response_softdrop, data_reco_softdrop, 4)
-unfolded_data_pdfmstw_softdrop = unfold_data_pdfmstw_softdrop.Hreco()
+unfold_data_pdfmstw_softdrop.SetName("unfold_data_pdfmstw_softdrop")
+unfolded_data_pdfmstw_softdrop = unfold_data_pdfmstw_softdrop.Hreco().Clone("2d_response_mstw_softdrop_data")
 
 canvases_data_mstw_softdrop = []
 namesreco_data_mstw_softdrop = []

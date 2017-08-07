@@ -41,6 +41,14 @@ parser.add_option('--scale', action='store_true',
                   dest='scale',
                   help='Scale to unity')
 
+
+
+parser.add_option('--absscale', action ='store_true', 
+                 default =False,
+                 dest='absscale',
+                 help='Use absolute cross section?')
+                            
+
 (options, args) = parser.parse_args()
 
 def get_pt_bin_vals() :
