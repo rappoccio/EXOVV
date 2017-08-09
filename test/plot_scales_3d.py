@@ -220,8 +220,8 @@ for ihist in xrange( len(histstrs) ):
         mg.GetXaxis().SetRangeUser(20., 1000.)
     else : 
         mg.SetTitle(";Groomed jet mass (GeV);JMS")
-        mg.SetMinimum(0.7)
-        mg.SetMaximum(1.3)
+        mg.SetMinimum(0.0)
+        mg.SetMaximum(3.0)
         mg.GetXaxis().SetRangeUser(10., 1000.)
     totresc.SetLogx()
     #tlx.DrawLatex ( 0.6, 0.830, ptbinstrs[ptbin])

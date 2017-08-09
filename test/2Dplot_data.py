@@ -338,8 +338,8 @@ for i in range(0, nptbin):
     
     temp_unc = (pdf_up[i] - pdf_dn[i]) 
     temp_unc_softdrop = (pdf_upsd[i] - pdf_dnsd[i])
-    temp_unc.Scale( 0.5 )
-    temp_unc_softdrop.Scale(0.5)
+    #temp_unc.Scale( 0.5 )
+    #temp_unc_softdrop.Scale(0.5)
 
     temp_unc.Scale(scales[i])
     temp_unc_softdrop.Scale(scales[i])
