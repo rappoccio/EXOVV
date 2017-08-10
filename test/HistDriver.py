@@ -2,123 +2,162 @@
 
 import ROOT
 import array
+import math
 
+class StyleDriver :
+    def __init__(self, name,
+                lineColor=None, fillColor=None, markerColor=None, 
+                lineStyle=None, fillStyle=None, markerStyle=None, 
+                lineWidth=None):
+        self.name        = name
+        self.lineColor   = lineColor   
+        self.fillColor   = fillColor   
+        self.markerColor = markerColor 
+        self.lineStyle   = lineStyle   
+        self.fillStyle   = fillStyle   
+        self.markerStyle = markerStyle 
+        self.lineWidth   = lineWidth   
+        
 class HistDriver :
-    def __init__( self, lumi=None ):
+    def __init__( self, lumi=None, dlumi=None ):
         self.lumi_=lumi
+        if dlumi != None :
+            self.dlumi2_ = dlumi**2
+        else :
+            self.dlumi2_ = None
         self.hists_ = []  # Keep stuff around until we want them to go out of scope
         self.canvs_ = []
         self.pads_ = []
         self.stacks_ = []
+        self.legs_ = []
         self.stampCMSVal = ROOT.TLatex()
         self.stampCMSVal.SetNDC()
-        self.stampCMSVal.SetTextFont(43)
+        self.stampCMSVal.SetTextFont(63)
         self.stampCMSVal.SetTextSize(25)
-        self.markerStyles = [20, 21, 22, 23, 33, 34, 24, 25, 26, 32, 28, 29]
-        self.lineStyles = [3,3,5,7,6,4,2,1,1,1,1]
-        self.lineColors = [ROOT.kRed, ROOT.kRed, ROOT.kBlue, ROOT.kCyan+1, ROOT.kMagenta, ROOT.kGreen+2, ROOT.kBlack, ROOT.kBlack, ROOT.kBlack]
-        
+        self.styles = {'nom':StyleDriver(name="nom",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray),
+                       'nomStat':StyleDriver(name="nomStat",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray+2),
+                       'pythia':StyleDriver(name="pythia",markerStyle=0,lineStyle=2,lineColor=ROOT.kBlack,lineWidth=3),
+                       'herwig':StyleDriver(name="herwig",markerStyle=0,lineStyle=8,lineColor=ROOT.kMagenta+1,lineWidth=3),
+                       'powheg':StyleDriver(name="powheg",markerStyle=0,lineStyle=4,lineColor=ROOT.kGreen+2,lineWidth=3)}
 
-    def plotFullXS( self, hist, postfix="" ):
-
-        c = ROOT.TCanvas("c" + postfix, "c" + postfix)
-        self.canvs_.append(c)
-        stack = ROOT.THStack( hist.GetName() + "_stack", hist.GetTitle() )
-        for iy in xrange(1,hist.GetNbinsY()+1):
-            proj = hist.ProjectionX('proj_' + hist.GetName() + postfix + str(iy), iy,iy )
-            setStyles( proj, markerStyle=self.markerStyles[iy-1], fillColor=ROOT.kGray, fillStyle=1001 )            
-            stack.Add( proj )
-
-        stack.Draw("nostack e2")
-        self.stacks_.append(stack)
-        self.stampCMS( c, "CMS Preliminary")
-        stack.SetMinimum(1e-12)
-        stack.SetMaximum(1.0)
-        c.SetLogy()
-        return stack
+        self.titles = {
+            'pythia':'PYTHIA8', 'herwig':'HERWIG++', 'powheg':'POWHEG+PYTHIA8'
+            }
+        self.sysStyles = {'_jer'   :StyleDriver(name="_jer",   lineWidth=3,lineStyle=8,lineColor=ROOT.kRed),
+                          '_jec'   :StyleDriver(name="_jec",   lineWidth=3,lineStyle=3,lineColor=ROOT.kRed),
+                          '_jmr'   :StyleDriver(name="_jmr",   lineWidth=3,lineStyle=5,lineColor=ROOT.kBlue),
+                          '_jms'   :StyleDriver(name="_jms",   lineWidth=3,lineStyle=8,lineColor=ROOT.kBlue),
+                          '_pu'    :StyleDriver(name="_pu",    lineWidth=3,lineStyle=7,lineColor=ROOT.kCyan+1),
+                          '_pdf'   :StyleDriver(name="_pdf",   lineWidth=3,lineStyle=6,lineColor=ROOT.kMagenta),
+                          '_ps'    :StyleDriver(name="_ps",    lineWidth=3,lineStyle=4,lineColor=ROOT.kGreen+2),
+                          '_mcStat':StyleDriver(name="_mcStat",lineWidth=3,lineStyle=2,lineColor=ROOT.kBlack),
+                        }
+        self.lineStyles = [3,8,5,9,7,6,4,2,1,1,1,1]
+        self.lineColors = [ROOT.kRed, ROOT.kRed, ROOT.kBlue, ROOT.kBlue, ROOT.kCyan+1, ROOT.kMagenta, ROOT.kGreen+2, ROOT.kBlack, ROOT.kBlack, ROOT.kBlack]
 
         
-    def plotFullXSProjections( self, hist, histStat=None, postfix="" ):
-
-        for iy in xrange(1,hist.GetNbinsY()+1):
-            c = ROOT.TCanvas("c" + str(iy) + postfix, "c" + str(iy) + postfix)
-            self.canvs_.append(c)
-            
-            proj = hist.ProjectionX('proj_' + hist.GetName() + postfix + str(iy), iy,iy, "e" )
-            setStyles( proj, markerStyle=self.markerStyles[iy-1], fillColor=ROOT.kGray, fillStyle=1001 )            
-            proj.Draw("e2")
-            if histStat != None :
-                projStat = histStat.ProjectionX('proj_' + histStat.GetName() + postfix + str(iy), iy,iy, "e" )
-                setStyles( projStat, markerStyle=self.markerStyles[iy-1], fillColor=ROOT.kGray+3, fillStyle=1001 )
-                projStat.Draw("e2 same")
-            c.SetLogx()
-            proj.GetXaxis().SetRangeUser(10,2000)
-            proj.SetMinimum(0.0)
-            self.stampCMS(c, "CMS Preliminary")
-            self.hists_.append(proj)
-            if histStat != None : 
-                self.hists_.append(projStat)
-
-
-
-    def plotFullUncs( self, hists, postfix="" ):
-
-        canvs = []
-        for iy in xrange(1,hists.values()[0].GetNbinsY()+1):
-            c = ROOT.TCanvas("cunc" + str(iy) + postfix, "cunc" + str(iy) + postfix)
-            self.canvs_.append(c)
-            canvs.append(c)
-
-            stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), hists.values()[0].GetTitle() )
-            for ihist,hist in enumerate(hists.values()) :
-
-                proj = hist.ProjectionX('proj_' + hist.GetName()+ postfix + str(iy), iy,iy, "e" )
-                setStyles( proj, lineWidth=3, lineStyle=self.lineStyles[ihist], lineColor=self.lineColors[ihist] )
-                self.hists_.append(proj)
-                stack.Add( proj )
-                
-            stack.Draw("nostack hist")
-            stack.SetMinimum(1e-4)
-            stack.SetMaximum(1e3)
-            self.stacks_.append(stack)
-            c.SetLogy()
-            c.SetLogx()
-            self.stampCMS(c, "CMS Preliminary")
-                
-
+        
     def setupPads(self, canv):
         canv.cd()
         pad1 = ROOT.TPad('pad' + canv.GetName() + '1', 'pad' + canv.GetName() + '1', 0., 0.3, 1.0, 1.0)
-        pad1.SetBottomMargin(0.022)
+        pad1.SetBottomMargin(0.05)
         pad2 = ROOT.TPad('pad' + canv.GetName() + '2', 'pad' + canv.GetName() + '2', 0., 0.0, 1.0, 0.3)
         pad2.SetTopMargin(0.05)
-        pad1.SetLeftMargin(0.20)
-        pad2.SetLeftMargin(0.20)
+        pad1.SetLeftMargin(0.2)
+        pad2.SetLeftMargin(0.2)
         pad2.SetBottomMargin(0.5)
         pad1.Draw()
         pad2.Draw()
+        self.pads_.append([pad1,pad2])
+        
+        
         self.canvs_.append(canv)
         self.pads_.append( [pad1,pad2] )
         return [pad1, pad2]
 
-    def plotHistAndRatio( pad1, pad2, hist, nominal, rationame="_ratio", option1="", option2="" ) :
+    def plotHistAndRatio(self, pad1, pad2, hist, nominal, rationame="_ratio", option1="", option2="", ratiotitle=None, logy=False, logx=False, ratiorange=None, xAxisRange=None ) :
+
+        if xAxisRange != None :
+            hist.GetXaxis().SetRangeUser(xAxisRange[0],xAxisRange[1])
+            
         pad1.cd()
+        hist.GetYaxis().SetTitleOffset(1.2)
         hist.Draw(option1)
+        pad1.SetLogy(logy)
+        pad1.SetLogx(logx)
         pad2.cd()
+        pad2.SetLogx(logx)
         ratio = hist.Clone( hist.GetName() + rationame )
+        ratio.SetMarkerStyle(0)
+        ratio.GetXaxis().SetTickLength(0.07)
+        ratio.GetYaxis().SetNdivisions(2,4,0,False)
+        ratio.GetYaxis().SetTitleOffset(1.2)
+        ratio.GetXaxis().SetTitleOffset(3.5)
+        if ratiotitle != None :
+            ratio.SetTitle(ratiotitle)
         ratio.Divide( nominal )
         ratio.Draw(option2)
+        if ratiorange != None :
+            ratio.SetMinimum( ratiorange[0] )
+            ratio.SetMaximum( ratiorange[1] )
         self.hists_.append(ratio)
 
 
+    def divide1D( self, hist1, hist2 ) :
+        for ix in xrange(0, hist1.GetNbinsX()+2) :
+            val1 = hist1.GetBinContent(ix)
+            err1 = hist1.GetBinError(ix)
+            val2 = hist2.GetBinContent(ix)
+            err2 = hist2.GetBinError(ix)
+            if abs(val2) > 0.0 and abs(val1) > 0.0 :
+                hist1.SetBinContent( ix, val1/val2 )
+                errtot = math.sqrt( (err1/val1)**2 + (err2/val2)**2)
+                hist1.SetBinError( ix, val1/val2 * errtot )
+            else :
+                hist1.SetBinContent(ix,0.0)
+                hist1.SetBinError(ix,0.0)
+                
+        
+    def normalizeHist(self, hist, normalizeUnity=True, divideByBinWidths=True, scalePtBins = False):
+        '''
+          1. Normalize to unity if desired.
+          2. Divide all bins by bin width.
+          3. Normalize pt bins to unity if desired.
+        '''
+        if normalizeUnity and hist.Integral() > 0.0 :
+            hist.Scale( 1.0 / hist.Integral() )
+        elif normalizeUnity == False and self.lumi_ > 0.0 :
+            hist.Scale( 1.0 / self.lumi_ )
+            for ix in xrange(1,hist.GetNbinsX()+1) :
+                for iy in xrange(1,hist.GetNbinsY()+1):
+                    val = hist.GetBinContent(ix,iy)
+                    err = hist.GetBinError(ix,iy)
+                    if val > 0.0 :
+                        errtot = math.sqrt( (err/val)**2 + self.dlumi2_ ) * val
+                        hist.SetBinError(ix,iy,errtot)
+        else :
+            raise ValueError("Normalizing histogram is not valid.")
+        if divideByBinWidths : 
+            divideByBinWidthsXY( hist )
+        if scalePtBins :
+            normalizeYSlices(hist)
+
 
     def stampCMS( self, pad, text, lumi=None ) :
+        pad.cd()
         if lumi == None :
-            lumi = self.lumi_
-        self.stampCMSVal.DrawLatex(0.2, 0.926, text)
-        self.stampCMSVal.DrawLatex(0.62, 0.926, "%3.1f fb^{-1} (13 TeV)" % (lumi) )
+            lumi = self.lumi_ 
+        self.stampCMSVal.DrawLatex(0.25, 0.82, text)
+        self.stampCMSVal.DrawLatex(0.64, 0.926, "%3.1f fb^{-1} (13 TeV)" % (lumi / 1e3) )
     
-        
+
+
+def setStylesClass( hist, istyle ) :
+    setStyles(hist, lineColor=istyle.lineColor, fillColor=istyle.fillColor, markerColor=istyle.markerColor, 
+               lineStyle=istyle.lineStyle, fillStyle=istyle.fillStyle, markerStyle=istyle.markerStyle, 
+               lineWidth=istyle.lineWidth )
+
+
 def setStyles( hist,
                lineColor=None, fillColor=None, markerColor=None, 
                lineStyle=None, fillStyle=None, markerStyle=None, 
@@ -167,18 +206,16 @@ def getGraph( hist, width=None, minmassbin=None ) :
     graph.SetFillStyle( hist.GetFillStyle() )
     return graph
 
-def normalizeHist(hist, normalizeUnity=True, normalizeEachPtBin=False, divideByBinWidths=True):
-    '''
-      1. Normalize to unity if desired.
-      2. Divide all bins by bin width.
-      3. Normalize pt bins to unity if desired.
-    '''
-    if normalizeUnity and hist.Integral("width") > 0.0 :
-        hist.Scale( 1.0 / hist.Integral("width") )
-    if divideByBinWidths : 
-        divideByBinWidthsXY( hist )
-    if normalizeEachPtBin :
-        normalizeYSlices( hist )
+
+def normalizeYSlices(hist):
+
+    for iy in xrange(0,hist.GetNbinsY()+2):
+        proj = hist.ProjectionX("proj_" + str(iy), iy, iy, "e")
+        if proj.Integral() > 0.0 : 
+            proj.Scale(1.0 / proj.Integral() )
+            for ix in xrange(0, hist.GetNbinsX()+2):
+                hist.SetBinContent( ix,iy, proj.GetBinContent(ix,iy) )
+                hist.SetBinError( ix,iy, proj.GetBinError(ix,iy) )
 
 def setToAverage(hist, up, dn ):
     '''
@@ -298,31 +335,37 @@ def divideByBinWidthsXY( hist ) :
                 hist.SetBinError(ix,iy, hist.GetBinError(ix,iy) / prod )
         
 
-
-def normalizeYSlices( hist ) :
-    for iy in xrange(1,hist.GetNbinsY()+1 ) :
-        binsum = 0.0
-        for ix in xrange(1,hist.GetNbinsX()+1 ) :
-            binsum += hist.GetBinContent( ix, iy )
-        if binsum > 0.0 : 
-            for ix in xrange(1,hist.GetNbinsX()+1 ) :
-                hist.SetBinContent( ix, iy, hist.GetBinContent(ix,iy) / binsum )
-                hist.SetBinError( ix, iy, hist.GetBinError(ix,iy) / binsum )
-            
-def normalizeXSlices( hist ) :
-    for ix in xrange(1,hist.GetNbinsX()+1 ) :
-        binsum = 0.0
-        for iy in xrange(1,hist.GetNbinsY()+1 ) :
-            binsum += hist.GetBinContent( ix, iy )
-        if binsum > 0.0 : 
-            for iy in xrange(1,hist.GetNbinsY()+1 ) :
-                hist.SetBinContent( ix, iy, hist.GetBinContent(ix,iy) / binsum )
-                hist.SetBinError( ix, iy, hist.GetBinError(ix,iy) / binsum )
-            
-                        
-                
 def printHist( hist ) :
     for ix in xrange(1,hist.GetNbinsX()+1):
         for iy in xrange(1,hist.GetNbinsY()+1):
             print '%7.2e +- %7.2e' % ( hist.GetBinContent(ix,iy), hist.GetBinError(ix,iy) ),
         print ''
+
+        
+def printHist1D( hist, maxx = None ) :
+    if maxx == None : 
+        for ix in xrange(1,hist.GetNbinsX()+1):
+            print ' %8.2e' % ( hist.GetBinContent(ix) ),
+        print ''
+    else : 
+        for ix in xrange(1,maxx):
+            print ' %8.2e' % ( hist.GetBinContent(ix) ),
+        print ''
+
+        
+def printHist1DErrs( hist, maxx = None ) :
+    if maxx == None : 
+        for ix in xrange(1,hist.GetNbinsX()+1):
+            print ' %8.2e' % ( hist.GetBinError(ix) ),
+        print ''
+    else : 
+        for ix in xrange(1,maxx):
+            print ' %8.2e' % ( hist.GetBinError(ix) ),
+        print ''
+
+def ensureAbs(hist):
+    for ix in xrange(0,hist.GetNbinsX()+2):
+        for iy in xrange(0,hist.GetNbinsY()+2):
+            if hist.GetBinContent(ix,iy) < 0.0 :
+                hist.SetBinContent(ix,iy, -1*hist.GetBinContent(ix,iy) )
+            

@@ -18,6 +18,11 @@ parser.add_option('--extension', action ='store', type = 'string',
                  dest='extension',
                  help='Runs jec, correct options are _jecup : _jecdn : _jerup : _jerdn : _jmrup : _jmrdn : _jmrnom : _jmsup : _jmsdn : or nothing at all to get the nominal')
 
+parser.add_option('--scale', action ='store_true', 
+                 default =False,
+                 dest='scale',
+                 help='Scale hists to unity?')
+
                                 
 (options, args) = parser.parse_args()
 
@@ -39,11 +44,12 @@ else :
     
 response.Draw('colz')
 
-truth.Scale(1./truth.Integral())
-reco.Scale(1./reco.Integral())
+if options.scale != None and options.scale :     
+    truth.Scale(1./truth.Integral())
+    reco.Scale(1./reco.Integral())
 
-truthSD.Scale(1./truthSD.Integral())
-recoSD.Scale(1./recoSD.Integral())
+    truthSD.Scale(1./truthSD.Integral())
+    recoSD.Scale(1./recoSD.Integral())
 
 
 pt_bin = {0: '200 < p_{T} < 260', 1: '260 < p_{T} < 350', 2: '350 < p_{T} < 460', 3: '460 < p_{T} < 550', 4: '550 < p_{T} < 650', 5: '650 < p_{T} < 760', 6: '760 < p_{T} < 900', 7: '900 < p_{T} < 1000', 8: '1000 < p_{T} < 1100', 9:'1100 < p_{T} < 1200', 10:'1200 < p_{T} < 1300', 11:'1300 < p_{T} < Inf'}
@@ -256,12 +262,14 @@ for i in range(0, nptbin):
 for i, canvas in enumerate(canvases) : 
     canvas.cd()
     ihist = namesreco[i] = reco_unfolded.ProjectionX('pythia8_mass' + str(i), i+1, i+1)
-    ihist.Scale( 1.0 / ihist.Integral() )
+    if options.scale != None and options.scale :     
+        ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append( ihist )
     namesreco[i].SetTitle('Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesreco[i].Draw('hist')
     ihist = namesgen[i] = truth.ProjectionX('genmass' + str(i), i+1 , i+1)
-    ihist.Scale( 1.0 / ihist.Integral() )
+    if options.scale != None and options.scale :     
+        ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append( ihist) 
     namesgen[i].SetLineColor(2)
     namesgen[i].Draw('same hist')
@@ -273,12 +281,14 @@ for i, canvas in enumerate(canvases) :
 for i, canvas in enumerate(canvasesSD):
     canvas.cd()
     ihist = namesrecoSD[i] = reco_unfoldedSD.ProjectionX('pythia8_massSD' + str(i), i+1, i+1)
-    ihist.Scale( 1.0 / ihist.Integral() )
+    if options.scale != None and options.scale :     
+        ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append(ihist)
     namesrecoSD[i].SetTitle('SD Mass Projection for P_{T} ' + pt_bin[i] + ' GeV')
     namesrecoSD[i].Draw('hist')
     ihist = namesgenSD[i] = truthSD.ProjectionX('genmassSD' + str(i), i+1, i+1)
-    ihist.Scale( 1.0 / ihist.Integral() )
+    if options.scale != None and options.scale :     
+        ihist.Scale( 1.0 / ihist.Integral() )
     keepHists.append(ihist)
     namesgenSD[i].SetLineColor(2)
     namesgenSD[i].Draw('same hist')
@@ -309,5 +319,7 @@ for evenmore in namesgenSD:
     evenmore.Write()
 span.Write()
 sdspan.Write()
+unfold.Write()
+unfoldSD.Write()
 outfile.Write()
 outfile.Close()

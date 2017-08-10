@@ -4,15 +4,30 @@ ROOT.gROOT.SetBatch()
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
-from plot_tools import plotter, setup, get_ptbins
-from optparse import OptionParser
+from plot_tools import setup, get_ptbins
 import pickle
+
+
+from optparse import OptionParser
 
 ############################################################################
 ############################################################################
 ####################CALCULATE JACKKNIFE UNCERTAINTY#########################
 ############################################################################
 ############################################################################
+
+parser = OptionParser()
+
+parser.add_option('--scale', action='store_true',
+                  default = False,
+                  dest='scale',
+                  help='Scale to unity')
+
+
+(options, args) = parser.parse_args()
+ 
+
+
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-1400', 12:'1400-1500', 13:'1500-1600', 14:'1600-1700', 15:'1700-1800', 16:'1800-1900', 17:'1900-2000', 18:'2000-Inf'}
 
 jackknife_mc = ROOT.TFile('jackknife_otherway_repdf.root')
@@ -27,17 +42,19 @@ unfolded_data_softdrop = []
 data_hist = datafile.Get('PFJet_pt_m_AK8')
 data_hist_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
 
-
-data_hist.Scale(1./data_hist.Integral())
-data_hist_softdrop.Scale(1./data_hist_softdrop.Integral())
+if options.scale != None and options.scale : 
+    data_hist.Scale(1./data_hist.Integral())
+    data_hist_softdrop.Scale(1./data_hist_softdrop.Integral())
 
 mc_hist = supplementaryMC.Get('PFJet_pt_m_AK8')
-mc_hist.Scale(1./mc_hist.Integral())
+if options.scale != None and options.scale : 
+    mc_hist.Scale(1./mc_hist.Integral())
 
 responses_softdrop = []
 unfolded_softdrop = []
 mc_hist_softdrop = supplementaryMC.Get('PFJet_pt_m_AK8SD')
-mc_hist_softdrop.Scale(1./mc_hist_softdrop.Integral())
+if options.scale != None and options.scale : 
+    mc_hist_softdrop.Scale(1./mc_hist_softdrop.Integral())
 
 
 for i in range(0, 10):
@@ -50,12 +67,12 @@ for i in range(0, 10):
     unfolded_data.append(RooUnfoldBayes(responses[i], data_hist, 4).Hreco())
     unfolded_data_softdrop.append(RooUnfoldBayes(responses_softdrop[i], data_hist_softdrop, 4).Hreco())
 
+    if options.scale != None and options.scale : 
+        unfolded_data[i].Scale(1./ unfolded_data[i].Integral())
+        unfolded_data_softdrop[i].Scale(1./unfolded_data_softdrop[i].Integral())
 
-    unfolded_data[i].Scale(1./ unfolded_data[i].Integral())
-    unfolded_data_softdrop[i].Scale(1./unfolded_data_softdrop[i].Integral())
-
-    unfolded_softdrop[i].Scale( 1. / unfolded_softdrop[i].Integral())
-    unfolded[i].Scale( 1. / unfolded[i].Integral() )
+        unfolded_softdrop[i].Scale( 1. / unfolded_softdrop[i].Integral())
+        unfolded[i].Scale( 1. / unfolded[i].Integral() )
     
     
 
@@ -87,9 +104,13 @@ def unfold_jackknife( unfoldedlist, pickleoutputname):
             RMS_vals[y].append(9./10.*sqrt(1./10. * ((massnums[0][y][numbers] - mu)**2 + (massnums[1][y][numbers]- mu)**2 + (massnums[2][y][numbers]- mu)**2 + (massnums[3][y][numbers]- mu)**2 + (massnums[4][y][numbers]- mu)**2 + (massnums[5][y][numbers]- mu)**2 + (massnums[6][y][numbers]- mu)**2 +     (massnums[7][y][numbers]- mu)**2 + (massnums[8][y][numbers]- mu)**2 + (massnums[9][y][numbers]- mu)**2)))
     ### serialize in binary format with pickle
     pickle.dump(RMS_vals, open(pickleoutputname+".p", "wb"))
-    
-unfold_jackknife(unfolded, "ungroomedJackKnifeRMS")
-unfold_jackknife(unfolded_softdrop, "softdropJackKnifeRMS")
 
-unfold_jackknife(unfolded_data, "ungroomeddataJackKnifeRMS")
-unfold_jackknife(unfolded_data_softdrop, "softdropdataJackKnifeRMS")
+
+postfix = ''
+if not options.scale :
+    postfix += "_absolute"
+unfold_jackknife(unfolded, "ungroomedJackKnifeRMS" + postfix)
+unfold_jackknife(unfolded_softdrop, "softdropJackKnifeRMS" + postfix)
+
+unfold_jackknife(unfolded_data, "ungroomeddataJackKnifeRMS" + postfix)
+unfold_jackknife(unfolded_data_softdrop, "softdropdataJackKnifeRMS" + postfix)
