@@ -1260,6 +1260,8 @@ response_jerup.Write()
 response_jerdn.Write()
 h_2DHisto_gen.Write()
 h_2DHisto_meas.Write()
+h_2DHisto_meas.Write()
+h_2DHisto_nomnom_meas.Write()
 response_jmrup.Write()
 response_jmrdn.Write()
 response_jmsup.Write()
@@ -1298,6 +1300,8 @@ h_2DHisto_measSD.Write()
 h_2DHisto_genSD.Write()
 h_2DHisto_nomnom_measSD.Write()
 h_2DHisto_nomnom_genSD.Write()
+
+
 
 response_softdrop.Write()
 response_softdrop_jecup.Write()
