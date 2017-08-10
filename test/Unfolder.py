@@ -38,7 +38,7 @@ class RooUnfoldUnfolder:
         self.uncertainties = dict(                                   # TH2D's representing uncertainties
             zip(self.sysnames, [None] * len(self.sysnames) )
             )
-        self.uncertaintyNames = dict( zip( self.sysnames, ['JES', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'MC Stat'] ) )
+        self.uncertaintyNames = dict( zip( self.sysnames, ['JES', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.'] ) )
 
         self.ptBinNames = ['200 < p_{T} < 260 GeV','260 < p_{T} < 350 GeV','350 < p_{T} < 460 GeV','460 < p_{T} < 550 GeV','550 < p_{T} < 650 GeV','650 < p_{T} < 760 GeV', '760 < p_{T} < 900 GeV', '900 < p_{T} < 1000 GeV', '1000 < p_{T} < 1100 GeV','1100 < p_{T} < 1200 GeV',
     '1200 < p_{T} < 1300 GeV', 'p_{T} > 1300 GeV']
@@ -96,17 +96,20 @@ class RooUnfoldUnfolder:
     def readExp(self) :
         # Nominal value :
         fnom = ROOT.TFile(self.inputs + '_nomnom.root')
-        fraw = ROOT.TFile(self.inputs + '.root')
+        funsmeared = ROOT.TFile(self.inputs + '.root')
         self.files['nom'] = fnom
-        self.files['raw'] = fraw
+        self.files['unsmeared'] = funsmeared
         self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' )
-        self.responses['raw'] = fraw.Get('2d_response' + self.postfix1 )
+        self.responses['unsmeared'] = funsmeared.Get('2d_response' + self.postfix1 )
 
         self.nom = self.responses['nom'].Hreco()
-        self.raw = self.responses['raw'].Hreco()
-        self.rawForPS = self.raw.Clone( self.nom.GetName() + "_normalizingPS")
-        self.histDriver_.normalizeHist( self.rawForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
-        #self.histDriver_.normalizeHist( self.raw, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
+        self.raw = self.nom.Clone(self.nom.GetName() + "_unscaled")
+        self.unsmeared = self.responses['unsmeared'].Hreco()
+        self.unsmearedForPS = self.unsmeared.Clone( self.nom.GetName() + "_normalizingPS")
+        self.rawForStat = self.raw.Clone( self.raw.GetName() + "_forstats")
+        self.histDriver_.normalizeHist( self.unsmearedForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
+        self.histDriver_.normalizeHist( self.rawForStat, normalizeUnity = self.normalizeUnity, divideByBinWidths=True, scalePtBins = True)
+        #self.histDriver_.normalizeHist( self.unsmeared, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
         
         self.nom.UseCurrentStyle()
 
@@ -118,9 +121,9 @@ class RooUnfoldUnfolder:
             self.nom.SetTitle(";Groomed jet mass (GeV);Ungroomed jet p_{T} (GeV)")
 
         self.histDriver_.normalizeHist( self.nom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
-        self.histDriver_.normalizeHist( self.raw, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
+        self.histDriver_.normalizeHist( self.unsmeared, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
-        self.nomNorm = self.nom.Integral()
+        self.nomNorm = self.nom.Integral("width")
         
         # Each experimental uncertainty has an "up" and a "down" variation, so
         # the (absolute) uncertainty is (up-down)/2   (factor of 2 will come later)
@@ -143,18 +146,21 @@ class RooUnfoldUnfolder:
             self.histDriver_.normalizeHist( histdn, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
             # Take difference to nominal... next step takes abs() so ignore relative sign
-            histup.Add( self.raw, -1.0 )
-            histdn.Add( self.raw, -1.0 )
+            histup.Add( self.unsmeared, -1.0 )
+            histdn.Add( self.unsmeared, -1.0 )
 
-            self.uncertainties[sys] = self.raw.Clone( self.nom.GetName() + "_" + sys )
+            self.uncertainties[sys] = self.unsmeared.Clone( self.nom.GetName() + "_" + sys )
             setToAverage( self.uncertainties[sys], histup, histdn )
-            self.uncertainties[sys].Divide( self.raw )
+            self.uncertainties[sys].Divide( self.unsmeared )
 
         self.uncertainties['_lum'] = self.nom.Clone( self.nom.GetName() + "_lum" )
-        for ix in xrange(0, self.raw.GetXaxis().FindBin( self.nom.GetXaxis().GetXmax() ) ):
-            for iy in xrange(0, self.raw.GetNbinsY()+2):
-                if self.raw.GetBinContent(ix,iy) > 0.0 : 
-                    self.uncertainties['_lum'].SetBinContent( ix, iy, math.sqrt( self.histDriver_.dlumi2_ )  )
+        for ix in xrange(0, self.unsmeared.GetXaxis().FindBin( self.nom.GetXaxis().GetXmax() ) ):
+            for iy in xrange(0, self.unsmeared.GetNbinsY()+2):
+                if self.unsmeared.GetBinContent(ix,iy) > 0.0 :
+                    if self.normalizeUnity == False : 
+                        self.uncertainties['_lum'].SetBinContent( ix, iy, math.sqrt( self.histDriver_.dlumi2_ )  )
+                    else :
+                        self.uncertainties['_lum'].SetBinContent( ix, iy, 0.0 )
 
         # Next : PDF and PS uncertainties
         # For the NNPDF uncertainties ("pdfup" and "pdfdn") these are
@@ -192,10 +198,10 @@ class RooUnfoldUnfolder:
         hpdfdiff.Add( hpdfdn, -1.0 )
         hpdfdiff.Scale(0.5)
 
-        hmstw.Add( self.rawForPS, -1.0 )
-        hcteq.Add( self.rawForPS, -1.0 )
+        hmstw.Add( self.unsmearedForPS, -1.0 )
+        hcteq.Add( self.unsmearedForPS, -1.0 )
                              
-        self.uncertainties['_pdf'] = hpdfdiff.Clone( self.raw.GetName() + "_pdf")
+        self.uncertainties['_pdf'] = hpdfdiff.Clone( self.unsmeared.GetName() + "_pdf")
         
         
         for iy in xrange(0,hpdfdiff.GetNbinsY()+2) :
@@ -210,7 +216,7 @@ class RooUnfoldUnfolder:
                     self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)
 
 
-        self.uncertainties['_pdf'].Divide( self.rawForPS )
+        self.uncertainties['_pdf'].Divide( self.unsmearedForPS )
         
                                                
         # Parton shower: Half the difference between pythia and herwig
@@ -226,33 +232,33 @@ class RooUnfoldUnfolder:
         # HAVE to normalize a pythia clone and the herwig to unity per pt bin regardless for systematic
         # uncertainty estimation. 
         #self.histDriver_.normalizeHist( hps, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins  )
-        #self.histDriver_.normalizeHist( self.rawForPS, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins)
+        #self.histDriver_.normalizeHist( self.unsmearedForPS, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins)
         self.histDriver_.normalizeHist( hps, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True  )
 
       
         # This holds [ (dsigma/dm)_pythia - (dsigma/dm)_herwig ]
         
-        hps.Add( self.rawForPS, -1.0 )
+        hps.Add( self.unsmearedForPS, -1.0 )
         ensureAbs( hps )
         hps.Scale(0.5)
         
-        #hps.Divide(self.rawForPS)
-        hps.Divide(self.rawForPS)
+        #hps.Divide(self.unsmearedForPS)
+        hps.Divide(self.unsmearedForPS)
         # Now set up the PS uncertainties themselves:
         self.uncertainties['_ps'] = hps.Clone( self.nom.GetName() + "_ps" )
 
         picklePostfix = ""
         if "Data" in self.inputs :
             picklePostfix = "data"
-        RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS.p", "rb"))         ########
-        RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS.p", "rb")) ########
+        #RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS.p", "rb"))         ########
+        #RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS.p", "rb")) ########
 
-        #if self.normalizeUnity : 
-        #    RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS.p", "rb"))         ########
-        #    RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS.p", "rb")) ########
-        #else :
-        #    RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS_absolute.p", "rb"))         ########
-        #    RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS_absolute.p", "rb")) ########
+        if self.normalizeUnity : 
+            RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS.p", "rb"))         ########
+            RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS.p", "rb")) ########
+        else :
+            RMS_vals = pickle.load(open("ungroomed" + picklePostfix +"JackKnifeRMS_absolute.p", "rb"))         ########
+            RMS_vals_softdrop = pickle.load(open("softdrop" + picklePostfix +"JackKnifeRMS_absolute.p", "rb")) ########
 
         if not self.useSoftDrop :
             mcStatVals = RMS_vals
@@ -268,17 +274,21 @@ class RooUnfoldUnfolder:
         setStyles( self.nom, fillStyle=1001, fillColor=ROOT.kGray, markerStyle=20)
         setStyles( self.nomStat, fillStyle=1001, fillColor=ROOT.kGray+2)
 
-        for ix in xrange(1,self.nom.GetNbinsX()+1):
-            for iy in xrange(1,self.nom.GetNbinsY()):
+        for ix in xrange(1,self.raw.GetNbinsX()+1):
+            for iy in xrange(1,self.raw.GetNbinsY()):
                 val = self.raw.GetBinContent(ix,iy)
+                staterr = self.raw.GetBinError(ix,iy)
+                biny = self.raw.GetYaxis().GetBinWidth(iy)
+                binx = self.raw.GetXaxis().GetBinWidth(ix)
                 if val > 0.0 : 
-                    mcStatVal = mcStatVals[iy-1][ix-1]
+                    #mcStatVal = math.sqrt( staterr/binx/biny + mcStatVals[iy-1][ix-1]/binx/biny)
+                    mcStatVal = math.sqrt( (staterr/val)**2 + (mcStatVals[iy-1][ix-1]/val/binx/biny)**2)
                 else :
                     mcStatVal = 0.0
                     
                 self.mcStat.SetBinContent( ix, iy, mcStatVal )
-        self.histDriver_.normalizeHist( self.mcStat, normalizeUnity = False, divideByBinWidths=True, scalePtBins = False) 
-        self.mcStat.Divide( self.raw )
+
+        #self.mcStat.Divide( self.nomForPS )
         printHist( self.mcStat, maxx=5,maxy=3 )
         self.uncertainties['_mcStat'] = self.mcStat.Clone( self.nom.GetName() + "_mcStat")
         
@@ -378,6 +388,7 @@ class RooUnfoldUnfolder:
         leg = ROOT.TLegend(0.6, 0.4, 0.83, 0.83)
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
+        leg.SetTextFont(43)
         self.histDriver_.legs_.append(leg)
 
         projs = []
@@ -438,12 +449,13 @@ class RooUnfoldUnfolder:
 
 
         for iy in xrange(1,hists[0].GetNbinsY()+1):
-            c = ROOT.TCanvas("c" + str(iy) + postfix, "c" + str(iy) + postfix)
+            c = ROOT.TCanvas("c" + str(iy) + postfix, "c" + str(iy) + postfix, 800, 600)
             pad1,pad2 = self.histDriver_.setupPads( c )
 
-            leg = ROOT.TLegend(0.6, 0.4, 0.83, 0.83)
+            leg = ROOT.TLegend(0.5, 0.4, 0.83, 0.83, self.ptBinNames[iy-1] )
             leg.SetBorderSize(0)
             leg.SetFillColor(0)
+            leg.SetTextFont(43)
             self.histDriver_.legs_.append(leg)
 
             
@@ -492,12 +504,13 @@ class RooUnfoldUnfolder:
                 #    projx.SetTitle( title )
 
                 if ihist == 0 :
-                    option = "e2"
+                    option = "e2 ]["
                 elif ihist == 1 :
-                    option = "e2 same"
+                    option = "e2 same ]["
                 else :
-                    option = "hist same"
+                    option = "hist same ]["
                 #projx.GetXaxis().SetRangeUser(00,1300)
+
     
                 self.histDriver_.plotHistAndRatio( pad1=pad1, pad2=pad2, hist=projx, nominal=ratioval,
                                        option1=option, option2=option,
@@ -506,8 +519,11 @@ class RooUnfoldUnfolder:
                 pad1.cd()
                 projs[0].SetMaximum(maxval)
                 projs[0].SetMinimum(0.0)
-                projs[0].SetLabelSize(0)
-                projs[0].SetTitleSize(0)
+                projs[0].GetXaxis().SetLabelSize(0)
+                projs[0].GetXaxis().SetTitleSize(0)
+                projs[0].GetYaxis().SetTitleSize( 25 )
+                projs[0].GetYaxis().SetLabelSize( 19 )
+                projs[0].GetYaxis().SetTitleOffset( 1.5 )                
                 leg.Draw()
             
             
@@ -525,18 +541,16 @@ class RooUnfoldUnfolder:
             c = ROOT.TCanvas("cunc" + str(iy) + postfix, "cunc" + str(iy) + postfix, 800, 600)
             self.histDriver_.canvs_.append(c)
             canvs.append(c)
-            leg= ROOT.TLegend( 0.2, 0.6, 0.8, 0.8)
+            leg= ROOT.TLegend( 0.2, 0.5, 0.84, 0.8, self.ptBinNames[iy-1])
             leg.SetBorderSize(0)
             leg.SetFillColor(0)
             leg.SetNColumns(2)
-            
+            leg.SetTextFont(43)
             if self.useSoftDrop :
                 stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Groomed jet mass (GeV);Fractional Uncertainty" )
-                leg.SetHeader("Groomed " + self.ptBinNames[iy-1])
             else :
-                leg.SetHeader("Ungroomed " + self.ptBinNames[iy-1])
                 stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Jet mass (GeV);Fractional Uncertainty" )
-            
+
 
 
             for key in self.sysnames :

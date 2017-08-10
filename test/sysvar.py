@@ -361,7 +361,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         legends_list[i].AddEntry(hRecoPUup, 'PU', 'l')
         legends_list[i].AddEntry(hRecoPDFup, 'PDF', 'l')
         legends_list[i].AddEntry(hRecoCopyup, 'Physics Model', 'l')        
-        legends_list[i].AddEntry(hRMSup, 'MC Stat', 'l')
+        legends_list[i].AddEntry(hRMSup, 'Stat. Unc.', 'l')
         legends_list[i].Draw()
 
         tlx = ROOT.TLatex()
@@ -376,7 +376,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         tlx2.SetNDC()
         tlx2.SetTextFont(63)
         tlx2.SetTextSize(20)
-        tlx2.DrawLatex(0.22, 0.830, histname + ptbins_dict[i])
+        tlx2.DrawLatex(0.22, 0.830, ptbins_dict[i])
 
         
         canvas_list[i].Draw()

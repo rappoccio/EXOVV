@@ -32,7 +32,7 @@ class HistDriver :
         self.legs_ = []
         self.stampCMSVal = ROOT.TLatex()
         self.stampCMSVal.SetNDC()
-        self.stampCMSVal.SetTextFont(63)
+        self.stampCMSVal.SetTextFont(43)
         self.stampCMSVal.SetTextSize(25)
         self.styles = {'nom':StyleDriver(name="nom",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray),
                        'nomStat':StyleDriver(name="nomStat",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray+2),
@@ -64,8 +64,10 @@ class HistDriver :
         pad1.SetBottomMargin(0.05)
         pad2 = ROOT.TPad('pad' + canv.GetName() + '2', 'pad' + canv.GetName() + '2', 0., 0.0, 1.0, 0.3)
         pad2.SetTopMargin(0.05)
-        pad1.SetLeftMargin(0.2)
-        pad2.SetLeftMargin(0.2)
+        pad1.SetLeftMargin(0.15)
+        pad2.SetLeftMargin(0.15)
+        pad1.SetRightMargin(0.15)
+        pad2.SetRightMargin(0.15)
         pad2.SetBottomMargin(0.5)
         pad1.Draw()
         pad2.Draw()
@@ -94,6 +96,8 @@ class HistDriver :
         ratio.GetYaxis().SetNdivisions(2,4,0,False)
         ratio.GetYaxis().SetTitleOffset(1.2)
         ratio.GetXaxis().SetTitleOffset(3.5)
+        if logx :
+            ratio.GetXaxis().SetNoExponent()
         if ratiotitle != None :
             ratio.SetTitle(ratiotitle)
         ratio.Divide( nominal )
@@ -148,7 +152,7 @@ class HistDriver :
         pad.cd()
         if lumi == None :
             lumi = self.lumi_ 
-        self.stampCMSVal.DrawLatex(0.25, 0.82, text)
+        self.stampCMSVal.DrawLatex(0.15, 0.926, text)
         self.stampCMSVal.DrawLatex(0.64, 0.926, "%3.1f fb^{-1} (13 TeV)" % (lumi / 1e3) )
     
 

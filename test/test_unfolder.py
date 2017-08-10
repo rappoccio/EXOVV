@@ -12,9 +12,10 @@ ROOT.gStyle.SetTitleOffset(1.0, "Y");
 ROOT.gStyle.SetPadRightMargin(0.15)
 ROOT.gStyle.SetTitleFont(43,"XYZ")
 ROOT.gStyle.SetTitleSize(30,"XYZ")
-ROOT.gStyle.SetTitleOffset(1.0, "XY")
+ROOT.gStyle.SetTitleOffset(1.0, "X")
+ROOT.gStyle.SetTitleOffset(0.8, "Y")
 ROOT.gStyle.SetLabelFont(43,"XYZ")
-ROOT.gStyle.SetLabelSize(25,"XYZ")
+ROOT.gStyle.SetLabelSize(22,"XYZ")
 
 
 

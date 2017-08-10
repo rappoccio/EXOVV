@@ -1202,7 +1202,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gen_list[i].SetMarkerStyle(8)
         #gen_list[i].SetMarkerSize(30)
         gen_list[i].Draw("][ SAME")
-        latex_list[i].DrawLatex(0.2, 0.926, "CMS preliminary, 40 pb^{-1} (13 TeV)")
+        latex_list[i].DrawLatex(0.2, 0.926, "CMS, 40 pb^{-1} (13 TeV)")
         latexpt_list[i].DrawLatex(0.200, 0.779, ptbins_dict[i])
         
         recocopy = reco_list[i].Clone()
