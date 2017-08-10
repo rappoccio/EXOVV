@@ -104,8 +104,8 @@ class RooUnfoldUnfolder:
 
         self.nom = self.responses['nom'].Hreco()
         self.raw = self.responses['raw'].Hreco()
-        self.nomForPS = self.nom.Clone( self.nom.GetName() + "_normalizingPS")
-        self.histDriver_.normalizeHist( self.nomForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
+        self.rawForPS = self.raw.Clone( self.nom.GetName() + "_normalizingPS")
+        self.histDriver_.normalizeHist( self.rawForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
         #self.histDriver_.normalizeHist( self.raw, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
         
         self.nom.UseCurrentStyle()
@@ -118,6 +118,7 @@ class RooUnfoldUnfolder:
             self.nom.SetTitle(";Groomed jet mass (GeV);Ungroomed jet p_{T} (GeV)")
 
         self.histDriver_.normalizeHist( self.nom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
+        self.histDriver_.normalizeHist( self.raw, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
         self.nomNorm = self.nom.Integral()
         
@@ -142,17 +143,17 @@ class RooUnfoldUnfolder:
             self.histDriver_.normalizeHist( histdn, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
             # Take difference to nominal... next step takes abs() so ignore relative sign
-            histup.Add( self.nom, -1.0 )
-            histdn.Add( self.nom, -1.0 )
+            histup.Add( self.raw, -1.0 )
+            histdn.Add( self.raw, -1.0 )
 
-            self.uncertainties[sys] = self.nom.Clone( self.nom.GetName() + "_" + sys )
+            self.uncertainties[sys] = self.raw.Clone( self.nom.GetName() + "_" + sys )
             setToAverage( self.uncertainties[sys], histup, histdn )
-            self.uncertainties[sys].Divide( self.nom )
+            self.uncertainties[sys].Divide( self.raw )
 
         self.uncertainties['_lum'] = self.nom.Clone( self.nom.GetName() + "_lum" )
-        for ix in xrange(0, self.nom.GetXaxis().FindBin( self.nom.GetXaxis().GetXmax() ) ):
-            for iy in xrange(0, self.nom.GetNbinsY()+2):
-                if self.nom.GetBinContent(ix,iy) > 0.0 : 
+        for ix in xrange(0, self.raw.GetXaxis().FindBin( self.nom.GetXaxis().GetXmax() ) ):
+            for iy in xrange(0, self.raw.GetNbinsY()+2):
+                if self.raw.GetBinContent(ix,iy) > 0.0 : 
                     self.uncertainties['_lum'].SetBinContent( ix, iy, math.sqrt( self.histDriver_.dlumi2_ )  )
 
         # Next : PDF and PS uncertainties
@@ -191,10 +192,10 @@ class RooUnfoldUnfolder:
         hpdfdiff.Add( hpdfdn, -1.0 )
         hpdfdiff.Scale(0.5)
 
-        hmstw.Add( self.nomForPS, -1.0 )
-        hcteq.Add( self.nomForPS, -1.0 )
+        hmstw.Add( self.rawForPS, -1.0 )
+        hcteq.Add( self.rawForPS, -1.0 )
                              
-        self.uncertainties['_pdf'] = hpdfdiff.Clone( self.nom.GetName() + "_pdf")
+        self.uncertainties['_pdf'] = hpdfdiff.Clone( self.raw.GetName() + "_pdf")
         
         
         for iy in xrange(0,hpdfdiff.GetNbinsY()+2) :
@@ -209,7 +210,7 @@ class RooUnfoldUnfolder:
                     self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)
 
 
-        self.uncertainties['_pdf'].Divide( self.nomForPS )
+        self.uncertainties['_pdf'].Divide( self.rawForPS )
         
                                                
         # Parton shower: Half the difference between pythia and herwig
@@ -225,18 +226,18 @@ class RooUnfoldUnfolder:
         # HAVE to normalize a pythia clone and the herwig to unity per pt bin regardless for systematic
         # uncertainty estimation. 
         #self.histDriver_.normalizeHist( hps, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins  )
-        #self.histDriver_.normalizeHist( self.nomForPS, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins)
+        #self.histDriver_.normalizeHist( self.rawForPS, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins)
         self.histDriver_.normalizeHist( hps, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True  )
 
       
         # This holds [ (dsigma/dm)_pythia - (dsigma/dm)_herwig ]
         
-        hps.Add( self.nomForPS, -1.0 )
+        hps.Add( self.rawForPS, -1.0 )
         ensureAbs( hps )
         hps.Scale(0.5)
         
-        #hps.Divide(self.nomForPS)
-        hps.Divide(self.nomForPS)
+        #hps.Divide(self.rawForPS)
+        hps.Divide(self.rawForPS)
         # Now set up the PS uncertainties themselves:
         self.uncertainties['_ps'] = hps.Clone( self.nom.GetName() + "_ps" )
 
@@ -277,7 +278,7 @@ class RooUnfoldUnfolder:
                     
                 self.mcStat.SetBinContent( ix, iy, mcStatVal )
         self.histDriver_.normalizeHist( self.mcStat, normalizeUnity = False, divideByBinWidths=True, scalePtBins = False) 
-        self.mcStat.Divide( self.nom )
+        self.mcStat.Divide( self.raw )
         printHist( self.mcStat, maxx=5,maxy=3 )
         self.uncertainties['_mcStat'] = self.mcStat.Clone( self.nom.GetName() + "_mcStat")
         

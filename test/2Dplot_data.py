@@ -34,13 +34,15 @@ parser.add_option('--unrestrictedChi2', action='store_true',
 
 #from ROOT import *
 import ROOT
+ROOT.gROOT.SetBatch()
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
 from math import sqrt
 from plot_tools import setup, get_ptbins, plot_OneBand, PlotRatios
 
-f = ROOT.TFile('2DData' + options.extension + '.root')
+f = ROOT.TFile('2DData_nomnom.root')
+fraw = ROOT.TFile('2DData.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 
@@ -222,6 +224,8 @@ for hists in [
 
 datalist = []
 datalistSD = []
+datalistraw = []
+datalistrawSD = []
 MCtruth = []
 MCtruthSD = []
 atlx = []
@@ -236,6 +240,8 @@ comparisons = []
 for x in range(0, nptbin):
     datalistSD.append(f.Get('massSD'+str(x)))
     datalist.append(f.Get('mass'+str(x)))
+    datalistrawSD.append(f.Get('massSD'+str(x)))
+    datalistraw.append(f.Get('mass'+str(x)))
     MCtruth.append(f.Get('genmass' + str(x)))
     MCtruthSD.append(f.Get('genmassSD' + str(x)))
     atlx.append(ROOT.TLatex())
@@ -279,8 +285,8 @@ for i in range(0, nptbin):
     if ps_softdrop[i].Integral() > 0.0 : 
         ps_softdrop[i].Scale(1.0 / ps_softdrop[i].Integral() )
     
-    temp_unc = 0.5 * (ps[i] - datalist[i])
-    temp_softdrop_unc = 0.5 * (ps_softdrop[i] - datalistSD[i])
+    temp_unc = 0.5 * (ps[i] - datalistraw[i])
+    temp_softdrop_unc = 0.5 * (ps_softdrop[i] - datalistrawSD[i])
     temp_unc.Scale(scales[i])
     temp_softdrop_unc.Scale(scales[i])
 #take the differences in the bins between the pythia 8 unfolded with pythia 8 and the pythia 8 unfolded with pythia 6
@@ -330,16 +336,16 @@ for i in range(0, nptbin):
             hist.Scale(1.0 / hist.Integral() )
     
 
-    temp_diffcteq = (pdf_cteq[i] - MCtruth[i])
-    temp_diffmstw = (pdf_mstw[i] - MCtruth[i])
-    temp_diffcteqsd = (pdf_cteqsd[i] - MCtruthSD[i])
-    temp_diffmstwsd = (pdf_mstwsd[i] - MCtruthSD[i])
+    temp_diffcteq = (pdf_cteq[i] - datalistraw[i])
+    temp_diffmstw = (pdf_mstw[i] - datalistraw[i])
+    temp_diffcteqsd = (pdf_cteqsd[i] - datalistrawSD[i])
+    temp_diffmstwsd = (pdf_mstwsd[i] - datalistrawSD[i])
 
     
     temp_unc = (pdf_up[i] - pdf_dn[i]) 
     temp_unc_softdrop = (pdf_upsd[i] - pdf_dnsd[i])
-    #temp_unc.Scale( 0.5 )
-    #temp_unc_softdrop.Scale(0.5)
+    temp_unc.Scale( 0.5 )
+    temp_unc_softdrop.Scale(0.5)
 
     temp_unc.Scale(scales[i])
     temp_unc_softdrop.Scale(scales[i])

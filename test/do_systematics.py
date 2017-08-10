@@ -28,9 +28,14 @@ parser.add_option('--absscale', action ='store_true',
 
  
 ROOT.gROOT.SetBatch()
-
-
-f = ROOT.TFile('2DClosure_nomnom.root')
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
+# All of the systematic uncertainties are NOT scaled by default except "nomnom", so take the ratios to the unsmeared case.
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
+f = ROOT.TFile('2DClosure.root')
 parton_shower = ROOT.TFile('PS_hists.root')
 pdfs = ROOT.TFile('unfoldedpdf.root')
 bins = ['200 < p_{T} < 260 GeV','260 < p_{T} < 350 GeV','350 < p_{T} < 460 GeV','460 < p_{T} < 550 GeV','550 < p_{T} < 650 GeV','650 < p_{T} < 760 GeV', '760 < p_{T} < 900 GeV', '900 < p_{T} < 1000 GeV', '1000 < p_{T} < 1100 GeV','1100 < p_{T} < 1200 GeV',
@@ -201,9 +206,8 @@ for i in range(0, nptbins):
     if ps_softdrop[i].Integral() > 0.0 : 
         ps_softdrop[i].Scale(1.0 / ps_softdrop[i].Integral()* datalistSD[i].Integral() )
               
-    temp_unc = (ps[i] - datalist[i])
-    #temp_softdrop_unc = 0.5 * (ps_softdrop[i] - datalistSD[i])
-    temp_softdrop_unc = (ps_softdrop[i] - datalistSD[i])
+    temp_unc = 0.5 * (ps[i] - datalist[i])
+    temp_softdrop_unc = 0.5 * (ps_softdrop[i] - datalistSD[i])
     temp_unc.Scale(scales[i])
     temp_softdrop_unc.Scale(scales[i])
 #take the differences in the bins between the pythia 8 unfolded with pythia 8 and the pythia 8 unfolded with pythia 6
@@ -259,8 +263,8 @@ for i in range(0, nptbins):
     
     temp_unc = (pdf_up[i] - pdf_dn[i]) 
     temp_unc_softdrop = (pdf_upsd[i] - pdf_dnsd[i])
-    #temp_unc.Scale( 0.5 )
-    #temp_unc_softdrop.Scale(0.5)
+    temp_unc.Scale( 0.5 )
+    temp_unc_softdrop.Scale(0.5)
 
 
     temp_unc.Scale(scales[i])

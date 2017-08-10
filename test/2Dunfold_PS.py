@@ -23,7 +23,13 @@ parser.add_option('--scale', action ='store_true',
  
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
 nptbin = 11
-
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
+# All of the systematic uncertainties are NOT scaled by default except "nomnom", so take the ratios to the unsmeared case.
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
+##### WARNING ### WARNING #####<----------------------------------------------
 herwigfile = TFile('qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root')
 pythia8file = TFile('responses_rejec_fixjmr_otherway_qcdmc_2dplots.root')
 datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')

@@ -35,12 +35,9 @@ outtext = options.extension
 truth = myfile.Get('PFJet_pt_m_AK8Gen')
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
 
-reco = myfile.Get('PFJet_pt_m_AK8')
-    
-if 'nomnom' in options.extension :    
-    recoSD = myfile.Get('PFJet_pt_m_AK8SD_nomnom')
-else :
-    recoSD = myfile.Get('PFJet_pt_m_AK8SD')
+
+reco = myfile.Get('PFJet_pt_m_AK8_nomnom')
+recoSD = myfile.Get('PFJet_pt_m_AK8SD_nomnom')
     
 response.Draw('colz')
 
