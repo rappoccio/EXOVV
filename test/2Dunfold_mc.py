@@ -36,8 +36,8 @@ truth = myfile.Get('PFJet_pt_m_AK8Gen')
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
 
 
-reco = myfile.Get('PFJet_pt_m_AK8_nomnom')
-recoSD = myfile.Get('PFJet_pt_m_AK8SD_nomnom')
+reco = myfile.Get('PFJet_pt_m_AK8')
+recoSD = myfile.Get('PFJet_pt_m_AK8SD')
     
 response.Draw('colz')
 
@@ -180,7 +180,7 @@ corSD_canvas.Print("CorrelationMatrixSD.pdf", "pdf")
 ###################
 
 
-ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
+#ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 cov_canvas = ROOT.TCanvas("cov_canvas", "response", 800, 800)
 cov_canvas.SetRightMargin(0.15)
 cov_canvas.SetLeftMargin(0.15)
