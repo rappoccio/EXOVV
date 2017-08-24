@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # ==============================================================================
 #  File and Version Information:
-#       $Id: RooUnfoldExample.py 302 2011-09-30 20:39:20Z T.J.Adye $
+#       $Id: RooUnfoldExample.py 354 2017-07-11 17:49:50Z T.J.Adye@rl.ac.uk $
 #
 #  Description:
 #       Simple example usage of the RooUnfold package using toy MC.
@@ -16,6 +16,7 @@ from ROOT import RooUnfold
 from ROOT import RooUnfoldBayes
 # from ROOT import RooUnfoldSvd
 # from ROOT import RooUnfoldTUnfold
+# from ROOT import RooUnfoldIds
 
 # ==============================================================================
 #  Gaussian smearing, systematic translation, and variable inefficiency
@@ -56,8 +57,9 @@ for i in xrange(10000):
 
 print "==================================== UNFOLD ==================================="
 unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
-# unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
-# unfold= RooUnfoldTUnfold (response, hMeas);
+# unfold= RooUnfoldSvd     (response, hMeas, 20);     #  OR
+# unfold= RooUnfoldTUnfold (response, hMeas);         #  OR
+# unfold= RooUnfoldIds     (response, hMeas, 3);      #  OR
 
 hReco= unfold.Hreco();
 unfold.PrintTable (cout, hTrue);

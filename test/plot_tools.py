@@ -425,20 +425,20 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             hRecoPDF.SetBinError(ibin, add_quadrature( [temp , (pdfdif_list[i][ibin-1] * 1./ hRMS.GetBinWidth(ibin) ) ]))
         ####################################################################################### PDF Drawn Here
         hReco.Scale(1.0/hReco.Integral("width"))
-        #hRecoPDF.SetTitle(";;Normalized cross section")
+        #hRecoPDF.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^2#sigma}{dm dp_{T}} (1/GeV)")
         hRecoPDF.GetYaxis().SetTitleSize(30)
-        hRecoPDF.GetYaxis().SetTitleOffset(1.3)
+        hRecoPDF.GetYaxis().SetTitleOffset(1.5)
         hRecoPDF.GetYaxis().SetLabelOffset(0.01)
-        hRecoPDF.GetYaxis().SetLabelSize(25)
+        hRecoPDF.GetYaxis().SetLabelSize(22)
         hRecoPDF.GetXaxis().SetLabelOffset(2)
         hRecoPDF.SetMarkerStyle(20)
         hRecoPDF.SetFillColor(ROOT.kGray)
         hRecoPDF.Scale(1.0/hRecoPDF.Integral("width"))
-        #hStat.SetTitle(";;Normalized cross section")
+        #hStat.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^2#sigma}{dm dp_{T}} (1/GeV)")
         hStat.GetYaxis().SetTitleSize(30)
         hStat.GetYaxis().SetTitleOffset(1.3)
         hStat.GetYaxis().SetLabelOffset(0.0001)
-        hStat.GetYaxis().SetLabelSize(28)
+        hStat.GetYaxis().SetLabelSize(25)
         hStat.SetFillColor(ROOT.kGray+1)
         hStat.Scale(1./hStat.Integral("width"))
         if i == 11:
@@ -494,7 +494,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
         for titlehist in [hRecoPDF, hRecoBarePdf, hRecoCopy, hRecoJMR, hRecoJMS, hReco, hRecoPU, hRMS, ] : 
             if not options.extra_massy : 
-                titlehist.SetTitle(";;Normalized cross section")
+                titlehist.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (1/GeV)")
             else :
                 titlehist.SetTitle(";;#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")
 
@@ -699,7 +699,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         if options.isSoftDrop:
             latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
         else:
-            latexpt_list[i].DrawLatex(0.22, 0.830, ptbins_dict[i])
+            latexpt_list[i].DrawLatex(0.60, 0.830, ptbins_dict[i])
 
         pdfc = hRecoPDF.Clone()
         barepdfc = hRecoBarePdf.Clone()
@@ -759,6 +759,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetYaxis().SetTitleOffset(1.3)
         datPDF.GetYaxis().SetLabelOffset(0.0001)
         datPDF.GetYaxis().SetTitleSize(30)
+        datPDF.GetYaxis().SetLabelSize(28)
         datPDF.GetXaxis().SetLabelOffset(0.001)
         datPDF.SetMarkerStyle(0)
         datStat = hStat.Clone()
@@ -842,7 +843,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         datPDF.GetYaxis().SetTitleSize(30)
         datPDF.GetYaxis().SetTitleOffset(1.3)
         datPDF.GetYaxis().SetLabelOffset(0.01)
-        datPDF.GetYaxis().SetLabelSize(28)
+        datPDF.GetYaxis().SetLabelSize(22)
         datPDF.GetXaxis().SetLabelSize(28)
 		
         datStat.SetMinimum(0.5)
@@ -1052,9 +1053,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
             stackleg.Draw()
             if(not options.isSoftDrop):
-                the_stack.SetTitle(";Jet mass(GeV);Normalized cross section")
+                the_stack.SetTitle(";Jet mass(GeV);#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (1/GeV)")
             else:
-                the_stack.SetTitle(";Groomed jet mass(GeV);Normalized cross section")
+                the_stack.SetTitle(";Groomed jet mass(GeV);#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (1/GeV)")
         else :
             the_stack.SetMinimum(1e-12)
             the_stack.SetMaximum(1e6)
@@ -1187,7 +1188,7 @@ def PlotBias(canvas_list, pads_list, gen_list, reco_list, legends_list, recolegn
         gen_list[i].UseCurrentStyle()
         reco_list[i].Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
         gen_list[i].Scale(data_list[i].GetYaxis().GetBinWidth(i+1))
-        reco_list[i].SetTitle(";;Normalized cross section")
+        reco_list[i].SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (1/GeV)")
         reco_list[i].GetYaxis().SetTitleSize(30)
         reco_list[i].SetLineColor(1)
         reco_list[i].SetAxisRange(1e-11, 1, "Y")

@@ -264,7 +264,7 @@ for x in range(0, nptbin):
             alegends_fullbandSD.append(TLegend(.55, .29, .88, .80))
     else : 
 
-        alegends_fullband.append(TLegend(0.64, 0.5, 0.89, 0.89))        
+        alegends_fullband.append(TLegend(0.64, 0.5, 0.89, 0.80))
         alegends_fullbandSD.append(TLegend(0.25, 0.5, 0.5, 0.89))
             
 for hists in [datalistSD,datalist,MCtruth,MCtruthSD] :
