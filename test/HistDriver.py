@@ -129,6 +129,9 @@ class HistDriver :
           2. Divide all bins by bin width.
           3. Normalize pt bins to unity if desired.
         '''
+        if scalePtBins :
+            normalizeYSlices(hist)
+
         if normalizeUnity and hist.Integral() > 0.0 :
             hist.Scale( 1.0 / hist.Integral() )
         elif normalizeUnity == False and self.lumi_ > 0.0 :
@@ -144,8 +147,6 @@ class HistDriver :
             raise ValueError("Normalizing histogram is not valid.")
         if divideByBinWidths : 
             divideByBinWidthsXY( hist )
-        if scalePtBins :
-            normalizeYSlices(hist)
 
 
     def stampCMS( self, pad, text, lumi=None ) :
