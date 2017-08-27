@@ -52,12 +52,79 @@ import array
 import math
 import random
 
+from DataFormats.FWLite import Events, Handle
+
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 
 ptBinA = array.array('d', [  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300, 13000.])
 nbinsPt = len(ptBinA) - 1
 mBinA = array.array('d', [0, 1, 5, 10, 20, 40, 60, 80, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000])
 nbinsm = len(mBinA) - 1
+
+
+
+
+# JEC uncertainty sources
+jecUncSrcs = [
+        "AbsoluteStat",
+        "AbsoluteScale",
+        "AbsoluteFlavMap",
+        "AbsoluteMPFBias",
+        "Fragmentation",
+        "SinglePionECAL",
+        "SinglePionHCAL",
+        "FlavorQCD",
+        "TimeEta",
+        "TimePt",
+        "RelativeJEREC1",
+        "RelativeJEREC2",
+        "RelativeJERHF",
+        "RelativePtBB",
+        "RelativePtEC1",
+        "RelativePtEC2",
+        "RelativePtHF",
+        "RelativeFSR",
+        "RelativeStatFSR",
+        "RelativeStatEC",
+        "RelativeStatHF",
+        "PileUpDataMC",
+        "PileUpPtRef",
+        "PileUpPtBB",
+        "PileUpPtEC1",
+        "PileUpPtEC2",
+        "PileUpPtHF",
+        "PileUpMuZero",
+        "PileUpEnvelope",
+        "SubTotalPileUp",
+        "SubTotalRelative",
+        "SubTotalPt",
+        "SubTotalScale",
+        "SubTotalAbsolute",
+        "SubTotalMC",
+        "Total",
+        "TotalNoFlavor",
+        "TotalNoTime",
+        "TotalNoFlavorNoTime",
+        "FlavorZJet",
+        "FlavorPhotonJet",
+        "FlavorPureGluon",
+        "FlavorPureQuark",
+        "FlavorPureCharm",
+        "FlavorPureBottom",
+        "TimeRunA",
+        "TimeRunB",
+        "TimeRunC",
+        "TimeRunD",
+        "CorrelationGroupMPFInSitu",
+        "CorrelationGroupIntercalibration",
+        "CorrelationGroupbJES",
+        "CorrelationGroupFlavor",
+        "CorrelationGroupUncorrelated",
+        ]
+
+
+
+
 
 trueVarHist = ROOT.TH2F('truehist2d', 'truehist2D', nbinsm, mBinA, nbinsPt, ptBinA)
 measVarHist = ROOT.TH2F('meashist2d', 'meashist2D', nbinsm, mBinA, nbinsPt, ptBinA)
@@ -122,6 +189,16 @@ response_jecdn = ROOT.RooUnfoldResponse()
 response_jecdn.SetName("2d_response_jecdn")
 response_jecdn.Setup(measVarHist, trueVarHist)
 
+response_jecsrcup = []
+response_jecsrcdn = []
+for iUncSrc in xrange( len(jecUncSrcs) ) :
+    response_jecsrcup.append( ROOT.RooUnfoldResponse() )
+    response_jecsrcdn.append( ROOT.RooUnfoldResponse() )
+    response_jecsrcup[iUncSrc].SetName("2d_response_jecsrc" + str(iUncSrc) +"up")
+    response_jecsrcup[iUncSrc].Setup(measVarHist, trueVarHist)
+    response_jecsrcdn[iUncSrc].SetName("2d_response_jecsrc" + str(iUncSrc) +"dn")
+    response_jecsrcdn[iUncSrc].Setup(measVarHist, trueVarHist)    
+
 response_jerup = ROOT.RooUnfoldResponse()
 response_jerup.SetName("2d_response_jerup")
 response_jerup.Setup(measVarHist, trueVarHist)
@@ -172,6 +249,16 @@ response_softdrop_jecup.Setup(measVarHist, trueVarHist)
 response_softdrop_jecdn = ROOT.RooUnfoldResponse()
 response_softdrop_jecdn.SetName("2d_response_softdrop_jecdn")
 response_softdrop_jecdn.Setup(measVarHist, trueVarHist)
+
+response_softdrop_jecsrcup = []
+response_softdrop_jecsrcdn = []
+for iUncSrc in xrange( len(jecUncSrcs) ) :
+    response_softdrop_jecsrcup.append( ROOT.RooUnfoldResponse() )
+    response_softdrop_jecsrcdn.append( ROOT.RooUnfoldResponse() )
+    response_softdrop_jecsrcup[iUncSrc].SetName("2d_response_softdrop_jecsrc" + str(iUncSrc) +"up")
+    response_softdrop_jecsrcup[iUncSrc].Setup(measVarHist, trueVarHist)
+    response_softdrop_jecsrcdn[iUncSrc].SetName("2d_response_softdrop_jecsrc" + str(iUncSrc) +"dn")
+    response_softdrop_jecsrcdn[iUncSrc].Setup(measVarHist, trueVarHist)    
 
 response_softdrop_jerup = ROOT.RooUnfoldResponse()
 response_softdrop_jerup.SetName("2d_response_softdrop_jerup")
@@ -337,7 +424,18 @@ for isys in sysvarstr :
 
 
 
+ROOT.gSystem.Load('libCondFormatsJetMETObjects')
 
+
+jecParStrAK8 = ROOT.std.string('JECs/Fall15_25nsV2_DATA_Uncertainty_AK8PFchs.txt')
+jecUncAK8 = ROOT.JetCorrectionUncertainty( jecParStrAK8 )
+
+jecUncSrcAK8 = []
+for ijec in jecUncSrcs:
+    print 'Adding JEC source ', ijec
+    jecParSrcStrAK8 = ROOT.JetCorrectorParameters(('JECs/Fall15_25nsV2_DATA_UncertaintySources_AK8PFchs.txt'), ijec )
+    jecUncSrcAK8.append( ROOT.JetCorrectionUncertainty(jecParSrcStrAK8) )
+    
 
 def getMatched( p4, coll, dRMax = 0.1) :
     if coll != None : 
@@ -730,6 +828,20 @@ for itree,t in enumerate(trees) :
 
                     response_nomnom.Fill(FatJet.M()*jmrnom*smearnom, FatJet.Perp()*smearnom, GenJets[igen].M(), GenJets[igen].Perp(), weight)
 
+
+
+                    for iUncSrc,uncSrc in enumerate(jecUncSrcs) : 
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcUp = jecUncSrcAK8[iUncSrc].getUncertainty(1)
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcDn = jecUncSrcAK8[iUncSrc].getUncertainty(0)
+                        
+                        response_jecsrcup[iUncSrc].Fill( FatJet.M() * (1+uncSrcUp), FatJet.Perp()* (1+uncSrcUp), GenJets[igen].M(), GenJets[igen].Perp(), weight )
+                        response_jecsrcdn[iUncSrc].Fill( FatJet.M() * (1-uncSrcDn), FatJet.Perp()* (1-uncSrcDn), GenJets[igen].M(), GenJets[igen].Perp(), weight )
+
+                    
                     h_massup.Fill(FatJet.M()*jmrup, weight)
                     h_massdn.Fill(FatJet.M()*jmrdn, weight)
                     h_massnom.Fill(FatJet.M()*jmrnom, weight)
@@ -956,6 +1068,16 @@ for itree,t in enumerate(trees) :
                     response_jmrnom.Fake(FatJet.M(), FatJet.Perp(), weight)
                     response_nomnom.Fake(FatJet.M(), FatJet.Perp(), weight)
 
+                    for iUncSrc,uncSrc in enumerate(jecUncSrcs) : 
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcUp = jecUncSrcAK8[iUncSrc].getUncertainty(1)
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcDn = jecUncSrcAK8[iUncSrc].getUncertainty(0)
+                        response_jecsrcup[iUncSrc].Fake( FatJet.M() * (1+uncSrcUp), FatJet.Perp()* (1+uncSrcUp), weight )
+                        response_jecsrcdn[iUncSrc].Fake( FatJet.M() * (1-uncSrcDn), FatJet.Perp()* (1-uncSrcDn), weight )
+
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
                     else:
@@ -1058,6 +1180,17 @@ for itree,t in enumerate(trees) :
 
                     response_softdrop_nomnom.Fill(FatJetSD.M()*jmrnomSD*smearnomSD, FatJetPt[ijet]*smearnomSD, GenJetsSD[igenSD].M(), GenJetPt[igen], weight)
 
+                    for iUncSrc,uncSrc in enumerate(jecUncSrcs) : 
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcUp = jecUncSrcAK8[iUncSrc].getUncertainty(1)
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcDn = jecUncSrcAK8[iUncSrc].getUncertainty(0)
+                        
+                        response_softdrop_jecsrcup[iUncSrc].Fill( FatJetSD.M() * (1+uncSrcUp), FatJetPt[ijet]* (1+uncSrcUp), GenJets[igen].M(), GenJets[igen].Perp(), weight )
+                        response_softdrop_jecsrcdn[iUncSrc].Fill( FatJetSD.M() * (1-uncSrcDn), FatJetPt[ijet]* (1-uncSrcDn), GenJets[igen].M(), GenJets[igen].Perp(), weight )
+
 
                     
                     h_massup_softdrop.Fill(FatJetSD.M()*jmrupSD, weight)
@@ -1150,6 +1283,15 @@ for itree,t in enumerate(trees) :
                     response_softdrop_jmsup.Fake(FatJetSD.M() , FatJetPt[ijet] , weight)
                     response_softdrop_jmsdn.Fake(FatJetSD.M() , FatJetPt[ijet] , weight)
                     response_softdrop_nomnom.Fake(FatJetSD.M(), FatJetPt[ijet], weight)
+                    for iUncSrc,uncSrc in enumerate(jecUncSrcs) : 
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcUp = jecUncSrcAK8[iUncSrc].getUncertainty(1)
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        uncSrcDn = jecUncSrcAK8[iUncSrc].getUncertainty(0)
+                        response_softdrop_jecsrcup[iUncSrc].Fake( FatJetSD.M() * (1+uncSrcUp), FatJetPt[ijet]* (1+uncSrcUp), weight )
+                        response_softdrop_jecsrcdn[iUncSrc].Fake( FatJetSD.M() * (1-uncSrcDn), FatJetPt[ijet]* (1-uncSrcDn), weight )
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
                     else:
@@ -1190,6 +1332,10 @@ for itree,t in enumerate(trees) :
                 response_jmsup.Miss(GenJets[igen].M(), GenJets[igen].Perp(), weight)
                 response_jmsdn.Miss(GenJets[igen].M(), GenJets[igen].Perp(), weight)
                 response_nomnom.Miss(GenJets[igen].M(), GenJets[igen].Perp(), weight)
+                for iUncSrc in xrange(len(jecUncSrcs)):
+                    response_jecsrcup[iUncSrc].Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
+                    response_jecsrcdn[iUncSrc].Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
+                    
                 if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                     pass
                 else:
@@ -1230,6 +1376,9 @@ for itree,t in enumerate(trees) :
                 response_softdrop_jmsup.Miss( GenJetsSD[igenSD].M(), GenJetPt[igen], weight)
                 response_softdrop_jmsdn.Miss( GenJetsSD[igenSD].M(), GenJetPt[igen], weight)
                 response_softdrop_nomnom.Miss(GenJetsSD[igenSD].M(), GenJetPt[igen], weight)
+                for iUncSrc in xrange(len(jecUncSrcs)):
+                    response_softdrop_jecsrcup[iUncSrc].Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
+                    response_softdrop_jecsrcdn[iUncSrc].Miss( GenJets[igen].M(), GenJets[igen].Perp(), weight )
                 if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                     pass
                 else:
@@ -1258,6 +1407,9 @@ response_jecup.Write()
 response_jecdn.Write()
 response_jerup.Write()
 response_jerdn.Write()
+for iUncSrc,uncSrc in enumerate(jecUncSrcs) :
+    response_jecsrcup[iUncSrc].Write()
+    response_jecsrcdn[iUncSrc].Write()
 h_2DHisto_gen.Write()
 h_2DHisto_meas.Write()
 h_2DHisto_meas.Write()
@@ -1315,6 +1467,9 @@ response_softdrop_jmsdn.Write()
 response_softdrop_jmrnom.Write()
 response_softdrop_jernom.Write()
 response_softdrop_nomnom.Write()
+for iUncSrc,uncSrc in enumerate(jecUncSrcs) :
+    response_softdrop_jecsrcup[iUncSrc].Write()
+    response_softdrop_jecsrcdn[iUncSrc].Write()
 
 h_nvtx.Write()
 h_pt_meas.Write()
