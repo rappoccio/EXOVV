@@ -36,9 +36,14 @@ truth = myfile.Get('PFJet_pt_m_AK8Gen')
 truthSD = myfile.Get('PFJet_pt_m_AK8SDgen')
 
 
-reco = myfile.Get('PFJet_pt_m_AK8')
-recoSD = myfile.Get('PFJet_pt_m_AK8SD')
-    
+if 'nomnom' in options.extension: 
+    reco = myfile.Get('PFJet_pt_m_AK8_nomnom')
+    recoSD = myfile.Get('PFJet_pt_m_AK8SD_nomnom')
+else : 
+    reco = myfile.Get('PFJet_pt_m_AK8')
+    recoSD = myfile.Get('PFJet_pt_m_AK8SD')
+
+        
 response.Draw('colz')
 
 if options.scale != None and options.scale :     
