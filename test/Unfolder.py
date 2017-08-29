@@ -29,7 +29,6 @@ class RooUnfoldUnfolder:
         self.thsysnames = ['_pdf', '_ps', '_mcStat']                 # Theory uncertainties
         self.flatsysnames = ['_lum']                                 # Flat uncertainties
         self.sysnames = self.expsysnames + self.flatsysnames + self.thsysnames # All uncertainties
-        self.files = dict()                                          # Store files
         self.responses = dict()                                      # RooUnfoldResponse objects
         self.nom = None                                              # TH2D representing central value with stat+sys uncertainties
         self.nomStat = None                                          # TH2D representing central value with ONLY stat uncertainties
@@ -97,10 +96,8 @@ class RooUnfoldUnfolder:
         # Nominal value :
         fnom = ROOT.TFile(self.inputs + '_nomnom.root')
         funsmeared = ROOT.TFile(self.inputs + '.root')
-        self.files['nom'] = fnom
-        self.files['unsmeared'] = funsmeared
-        self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' )
-        self.responses['unsmeared'] = funsmeared.Get('2d_response' + self.postfix1 )
+        self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' ).Clone()
+        self.responses['unsmeared'] = funsmeared.Get('2d_response' + self.postfix1 ).Clone()
 
         self.nom = self.responses['nom'].Hreco()
         self.raw = self.nom.Clone(self.nom.GetName() + "_unscaled")
@@ -132,11 +129,9 @@ class RooUnfoldUnfolder:
             sysdn = sys + 'dn'
             fup = ROOT.TFile( self.inputs + sysup + '.root')
             fdn = ROOT.TFile( self.inputs + sysdn + '.root')
-            resup = fup.Get('2d_response' + self.postfix1 + sysup)
-            resdn = fdn.Get('2d_response' + self.postfix1 + sysdn)
+            resup = fup.Get('2d_response' + self.postfix1 + sysup).Clone()
+            resdn = fdn.Get('2d_response' + self.postfix1 + sysdn).Clone()
 
-            self.files[sysup] = fup
-            self.files[sysdn] = fdn
             self.responses[sysup] = resup
             self.responses[sysdn] = resdn
 
@@ -167,7 +162,6 @@ class RooUnfoldUnfolder:
         # double sided, so (absolute) uncertainty is (up-down)/2 again (factor of 2 will come later). 
         # For the CTEQ and MSTW, the uncertainty is |sys-nom|.
         fpdf = ROOT.TFile("unfoldedpdf.root")
-        self.files['_pdf'] =  fpdf
 
         pdfpostfix = ''
         if "Data" in self.inputs :
@@ -176,10 +170,10 @@ class RooUnfoldUnfolder:
 
         #print 'Getting PDFs:'
         #print 'unfold' + pdfpostfix + '_mstw' + self.postfix1 
-        mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 )
-        mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 )        
-        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  )
-        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  )
+        mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 ).Clone()
+        mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 ).Clone()        
+        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  ).Clone()
+        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  ).Clone()
         
         self.responses['_pdfup'] =  mpdfup 
         self.responses['_pdfdn'] =  mpdfdn 
@@ -222,11 +216,11 @@ class RooUnfoldUnfolder:
         # Parton shower: Half the difference between pythia and herwig
         # However : There is a different pt spectrum, so need to correct per pt bin to
         # just get the mass differences
-        self.files['_ps'] = ROOT.TFile("PS_hists.root")
+        psfile = ROOT.TFile("PS_hists.root")
         if "Data" in self.inputs : 
-            self.responses['_ps'] = self.files['_ps'].Get( 'unfold_ps_data' + self.postfix1 + '_herwig' )
+            self.responses['_ps'] = psfile.Get( 'unfold_ps_data' + self.postfix1 + '_herwig' ).Clone()
         else :
-            self.responses['_ps'] = self.files['_ps'].Get( 'unfold_ps' + self.postfix1 + '_herwig' )
+            self.responses['_ps'] = psfile.Get( 'unfold_ps' + self.postfix1 + '_herwig' ).Clone()
         hps = self.responses['_ps'].Hreco()
         
         # HAVE to normalize a pythia clone and the herwig to unity per pt bin regardless for systematic
@@ -289,7 +283,7 @@ class RooUnfoldUnfolder:
                 self.mcStat.SetBinContent( ix, iy, mcStatVal )
 
         #self.mcStat.Divide( self.nomForPS )
-        printHist( self.mcStat, maxx=5,maxy=3 )
+        #printHist( self.mcStat, maxx=5,maxy=3 )
         self.uncertainties['_mcStat'] = self.mcStat.Clone( self.nom.GetName() + "_mcStat")
         
         # Now sum all of the uncertainties in quadrature

@@ -273,12 +273,12 @@ def smooth( hist, delta = 2, xmin = None, xmax = None, reverse=True, verbose=Fal
 
 
 
-            if verbose: 
-                print '-----------'
-                for ival in svals :
-                    print '%6.2f' % ( ival ),
-                print ''
-                print median
+            #if verbose: 
+            #    print '-----------'
+            #    for ival in svals :
+            #        print '%6.2f' % ( ival ),
+            #    print ''
+            #    print median
 
         for ibin in xrange(xmin, xmax) :
             if ibin in newvalues : 
