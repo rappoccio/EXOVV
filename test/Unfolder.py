@@ -25,7 +25,7 @@ class RooUnfoldUnfolder:
         self.useSoftDrop = useSoftDrop                               # Use soft drop
         self.normalizeUnity = normalizeUnity                         # Normalize total histogram to unity (via Integral("width"))
         self.scalePtBins = scalePtBins                               # Scale each pt bin separately
-        self.expsysnames = [ '_jec', '_jer', '_jmr', '_jms', '_pu' ] # Experimental uncertainties
+        self.expsysnames = [ '_jer', '_jmr', '_jms', '_pu' ]         # Experimental uncertainties EXCEPT for jec
         self.thsysnames = ['_pdf', '_ps', '_mcStat']                 # Theory uncertainties
         self.flatsysnames = ['_lum']                                 # Flat uncertainties
         self.sysnames = self.expsysnames + self.flatsysnames + self.thsysnames # All uncertainties
@@ -34,10 +34,17 @@ class RooUnfoldUnfolder:
         self.nomStat = None                                          # TH2D representing central value with ONLY stat uncertainties
         self.nomNorm = None                                          # Normalization of the nominal. If we don't normalize to unity, we normalize Herwig to this. 
 
+
+        for i in xrange(53) :
+            self.expsysnames.append( '_jecsrc' + str(i) )
+            
         self.uncertainties = dict(                                   # TH2D's representing uncertainties
             zip(self.sysnames, [None] * len(self.sysnames) )
             )
-        self.uncertaintyNames = dict( zip( self.sysnames, ['JES', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.'] ) )
+        unctitles = ['JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.']
+        for i in xrange(53) :
+            unctitles += 'JEC' + str(i)
+        self.uncertaintyNames = dict( zip( self.sysnames, unctitles ) )
 
         self.ptBinNames = ['200 < p_{T} < 260 GeV','260 < p_{T} < 350 GeV','350 < p_{T} < 460 GeV','460 < p_{T} < 550 GeV','550 < p_{T} < 650 GeV','650 < p_{T} < 760 GeV', '760 < p_{T} < 900 GeV', '900 < p_{T} < 1000 GeV', '1000 < p_{T} < 1100 GeV','1100 < p_{T} < 1200 GeV',
     '1200 < p_{T} < 1300 GeV', 'p_{T} > 1300 GeV']
@@ -96,12 +103,12 @@ class RooUnfoldUnfolder:
         # Nominal value :
         fnom = ROOT.TFile(self.inputs + '_nomnom.root')
         funsmeared = ROOT.TFile(self.inputs + '.root')
-        self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' ).Clone()
-        self.responses['unsmeared'] = funsmeared.Get('2d_response' + self.postfix1 ).Clone()
+        self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' )
+        self.responses['unsmeared'] = funsmeared.Get('2d_response' + self.postfix1 )
 
-        self.nom = self.responses['nom'].Hreco()
+        self.nom = self.responses['nom'].Hreco().Clone()
         self.raw = self.nom.Clone(self.nom.GetName() + "_unscaled")
-        self.unsmeared = self.responses['unsmeared'].Hreco()
+        self.unsmeared = self.responses['unsmeared'].Hreco().Clone()
         self.unsmearedForPS = self.unsmeared.Clone( self.nom.GetName() + "_normalizingPS")
         self.rawForStat = self.raw.Clone( self.raw.GetName() + "_forstats")
         self.histDriver_.normalizeHist( self.unsmearedForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
@@ -129,14 +136,14 @@ class RooUnfoldUnfolder:
             sysdn = sys + 'dn'
             fup = ROOT.TFile( self.inputs + sysup + '.root')
             fdn = ROOT.TFile( self.inputs + sysdn + '.root')
-            resup = fup.Get('2d_response' + self.postfix1 + sysup).Clone()
-            resdn = fdn.Get('2d_response' + self.postfix1 + sysdn).Clone()
+            resup = fup.Get('2d_response' + self.postfix1 + sysup)
+            resdn = fdn.Get('2d_response' + self.postfix1 + sysdn)
 
             self.responses[sysup] = resup
             self.responses[sysdn] = resdn
 
-            histup = self.responses[sysup].Hreco()
-            histdn = self.responses[sysdn].Hreco()
+            histup = self.responses[sysup].Hreco().Clone()
+            histdn = self.responses[sysdn].Hreco().Clone()
             self.histDriver_.normalizeHist( histup, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
             self.histDriver_.normalizeHist( histdn, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
@@ -170,19 +177,19 @@ class RooUnfoldUnfolder:
 
         #print 'Getting PDFs:'
         #print 'unfold' + pdfpostfix + '_mstw' + self.postfix1 
-        mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 ).Clone()
-        mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 ).Clone()        
-        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  ).Clone()
-        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  ).Clone()
+        mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 )
+        mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 )
+        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  )
+        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  )
         
         self.responses['_pdfup'] =  mpdfup 
         self.responses['_pdfdn'] =  mpdfdn 
         self.responses['_mstw'] =  mmstw 
         self.responses['_cteq'] =  mcteq
-        hpdfup = mpdfup.Hreco()
-        hpdfdn = mpdfdn.Hreco()
-        hmstw = mmstw.Hreco()
-        hcteq = mcteq.Hreco()
+        hpdfup = mpdfup.Hreco().Clone()
+        hpdfdn = mpdfdn.Hreco().Clone()
+        hmstw = mmstw.Hreco().Clone()
+        hcteq = mcteq.Hreco().Clone()
                     
         for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
             self.histDriver_.normalizeHist( hist, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True )
@@ -218,10 +225,10 @@ class RooUnfoldUnfolder:
         # just get the mass differences
         psfile = ROOT.TFile("PS_hists.root")
         if "Data" in self.inputs : 
-            self.responses['_ps'] = psfile.Get( 'unfold_ps_data' + self.postfix1 + '_herwig' ).Clone()
+            self.responses['_ps'] = psfile.Get( 'unfold_ps_data' + self.postfix1 + '_herwig' )
         else :
-            self.responses['_ps'] = psfile.Get( 'unfold_ps' + self.postfix1 + '_herwig' ).Clone()
-        hps = self.responses['_ps'].Hreco()
+            self.responses['_ps'] = psfile.Get( 'unfold_ps' + self.postfix1 + '_herwig' )
+        hps = self.responses['_ps'].Hreco().Clone()
         
         # HAVE to normalize a pythia clone and the herwig to unity per pt bin regardless for systematic
         # uncertainty estimation. 
