@@ -630,7 +630,11 @@ for itree,t in enumerate(trees) :
         FatJetsMassSD = []        
         GenJetsSD = []
         FatJetsSD = []
-        weight = qcdWeights[itree]
+        if options.split == None : 
+            weight = qcdWeights[itree]
+        else :
+            weight = qcdWeights[options.split]
+
 
 
         
