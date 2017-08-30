@@ -18,11 +18,13 @@ ROOT.gStyle.SetLabelFont(43,"XYZ")
 ROOT.gStyle.SetLabelSize(22,"XYZ")
 
 
+pythiafile = "responses_jecsrcs_otherway_qcdmc_2dplots.root"
+herwigfile = "qcdmc_herwig_otherway_jecsrcs_2dplots.root"
 
 # First absolute cross section
 uu = RooUnfoldUnfolder(useSoftDrop=False,
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=False, scalePtBins=False, lumi=lumi) 
 uu.plotFullXSProjections( hists=[uu.nom, uu.nomStat,uu.pythiaHist,uu.herwigHist],
@@ -30,8 +32,8 @@ uu.plotFullXSProjections( hists=[uu.nom, uu.nomStat,uu.pythiaHist,uu.herwigHist]
                               postfix="absolute" )
 
 ug = RooUnfoldUnfolder(useSoftDrop=True,
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=False, scalePtBins=False, lumi=lumi) 
 
@@ -49,13 +51,13 @@ uu.plotPtDist( hists=[uu.nom, uu.nomStat, uu.pythiaHist, uu.herwigHist],
 
 # Then plot uncertainties
 uumc = RooUnfoldUnfolder(useSoftDrop=False,inputs='2DClosure',
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=False, scalePtBins=False, lumi=lumi)
 ugmc = RooUnfoldUnfolder(useSoftDrop=True,inputs='2DClosure',
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=False, scalePtBins=False, lumi=lumi) 
 
@@ -67,8 +69,8 @@ ugmc.plotFullUncs( hists=ug.uncertainties, postfix="softdrop_absolute")
 
 # Now normalized cross section
 uu_norm = RooUnfoldUnfolder(useSoftDrop=False,
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=True, scalePtBins=True, lumi=lumi)
 
@@ -77,8 +79,8 @@ uu_norm.plotFullXSProjections( hists=[uu_norm.nom, uu_norm.nomStat,uu_norm.pythi
                               postfix="normalized" )
 
 ug_norm = RooUnfoldUnfolder(useSoftDrop=True,
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=True, scalePtBins=True, lumi=lumi)
 
@@ -97,14 +99,14 @@ ug_norm.draw2D("normalized_groomed")
 
 
 uumc_norm = RooUnfoldUnfolder(useSoftDrop=False, inputs="2DClosure",
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=True, scalePtBins=True, lumi=lumi)
 
 ugmc_norm = RooUnfoldUnfolder(useSoftDrop=True, inputs="2DClosure",
-                       pythiaInputs="responses_rejec_fixjmr_otherway_qcdmc_2dplots.root",
-                       herwigInputs="qcdmc_herwig_otherway_rejec_fixjmr_2dplots.root",
+                       pythiaInputs=pythiafile,
+                       herwigInputs=herwigfile,
                        powhegInputs="CMS_SMP_16_010.root",
                        normalizeUnity=True, scalePtBins=True, lumi=lumi)
 

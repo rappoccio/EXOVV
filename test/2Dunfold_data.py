@@ -25,7 +25,7 @@ parser.add_option('--scale', action ='store_true',
        
 (options, args) = parser.parse_args()
 
-mcfile = TFile('responses_rejec_fixjmr_otherway_qcdmc_2dplots.root')
+mcfile = TFile('responses_jecsrcs_otherway_qcdmc_2dplots.root')
 datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
 

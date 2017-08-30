@@ -53,6 +53,8 @@ class HistDriver :
                           '_ps'    :StyleDriver(name="_ps",    lineWidth=3,lineStyle=4,lineColor=ROOT.kGreen+2),
                           '_mcStat':StyleDriver(name="_mcStat",lineWidth=3,lineStyle=2,lineColor=ROOT.kBlack),
                         }
+        for i in xrange(53) :
+            self.sysStyles[ '_jecsrc' + str(i) ] = StyleDriver(name="_jecsrc" + str(i), lineWidth=3,lineStyle=3,lineColor=ROOT.kRed)
         self.lineStyles = [3,8,5,9,7,4,6,4,2,1,1,1,1]
         self.lineColors = [ROOT.kRed, ROOT.kRed, ROOT.kBlue, ROOT.kBlue, ROOT.kCyan+1, ROOT.kOrange+1, ROOT.kMagenta, ROOT.kGreen+2, ROOT.kBlack, ROOT.kBlack, ROOT.kBlack]
 
@@ -273,12 +275,12 @@ def smooth( hist, delta = 2, xmin = None, xmax = None, reverse=True, verbose=Fal
 
 
 
-            if verbose: 
-                print '-----------'
-                for ival in svals :
-                    print '%6.2f' % ( ival ),
-                print ''
-                print median
+            #if verbose: 
+            #    print '-----------'
+            #    for ival in svals :
+            #        print '%6.2f' % ( ival ),
+            #    print ''
+            #    print median
 
         for ibin in xrange(xmin, xmax) :
             if ibin in newvalues : 

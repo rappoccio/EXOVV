@@ -26,7 +26,7 @@ parser.add_option('--scale', action ='store_true',
                                 
 (options, args) = parser.parse_args()
 
-myfile = TFile('responses_rejec_fixjmr_otherway_qcdmc_2dplots.root')
+myfile = TFile('responses_jecsrcs_otherway_qcdmc_2dplots.root')
 
 
 response = myfile.Get('2d_response' + options.extension )
