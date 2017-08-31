@@ -1185,11 +1185,11 @@ for itree,t in enumerate(trees) :
                     response_softdrop_nomnom.Fill(FatJetSD.M()*jmrnomSD*smearnomSD, FatJetPt[ijet]*smearnomSD, GenJetsSD[igenSD].M(), GenJetPt[igen], weight)
 
                     for iUncSrc,uncSrc in enumerate(jecUncSrcs) : 
-                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
-                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJetEta[ijet] )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJetPt[ijet] )
                         uncSrcUp = jecUncSrcAK8[iUncSrc].getUncertainty(1)
-                        jecUncSrcAK8[iUncSrc].setJetEta( FatJet.Eta() )
-                        jecUncSrcAK8[iUncSrc].setJetPt( FatJet.Perp() )
+                        jecUncSrcAK8[iUncSrc].setJetEta( FatJetEta[ijet] )
+                        jecUncSrcAK8[iUncSrc].setJetPt( FatJetPt[ijet] )
                         uncSrcDn = jecUncSrcAK8[iUncSrc].getUncertainty(0)
                         
                         response_softdrop_jecsrcup[iUncSrc].Fill( FatJetSD.M() * (1+uncSrcUp), FatJetPt[ijet]* (1+uncSrcUp), GenJets[igen].M(), GenJets[igen].Perp(), weight )
