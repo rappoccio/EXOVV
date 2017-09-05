@@ -1,6 +1,8 @@
 {
   TStyle *tdrStyle = new TStyle("tdrStyle","Style for P-TDR");
 
+  gSystem->Load("RooUnfold/libRooUnfold");
+
   cout << "TDR Style initialized" << endl;
 
 // For the canvas:
