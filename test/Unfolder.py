@@ -9,7 +9,7 @@ import pickle
 
 class RooUnfoldUnfolder:
     def __init__(self, inputs = "2DData", pythiaInputs=None, herwigInputs=None, powhegInputs=None,
-                 useSoftDrop=False, normalizeUnity=True, scalePtBins=False, lumi=2.3e3, dlumi=0.027):
+                 useSoftDrop=False, normalizeUnity=True, scalePtBins=False, lumi=2.3e3, dlumi=0.027, postfix=''):
 
         self.histDriver_ = HistDriver(lumi=lumi, dlumi=dlumi)        # Creates and stores histograms so they don't go out of scope
         self.inputs = inputs                                         # String for inputs to use
@@ -25,7 +25,7 @@ class RooUnfoldUnfolder:
         self.useSoftDrop = useSoftDrop                               # Use soft drop
         self.normalizeUnity = normalizeUnity                         # Normalize total histogram to unity (via Integral("width"))
         self.scalePtBins = scalePtBins                               # Scale each pt bin separately
-        self.expsysnames = [ '_jer', '_jmr', '_jms', '_pu' ]         # Experimental uncertainties EXCEPT for jec
+        self.expsysnames = [ '_jec', '_jer', '_jmr', '_jms', '_pu' ] # Experimental uncertainties EXCEPT for jec
         self.thsysnames = ['_pdf', '_ps', '_mcStat']                 # Theory uncertainties
         self.flatsysnames = ['_lum']                                 # Flat uncertainties
         self.sysnames = self.expsysnames + self.flatsysnames + self.thsysnames # All uncertainties
@@ -33,15 +33,44 @@ class RooUnfoldUnfolder:
         self.nom = None                                              # TH2D representing central value with stat+sys uncertainties
         self.nomStat = None                                          # TH2D representing central value with ONLY stat uncertainties
         self.nomNorm = None                                          # Normalization of the nominal. If we don't normalize to unity, we normalize Herwig to this. 
+        self.postfix = postfix
+        self.files = {}
+        
+        # All jet energy uncertainty sources
+        self.allJecUncSrcNames = [
+            "AbsoluteStat","AbsoluteScale","AbsoluteFlavMap","AbsoluteMPFBias",
+            "Fragmentation",
+            "SinglePionECAL","SinglePionHCAL",
+            "FlavorQCD",
+            "TimeEta","TimePt",
+            "RelativeJEREC1","RelativeJEREC2","RelativeJERHF","RelativePtBB","RelativePtEC1","RelativePtEC2","RelativePtHF","RelativeFSR","RelativeStatFSR","RelativeStatEC","RelativeStatHF",
+            "PileUpDataMC","PileUpPtRef","PileUpPtBB","PileUpPtEC1","PileUpPtEC2","PileUpPtHF","PileUpMuZero","PileUpEnvelope",
+            "SubTotalPileUp","SubTotalRelative","SubTotalPt","SubTotalScale","SubTotalAbsolute","SubTotalMC",
+            "Total","TotalNoFlavor","TotalNoTime","TotalNoFlavorNoTime",
+            "FlavorZJet","FlavorPhotonJet","FlavorPureGluon","FlavorPureQuark","FlavorPureCharm","FlavorPureBottom",
+            "TimeRunA","TimeRunB","TimeRunC","TimeRunD",
+            "CorrelationGroupMPFInSitu","CorrelationGroupIntercalibration","CorrelationGroupbJES","CorrelationGroupFlavor","CorrelationGroupUncorrelated",
+            ]
+        self.allJecUncSrcs = dict(
+            zip( self.allJecUncSrcNames, [i for i in xrange( len(self.allJecUncSrcNames) )] )
+            )
 
-
-        for i in xrange(53) :
-            self.expsysnames.append( '_jecsrc' + str(i) )
+        # Jet energy uncertainty sources to use
+        self.jecUncSrcs = [
+            "AbsoluteStat","AbsoluteScale","AbsoluteFlavMap","AbsoluteMPFBias",
+            "Fragmentation",
+            "SinglePionECAL","SinglePionHCAL",
+            #"FlavorQCD",   # Would double count pythia-vs-herwig
+            "TimeEta","TimePt",
+            "RelativeJEREC1","RelativeJEREC2","RelativeJERHF","RelativePtBB","RelativePtEC1","RelativePtEC2","RelativePtHF","RelativeFSR","RelativeStatFSR","RelativeStatEC","RelativeStatHF",
+            "PileUpDataMC","PileUpPtRef","PileUpPtBB","PileUpPtEC1","PileUpPtEC2","PileUpPtHF","PileUpMuZero","PileUpEnvelope",
+            ]
+        
             
         self.uncertainties = dict(                                   # TH2D's representing uncertainties
             zip(self.sysnames, [None] * len(self.sysnames) )
             )
-        unctitles = ['JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.']
+        unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.']
         for i in xrange(53) :
             unctitles += 'JEC' + str(i)
         self.uncertaintyNames = dict( zip( self.sysnames, unctitles ) )
@@ -101,14 +130,16 @@ class RooUnfoldUnfolder:
             
     def readExp(self) :
         # Nominal value :
-        fnom = ROOT.TFile(self.inputs + '_nomnom.root')
-        funsmeared = ROOT.TFile(self.inputs + '.root')
+        fnom = ROOT.TFile(self.inputs + '_expunc.root')
+        self.files['nom'] = fnom
         self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' )
-        self.responses['unsmeared'] = funsmeared.Get('2d_response' + self.postfix1 )
+        self.responses['unsmeared'] = fnom.Get('2d_response' + self.postfix1 )
 
-        self.nom = self.responses['nom'].Hreco().Clone()
+        self.nom = self.responses['nom'].Hreco()
         self.raw = self.nom.Clone(self.nom.GetName() + "_unscaled")
-        self.unsmeared = self.responses['unsmeared'].Hreco().Clone()
+
+        print self.nom.Integral()
+        self.unsmeared = self.responses['unsmeared'].Hreco()
         self.unsmearedForPS = self.unsmeared.Clone( self.nom.GetName() + "_normalizingPS")
         self.rawForStat = self.raw.Clone( self.raw.GetName() + "_forstats")
         self.histDriver_.normalizeHist( self.unsmearedForPS, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True)
@@ -134,16 +165,14 @@ class RooUnfoldUnfolder:
         for sys in self.expsysnames :
             sysup = sys + 'up'
             sysdn = sys + 'dn'
-            fup = ROOT.TFile( self.inputs + sysup + '.root')
-            fdn = ROOT.TFile( self.inputs + sysdn + '.root')
-            resup = fup.Get('2d_response' + self.postfix1 + sysup)
-            resdn = fdn.Get('2d_response' + self.postfix1 + sysdn)
+            resup = fnom.Get('2d_response' + self.postfix1 + sysup)
+            resdn = fnom.Get('2d_response' + self.postfix1 + sysdn)
 
             self.responses[sysup] = resup
             self.responses[sysdn] = resdn
 
-            histup = self.responses[sysup].Hreco().Clone()
-            histdn = self.responses[sysdn].Hreco().Clone()
+            histup = self.responses[sysup].Hreco()
+            histdn = self.responses[sysdn].Hreco()
             self.histDriver_.normalizeHist( histup, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
             self.histDriver_.normalizeHist( histdn, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
@@ -169,6 +198,7 @@ class RooUnfoldUnfolder:
         # double sided, so (absolute) uncertainty is (up-down)/2 again (factor of 2 will come later). 
         # For the CTEQ and MSTW, the uncertainty is |sys-nom|.
         fpdf = ROOT.TFile("unfoldedpdf.root")
+        self.files['pdf'] = fpdf
 
         pdfpostfix = ''
         if "Data" in self.inputs :
@@ -186,10 +216,10 @@ class RooUnfoldUnfolder:
         self.responses['_pdfdn'] =  mpdfdn 
         self.responses['_mstw'] =  mmstw 
         self.responses['_cteq'] =  mcteq
-        hpdfup = mpdfup.Hreco().Clone()
-        hpdfdn = mpdfdn.Hreco().Clone()
-        hmstw = mmstw.Hreco().Clone()
-        hcteq = mcteq.Hreco().Clone()
+        hpdfup = mpdfup.Hreco()
+        hpdfdn = mpdfdn.Hreco()
+        hmstw = mmstw.Hreco()
+        hcteq = mcteq.Hreco()
                     
         for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
             self.histDriver_.normalizeHist( hist, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True )
@@ -224,11 +254,12 @@ class RooUnfoldUnfolder:
         # However : There is a different pt spectrum, so need to correct per pt bin to
         # just get the mass differences
         psfile = ROOT.TFile("PS_hists.root")
+        self.files['ps'] = psfile
         if "Data" in self.inputs : 
             self.responses['_ps'] = psfile.Get( 'unfold_ps_data' + self.postfix1 + '_herwig' )
         else :
             self.responses['_ps'] = psfile.Get( 'unfold_ps' + self.postfix1 + '_herwig' )
-        hps = self.responses['_ps'].Hreco().Clone()
+        hps = self.responses['_ps'].Hreco()
         
         # HAVE to normalize a pythia clone and the herwig to unity per pt bin regardless for systematic
         # uncertainty estimation. 
@@ -446,11 +477,11 @@ class RooUnfoldUnfolder:
                         
 
         
-    def plotFullXSProjections( self, hists, styleNames, postfix="", xAxisRange = None):
+    def plotFullXSProjections( self, hists, styleNames, xAxisRange = None):
 
 
         for iy in xrange(1,hists[0].GetNbinsY()+1):
-            c = ROOT.TCanvas("c" + str(iy) + postfix, "c" + str(iy) + postfix, 800, 600)
+            c = ROOT.TCanvas("c" + str(iy) + self.postfix, "c" + str(iy) + self.postfix, 800, 600)
             pad1,pad2 = self.histDriver_.setupPads( c )
 
             leg = ROOT.TLegend(0.5, 0.4, 0.83, 0.83, self.ptBinNames[iy-1] )
@@ -467,7 +498,7 @@ class RooUnfoldUnfolder:
                 
                     
 
-                projx = hist.ProjectionX('proj_' + hist.GetName() + postfix + str(iy), iy,iy, "e" )
+                projx = hist.ProjectionX('proj_' + hist.GetName() + self.postfix + str(iy), iy,iy, "e" )
                 setStylesClass( projx,istyle=self.histDriver_.styles[styleNames[ihist]] )
                 projs.append(projx)
 
@@ -530,16 +561,16 @@ class RooUnfoldUnfolder:
             
             self.histDriver_.stampCMS(pad1, "CMS", self.histDriver_.lumi_)
             self.histDriver_.canvs_.append(c)
-            c.Print("fullxs_" + postfix + str(iy) + ".png", "png")
-            c.Print("fullxs_" + postfix + str(iy) + ".pdf", "pdf")
+            c.Print("fullxs_" + self.postfix + str(iy) + ".png", "png")
+            c.Print("fullxs_" + self.postfix + str(iy) + ".pdf", "pdf")
 
 
 
-    def plotFullUncs( self, hists, postfix="" ):
+    def plotFullUncs( self, hists ):
 
         canvs = []
         for iy in xrange(1,hists.values()[0].GetNbinsY()+1):
-            c = ROOT.TCanvas("cunc" + str(iy) + postfix, "cunc" + str(iy) + postfix, 800, 600)
+            c = ROOT.TCanvas("cunc" + str(iy) + self.postfix, "cunc" + str(iy) + self.postfix, 800, 600)
             self.histDriver_.canvs_.append(c)
             canvs.append(c)
             leg= ROOT.TLegend( 0.2, 0.5, 0.84, 0.8, self.ptBinNames[iy-1])
@@ -557,7 +588,7 @@ class RooUnfoldUnfolder:
             for key in self.sysnames :
                 hist = hists[key]
 
-                proj = hist.ProjectionX('proj_' + hist.GetName()+ postfix + str(iy), iy,iy, "e" )
+                proj = hist.ProjectionX('proj_' + hist.GetName()+ self.postfix + str(iy), iy,iy, "e" )
                 leg.AddEntry( proj, self.uncertaintyNames[key] , "l")
 
                 if not self.useSoftDrop :
@@ -582,5 +613,5 @@ class RooUnfoldUnfolder:
             c.SetLogy()
             c.SetLogx()
             self.histDriver_.stampCMS(c, "CMS")
-            c.Print("uncertainties_" + postfix + str(iy) + ".png", "png")
-            c.Print("uncertainties_" + postfix + str(iy) + ".pdf", "pdf")
+            c.Print("uncertainties_" + self.postfix + str(iy) + ".png", "png")
+            c.Print("uncertainties_" + self.postfix + str(iy) + ".pdf", "pdf")
