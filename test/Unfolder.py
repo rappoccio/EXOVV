@@ -471,6 +471,7 @@ class RooUnfoldUnfolder:
         else :
             c.Print( filename + ".png", "png")
             c.Print( filename + ".pdf", "pdf")
+        c.Draw()
         self.histDriver_.canvs_.append(c)
         
 
@@ -563,6 +564,7 @@ class RooUnfoldUnfolder:
             self.histDriver_.canvs_.append(c)
             c.Print("fullxs_" + self.postfix + str(iy) + ".png", "png")
             c.Print("fullxs_" + self.postfix + str(iy) + ".pdf", "pdf")
+            c.Draw()
 
 
 
@@ -615,3 +617,4 @@ class RooUnfoldUnfolder:
             self.histDriver_.stampCMS(c, "CMS")
             c.Print("uncertainties_" + self.postfix + str(iy) + ".png", "png")
             c.Print("uncertainties_" + self.postfix + str(iy) + ".pdf", "pdf")
+            c.Draw()
