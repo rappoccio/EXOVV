@@ -617,4 +617,5 @@ class RooUnfoldUnfolder:
             self.histDriver_.stampCMS(c, "CMS")
             c.Print("uncertainties_" + self.postfix + str(iy) + ".png", "png")
             c.Print("uncertainties_" + self.postfix + str(iy) + ".pdf", "pdf")
+            c.Print("uncertainties_" + self.postfix + str(iy) + ".root", "root")
             c.Draw()

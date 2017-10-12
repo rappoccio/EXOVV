@@ -40,7 +40,7 @@ def minmassbin_groomed(ibin) :
     return 3
 
 
-def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, jmsup_list, jmsdn_list, puup_list, pudn_list,ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, histname = "Ungroomed "):
+def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_list, jernom_list, psdif_list, pdfdif_list, legends_list, outname_str, jmrup_list, jmrdn_list, jmrnom_list, jmsup_list, jmsdn_list, puup_list, pudn_list,ptbins_dict, softdrop= "", keephists=[], jackknifeRMS=False, histname = "Ungroomed ", outfile=None):
     scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.,1./100.,1./100.,1./100.,1./100.,1./100.,1./100., 1./10000]
     mbinwidths = [1., 4., 5, 10., 20, 20., 20., 20., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50., 50.]
 
@@ -364,6 +364,16 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         legends_list[i].AddEntry(hRMSup, 'Stat. Unc.', 'l')
         legends_list[i].Draw()
 
+
+        hRecoup.SetName(outname_str + "jes")
+        hRecoJERup.SetName(outname_str + "jer")
+        hRecoJMRup.SetName(outname_str + "jmr")
+        hRecoJMSup.SetName(outname_str + "jms")
+        hRecoPUup.SetName(outname_str + "pu")
+        hRecoPDFup.SetName(outname_str + "pdf")
+        hRecoCopyup.SetName(outname_str + "ps")
+        hRMSup.SetName(outname_str + "stat")
+        
         tlx = ROOT.TLatex()
         tlx.SetNDC()
         tlx.SetTextFont(43)
@@ -384,6 +394,8 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         canvas_list[i].SetLogx()
         canvas_list[i].SaveAs(outname_str + str(i) + ".png")
         canvas_list[i].SaveAs(outname_str + str(i) + ".pdf")
+        if outfile != None and outfile :
+            canvas_list[i].SaveAs(outname_str + str(i) + ".root")
 
 def reset(histogram):
     for ibin in xrange(1, histogram.GetNbinsX()):

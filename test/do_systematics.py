@@ -103,6 +103,7 @@ jmsdnfile = ROOT.TFile('2DClosure_jmsdn.root')
 puupfile = ROOT.TFile('2DClosure_puup.root')
 pudnfile = ROOT.TFile('2DClosure_pudn.root')
 
+
 ##################################################################### Get uncertainty hists
 for i in range(0, nptbins):
     jecdna.append(jecdn.Get('pythia8_mass' + str(i)))
@@ -316,5 +317,5 @@ postfix = ''
 if options.absscale :
     postfix="absolute_"
 
-plot_vars(datacanvases, datalist, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "mcvariations_"+postfix, jmrupa, jmrdna, jmrnoma, jmsupa, jmsdna, puupa, pudna, bins, keephists=histstokeep, jackknifeRMS=RMS_vals)
-plot_vars(datacanvasesSD, datalistSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "mcvariations_softdrop_"+postfix, jmrupaSD, jmrdnaSD, jmrnomaSD, jmsupaSD, jmsdnaSD, puupaSD, pudnaSD, bins, softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, histname="Soft Drop ")
+plot_vars(datacanvases, datalist, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "mcvariations_"+postfix, jmrupa, jmrdna, jmrnoma, jmsupa, jmsdna, puupa, pudna, bins, keephists=histstokeep, jackknifeRMS=RMS_vals, outfile=True)
+plot_vars(datacanvasesSD, datalistSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "mcvariations_softdrop_"+postfix, jmrupaSD, jmrdnaSD, jmrnomaSD, jmsupaSD, jmsdnaSD, puupaSD, pudnaSD, bins, softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, histname="Soft Drop ", outfile=True)
