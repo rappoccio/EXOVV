@@ -31,6 +31,8 @@ class RooUnfoldUnfolder:
         self.sysnames = self.expsysnames + self.flatsysnames + self.thsysnames # All uncertainties
         self.responses = dict()                                      # RooUnfoldResponse objects
         self.nom = None                                              # TH2D representing central value with stat+sys uncertainties
+        self.jernom = None                                           # TH2D representing central value in JER
+        self.jmrnom = None                                           # TH2D representing central value in JMR
         self.nomStat = None                                          # TH2D representing central value with ONLY stat uncertainties
         self.nomNorm = None                                          # Normalization of the nominal. If we don't normalize to unity, we normalize Herwig to this. 
         self.postfix = postfix
@@ -133,10 +135,14 @@ class RooUnfoldUnfolder:
         fnom = ROOT.TFile(self.inputs + '_expunc.root')
         self.files['nom'] = fnom
         self.responses['nom'] = fnom.Get('2d_response' + self.postfix1 + '_nomnom' )
+        self.responses['jernom'] = fnom.Get('2d_response' + self.postfix1 + '_jernom' )
+        self.responses['jmrnom'] = fnom.Get('2d_response' + self.postfix1 + '_jmrnom' )
         self.responses['unsmeared'] = fnom.Get('2d_response' + self.postfix1 )
 
         self.nom = self.responses['nom'].Hreco()
         self.raw = self.nom.Clone(self.nom.GetName() + "_unscaled")
+        self.jernom = self.responses['jernom'].Hreco()
+        self.jmrnom = self.responses['jmrnom'].Hreco()
 
         print self.nom.Integral()
         self.unsmeared = self.responses['unsmeared'].Hreco()
@@ -156,6 +162,8 @@ class RooUnfoldUnfolder:
             self.nom.SetTitle(";Groomed jet mass (GeV);Ungroomed jet p_{T} (GeV)")
 
         self.histDriver_.normalizeHist( self.nom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
+        self.histDriver_.normalizeHist( self.jernom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
+        self.histDriver_.normalizeHist( self.jmrnom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
         self.histDriver_.normalizeHist( self.unsmeared, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
         self.nomNorm = self.nom.Integral("width")
@@ -177,12 +185,18 @@ class RooUnfoldUnfolder:
             self.histDriver_.normalizeHist( histdn, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
 
             # Take difference to nominal... next step takes abs() so ignore relative sign
-            histup.Add( self.unsmeared, -1.0 )
-            histdn.Add( self.unsmeared, -1.0 )
-
-            self.uncertainties[sys] = self.unsmeared.Clone( self.nom.GetName() + "_" + sys )
-            setToAverage( self.uncertainties[sys], histup, histdn )
-            self.uncertainties[sys].Divide( self.unsmeared )
+            if sys in ['_jec', '_jer', '_jms', '_pu' ] : 
+                histup.Add( self.jernom, -1.0 )
+                histdn.Add( self.jernom, -1.0 )
+                self.uncertainties[sys] = self.jernom.Clone( self.nom.GetName() + "_" + sys )
+                setToAverage( self.uncertainties[sys], histup, histdn )
+                self.uncertainties[sys].Divide( self.jernom )
+            elif sys in ['_jmr']:
+                histup.Add( self.jmrnom, -1.0 )
+                histdn.Add( self.jmrnom, -1.0 )
+                self.uncertainties[sys] = self.jmrnom.Clone( self.jmrnom.GetName() + "_" + sys )
+                setToAverage( self.uncertainties[sys], histup, histdn )
+                self.uncertainties[sys].Divide( self.jmrnom )                
 
         self.uncertainties['_lum'] = self.nom.Clone( self.nom.GetName() + "_lum" )
         for ix in xrange(0, self.unsmeared.GetXaxis().FindBin( self.nom.GetXaxis().GetXmax() ) ):
