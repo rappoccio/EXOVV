@@ -62,7 +62,7 @@ class RooUnfoldUnfolder:
             "AbsoluteStat","AbsoluteScale","AbsoluteFlavMap","AbsoluteMPFBias",
             "Fragmentation",
             "SinglePionECAL","SinglePionHCAL",
-            #"FlavorQCD",   # Would double count pythia-vs-herwig
+            "FlavorQCD",   # Would double count pythia-vs-herwig
             "TimeEta","TimePt",
             "RelativeJEREC1","RelativeJEREC2","RelativeJERHF","RelativePtBB","RelativePtEC1","RelativePtEC2","RelativePtHF","RelativeFSR","RelativeStatFSR","RelativeStatEC","RelativeStatHF",
             "PileUpDataMC","PileUpPtRef","PileUpPtBB","PileUpPtEC1","PileUpPtEC2","PileUpPtHF","PileUpMuZero","PileUpEnvelope",
