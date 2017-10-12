@@ -35,9 +35,9 @@ ROOT.gROOT.SetBatch()
 ##### WARNING ### WARNING #####<----------------------------------------------
 ##### WARNING ### WARNING #####<----------------------------------------------
 ##### WARNING ### WARNING #####<----------------------------------------------
-f = ROOT.TFile('2DClosure_PAS.root')
-parton_shower = ROOT.TFile('PS_hists_PAS.root')
-pdfs = ROOT.TFile('unfoldedpdf_PAS.root')
+f = ROOT.TFile('PASStage/2DClosure.root')
+parton_shower = ROOT.TFile('PASStage/PS_hists.root')
+pdfs = ROOT.TFile('PASStage/unfoldedpdf.root')
 bins = ['200 < p_{T} < 260 GeV','260 < p_{T} < 350 GeV','350 < p_{T} < 460 GeV','460 < p_{T} < 550 GeV','550 < p_{T} < 650 GeV','650 < p_{T} < 760 GeV', '760 < p_{T} < 900 GeV', '900 < p_{T} < 1000 GeV', '1000 < p_{T} < 1100 GeV','1100 < p_{T} < 1200 GeV',
     '1200 < p_{T} < 1300 GeV', 'p_{T} > 1300 GeV']
 scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
@@ -90,16 +90,16 @@ ps_softdrop = []
 ps_differences = []
 ps_differences_softdrop = []
 
-jecdn = ROOT.TFile('2DClosure_PAS_jecdn.root')
-jecup = ROOT.TFile('2DClosure_PAS_jecup.root')
-jerdn = ROOT.TFile('2DClosure_PAS_jerdn.root')
-jerup = ROOT.TFile('2DClosure_PAS_jerup.root')
-jernom = ROOT.TFile('2DClosure_PAS_jernom.root')
-jmrupfile = ROOT.TFile('2DClosure_PAS_jmrup.root')
-jmrdnfile = ROOT.TFile('2DClosure_PAS_jmrdn.root')
-jmrnomfile= ROOT.TFile('2DClosure_PAS_jmrnom.root')
-puupfile = ROOT.TFile('2DClosure_PAS_puup.root')
-pudnfile = ROOT.TFile('2DClosure_PAS_pudn.root')
+jecdn = ROOT.TFile('PASStage/2DClosure_jecdn.root')
+jecup = ROOT.TFile('PASStage/2DClosure_jecup.root')
+jerdn = ROOT.TFile('PASStage/2DClosure_jerdn.root')
+jerup = ROOT.TFile('PASStage/2DClosure_jerup.root')
+jernom = ROOT.TFile('PASStage/2DClosure_jernom.root')
+jmrupfile = ROOT.TFile('PASStage/2DClosure_jmrup.root')
+jmrdnfile = ROOT.TFile('PASStage/2DClosure_jmrdn.root')
+jmrnomfile= ROOT.TFile('PASStage/2DClosure_jmrnom.root')
+puupfile = ROOT.TFile('PASStage/2DClosure_puup.root')
+pudnfile = ROOT.TFile('PASStage/2DClosure_pudn.root')
 
 
 ##################################################################### Get uncertainty hists
