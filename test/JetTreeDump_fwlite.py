@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+﻿#! /usr/bin/env python
 
 ##################
 # Editting flags
@@ -417,9 +417,7 @@ def JetTreeDump_FWLite(argv) :
 
     h_jetsAK8Keys = Handle("std::vector<std::vector<int> >")
     l_jetsAK8Keys = ( "jetKeysAK8" + options.puStr , "" )
-    
-    h_jetsAK8BDisc = Handle("std::vector<float>")
-    l_jetsAK8BDisc = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "CSVv2" )
+
     h_jetsAK8SoftDropMass = Handle("std::vector<float>")
     l_jetsAK8SoftDropMass = ("jetsAK8" + options.puStr, "jetAK8" + options.puStr + "softDropMass" )
     h_jetsAK8TrimMass = Handle("std::vector<float>")
@@ -462,39 +460,8 @@ def JetTreeDump_FWLite(argv) :
     h_subjetsAK8BDisc = Handle( "std::vector<float>")
     l_subjetsAK8BDisc = ("subjetsAK8" + options.puStr, "subjetAK8" + options.puStr + options.btagger)
 
-    h_genPartPt = Handle("std::vector<float>")
-    l_genPartPt = ("genPart" , "genPartPt")
-    h_genPartEta = Handle("std::vector<float>")
-    l_genPartEta = ("genPart" , "genPartEta")
-    h_genPartPhi = Handle("std::vector<float>")
-    l_genPartPhi = ("genPart" , "genPartPhi")
-    h_genPartMass = Handle("std::vector<float>")
-    l_genPartMass = ("genPart" , "genPartMass")
 
-    #### ADD IN THESE BELOW : ####
-    # PDG ID : http://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf
-    # Want abs(pdgid) == 5
-    h_genPartID = Handle("std::vector<float>")               # PDG ID : 
-    l_genPartID = ("genPart" , "genPartID")
-    h_genPartStatus = Handle("std::vector<float>")           # Generator "status"
-    l_genPartStatus = ("genPart" , "genPartStatus")
-    h_genPartMom0ID = Handle("std::vector<float>")           # "Mother 0" particle ID
-    l_genPartMom0ID = ("genPart" , "genPartMom0ID")
-    h_genPartMom0Status = Handle("std::vector<float>")       # "Mother 0" particle status
-    l_genPartMom0Status = ("genPart" , "genPartMom0Status")
-    h_genPartMom1ID = Handle("std::vector<float>")           # "Mother 1" particle ID
-    l_genPartMom1ID = ("genPart" , "genPartMom1ID")
-    h_genPartMom1Status = Handle("std::vector<float>")       # "Mother 1" particle ID
-    l_genPartMom1Status = ("genPart" , "genPartMom1Status")
-    h_genPartDau0ID = Handle("std::vector<float>")
-    l_genPartDau0ID = ("genPart" , "genPartDau0ID")          # Ditto for daughters
-    h_genPartDau0Status = Handle("std::vector<float>")
-    l_genPartDau0Status = ("genPart" , "genPartDau0Status")
-    h_genPartDau1ID = Handle("std::vector<float>")
-    l_genPartDau1ID = ("genPart" , "genPartDau1ID")
-    h_genPartDau1Status = Handle("std::vector<float>")
-    l_genPartDau1Status = ("genPart" , "genPartDau1Status")
-    
+
     h_genJetsAK8Pt = Handle("std::vector<float>")
     l_genJetsAK8Pt = ("genJetsAK8" , "genJetsAK8Pt")
     h_genJetsAK8Eta = Handle("std::vector<float>")
@@ -589,58 +556,38 @@ def JetTreeDump_FWLite(argv) :
         FatJetCorrDn        = array('f', [-1., -1., -1., -1., -1.])
         FatJetSDCorrUp      = array('f', [-1., -1., -1., -1., -1.])
         FatJetSDCorrDn      = array('f', [-1., -1., -1., -1., -1.])
-        MuonPt              = array('f', [-1., -1., -1., -1., -1.])
-        MuonEta             = array('f', [-1., -1., -1., -1., -1.])
-        MuonPhi             = array('f', [-1., -1., -1., -1., -1.])
-        MuonMass            = array('f', [-1., -1., -1., -1., -1.])
 
 
 
         NGenJet             = array('i', [0] )
-        NGenPart            = array('i', [0] )
-        GenJetPt            = array('f', [-1.]*20)
-        GenJetEta           = array('f', [-1.]*20)
-        GenJetPhi           = array('f', [-1.]*20)
-        GenJetRap           = array('f', [-1.]*20)
-        GenJetBDisc         = array('f', [-1.]*20)
-        GenJetRhoRatio      = array('f', [-1.]*20)
-        GenJetMass          = array('f', [-1.]*20)
-        GenJetMassSoftDrop  = array('f', [-1.]*20)
-        GenJetMassPruned    = array('f', [-1.]*20)
-        GenJetMassFiltered  = array('f', [-1.]*20)
-        GenJetMassTrimmed   = array('f', [-1.]*20)
-        GenJetTau1          = array('f', [-1.]*20)
-        GenJetTau2          = array('f', [-1.]*20)
-        GenJetTau3          = array('f', [-1.]*20)
-        GenJetTau32         = array('f', [-1.]*20)
-        GenJetTau21         = array('f', [-1.]*20)
-        GenJetSDnsubjets    = array('f', [-1.]*20)
-        GenJetSDbdisc0      = array('f', [-1.]*20)
-        GenJetSDbdisc1      = array('f', [-1.]*20)
-        GenJetSDmaxbdisc    = array('f', [-1.]*20)
-        GenJetSDsubjetWpt   = array('f', [-1.]*20)
-        GenJetSDsubjetWmass = array('f', [-1.]*20)
-        GenJetSDsubjetWp4   = array('f', [-1.]*20)
-        GenJetSDsubjetBpt   = array('f', [-1.]*20)
-        GenJetSDsubjetBmass = array('f', [-1.]*20)
-        GenJetSDsubjetBp4   = array('f', [-1.]*20)
-        GenJetPtSoftDrop    = array('f', [-1.]*20)
+        GenJetPt            = array('f', [-1., -1., -1., -1., -1.])
+        GenJetEta           = array('f', [-1., -1., -1., -1., -1.])
+        GenJetPhi           = array('f', [-1., -1., -1., -1., -1.])
+        GenJetRap           = array('f', [-1., -1., -1., -1., -1.])
+        GenJetBDisc         = array('f', [-1., -1., -1., -1., -1.])
+        GenJetRhoRatio      = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMass          = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassSoftDrop  = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassPruned    = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassFiltered  = array('f', [-1., -1., -1., -1., -1.])
+        GenJetMassTrimmed   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetTau1          = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetTau2          = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetTau3          = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetTau32         = array('f', [-1., -1., -1., -1., -1.])
+        GenJetTau21         = array('f', [-1., -1., -1., -1., -1.]) 
+        GenJetSDnsubjets    = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDbdisc0      = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDbdisc1      = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDmaxbdisc    = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetWpt   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetWmass = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetWp4   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetBpt   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetBmass = array('f', [-1., -1., -1., -1., -1.])
+        GenJetSDsubjetBp4   = array('f', [-1., -1., -1., -1., -1.])
+        GenJetPtSoftDrop    = array('f', [-1., -1., -1., -1., -1.])
 
-        GenPartID           = array('f', [-1.]*20)
-        GenPartPt           = array('f', [-1.]*20)
-        GenPartEta          = array('f', [-1.]*20)
-        GenPartPhi          = array('f', [-1.]*20)
-        GenPartMass         = array('f', [-1.]*20)
-        GenPartStatus       = array('f', [-1.]*20)
-        GenPartMom0ID       = array('f', [-1.]*20)
-        GenPartMom0Status   = array('f', [-1.]*20)
-        GenPartMom1ID       = array('f', [-1.]*20)
-        GenPartMom1Status   = array('f', [-1.]*20)
-        GenPartDau0ID       = array('f', [-1.]*20)
-        GenPartDau0Status   = array('f', [-1.]*20)
-        GenPartDau1ID       = array('f', [-1.]*20)
-        GenPartDau1Status   = array('f', [-1.]*20)
-        
         METpx        = array('f', [-1.])
         METpy        = array('f', [-1.])
         METpt        = array('f', [-1.])
@@ -694,16 +641,11 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('FatJetSDsubjetBp4'   , FatJetSDsubjetBp4   ,  'FatJetSDsubjetBp4[NFatJet]/F'   )
         TreeEXOVV.Branch('FatJetCorrUp'        , FatJetCorrUp        ,  'FatJetCorrUp[NFatJet]/F'        )
         TreeEXOVV.Branch('FatJetCorrDn'        , FatJetCorrDn        ,  'FatJetCorrDn[NFatJet]/F'        )
-        TreeEXOVV.Branch('FatJetSDCorrUp'      , FatJetSDCorrUp      ,  'FatJetSDCorrUp[NFatJet]/F'      )
-        TreeEXOVV.Branch('FatJetSDCorrDn'      , FatJetSDCorrDn      ,  'FatJetSDCorrDn[NFatJet]/F'      )
-        
-        TreeEXOVV.Branch('MuonPt'              , MuonPt              ,  'MuonPt[NFatJet]/F'              )
-        TreeEXOVV.Branch('MuonEta'             , MuonEta             ,  'MuonEta[NFatJet]/F'             )
-        TreeEXOVV.Branch('MuonPhi'             , MuonPhi             ,  'MuonPhi[NFatJet]/F'             )
-        TreeEXOVV.Branch('MuonMass'            , MuonMass            ,  'MuonMass[NFatJet]/F'            )
+        TreeEXOVV.Branch('FatJetSDCorrUp'      , FatJetSDCorrUp      ,  'FatJetSDCorrUp[NFatJet]/F'        )
+        TreeEXOVV.Branch('FatJetSDCorrDn'      , FatJetSDCorrDn      ,  'FatJetSDCorrDn[NFatJet]/F'        )
 
 
-        TreeEXOVV.Branch('NGenJet'             , NGenJet             ,  'NGenJet/I'                      )
+        TreeEXOVV.Branch('NGenJet'             , NGenJet             ,  'NGenJet/I'        )
         TreeEXOVV.Branch('GenJetPt'            , GenJetPt            ,  'GenJetPt[NGenJet]/F'            )
         TreeEXOVV.Branch('GenJetEta'           , GenJetEta           ,  'GenJetEta[NGenJet]/F'           )
         TreeEXOVV.Branch('GenJetPhi'           , GenJetPhi           ,  'GenJetPhi[NGenJet]/F'           )
@@ -713,22 +655,6 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('GenJetMass'          , GenJetMass          ,  'GenJetMass[NGenJet]/F'          )
         TreeEXOVV.Branch('GenJetMassSoftDrop'  , GenJetMassSoftDrop  ,  'GenJetMassSoftDrop[NGenJet]/F'  )
         TreeEXOVV.Branch('GenJetPtSoftDrop'    , GenJetPtSoftDrop    ,  'GenJetPtSoftDrop[NGenJet]/F'    )
-        
-        TreeEXOVV.Branch('NGenPart'            , NGenPart            ,  'NGenPart/I'                      )
-        TreeEXOVV.Branch('GenPartID'           , GenPartID           ,  'GenPartID[NGenPart]/F'           )
-        TreeEXOVV.Branch('GenPartPt'           , GenPartPt           ,  'GenPartPt[NGenPart]/F'           )
-        TreeEXOVV.Branch('GenPartEta'          , GenPartEta          ,  'GenPartEta[NGenPart]/F'          )
-        TreeEXOVV.Branch('GenPartPhi'          , GenPartPhi          ,  'GenPartPhi[NGenPart]/F'          )
-        TreeEXOVV.Branch('GenPartMass'         , GenPartMass         ,  'GenPartMass[NGenPart]/F'         )
-        TreeEXOVV.Branch('GenPartStatus'       , GenPartStatus       ,  'GenPartStatus[NGenPart]/F'       )
-        TreeEXOVV.Branch('GenPartMom0ID'       , GenPartMom0ID       ,  'GenPartMom0ID[NGenPart]/F'       )
-        TreeEXOVV.Branch('GenPartMom0Status'   , GenPartMom0Status   ,  'GenPartMom0Status[NGenPart]/F'   )
-        TreeEXOVV.Branch('GenPartMom1ID'       , GenPartMom1ID       ,  'GenPartMom1ID[NGenPart]/F'       )
-        TreeEXOVV.Branch('GenPartMom1Status'   , GenPartMom1Status   ,  'GenPartMom1Status[NGenPart]/F'   )
-        TreeEXOVV.Branch('GenPartDau0ID'       , GenPartDau0ID       ,  'GenPartDau0ID[NGenPart]/F'       )
-        TreeEXOVV.Branch('GenPartDau0Status'   , GenPartDau0Status   ,  'GenPartDau0Status[NGenPart]/F'   )
-        TreeEXOVV.Branch('GenPartDau1ID'       , GenPartDau1ID       ,  'GenPartDau1ID[NGenPart]/F'       )
-        TreeEXOVV.Branch('GenPartDau1Status'   , GenPartDau1Status   ,  'GenPartDau1Status[NGenPart]/F'   )
 
 
         TreeEXOVV.Branch('METpx'        , METpx        ,  'METpx/F'        )
@@ -1173,23 +1099,6 @@ def JetTreeDump_FWLite(argv) :
                 event.getByLabel ( l_genJetsAK8SoftDropPt, h_genJetsAK8SoftDropPt )
                 event.getByLabel ( l_genJetsAK8SoftDropPhi, h_genJetsAK8SoftDropPhi )
                 event.getByLabel ( l_genJetsAK8SoftDropEta, h_genJetsAK8SoftDropEta )
-                
-                event.getByLabel ( l_genPartPt, h_genPartPt )
-                event.getByLabel ( l_genPartEta, h_genPartEta )
-                event.getByLabel ( l_genPartPhi, h_genPartPhi )
-                event.getByLabel ( l_genPartMass, h_genPartMass )
-                    
-                event.getByLabel ( l_genPartID, h_genPartID )
-                event.getByLabel ( l_genPartStatus, h_genPartStatus )
-                event.getByLabel ( l_genPartMom0ID, h_genPartMom0ID )
-                event.getByLabel ( l_genPartMom0Status, h_genPartMom0Status )
-                event.getByLabel ( l_genPartMom1ID, h_genPartMom1ID )
-                event.getByLabel ( l_genPartMom1Status, h_genPartMom1Status )
-                event.getByLabel ( l_genPartDau0ID, h_genPartDau0ID )
-                event.getByLabel ( l_genPartDau0Status, h_genPartDau0Status )
-                event.getByLabel ( l_genPartDau1ID, h_genPartDau1ID )
-                event.getByLabel ( l_genPartDau1Status, h_genPartDau1Status )
-                
 
 
             # event.getByLabel ( l_jetsAK8Pt, h_jetsAK8Pt ) got this above to speed things up
@@ -1210,7 +1119,6 @@ def JetTreeDump_FWLite(argv) :
 
             event.getByLabel ( l_jetsAK8Keys, h_jetsAK8Keys )
 
-
             event.getByLabel ( l_jetsAK8SoftDropMass, h_jetsAK8SoftDropMass )
             event.getByLabel ( l_jetsAK8TrimMass, h_jetsAK8TrimMass )
             event.getByLabel ( l_jetsAK8PrunMass, h_jetsAK8PrunMass )
@@ -1221,8 +1129,8 @@ def JetTreeDump_FWLite(argv) :
 
             event.getByLabel ( l_jetsAK8vSubjetIndex0, h_jetsAK8vSubjetIndex0 )
             event.getByLabel ( l_jetsAK8vSubjetIndex1, h_jetsAK8vSubjetIndex1 )
-            
-            event.getByLabel ( l_jetsAK8BDisc , h_jetsAK8BDisc )
+
+
             event.getByLabel ( l_subjetsAK8BDisc, h_subjetsAK8BDisc)
             event.getByLabel ( l_subjetsAK8Pt, h_subjetsAK8Pt)
             event.getByLabel ( l_subjetsAK8Eta, h_subjetsAK8Eta)
@@ -1230,13 +1138,6 @@ def JetTreeDump_FWLite(argv) :
             event.getByLabel ( l_subjetsAK8Mass, h_subjetsAK8Mass)
             event.getByLabel ( l_subjetsAK8jecFactor0, h_subjetsAK8jecFactor0)
             event.getByLabel ( l_subjetsAK8jetArea, h_subjetsAK8jetArea)
-            
-            event.getByLabel ( l_muPt, h_muPt)
-            event.getByLabel ( l_muEta, h_muEta)
-            event.getByLabel ( l_muPhi, h_muPhi)
-            event.getByLabel ( l_muMass, h_muMass)
-
-
 
 
 
@@ -1268,7 +1169,6 @@ def JetTreeDump_FWLite(argv) :
                 AK8Energy = h_jetsAK8Energy.product()
                 AK8Y = h_jetsAK8Y.product()
 
-                AK8BDisc = h_jetsAK8BDisc.product()
                 AK8OldJEC = h_jetsAK8JEC.product()
                 AK8Area = h_jetsAK8Area.product()
                 AK8SoftDropM = h_jetsAK8SoftDropMass.product()
@@ -1289,12 +1189,6 @@ def JetTreeDump_FWLite(argv) :
                 AK8cEME =  h_jetsAK8cEMEnergy.product()
                 AK8numDaughters = h_jetsAK8numDaughters.product()
                 AK8cMultip =  h_jetsAK8cMultip.product()
-                    
-                MuPt = h_muPt.product()
-                MuEta = h_muEta.product()
-                MuPhi = h_muPhi.product()
-                MuMass = h_muMass.product()
-                
 
             if len( h_subjetsAK8BDisc.product() ) > 0 : 
                 AK8SubJetsBDisc = h_subjetsAK8BDisc.product()
@@ -1319,22 +1213,6 @@ def JetTreeDump_FWLite(argv) :
                     GenAK8SoftDropEta = h_genJetsAK8SoftDropEta.product()
                     GenAK8SoftDropPhi = h_genJetsAK8SoftDropPhi.product()
                     GenAK8SoftDropMass = h_genJetsAK8SoftDropMass.product()
-                    
-                    GenAK8PartID = h_genPartID.product()
-                    GenAK8PartPt = h_genPartPt.product()
-                    GenAK8PartEta = h_genPartEta.product()
-                    GenAK8PartPhi = h_genPartPhi.product()
-                    GenAK8PartMass = h_genPartMass.product()
-                    GenAK8PartStatus = h_genPartStatus.product()
-                    GenAK8PartMom0ID = h_genPartMom0ID.product()
-                    GenAK8PartMom0Status = h_genPartMom0Status.product()
-                    GenAK8PartMom1ID = h_genPartMom1ID.product()
-                    GenAK8PartMom1Status = h_genPartMom1Status.product()
-                    GenAK8PartDau0ID = h_genPartDau0ID.product()
-                    GenAK8PartDau0Status = h_genPartDau0Status.product()
-                    GenAK8PartDau1ID = h_genPartDau1ID.product()
-                    GenAK8PartDau1Status = h_genPartDau1Status.product()
-
 
 
             njets = len(h_jetsAK8Pt.product())
@@ -1640,7 +1518,6 @@ def JetTreeDump_FWLite(argv) :
                     FatJetEta           [ifatjet] = jetP4.Eta()
                     FatJetPhi           [ifatjet] = jetP4.Phi()
                     FatJetRap           [ifatjet] = jetP4.Rapidity()
-                    FatJetBDisc         [ifatjet] = AK8BDisc[ifatjet]
                     if AK8JetRho[ifatjet] != None : 
                         FatJetRhoRatio      [ifatjet] = AK8JetRho[ifatjet]
                     else :
@@ -1662,11 +1539,6 @@ def JetTreeDump_FWLite(argv) :
                     FatJetTau21         [ifatjet] = AK8Tau21[ifatjet]
                     FatJetCorrUp        [ifatjet] = ak8JetsCorrUp[ifatjet]
                     FatJetCorrDn        [ifatjet] = ak8JetsCorrDn[ifatjet]
-    
-                    MuonPt              [ifatjet] = MuPt[ifatjet]
-                    MuonEta             [ifatjet] = MuEta[ifatjet]
-                    MuonPhi             [ifatjet] = MuPhi[ifatjet]
-                    MuonMass            [ifatjet] = MuMass[ifatjet]
 
 
                 if options.isMC : 
@@ -1680,31 +1552,6 @@ def JetTreeDump_FWLite(argv) :
                         GenJetMassSoftDrop  [igenjet] = ak8GenJetsSoftDropP4[igenjet].M()
                         GenJetMass          [igenjet] = jetP4.M()
                         GenJetPtSoftDrop    [igenjet] = ak8GenJetsSoftDropP4[igenjet].Perp()
-                
-                    NGenPart [0] = 0
-                    for igenpart in xrange( len(GenAK8PartID) ) :
-                        if NGenPart[0] >= 20 : 
-                            break
-                        #print 'igenpart = ', igenpart, ', id = ', GenAK8PartID[igenpart]
-                        if abs(GenAK8PartID[igenpart]) == 5 or abs(GenAK8PartID[igenpart]) == 4:
-                            GenPartID           [NGenPart[0]] = GenAK8PartID            [igenpart]
-                            GenPartPt           [NGenPart[0]] = GenAK8PartPt            [igenpart]
-                            GenPartEta          [NGenPart[0]] = GenAK8PartEta           [igenpart]
-                            GenPartPhi          [NGenPart[0]] = GenAK8PartPhi           [igenpart]
-                            GenPartMass         [NGenPart[0]] = GenAK8PartMass          [igenpart]
-                            GenPartStatus       [NGenPart[0]] = GenAK8PartStatus        [igenpart]
-                            GenPartMom0ID       [NGenPart[0]] = GenAK8PartMom0ID        [igenpart]
-                            GenPartMom0Status   [NGenPart[0]] = GenAK8PartMom0Status    [igenpart]
-                            GenPartMom1ID       [NGenPart[0]] = GenAK8PartMom1ID        [igenpart]
-                            GenPartMom1Status   [NGenPart[0]] = GenAK8PartMom1Status    [igenpart]
-                            GenPartDau0ID       [NGenPart[0]] = GenAK8PartDau0ID        [igenpart]
-                            GenPartDau0Status   [NGenPart[0]] = GenAK8PartDau0Status    [igenpart]
-                            GenPartDau1ID       [NGenPart[0]] = GenAK8PartDau1ID        [igenpart]
-                            GenPartDau1Status   [NGenPart[0]] = GenAK8PartDau1Status    [igenpart]
-                            NGenPart [0] += 1
-                            #print 'Found one! now NGenPart is ', NGenPart[0]
-
-
 
 
                 METpx               [0] = metPx
