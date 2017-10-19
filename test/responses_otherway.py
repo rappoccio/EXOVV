@@ -26,8 +26,13 @@ parser.add_option('--ptMin', type='float', action='store',
 parser.add_option('--herwigFlat', action='store_true',
                   dest='herwigFlat',
                   default = False,
-                  help='Max events')
+                  help='Use flat herwig file')
 
+
+parser.add_option('--pythiaFlat', action='store_true',
+                  dest='pythiaFlat',
+                  default = False,
+                  help='Use flat pythia file')
 
 
 parser.add_option('--verbose', action='store_true',
@@ -461,7 +466,7 @@ ROOT.gStyle.SetLabelSize(24, "XYZ")
 
 deweightFlat = False
 
-if not options.herwigFlat : 
+if not options.herwigFlat and not options.pythiaFlat : 
     qcdIn =[
         ROOT.TFile('qcdpy8_170to300_rejec.root'),
         ROOT.TFile('qcdpy8_300to470_rejec.root'),
@@ -486,7 +491,7 @@ if not options.herwigFlat :
         0.00682981   / 398452. ,  #2400to3200  
         0.000165445  / 391108. ,  #3200toInf   
         ]
-else : 
+elif options.herwigFlat : 
     qcdIn =[
         ROOT.TFile('qcdherwig_flat_rejec.root'),
         ]
@@ -494,7 +499,16 @@ else :
         1.0
         ]
     deweightFlat = True
-        
+
+else :
+    qcdIn =[
+        ROOT.TFile('qcdpy8_flat_pdf4lhc15.root'),
+        ]
+    qcdWeights =[
+        1.0
+        ]
+    deweightFlat = True
+    
 masslessSD = 0
 
 purw = ROOT.TFile("purw.root")
@@ -522,6 +536,10 @@ for itree,t in enumerate(trees) :
     
     NNPDF3weight_CorrDn = array.array('f', [-1.])
     NNPDF3weight_CorrUp = array.array('f', [-1.])
+
+    PDF4LHC15weight_CorrDn = array.array('f', [-1.])
+    PDF4LHC15weight_Central = array.array('f', [-1.])
+    PDF4LHC15weight_CorrUp = array.array('f', [-1.])
 
 
     CTEQweight_Central = array.array('f', [-1.])
@@ -585,6 +603,13 @@ for itree,t in enumerate(trees) :
     t.SetBranchAddress ('NNPDF3weight_CorrUp', NNPDF3weight_CorrUp)
     t.SetBranchAddress ('CTEQweight_Central', CTEQweight_Central)
     t.SetBranchAddress ('MSTWweight_Central', MSTWweight_Central)
+
+    if options.pythiaFlat : 
+        t.SetBranchAddress ('PDF4LHC15weight_CorrDn', PDF4LHC15weight_CorrDn)
+        t.SetBranchAddress ('PDF4LHC15weight_Central', PDF4LHC15weight_Central)
+        t.SetBranchAddress ('PDF4LHC15weight_CorrUp', PDF4LHC15weight_CorrUp)
+
+    
     t.SetBranchAddress ('Weight', Weight)
     t.SetBranchAddress ('NFatJet', NFatJet)
     t.SetBranchAddress ('NGenJet', NGenJet)
@@ -642,6 +667,9 @@ for itree,t in enumerate(trees) :
         pdfweight_dn = NNPDF3weight_CorrDn[0]
         cteqweight = CTEQweight_Central[0]
         mstwweight = MSTWweight_Central[0]
+        pdf4lhc15_dn = PDF4LHC15weight_CorrDn[0]
+        pdf4lhc15_nom = PDF4LHC15weight_Central[0]
+        pdf4lhc15_up = PDF4LHC15weight_CorrUp[0]
         #print "pdfweight up: " + str(pdfweight_up)
         #print "pdfweight down: " + str(pdfweight_dn)
         #print 'cteq weight: ' + str(cteqweight)
@@ -859,8 +887,13 @@ for itree,t in enumerate(trees) :
                     if pdfweight_up > 1.2 or pdfweight_dn < 0.8:
                         pass
                     else:
-                        response_pdfup.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*pdfweight_up)
-                        response_pdfdn.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*pdfweight_dn)
+                        if not options.pythiaFlat : 
+                            response_pdfup.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*pdfweight_up)
+                            response_pdfdn.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*pdfweight_dn)
+                        else :
+                            response_pdfup.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight * (pdf4lhc15_up-pdf4lhc15_nom) / pdf4lhc15_nom)
+                            response_pdfdn.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight * (pdf4lhc15_nom-pdf4lhc15_dn) / pdf4lhc15_nom)
+                            
 
                     if cteqweight > 1.2 or cteqweight < 0.8:
                         pass

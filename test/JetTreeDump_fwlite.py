@@ -161,9 +161,11 @@ def JetTreeDump_FWLite(argv) :
     if options.doPDFs:
         try : 
             import lhapdf
+            lhapdf.pathsPrepend("/cvmfs/sft.cern.ch/lcg/external/lhapdfsets/current/")
             nnpdfs = lhapdf.mkPDFs("NNPDF30_lo_as_0130")
             cteqs = lhapdf.mkPDFs("CT14lo")
             mstws = lhapdf.mkPDFs("MMHT2014lo68cl")
+            pdf4lhc15s = lhapdf.mkPDFs("PDF4LHC15_nlo_100")
         except :
             print 'LHAPDF is not working, did you do "source setup_lhapdf.csh"?'
 
@@ -512,8 +514,12 @@ def JetTreeDump_FWLite(argv) :
 
         NNPDF3weight_Central     = array('f', [-1.])
         NNPDF3weight_CorrDn     = array('f', [-1.])
-        NNPDF3weight_CorrUp     = array('f', [-1.])    
-
+        NNPDF3weight_CorrUp     = array('f', [-1.])
+        
+        PDF4LHC15weight_Central     = array('f', [-1.])
+        PDF4LHC15weight_CorrDn     = array('f', [-1.])
+        PDF4LHC15weight_CorrUp     = array('f', [-1.])    
+        
         MSTWweight_Central     = array('f', [-1.])
         MSTWweight_CorrDn     = array('f', [-1.])
         MSTWweight_CorrUp     = array('f', [-1.])    
@@ -603,6 +609,11 @@ def JetTreeDump_FWLite(argv) :
         TreeEXOVV.Branch('NNPDF3weight_CorrDn'   ,  NNPDF3weight_CorrDn       ,  'NNPDF3weight_CorrDn/F'          )
         TreeEXOVV.Branch('NNPDF3weight_CorrUp'   ,  NNPDF3weight_CorrUp       ,  'NNPDF3weight_CorrUp/F'          )
 
+        TreeEXOVV.Branch('PDF4LHC15weight_Central'   ,  PDF4LHC15weight_Central       ,  'PDF4LHC15weight_Central/F'          )
+        TreeEXOVV.Branch('PDF4LHC15weight_CorrDn'   ,  PDF4LHC15weight_CorrDn       ,  'PDF4LHC15weight_CorrDn/F'          )
+        TreeEXOVV.Branch('PDF4LHC15weight_CorrUp'   ,  PDF4LHC15weight_CorrUp       ,  'PDF4LHC15weight_CorrUp/F'          )
+        
+        
         TreeEXOVV.Branch('MSTWweight_Central'   ,  MSTWweight_Central       ,  'MSTWweight_Central/F'          )
         TreeEXOVV.Branch('MSTWweight_CorrDn'   ,  MSTWweight_CorrDn       ,  'MSTWweight_CorrDn/F'          )
         TreeEXOVV.Branch('MSTWweight_CorrUp'   ,  MSTWweight_CorrUp       ,  'MSTWweight_CorrUp/F'          )
@@ -980,6 +991,37 @@ def JetTreeDump_FWLite(argv) :
                         NNPDF3weight_CorrUp            [0] = weightup   
 
 
+                        pdf4lhc15weights = []
+                        pdf4lhc15weightavg = 0.
+                        for ipdf in xrange(0, len(pdf4lhc15s)) :                            
+                            w1 = pdf4lhc15s[ipdf].xfxQ(pdf.id.first, pdf.x.first, pdf.scalePDF) 
+                            w2 = pdf4lhc15s[ipdf].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
+                            pdf4lhc15weight = w1/pdfval1_nom * w2/pdfval2_nom
+                            if ipdf == 0 :
+                                pdf4lhc15weightavg = pdf4lhc15weight
+                            else : 
+                                pdf4lhc15weights.append( pdf4lhc15weight )
+
+
+                        pdf4lhc15weightrms = 0.
+                        for ipdf4lhc15weight in pdf4lhc15weights :
+                            pdf4lhc15weightrms += (pdf4lhc15weight - pdf4lhc15weightavg)**2
+                        pdf4lhc15weightrms = math.sqrt(pdf4lhc15weightrms)
+
+
+                        pdf4lhc15weightup = pdf4lhc15weightavg + pdf4lhc15weightrms
+                        pdf4lhc15weightdn = pdf4lhc15weightavg - pdf4lhc15weightrms
+                        if options.verbose :
+                            print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f nnpdf=%6.2f up=%6.2f dn=%6.2f' % (pdf.id.first,pdf.id.second,
+                                                                                                                                    pdf.x.first, pdf.x.second,
+                                                                                                                                    pdf.xPDF.first, pdf.xPDF.second,
+                                                                                                                                    pdf.scalePDF, weightavg, weightup, weightdn)
+                        PDF4LHC15weight_Central           [0] = pdf4lhc15weightavg
+                        PDF4LHC15weight_CorrDn            [0] = pdf4lhc15weightdn
+                        PDF4LHC15weight_CorrUp            [0] = pdf4lhc15weightup   
+
+
+                        
 
 
                         
