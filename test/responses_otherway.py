@@ -597,6 +597,11 @@ for itree,t in enumerate(trees) :
 
     t.SetBranchStatus ('CTEQweight_Central', 1)
     t.SetBranchStatus ('MSTWweight_Central', 1)
+
+    t.SetBranchStatus ('PDF4LHC15weight_CorrUp', 1)
+    t.SetBranchStatus ('PDF4LHC15weight_CorrDn', 1)    
+    t.SetBranchStatus ('PDF4LHC15weight_Central', 1)
+    
     t.SetBranchStatus ('Nvtx', 1)
 
     t.SetBranchAddress ('NNPDF3weight_CorrDn', NNPDF3weight_CorrDn)
