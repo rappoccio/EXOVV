@@ -956,7 +956,6 @@ def JetTreeDump_FWLite(argv) :
                     #@Event weight errors
 
 
-                    ## NNPDF is a pain and just HAASS to be different. Grumble grumble. 
                     if h_generator.product().hasPDF() :
                         pdf = h_generator.product().pdf()
 
