@@ -208,11 +208,9 @@ class RooUnfoldUnfolder:
                         self.uncertainties['_lum'].SetBinContent( ix, iy, 0.0 )
 
         # Next : PDF and PS uncertainties
-        # For the NNPDF uncertainties ("pdfup" and "pdfdn") these are
-        # double sided, so (absolute) uncertainty is (up-down)/2 again (factor of 2 will come later). 
-        # For the CTEQ and MSTW, the uncertainty is |sys-nom|.
-        fpdf = ROOT.TFile("unfoldedpdf.root")
+        fpdf = ROOT.TFile("unfoldedpdf_pdf4lhc15.root")
         self.files['pdf'] = fpdf
+        fpdf.ls()
 
         pdfpostfix = ''
         if "Data" in self.inputs :
@@ -223,42 +221,27 @@ class RooUnfoldUnfolder:
         #print 'unfold' + pdfpostfix + '_mstw' + self.postfix1 
         mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 )
         mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 )
-        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  )
-        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  )
         
         self.responses['_pdfup'] =  mpdfup 
         self.responses['_pdfdn'] =  mpdfdn 
-        self.responses['_mstw'] =  mmstw 
-        self.responses['_cteq'] =  mcteq
         hpdfup = mpdfup.Hreco()
         hpdfdn = mpdfdn.Hreco()
-        hmstw = mmstw.Hreco()
-        hcteq = mcteq.Hreco()
                     
-        for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
+        for hist in [ hpdfup, hpdfdn ] :
             self.histDriver_.normalizeHist( hist, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True )
 
 
         hpdfdiff = hpdfup.Clone(hpdfup.GetName() + "_difftodn")
         hpdfdiff.Add( hpdfdn, -1.0 )
         hpdfdiff.Scale(0.5)
-
-        hmstw.Add( self.unsmearedForPS, -1.0 )
-        hcteq.Add( self.unsmearedForPS, -1.0 )
                              
         self.uncertainties['_pdf'] = hpdfdiff.Clone( self.unsmeared.GetName() + "_pdf")
         
         
         for iy in xrange(0,hpdfdiff.GetNbinsY()+2) :
-
             for ix in xrange(0,hpdfup.GetNbinsX()+2) :
                 diff1 = abs(hpdfdiff.GetBinContent(ix,iy))
-                diff2 = abs(hmstw.GetBinContent(ix,iy))
-                diff3 = abs(hcteq.GetBinContent(ix,iy))                    
-                if diff2 > diff1 and diff2 > diff3 :
-                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff2)
-                if diff3 > diff1 and diff3 > diff2 :
-                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)
+                self.uncertainties['_pdf'].SetBinContent(ix,iy,diff1)
 
 
         self.uncertainties['_pdf'].Divide( self.unsmearedForPS )
@@ -339,6 +322,7 @@ class RooUnfoldUnfolder:
         self.uncertainties['_mcStat'] = self.mcStat.Clone( self.nom.GetName() + "_mcStat")
         
         # Now sum all of the uncertainties in quadrature
+        self.totunc = self.nom.Clone( self.nom.GetName() + '_totunc')
         for ix in xrange(1,self.nom.GetNbinsX()+1):
             for iy in xrange(1,self.nom.GetNbinsY()+1):
                 val = self.nom.GetBinContent(ix,iy)
@@ -351,11 +335,15 @@ class RooUnfoldUnfolder:
                         err2 += (isystval.GetBinContent(ix,iy))**2
                     #print ' totunc=%6.2e' % ( math.sqrt(err2) ),
                     self.nom.SetBinError( ix, iy, math.sqrt(err2) * val )
+                    self.totunc.SetBinContent( ix, iy, math.sqrt(err2) * val )
                     #print ' tot=%6.2e/%6.2e' % ( self.nom.GetBinError(ix,iy) , val )
 
         #self.printUnc()
         for ihist in self.uncertainties.itervalues() :
             ensureAbs(ihist)
+
+
+        self.uncertainties["_totunc"] = self.totunc
 
     def readPythia(self):
         self.pythiaFile = ROOT.TFile( self.pythiaInputs )
