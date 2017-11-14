@@ -24,6 +24,11 @@ parser.add_option('--scale', action='store_true',
                   help='Scale to unity')
 
 
+parser.add_option('--lumi', action ='store', type = 'float',
+                 default =2300.,
+                 dest='lumi',
+                 help='Luminosity')
+
 (options, args) = parser.parse_args()
  
 
@@ -41,6 +46,8 @@ unfolded_data_softdrop = []
 
 data_hist = datafile.Get('PFJet_pt_m_AK8')
 data_hist_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
+data_hist.Scale(1.0 / options.lumi )
+data_hist_softdrop.Scale(1.0 / options.lumi )
 
 if options.scale != None and options.scale : 
     data_hist.Scale(1./data_hist.Integral())

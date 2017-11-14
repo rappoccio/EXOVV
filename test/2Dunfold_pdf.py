@@ -19,6 +19,11 @@ parser.add_option('--scale', action ='store_true',
                  dest='scale',
                  help='Scale hists to unity?')
 
+parser.add_option('--lumi', action ='store', type = 'float',
+                 default =2300.,
+                 dest='lumi',
+                 help='Luminosity')
+
 (options, args) = parser.parse_args()
  
 
@@ -42,6 +47,9 @@ pdfdn_response_softdrop = pdffile.Get('2d_response_softdrop_pdfdn')
 # Get data hists and normalize
 data_reco = datafile.Get('PFJet_pt_m_AK8')
 data_reco_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
+
+data_reco.Scale(1.0 / options.lumi)
+data_reco_softdrop.Scale(1.0 / options.lumi)
 
 if options.scale != None and options.scale : 
     data_reco.Scale(1./data_reco.Integral())

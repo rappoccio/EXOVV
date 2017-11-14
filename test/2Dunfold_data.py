@@ -22,6 +22,12 @@ parser.add_option('--scale', action ='store_true',
                  dest='scale',
                  help='Scale hists to unity?')
 
+parser.add_option('--lumi', action ='store', type = 'float',
+                 default =2300.,
+                 dest='lumi',
+                 help='Luminosity')
+
+
        
 (options, args) = parser.parse_args()
 
@@ -43,6 +49,9 @@ truthSD = mcfile.Get('PFJet_pt_m_AK8SDgen')
 
 reco = datafile.Get('PFJet_pt_m_AK8')
 recoSD = datafile.Get('PFJet_pt_m_AK8SD')
+
+reco.Scale(1.0 / options.lumi )
+recoSD.Scale(1.0 / options.lumi )
 
 if options.scale != None and options.scale :     
     truth.Scale( 1./truth.Integral())

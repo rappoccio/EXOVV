@@ -456,7 +456,12 @@ class RooUnfoldUnfolder:
             else :
                 legstyle = 'l'
                 leg.AddEntry( hist, self.histDriver_.titles[styleNames[ihist]], legstyle)
+
+
             projy = hist.ProjectionY(hist.GetName() + "_ptplot")
+            for iy in xrange(hist.GetNbinsY()):
+                projy.SetBinContent( iy, projy.GetBinContent(iy) * projy.GetBinWidth(iy) )
+                projy.SetBinError( iy, projy.GetBinError(iy) * projy.GetBinWidth(iy) )
             setStylesClass( projy, istyle=self.histDriver_.styles[styleNames[ihist]] )
             projs.append(projy)
             self.histDriver_.hists_.append(projy)
