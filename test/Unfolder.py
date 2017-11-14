@@ -28,7 +28,7 @@ class RooUnfoldUnfolder:
         self.expsysnames = [ '_jec', '_jer', '_jmr', '_jms', '_pu' ] # Experimental uncertainties EXCEPT for jec
         self.thsysnames = ['_pdf', '_ps', '_mcStat']                 # Theory uncertainties
         self.flatsysnames = ['_lum']                                 # Flat uncertainties
-        self.sysnames = self.expsysnames + self.flatsysnames + self.thsysnames # All uncertainties
+        self.sysnames = self.expsysnames + self.flatsysnames + self.thsysnames + ['_totunc'] # All uncertainties
         self.responses = dict()                                      # RooUnfoldResponse objects
         self.nom = None                                              # TH2D representing central value with stat+sys uncertainties
         self.jernom = None                                           # TH2D representing central value in JER
@@ -72,7 +72,7 @@ class RooUnfoldUnfolder:
         self.uncertainties = dict(                                   # TH2D's representing uncertainties
             zip(self.sysnames, [None] * len(self.sysnames) )
             )
-        unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.']
+        unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.', 'Total']
         for i in xrange(53) :
             unctitles += 'JEC' + str(i)
         self.uncertaintyNames = dict( zip( self.sysnames, unctitles ) )
@@ -208,7 +208,7 @@ class RooUnfoldUnfolder:
                         self.uncertainties['_lum'].SetBinContent( ix, iy, 0.0 )
 
         # Next : PDF and PS uncertainties
-        fpdf = ROOT.TFile("unfoldedpdf_pdf4lhc15.root")
+        fpdf = ROOT.TFile("unfoldedpdf.root")
         self.files['pdf'] = fpdf
         fpdf.ls()
 
@@ -221,27 +221,46 @@ class RooUnfoldUnfolder:
         #print 'unfold' + pdfpostfix + '_mstw' + self.postfix1 
         mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 )
         mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 )
+        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  )
+        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  )
+
         
         self.responses['_pdfup'] =  mpdfup 
-        self.responses['_pdfdn'] =  mpdfdn 
+        self.responses['_pdfdn'] =  mpdfdn
+        self.responses['_mstw'] =  mmstw 
+        self.responses['_cteq'] =  mcteq        
         hpdfup = mpdfup.Hreco()
         hpdfdn = mpdfdn.Hreco()
-                    
-        for hist in [ hpdfup, hpdfdn ] :
+        hmstw = mmstw.Hreco()
+        hcteq = mcteq.Hreco()
+
+        
+        for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
             self.histDriver_.normalizeHist( hist, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True )
 
 
         hpdfdiff = hpdfup.Clone(hpdfup.GetName() + "_difftodn")
         hpdfdiff.Add( hpdfdn, -1.0 )
         hpdfdiff.Scale(0.5)
-                             
+
+        hmstw.Add( self.unsmearedForPS, -1.0 )
+        hcteq.Add( self.unsmearedForPS, -1.0 )
+
+        
         self.uncertainties['_pdf'] = hpdfdiff.Clone( self.unsmeared.GetName() + "_pdf")
         
         
         for iy in xrange(0,hpdfdiff.GetNbinsY()+2) :
             for ix in xrange(0,hpdfup.GetNbinsX()+2) :
                 diff1 = abs(hpdfdiff.GetBinContent(ix,iy))
+                diff2 = abs(hmstw.GetBinContent(ix,iy))
+                diff3 = abs(hcteq.GetBinContent(ix,iy))
                 self.uncertainties['_pdf'].SetBinContent(ix,iy,diff1)
+                if diff2 > diff1 and diff2 > diff3 :
+                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff2)
+                if diff3 > diff1 and diff3 > diff2 :
+                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)                
+                
 
 
         self.uncertainties['_pdf'].Divide( self.unsmearedForPS )
@@ -330,20 +349,22 @@ class RooUnfoldUnfolder:
                 if abs(val) > 0.0 : 
                     err2 = self.nom.GetBinError(ix,iy) / val 
                     err2 = err2**2
-                    for isyst,isystval in self.uncertainties.iteritems() :
+                    for isystname in self.expsysnames + self.flatsysnames + self.thsysnames :
                         #print '%6s=%6.2e' % ( isyst, abs(isystval.GetBinContent(ix,iy)) ),
+                        isystval = self.uncertainties[isystname]
                         err2 += (isystval.GetBinContent(ix,iy))**2
                     #print ' totunc=%6.2e' % ( math.sqrt(err2) ),
                     self.nom.SetBinError( ix, iy, math.sqrt(err2) * val )
-                    self.totunc.SetBinContent( ix, iy, math.sqrt(err2) * val )
+                    self.totunc.SetBinContent( ix, iy, math.sqrt(err2) )
                     #print ' tot=%6.2e/%6.2e' % ( self.nom.GetBinError(ix,iy) , val )
 
         #self.printUnc()
+        self.uncertainties["_totunc"] = self.totunc
         for ihist in self.uncertainties.itervalues() :
             ensureAbs(ihist)
 
 
-        self.uncertainties["_totunc"] = self.totunc
+        
 
     def readPythia(self):
         self.pythiaFile = ROOT.TFile( self.pythiaInputs )
@@ -470,9 +491,11 @@ class RooUnfoldUnfolder:
         if filename == None : 
             c.Print( projy.GetName() + ".png", "png")
             c.Print( projy.GetName() + ".pdf", "pdf")
+            c.Print( projy.GetName() + ".root", "root")
         else :
             c.Print( filename + ".png", "png")
             c.Print( filename + ".pdf", "pdf")
+            c.Print( filename + ".root", "root")
         c.Draw()
         self.histDriver_.canvs_.append(c)
         
@@ -577,7 +600,7 @@ class RooUnfoldUnfolder:
             c = ROOT.TCanvas("cunc" + str(iy) + self.postfix, "cunc" + str(iy) + self.postfix, 800, 600)
             self.histDriver_.canvs_.append(c)
             canvs.append(c)
-            leg= ROOT.TLegend( 0.2, 0.5, 0.84, 0.8, self.ptBinNames[iy-1])
+            leg= ROOT.TLegend( 0.2, 0.54, 0.84, 0.84, self.ptBinNames[iy-1])
             leg.SetBorderSize(0)
             leg.SetFillColor(0)
             leg.SetNColumns(2)

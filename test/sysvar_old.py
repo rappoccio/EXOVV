@@ -305,6 +305,22 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         #hRecoJMRdn.Draw('hist same')
         hRecoPDFup.Draw('hist same ][')
         #hRecoPDFdn.Draw('hist same')
+
+
+        hTot = hRMSup.Clone(outname_str + "tot")
+        for ibin in xrange(hTot.GetNbinsX()+1):
+            val1 = hTot.GetBinContent(ibin)
+            val1 *= val1
+            for ihist in [ hRecoup, hRecoCopyup, hRecoJMRup, hRecoPUup, hRecoPDFup ] :                
+                val2 = ihist.GetBinContent(ibin)
+                val2 *= val2
+                val1 += val2
+            hTot.SetBinContent( ibin, sqrt(val1) )
+        hTot.SetLineStyle(1)
+        hTot.SetLineColor(1)
+        hTot.SetFillStyle(0)
+        hTot.Draw('hist same ][')
+        
         ####################################################################################### Legends Filled
         legends_list[i].SetNColumns(3)
         legends_list[i].AddEntry(hRecoJMRup,  'JMS+JMR', 'l')
@@ -313,6 +329,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
         legends_list[i].AddEntry(hRecoCopyup, 'Physics Model', 'l')
         legends_list[i].AddEntry(hRecoup,     'JES+JER', 'l')
         legends_list[i].AddEntry(hRMSup,      'Stat', 'l')
+        legends_list[i].AddEntry(hTot, 'Total', 'l')
         legends_list[i].Draw()
 
 

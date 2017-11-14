@@ -52,6 +52,7 @@ class HistDriver :
                           '_pdf'   :StyleDriver(name="_pdf",   lineWidth=3,lineStyle=6,lineColor=ROOT.kMagenta),
                           '_ps'    :StyleDriver(name="_ps",    lineWidth=3,lineStyle=4,lineColor=ROOT.kGreen+2),
                           '_mcStat':StyleDriver(name="_mcStat",lineWidth=3,lineStyle=2,lineColor=ROOT.kBlack),
+                          '_totunc':StyleDriver(name="_totunc",lineWidth=3,lineStyle=1,lineColor=ROOT.kBlack, fillStyle=0),
                         }
         for i in xrange(53) :
             self.sysStyles[ '_jecsrc' + str(i) ] = StyleDriver(name="_jecsrc" + str(i), lineWidth=3,lineStyle=3,lineColor=ROOT.kRed)
