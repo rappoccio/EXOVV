@@ -210,7 +210,6 @@ class RooUnfoldUnfolder:
         # Next : PDF and PS uncertainties
         fpdf = ROOT.TFile("unfoldedpdf.root")
         self.files['pdf'] = fpdf
-        fpdf.ls()
 
         pdfpostfix = ''
         if "Data" in self.inputs :
@@ -458,11 +457,16 @@ class RooUnfoldUnfolder:
                 leg.AddEntry( hist, self.histDriver_.titles[styleNames[ihist]], legstyle)
 
 
-            projy = hist.ProjectionY(hist.GetName() + "_ptplot")
-            for iy in xrange(hist.GetNbinsY()):
-                projy.SetBinContent( iy, projy.GetBinContent(iy) * projy.GetBinWidth(iy) )
-                projy.SetBinError( iy, projy.GetBinError(iy) * projy.GetBinWidth(iy) )
-            setStylesClass( projy, istyle=self.histDriver_.styles[styleNames[ihist]] )
+            ##### Here, need to project sum( val * width )
+            projy = None
+            for im in xrange( 1, hist.GetNbinsX()) :
+                proji = hist.ProjectionY(hist.GetName() + "_ptplot", im, im, "e")
+                proji.Scale( hist.GetXaxis().GetBinWidth(im) )                
+                if im == 1 :
+                    projy = proji.Clone(hist.GetName() + "_ptplot")
+                else :
+                    #projy.Add( proji )
+                    self.histDriver_.addCorrelated1D( projy, proji )
             projs.append(projy)
             self.histDriver_.hists_.append(projy)
             if title != None :

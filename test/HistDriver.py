@@ -125,7 +125,18 @@ class HistDriver :
                 hist1.SetBinContent(ix,0.0)
                 hist1.SetBinError(ix,0.0)
                 
-        
+
+    def addCorrelated1D(self, hist1, hist2 ):
+        for ix in xrange(1,hist1.GetNbinsX() ):
+            val1 = hist1.GetBinContent(ix)
+            val2 = hist2.GetBinContent(ix)
+            err1 =  hist1.GetBinError(ix) if abs(val1) > 0 else 0.
+            err2 =  hist2.GetBinError(ix) if abs(val2) > 0 else 0.
+
+            
+            hist1.SetBinContent( ix, val1 + val2 )
+            hist1.SetBinError( ix, err1 + err2 )
+
     def normalizeHist(self, hist, normalizeUnity=True, divideByBinWidths=True, scalePtBins = False):
         '''
           1. Normalize to unity if desired.
@@ -138,7 +149,7 @@ class HistDriver :
         if normalizeUnity and hist.Integral() > 0.0 :
             hist.Scale( 1.0 / hist.Integral() )
         elif normalizeUnity == False and self.lumi_ > 0.0 :
-            hist.Scale( 1.0 / self.lumi_ )
+            #hist.Scale( 1.0 / self.lumi_ )
             for ix in xrange(1,hist.GetNbinsX()+1) :
                 for iy in xrange(1,hist.GetNbinsY()+1):
                     val = hist.GetBinContent(ix,iy)
