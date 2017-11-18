@@ -166,6 +166,7 @@ def JetTreeDump_FWLite(argv) :
             cteqs = lhapdf.mkPDFs("CT14lo")
             mstws = lhapdf.mkPDFs("MMHT2014lo68cl")
             pdf4lhc15s = lhapdf.mkPDFs("PDF4LHC15_nlo_100")
+            pdf4lhc15set = lhapdf.getPDFSet("PDF4LHC15_nlo_100")
         except :
             print 'LHAPDF is not working, did you do "source setup_lhapdf.csh"?'
 
@@ -995,27 +996,35 @@ def JetTreeDump_FWLite(argv) :
                         pdf4lhc15weightavg = 0.
                         for ipdf in xrange(0, len(pdf4lhc15s)) :                            
                             w1 = pdf4lhc15s[ipdf].xfxQ(pdf.id.first, pdf.x.first, pdf.scalePDF) 
-                            w2 = pdf4lhc15s[ipdf].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF) 
+                            w2 = pdf4lhc15s[ipdf].xfxQ(pdf.id.second, pdf.x.second, pdf.scalePDF)
                             pdf4lhc15weight = w1/pdfval1_nom * w2/pdfval2_nom
-                            if ipdf == 0 :
-                                pdf4lhc15weightavg = pdf4lhc15weight
-                            else : 
-                                pdf4lhc15weights.append( pdf4lhc15weight )
+                            pdf4lhc15weights.append( pdf4lhc15weight )
+                            pdf4lhc15weightavg += pdf4lhc15weight
+                        pdf4lhc15weightavg /= len(pdf4lhc15s)
+                        #    if ipdf == 0 :
+                        #        pdf4lhc15weightavg = pdf4lhc15weight
+                        #    else : 
+                        #        pdf4lhc15weights.append( pdf4lhc15weight )
+                        #weightvals = ROOT.std.vector('double')( len(pdf4lhc15s) )
+                        #weightvals[0] = 1.0
+                        pdf4lhc15Uncs = pdf4lhc15set.uncertainty( pdf4lhc15weights )
+                        #print pdf4lhc15Uncs
+                        #print '  %6.2e  : %6.2e + %6.2e - %6.2e' % ( pdf4lhc15weights[0], pdf4lhc15Uncs.central, pdf4lhc15Uncs.errplus, pdf4lhc15Uncs.errminus )
 
 
                         pdf4lhc15weightrms = 0.
                         for ipdf4lhc15weight in pdf4lhc15weights :
                             pdf4lhc15weightrms += (pdf4lhc15weight - pdf4lhc15weightavg)**2
-                        pdf4lhc15weightrms = math.sqrt(pdf4lhc15weightrms)
+                        pdf4lhc15weightrms = math.sqrt(pdf4lhc15weightrms / 99.)
 
 
-                        pdf4lhc15weightup = pdf4lhc15weightavg + pdf4lhc15weightrms
-                        pdf4lhc15weightdn = pdf4lhc15weightavg - pdf4lhc15weightrms
+                        pdf4lhc15weightup =  pdf4lhc15Uncs.central + pdf4lhc15Uncs.errplus
+                        pdf4lhc15weightdn = pdf4lhc15Uncs.central - pdf4lhc15Uncs.errminus
                         if options.verbose :
-                            print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f nnpdf=%6.2f up=%6.2f dn=%6.2f' % (pdf.id.first,pdf.id.second,
+                            print ' id1=%6.2f id2=%6.2f x1=%6.2f x2=%6.2f xf1=%6.2f xf2=%6.2f q=%6.2f pdf4l=%6.2f up=%6.2f dn=%6.2f' % (pdf.id.first,pdf.id.second,
                                                                                                                                     pdf.x.first, pdf.x.second,
                                                                                                                                     pdf.xPDF.first, pdf.xPDF.second,
-                                                                                                                                    pdf.scalePDF, weightavg, weightup, weightdn)
+                                                                                                                                    pdf.scalePDF, pdf4lhc15weightavg, pdf4lhc15weightup, pdf4lhc15weightdn)
                         PDF4LHC15weight_Central           [0] = pdf4lhc15weightavg
                         PDF4LHC15weight_CorrDn            [0] = pdf4lhc15weightdn
                         PDF4LHC15weight_CorrUp            [0] = pdf4lhc15weightup   

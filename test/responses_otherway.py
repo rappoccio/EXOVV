@@ -686,9 +686,9 @@ for itree,t in enumerate(trees) :
             if options.verbose :
                 print 'Deweighting flat tree, weight = ', weight
 
-            if NGenJet[0] < 2 or 5e-6 < weight/(GenJetPt[0]+GenJetPt[1]):
-                if options.verbose : print 'Weight is outside bounds, skipping'
-                continue
+            #if NGenJet[0] < 2 or 5e-6 < weight/(GenJetPt[0]+GenJetPt[1]):
+            #    print 'Weight ', weight, ' is outside bounds, skipping ', jentry
+            #    continue
 
         puweight = pu_nom.GetBinContent( pu_nom.GetXaxis().FindBin( Nvtx[0] ) )
         if abs(puweight) > 0.00001 : 
