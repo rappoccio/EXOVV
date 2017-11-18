@@ -19,6 +19,12 @@ parser.add_option('--scale', action ='store_true',
                  dest='scale',
                  help='Scale hists to unity?')
 
+
+parser.add_option('--lumi', action ='store', type = 'float',
+                 default =2300.,
+                 dest='lumi',
+                 help='Luminosity')
+
 (options, args) = parser.parse_args()
  
 pt_bin = {0: '200-260', 1: '260-350', 2: '350-460', 3: '460-550', 4: '550-650', 5: '650-760', 6: '760-900', 7: '900-1000', 8: '1000-1100', 9:'1100-1200', 10:'1200-1300', 11:'1300-Inf'}
@@ -44,6 +50,9 @@ pythia8_response_softdrop = pythia8file.Get('2d_response_softdrop_nomnom')
 # Get data hists and normalize
 data_reco = datafile.Get('PFJet_pt_m_AK8')
 data_reco_softdrop = datafile.Get('PFJet_pt_m_AK8SD')
+
+data_reco.Scale(1.0 / options.lumi)
+data_reco_softdrop.Scale(1.0 / options.lumi)
 
 if options.scale != None and options.scale : 
     data_reco.Scale(1./data_reco.Integral())

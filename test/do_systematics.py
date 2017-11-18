@@ -37,7 +37,7 @@ ROOT.gROOT.SetBatch()
 ##### WARNING ### WARNING #####<----------------------------------------------
 f = ROOT.TFile('2DClosure.root')
 parton_shower = ROOT.TFile('PS_hists.root')
-pdfs = ROOT.TFile('unfoldedpdf.root')
+pdfs = ROOT.TFile('unfoldedpdf_pdf4lhc15.root')
 bins = ['200 < p_{T} < 260 GeV','260 < p_{T} < 350 GeV','350 < p_{T} < 460 GeV','460 < p_{T} < 550 GeV','550 < p_{T} < 650 GeV','650 < p_{T} < 760 GeV', '760 < p_{T} < 900 GeV', '900 < p_{T} < 1000 GeV', '1000 < p_{T} < 1100 GeV','1100 < p_{T} < 1200 GeV',
     '1200 < p_{T} < 1300 GeV', 'p_{T} > 1300 GeV']
 scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100.]
@@ -102,6 +102,7 @@ jmsupfile = ROOT.TFile('2DClosure_jmsup.root')
 jmsdnfile = ROOT.TFile('2DClosure_jmsdn.root')
 puupfile = ROOT.TFile('2DClosure_puup.root')
 pudnfile = ROOT.TFile('2DClosure_pudn.root')
+
 
 ##################################################################### Get uncertainty hists
 for i in range(0, nptbins):
@@ -250,17 +251,10 @@ for i in range(0, nptbins):
 
 
     if not options.absscale : 
-        for hist in [pdf_up[i], pdf_dn[i], pdf_upsd[i], pdf_dnsd[i], pdf_cteq[i], pdf_cteqsd[i], pdf_mstw[i], pdf_mstwsd[i]]:
+        for hist in [pdf_up[i], pdf_dn[i], pdf_upsd[i], pdf_dnsd[i]]:
             if hist.Integral() > 0:
                 hist.Scale(1.0 / hist.Integral() )
 
-                            
-    temp_diffcteq = (pdf_cteq[i] - datalist[i])
-    temp_diffmstw = (pdf_mstw[i] - datalist[i])
-    temp_diffcteqsd = (pdf_cteqsd[i] - datalistSD[i])
-    temp_diffmstwsd = (pdf_mstwsd[i] - datalistSD[i])
-
-    
     temp_unc = (pdf_up[i] - pdf_dn[i]) 
     temp_unc_softdrop = (pdf_upsd[i] - pdf_dnsd[i])
     temp_unc.Scale( 0.5 )
@@ -269,31 +263,12 @@ for i in range(0, nptbins):
 
     temp_unc.Scale(scales[i])
     temp_unc_softdrop.Scale(scales[i])
-    temp_diffcteq.Scale(scales[i])
-    temp_diffmstw.Scale(scales[i])
-    temp_diffcteqsd.Scale(scales[i])
-    temp_diffmstwsd.Scale(scales[i])
     for ibin in xrange(1, temp_unc.GetNbinsX()):
-        diff1 = abs(temp_unc.GetBinContent(ibin))
-        diff2 = abs(temp_diffmstw.GetBinContent(ibin))
-        diff3 = abs(temp_diffcteq.GetBinContent(ibin))        
-        if diff1 > diff2 and diff1 > diff3 : 
-            temp_pdf_diff.append(diff1)
-        elif diff2 > diff1 and diff2 > diff3 :
-            temp_pdf_diff.append(diff2)
-        else :
-            temp_pdf_diff.append(diff3)        
+        diff1 = abs(temp_unc.GetBinContent(ibin))        
+        temp_pdf_diff.append(diff1)
 
         diffSD1 = abs(temp_unc_softdrop.GetBinContent(ibin))
-        diffSD2 = abs(temp_diffcteqsd.GetBinContent(ibin))
-        diffSD3 = abs(temp_diffmstwsd.GetBinContent(ibin))
-        if diffSD1 > diffSD2 and diffSD1 > diffSD3 : 
-            temp_softdrop_pdf_diff.append(diffSD1)
-        elif diffSD2 > diffSD1 and diffSD2 > diffSD3 :
-            temp_softdrop_pdf_diff.append(diffSD2)
-        else :
-            temp_softdrop_pdf_diff.append(diffSD3)
-
+        temp_softdrop_pdf_diff.append(diffSD1)
 
             
     pdf_differences.append(temp_pdf_diff)
@@ -316,5 +291,5 @@ postfix = ''
 if options.absscale :
     postfix="absolute_"
 
-plot_vars(datacanvases, datalist, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "mcvariations_"+postfix, jmrupa, jmrdna, jmrnoma, jmsupa, jmsdna, puupa, pudna, bins, keephists=histstokeep, jackknifeRMS=RMS_vals)
-plot_vars(datacanvasesSD, datalistSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "mcvariations_softdrop_"+postfix, jmrupaSD, jmrdnaSD, jmrnomaSD, jmsupaSD, jmsdnaSD, puupaSD, pudnaSD, bins, softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, histname="Soft Drop ")
+plot_vars(datacanvases, datalist, jecupa, jecdna, jerupa, jerdna, jernoma, ps_differences, pdf_differences, alegends, "mcvariations_"+postfix, jmrupa, jmrdna, jmrnoma, jmsupa, jmsdna, puupa, pudna, bins, keephists=histstokeep, jackknifeRMS=RMS_vals, outfile=True)
+plot_vars(datacanvasesSD, datalistSD, jecupaSD, jecdnaSD, jerupaSD, jerdnaSD, jernomaSD, ps_differences_softdrop, pdf_differences_softdrop, alegendsSD, "mcvariations_softdrop_"+postfix, jmrupaSD, jmrdnaSD, jmrnomaSD, jmsupaSD, jmsdnaSD, puupaSD, pudnaSD, bins, softdrop="MMDT Beta=0", keephists=histstokeep, jackknifeRMS=RMS_vals_softdrop, histname="Soft Drop ", outfile=True)
