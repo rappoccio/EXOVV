@@ -208,7 +208,7 @@ class RooUnfoldUnfolder:
                         self.uncertainties['_lum'].SetBinContent( ix, iy, 0.0 )
 
         # Next : PDF and PS uncertainties
-        fpdf = ROOT.TFile("unfoldedpdf.root")
+        fpdf = ROOT.TFile("unfoldedpdf_pdf4lhc15.root")
         self.files['pdf'] = fpdf
 
         pdfpostfix = ''
@@ -220,21 +220,14 @@ class RooUnfoldUnfolder:
         #print 'unfold' + pdfpostfix + '_mstw' + self.postfix1 
         mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 )
         mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 )
-        mmstw = fpdf.Get( 'unfold' + pdfpostfix + '_pdfmstw' + self.postfix1  )
-        mcteq = fpdf.Get( 'unfold' + pdfpostfix + '_pdfcteq' + self.postfix1  )
-
         
         self.responses['_pdfup'] =  mpdfup 
         self.responses['_pdfdn'] =  mpdfdn
-        self.responses['_mstw'] =  mmstw 
-        self.responses['_cteq'] =  mcteq        
         hpdfup = mpdfup.Hreco()
         hpdfdn = mpdfdn.Hreco()
-        hmstw = mmstw.Hreco()
-        hcteq = mcteq.Hreco()
 
         
-        for hist in [ hpdfup, hpdfdn, hmstw, hcteq] :
+        for hist in [ hpdfup, hpdfdn] :
             self.histDriver_.normalizeHist( hist, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True )
 
 
@@ -242,8 +235,8 @@ class RooUnfoldUnfolder:
         hpdfdiff.Add( hpdfdn, -1.0 )
         hpdfdiff.Scale(0.5)
 
-        hmstw.Add( self.unsmearedForPS, -1.0 )
-        hcteq.Add( self.unsmearedForPS, -1.0 )
+        #hmstw.Add( self.unsmearedForPS, -1.0 )
+        #hcteq.Add( self.unsmearedForPS, -1.0 )
 
         
         self.uncertainties['_pdf'] = hpdfdiff.Clone( self.unsmeared.GetName() + "_pdf")
@@ -252,15 +245,7 @@ class RooUnfoldUnfolder:
         for iy in xrange(0,hpdfdiff.GetNbinsY()+2) :
             for ix in xrange(0,hpdfup.GetNbinsX()+2) :
                 diff1 = abs(hpdfdiff.GetBinContent(ix,iy))
-                diff2 = abs(hmstw.GetBinContent(ix,iy))
-                diff3 = abs(hcteq.GetBinContent(ix,iy))
-                self.uncertainties['_pdf'].SetBinContent(ix,iy,diff1)
-                if diff2 > diff1 and diff2 > diff3 :
-                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff2)
-                if diff3 > diff1 and diff3 > diff2 :
-                    self.uncertainties['_pdf'].SetBinContent(ix,iy,diff3)                
-                
-
+                self.uncertainties['_pdf'].SetBinContent(ix,iy,diff1)                
 
         self.uncertainties['_pdf'].Divide( self.unsmearedForPS )
         
