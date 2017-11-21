@@ -896,8 +896,8 @@ for itree,t in enumerate(trees) :
                             response_pdfup.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*pdfweight_up)
                             response_pdfdn.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight*pdfweight_dn)
                         else :                            
-                            response_pdfup.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight * (pdf4lhc15_up-pdf4lhc15_nom) / pdf4lhc15_nom)
-                            response_pdfdn.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight * (pdf4lhc15_nom-pdf4lhc15_dn) / pdf4lhc15_nom)
+                            response_pdfup.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight * pdf4lhc15_up / pdf4lhc15_nom)
+                            response_pdfdn.Fill( FatJet.M(), FatJet.Perp(), GenJets[igen].M(), GenJets[igen].Perp(), weight * pdf4lhc15_dn / pdf4lhc15_nom)
                             
 
                     if cteqweight > 1.2 or cteqweight < 0.8:
