@@ -362,8 +362,8 @@ def printHist( hist, maxx = None, maxy = None ) :
     ymax = hist.GetNbinsY()+1
     if maxy != None :
         ymax = maxy
-    for ix in xrange(1,maxx):
-        for iy in xrange(1,maxy):
+    for ix in xrange(1,xmax):
+        for iy in xrange(1,ymax):
             print '%7.2e +- %7.2e' % ( hist.GetBinContent(ix,iy), hist.GetBinError(ix,iy) ),
         print ''
 

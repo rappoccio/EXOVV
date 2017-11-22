@@ -220,36 +220,39 @@ class RooUnfoldUnfolder:
         #print 'unfold' + pdfpostfix + '_mstw' + self.postfix1 
         mpdfup = fpdf.Get( 'unfold' + pdfpostfix + '_pdfup' + self.postfix1 )
         mpdfdn = fpdf.Get( 'unfold' + pdfpostfix + '_pdfdn' + self.postfix1 )
+        mpdfnom = fpdf.Get( 'unfold' + pdfpostfix + '_pdfnom' + self.postfix1 )
         
         self.responses['_pdfup'] =  mpdfup 
         self.responses['_pdfdn'] =  mpdfdn
+        self.responses['_pdfnom'] =  mpdfnom
         hpdfup = mpdfup.Hreco()
         hpdfdn = mpdfdn.Hreco()
+        hpdfnom = mpdfnom.Hreco()
+
+        print 'PDFUP'
+        printHist( hpdfup)
+        print 'PDFDN'
+        printHist( hpdfdn)
+        print 'PDFNOM'
+        printHist( hpdfnom)
 
         
+        self.histDriver_.normalizeHist( hpdfnom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
         for hist in [ hpdfup, hpdfdn] :
-            self.histDriver_.normalizeHist( hist, normalizeUnity = True, divideByBinWidths=True, scalePtBins = True )
+            self.histDriver_.normalizeHist( hist, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
+            ### FIXME FIXME FIXME :
+            ### When done re-running, turn me off. 21-Nov
+            #hist.Add( hpdfnom, -1.0 )
+            ensureAbs( hist )
+            hist.Divide( hpdfnom )
 
-
-        hpdfdiff = hpdfup.Clone(hpdfup.GetName() + "_difftodn")
-        hpdfdiff.Add( hpdfdn, -1.0 )
-        hpdfdiff.Scale(0.5)
-
-        #hmstw.Add( self.unsmearedForPS, -1.0 )
-        #hcteq.Add( self.unsmearedForPS, -1.0 )
 
         
-        self.uncertainties['_pdf'] = hpdfdiff.Clone( self.unsmeared.GetName() + "_pdf")
         
+        self.uncertainties['_pdf'] = self.raw.Clone( self.nom.GetName() + "_pdf")
+        setToAverage( self.uncertainties['_pdf'], hpdfup, hpdfdn)        
         
-        for iy in xrange(0,hpdfdiff.GetNbinsY()+2) :
-            for ix in xrange(0,hpdfup.GetNbinsX()+2) :
-                diff1 = abs(hpdfdiff.GetBinContent(ix,iy))
-                self.uncertainties['_pdf'].SetBinContent(ix,iy,diff1)                
 
-        self.uncertainties['_pdf'].Divide( self.unsmearedForPS )
-        
-                                               
         # Parton shower: Half the difference between pythia and herwig
         # However : There is a different pt spectrum, so need to correct per pt bin to
         # just get the mass differences
