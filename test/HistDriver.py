@@ -34,14 +34,18 @@ class HistDriver :
         self.stampCMSVal.SetNDC()
         self.stampCMSVal.SetTextFont(43)
         self.stampCMSVal.SetTextSize(25)
-        self.styles = {'nom':StyleDriver(name="nom",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray),
-                       'nomStat':StyleDriver(name="nomStat",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray+2),
-                       'pythia':StyleDriver(name="pythia",markerStyle=0,lineStyle=2,lineColor=ROOT.kBlack,lineWidth=3),
-                       'herwig':StyleDriver(name="herwig",markerStyle=0,lineStyle=8,lineColor=ROOT.kMagenta+1,lineWidth=3),
-                       'powheg':StyleDriver(name="powheg",markerStyle=0,lineStyle=4,lineColor=ROOT.kGreen+2,lineWidth=3)}
+        self.styles = {
+            'nom':StyleDriver(name="nom",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray),
+            'nomStat':StyleDriver(name="nomStat",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray+2),
+            'pythia':StyleDriver(name="pythia",markerStyle=0,lineStyle=2,lineColor=ROOT.kBlack,lineWidth=3),
+            'herwig':StyleDriver(name="herwig",markerStyle=0,lineStyle=8,lineColor=ROOT.kMagenta+1,lineWidth=3),
+            'powheg':StyleDriver(name="powheg",markerStyle=0,lineStyle=4,lineColor=ROOT.kGreen+2,lineWidth=3),
+            'theory1':StyleDriver(name="theory1",markerStyle=0,fillStyle=3004,fillColor=ROOT.kBlue,lineColor=ROOT.kBlue,lineWidth=3),
+            'theory2':StyleDriver(name="theory2",markerStyle=0,fillStyle=3005,fillColor=ROOT.kOrange+7,lineColor=ROOT.kOrange+7,lineWidth=3)
+            }
 
         self.titles = {
-            'pythia':'PYTHIA8', 'herwig':'HERWIG++', 'powheg':'POWHEG+PYTHIA8'
+            'pythia':'PYTHIA8', 'herwig':'HERWIG++', 'powheg':'POWHEG+PYTHIA8', 'theory1':'Frye et al', 'theory2':'Marzani et al'
             }
         self.sysStyles = {'_jer'   :StyleDriver(name="_jer",   lineWidth=3,lineStyle=8,lineColor=ROOT.kRed),
                           '_jec'   :StyleDriver(name="_jec",   lineWidth=3,lineStyle=3,lineColor=ROOT.kRed),
@@ -111,6 +115,35 @@ class HistDriver :
         self.hists_.append(ratio)
 
 
+
+    def plotGraphAndRatio(self, pad1, pad2, hist, nominal, rationame="_ratio", option1="", option2="", ratiotitle=None, logy=False, logx=False, ratiorange=None, xAxisRange=None ) :
+
+        if xAxisRange != None :
+            hist.GetXaxis().SetRangeUser(xAxisRange[0],xAxisRange[1])
+            
+        ratio = hist.Clone( hist.GetName() + rationame )
+        ratio.Divide( nominal )
+        ratio.SetMarkerStyle(0)
+        ratio.GetXaxis().SetTickLength(0.07)
+        ratio.GetYaxis().SetNdivisions(2,4,0,False)
+        ratio.GetYaxis().SetTitleOffset(1.2)
+        ratio.GetXaxis().SetTitleOffset(3.5)
+            
+        graph1 = getGraph( hist, minmassbin=hist.GetXaxis().FindBin(xAxisRange[0]) )
+        graph2 = getGraph( ratio, minmassbin=hist.GetXaxis().FindBin(xAxisRange[0]) )
+        pad1.cd()
+        hist.GetYaxis().SetTitleOffset(1.2)
+        graph1.Draw(option1)
+        pad1.SetLogy(logy)
+        pad1.SetLogx(logx)
+        pad2.cd()
+        pad2.SetLogx(logx)        
+        graph2.Draw(option2)
+        self.hists_.append(graph1)
+        self.hists_.append(graph2)
+        return graph1,graph2
+    
+
     def divide1D( self, hist1, hist2 ) :
         for ix in xrange(0, hist1.GetNbinsX()+2) :
             val1 = hist1.GetBinContent(ix)
@@ -143,24 +176,26 @@ class HistDriver :
           2. Divide all bins by bin width.
           3. Normalize pt bins to unity if desired.
         '''
-        if scalePtBins :
-            normalizeYSlices(hist)
-
         if normalizeUnity and hist.Integral() > 0.0 :
             hist.Scale( 1.0 / hist.Integral() )
-        elif normalizeUnity == False and self.lumi_ > 0.0 :
-            #hist.Scale( 1.0 / self.lumi_ )
-            for ix in xrange(1,hist.GetNbinsX()+1) :
-                for iy in xrange(1,hist.GetNbinsY()+1):
-                    val = hist.GetBinContent(ix,iy)
-                    err = hist.GetBinError(ix,iy)
-                    if val > 0.0 :
-                        errtot = math.sqrt( (err/val)**2 + self.dlumi2_ ) * val
-                        hist.SetBinError(ix,iy,errtot)
-        else :
-            raise ValueError("Normalizing histogram is not valid.")
+            
+
+
+        ## elif normalizeUnity == False and self.lumi_ > 0.0 :
+        ##     #hist.Scale( 1.0 / self.lumi_ )
+        ##     for ix in xrange(1,hist.GetNbinsX()+1) :
+        ##         for iy in xrange(1,hist.GetNbinsY()+1):
+        ##             val = hist.GetBinContent(ix,iy)
+        ##             err = hist.GetBinError(ix,iy)
+        ##             if val > 0.0 :
+        ##                 errtot = math.sqrt( (err/val)**2 + self.dlumi2_ ) * val
+        ##                 hist.SetBinError(ix,iy,errtot)
+        ## else :
+        ##     raise ValueError("Normalizing histogram is not valid.")
         if divideByBinWidths : 
             divideByBinWidthsXY( hist )
+        if scalePtBins :
+            normalizeYSlices(hist)
 
 
     def stampCMS( self, pad, text, lumi=None ) :
@@ -214,7 +249,7 @@ def getGraph( hist, width=None, minmassbin=None ) :
             dx.append( hist.GetXaxis().GetBinWidth(ibin) / 2. )
             y.append( val )
             dy.append( hist.GetBinError(ibin) )
-    graph =TGraphErrors( len(x), x, y, dx, dy )
+    graph =ROOT.TGraphErrors( len(x), x, y, dx, dy )
     graph.SetName( hist.GetName() + "_graph")
     graph.SetLineColor( hist.GetLineColor() )
     graph.SetLineStyle( hist.GetLineStyle() )
@@ -232,7 +267,7 @@ def normalizeYSlices(hist):
     for iy in xrange(0,hist.GetNbinsY()+2):
         proj = hist.ProjectionX("proj_" + str(iy), iy, iy, "e")
         if proj.Integral() > 0.0 : 
-            proj.Scale(1.0 / proj.Integral() )
+            proj.Scale(1.0 / proj.Integral('width') )
             for ix in xrange(0, hist.GetNbinsX()+2):
                 hist.SetBinContent( ix,iy, proj.GetBinContent(ix,iy) )
                 hist.SetBinError( ix,iy, proj.GetBinError(ix,iy) )

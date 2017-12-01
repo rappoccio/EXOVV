@@ -124,7 +124,7 @@ def plot_vars(canvas_list, data_list, jecup_list, jecdn_list, jerup_list, jerdn_
                 hRecoCopy.SetBinError(ibin, 0)
                 hRecoJMR.SetBinError(ibin, 0)
                 hRecoPU.SetBinError(ibin, 0)
-                hRecoPDF.SetBinError(ibin, 0)
+                #hRecoPDF.SetBinError(ibin, 0)
             hRMS.SetBinContent(ibin, 1.0)
             hReco.SetBinContent(ibin, 1.0)
             hRecoCopy.SetBinContent(ibin, 1.0)

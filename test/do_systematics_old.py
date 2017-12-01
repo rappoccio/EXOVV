@@ -218,7 +218,6 @@ for i in range(0, nptbins):
         temp_softdrop_pdf_diff.append( sqrt(val_groomed) )
 
 
-
     pdf_differences.append(temp_pdf_diff)
     pdf_differences_softdrop.append(temp_softdrop_pdf_diff)
 
