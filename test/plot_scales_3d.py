@@ -12,6 +12,16 @@ parser.add_option('--infile', type='string', action='store',
                   default = 'responses_rejec_tightgen_otherway_qcdmc_2dplots.root',
                   help='String to append to MC names')
 
+parser.add_option('--postfix', type='string', action='store',
+                  dest='postfix',
+                  default = '',
+                  help='Postfix for plots')
+
+parser.add_option('--hist', type='string', action='store',
+                  dest='hist',
+                  default = 'h3_mreco_mgen',
+                  help='Hist to plot')
+
 
 (options, args) = parser.parse_args()
 argv = []
@@ -34,10 +44,7 @@ ptquickstrs = ['200 GeV','260 GeV','350 GeV','460 GeV','550 GeV','650 GeV', '760
 
     
 histstrs = [
-    'h3_mreco_mgen',
-    'h3_mreco_mgen_softdrop_nomnom',
-    #'h2_ptreco_ptgen',
-    #'h2_ptreco_ptgen_softdrop',
+    options.hist,
     ]
 hists = []
 canvs = []
@@ -60,7 +67,7 @@ tlx.SetTextSize(25)
 
 markers = [20,21,22,23,29,33,34,24,25,26,27,28]
 styles = [1,2,3,1,2,3,1,2,3,1,2,3]
-colors = [1,1,1,2,2,2,103,103,103,4,4,4]
+colors = [1,1,1,2,2,2,ROOT.kGreen+3,ROOT.kGreen+3,ROOT.kGreen+3,4,4,4]
 
 lines = []
 graphs = []
@@ -74,8 +81,8 @@ for ihist in xrange( len(histstrs) ):
 
     totresc = ROOT.TCanvas("totresc_" +str(ihist), "totresc_" + str(ihist) )
     totresc2 = ROOT.TCanvas("totresc2_" +str(ihist), "totresc2_" + str(ihist) )
-    mg = ROOT.TMultiGraph()
-    rg = ROOT.TMultiGraph()
+    mg = ROOT.TMultiGraph("mg_" + str(ihist), "mg_" + str(ihist))
+    rg = ROOT.TMultiGraph("rg_" + str(ihist), "rg_" + str(ihist))
     canvs.append(totresc)
     multigraphs.append([mg,rg])
     leg = ROOT.TLegend(0.16, 0.64, 0.84, 0.84)
@@ -117,13 +124,15 @@ for ihist in xrange( len(histstrs) ):
         graphX = array.array('d', [])
         graphY = array.array('d', [])
         graphDX = array.array('d', [])
-        graphDY = array.array('d', [])
+        graphDY = array.array('d', [])        
+        graphdY = array.array('d', [])
+        graphdDY = array.array('d', [])
         for mbin in xrange( 1, hist2D.GetNbinsX() + 1):
             proj = hist2D.ProjectionY(hist2D.GetName() + "_" + str(mbin), mbin, mbin+1)
             proj.SetTitle("p_{T} = " + ptbinstrs[ptbin] + ", m = " + str(hist2D.GetXaxis().GetBinLowEdge(mbin)) + "-" +str(hist2D.GetXaxis().GetBinUpEdge(mbin)) + ";m_{reco}/m_{gen}")
             cm = ROOT.TCanvas("cm" + str(ptbin) + "_" + str(mbin), "cm" + str(ptbin) + "_" + str(mbin) )
             if proj.Integral() > 0 :
-                fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", 0.7, 1.3 )
+                fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", 0.5, 1.5 )
                 proj.Fit(fit, "LRM")
                 canvs.append(cm)
                 hists.append(proj)
@@ -132,18 +141,20 @@ for ihist in xrange( len(histstrs) ):
                 graphDX.append( hist2D.GetXaxis().GetBinWidth(mbin) / 2.0 )
                 graphY.append( fit.GetParameter(1) )
                 graphDY.append( fit.GetParameter(2) )
+                graphdY.append( fit.GetParError(1) )
+                graphdDY.append( fit.GetParError(2) )
                 proj.SetMaximum(1.3 * proj.GetMaximum())
                 if ihist == 0 : 
-                    cm.Print("mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_ungroomed.png", "png")
-                    cm.Print("mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_ungroomed.pdf", "pdf")
+                    cm.Print("fits3d/mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_ungroomed" + options.postfix + ".png", "png")
+                    cm.Print("fits3d/mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_ungroomed" + options.postfix + ".pdf", "pdf")
                 else :
-                    cm.Print("mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_groomed.png", "png")
-                    cm.Print("mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_groomed.pdf", "pdf")
+                    cm.Print("fits3d/mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_groomed" + options.postfix + ".png", "png")
+                    cm.Print("fits3d/mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_groomed" + options.postfix + ".pdf", "pdf")
 
 
         resc = ROOT.TCanvas("resc_" +str(ihist) + "_" + str(ptbin), "resc_" + str(ptbin) )
         #massres = ROOT.TGraphErrors( len(graphX), graphX, graphY, graphDX, graphDY )
-        massres = ROOT.TGraph( len(graphX), graphX, graphY )
+        massres = ROOT.TGraphErrors( len(graphX), graphX, graphY, graphDX, graphdY )
         massres.SetName("massres_" + str(ptbin))
         massres.SetTitle(";Jet mass (GeV);JMS")
         leg.AddEntry( massres, ptquickstrs[ptbin-1], "l" )
@@ -166,15 +177,15 @@ for ihist in xrange( len(histstrs) ):
         mg.Add( massres )
 
         if ihist == 0 : 
-            resc.Print("mreco_mgen_pt_" + str(ptbin) +"_ungroomed.png", "png")
-            resc.Print("mreco_mgen_pt_" + str(ptbin) +"_ungroomed.pdf", "pdf")
+            resc.Print("fits3d/mreco_mgen_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".png", "png")
+            resc.Print("fits3d/mreco_mgen_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".pdf", "pdf")
         else :
-            resc.Print("mreco_mgen_pt_" + str(ptbin) +"_groomed.png", "png")
-            resc.Print("mreco_mgen_pt_" + str(ptbin) +"_groomed.pdf", "pdf")
+            resc.Print("fits3d/mreco_mgen_pt_" + str(ptbin) +"_groomed" + options.postfix + ".png", "png")
+            resc.Print("fits3d/mreco_mgen_pt_" + str(ptbin) +"_groomed" + options.postfix + ".pdf", "pdf")
 
 
         resc2 = ROOT.TCanvas("resc2_" +str(ihist) + "_" + str(ptbin), "resc2_" + str(ptbin) )
-        massres2 = ROOT.TGraph( len(graphX), graphX, graphDY )
+        massres2 = ROOT.TGraphErrors( len(graphX), graphX, graphDY, graphDX, graphdDY )
         massres2.SetName("massres2_" + str(ptbin))
         massres2.SetTitle(";Jet mass (GeV);JMR")
         leg2.AddEntry( massres2, ptquickstrs[ptbin-1], "l" )
@@ -182,7 +193,7 @@ for ihist in xrange( len(histstrs) ):
         massres2.SetLineWidth(2)
         massres2.SetLineStyle(styles[ptbin-1])
 
-        massres2.Draw("AL")
+        massres2.Draw("ALX")
         resc2.SetLogx()
         resc2.SetLogy()
         #massres2.SetMaximum(2.0)
@@ -196,11 +207,11 @@ for ihist in xrange( len(histstrs) ):
         rg.Add(massres2)
         
         if ihist == 0 : 
-            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.png", "png")
-            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed.pdf", "pdf")
+            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".png", "png")
+            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".pdf", "pdf")
         else :
-            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_groomed.png", "png")
-            resc2.Print("mreco_mgen_width_pt_" + str(ptbin) +"_groomed.pdf", "pdf")
+            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_groomed" + options.postfix + ".png", "png")
+            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_groomed" + options.postfix + ".pdf", "pdf")
 
             
             
@@ -212,7 +223,7 @@ for ihist in xrange( len(histstrs) ):
         #hists.append(hist2D)
 
     totresc.cd()
-    mg.Draw("AL")
+    mg.Draw("ALX")
     if ihist == 0 :
         mg.SetTitle(";Ungroomed jet mass (GeV);JMS")
         mg.SetMinimum(0.0)
@@ -229,18 +240,16 @@ for ihist in xrange( len(histstrs) ):
     prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
     leg.Draw()
     
-    if ihist == 0 : 
-        totresc.Print("jms_ungroomed.png", "png")
-        totresc.Print("jms_ungroomed.pdf", "pdf")
-    else :
-        totresc.Print("jms_groomed.png", "png")
-        totresc.Print("jms_groomed.pdf", "pdf")
+
+    totresc.Print("jms" + options.postfix + ".png", "png")
+    totresc.Print("jms" + options.postfix + ".pdf", "pdf")
+    totresc.Print("jms" + options.postfix + ".root", "root")
 
 
 
     totresc2.cd()
-    rg.Draw("AL")
-    if ihist == 0 :
+    rg.Draw("ALX")
+    if "softdrop" not in options.hist :
         rg.SetTitle(";Ungroomed jet mass (GeV);JMR")
         rg.SetMinimum(0.0)
         rg.SetMaximum(0.6)
@@ -256,11 +265,8 @@ for ihist in xrange( len(histstrs) ):
     prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
     leg2.Draw()
     
-    if ihist == 0 : 
-        totresc2.Print("jmr_ungroomed.png", "png")
-        totresc2.Print("jmr_ungroomed.pdf", "pdf")
-    else :
-        totresc2.Print("jmr_groomed.png", "png")
-        totresc2.Print("jmr_groomed.pdf", "pdf")
+    totresc2.Print("jmr" + options.postfix + ".png", "png")
+    totresc2.Print("jmr" + options.postfix + ".pdf", "pdf")
+    totresc2.Print("jmr" + options.postfix + ".root", "root")
 
         
