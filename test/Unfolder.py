@@ -131,10 +131,12 @@ class RooUnfoldUnfolder:
 
         if not self.useSoftDrop: 
             self.postfix1 = ''
-            self.postfix2 = ''            
+            self.postfix2 = ''
+            self.subscript= '_{u}'
         else: 
             self.postfix1 = "_softdrop"
             self.postfix2 = "SD"
+            self.subscript= '_{g}'
 
         self.readExp()
 
@@ -576,9 +578,9 @@ class RooUnfoldUnfolder:
                 if not self.normalizeUnity : 
                     projx.GetYaxis().SetTitle("#frac{d^{2}#sigma}{dm dp_{T}} (pb/GeV^{2})")
                 elif plotlogm : 
-                    projx.GetYaxis().SetTitle("#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (pb/GeV)")
+                    projx.GetYaxis().SetTitle("#frac{m" + self.subscript + "}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (pb/GeV)")
                 else:
-                    projx.GetYaxis().SetTitle("#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (pb/GeV)")
+                    projx.GetYaxis().SetTitle("#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (pb/GeV)")
 
                 
                 self.histDriver_.hists_.append(projx)

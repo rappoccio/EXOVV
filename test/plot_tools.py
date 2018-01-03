@@ -494,9 +494,9 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
         for titlehist in [hRecoPDF, hRecoBarePdf, hRecoCopy, hRecoJMR, hRecoJMS, hReco, hRecoPU, hRMS, ] : 
             if not options.extra_massy : 
-                titlehist.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (1/GeV)")
+                titlehist.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}} (1/GeV)")
             else :
-                titlehist.SetTitle(";;#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")
+                titlehist.SetTitle(";;#frac{m" + subscript + "}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}}")
 
 
         print 'hRecoPDF ', i
@@ -749,8 +749,10 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
         if options.isSoftDrop :
             xlabeloption = 'Groomed j'
+            subscript = '_{g}'
         else :
             xlabeloption = 'J'
+            subscript = '_{u}'
 
 
         datPDF = hRecoPDF.Clone()
