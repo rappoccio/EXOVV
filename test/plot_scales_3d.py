@@ -37,11 +37,34 @@ ROOT.gROOT.SetBatch()
 
 f = ROOT.TFile(options.infile)
 
-ptbinstrs = ['#bf{200 < p_{T} < 260 GeV}','#bf{260 < p_{T} < 350 GeV}','#bf{350 < p_{T} < 460 GeV}','#bf{460 < p_{T} < 550 GeV}','#bf{550 < p_{T} < 650 GeV}','#bf{650 < p_{T} < 760 GeV}', '#bf{760 < p_{T} < 900 GeV}', '#bf{900 < p_{T} < 1000 GeV}', '#bf{1000 < p_{T} < 1100 GeV}','#bf{1100 < p_{T} < 1200 GeV}',
-    '#bf{1200 < p_{T} < 1300 GeV}', '#bf{p_{T} > 1300 GeV}']
+ptbinstrs = ['#bf{200 < p_{T} < 260 GeV}',
+                 '#bf{260 < p_{T} < 350 GeV}',
+                 '#bf{350 < p_{T} < 460 GeV}',
+                 '#bf{460 < p_{T} < 550 GeV}',
+                 '#bf{550 < p_{T} < 650 GeV}',
+                 '#bf{650 < p_{T} < 760 GeV}',
+                 '#bf{760 < p_{T} < 900 GeV}',
+                 '#bf{900 < p_{T} < 1000 GeV}',
+                 '#bf{1000 < p_{T} < 1100 GeV}',
+                 '#bf{1100 < p_{T} < 1200 GeV}',
+                 '#bf{1200 < p_{T} < 1300 GeV}',
+                 '#bf{p_{T} > 1300 GeV}'
+                 ]
 
-ptquickstrs = ['200 GeV','260 GeV','350 GeV','460 GeV','550 GeV','650 GeV', '760 GeV', '900 GeV', '1000 GeV','1100 GeV', '1200 GeV', '1300 GeV']
-
+ptquickstrs = ['200 GeV',
+                   '260 GeV',
+                   '350 GeV',
+                   '460 GeV',
+                   '550 GeV',
+                   '650 GeV',
+                   '760 GeV',
+                   '900 GeV',
+                   '1000 GeV',
+                   '1100 GeV',
+                   '1200 GeV',
+                   '1300 GeV'
+                   ]
+binsToPlot = [1,5,7,10]
     
 histstrs = [
     options.hist,
@@ -66,8 +89,8 @@ tlx.SetTextFont(43)
 tlx.SetTextSize(25)
 
 markers = [20,21,22,23,29,33,34,24,25,26,27,28]
-styles = [1,2,3,1,2,3,1,2,3,1,2,3]
-colors = [1,1,1,2,2,2,ROOT.kGreen+3,ROOT.kGreen+3,ROOT.kGreen+3,4,4,4]
+styles = dict( zip( binsToPlot, [1,2,3,4] ) )
+colors = dict( zip( binsToPlot, [1,2,ROOT.kGreen+3,4] ) )
 
 lines = []
 graphs = []
@@ -85,24 +108,24 @@ for ihist in xrange( len(histstrs) ):
     rg = ROOT.TMultiGraph("rg_" + str(ihist), "rg_" + str(ihist))
     canvs.append(totresc)
     multigraphs.append([mg,rg])
-    leg = ROOT.TLegend(0.16, 0.64, 0.84, 0.84)
+    leg = ROOT.TLegend(0.5, 0.64, 0.84, 0.84)
     leg.SetHeader("p_{T} Bins")
-    leg.SetNColumns(4)
+    #leg.SetNColumns(4)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     legs.append(leg)
-    leg2 = ROOT.TLegend(0.16, 0.64, 0.84, 0.84)
+    leg2 = ROOT.TLegend(0.5, 0.64, 0.84, 0.84)
     leg2.SetHeader("p_{T} Bins")
-    leg2.SetNColumns(4)
+    #leg2.SetNColumns(4)
     leg2.SetFillColor(0)
     leg2.SetBorderSize(0)
     legs.append(leg2)
     
-    for ptbin in xrange( 1, htemp.GetNbinsX() ) :
+    for ptbin in binsToPlot: # xrange( 1, htemp.GetNbinsX() ) :
 
         print 'processing ptbin ', ptbin
         
-        c = ROOT.TCanvas("c" + str(ihist) + "_pt" + str(ptbin), "c" + str(ihist) + "_pt" + str(ptbin) )
+        #c = ROOT.TCanvas("c" + str(ihist) + "_pt" + str(ptbin), "c" + str(ihist) + "_pt" + str(ptbin) )
         htemp.GetXaxis().SetRange(ptbin,ptbin+1)
         hist2D = htemp.Project3D("zy")
         hist2D.SetName(htemp.GetName() + "_proj_pt" + str(ptbin) )
@@ -133,8 +156,8 @@ for ihist in xrange( len(histstrs) ):
             cm = ROOT.TCanvas("cm" + str(ptbin) + "_" + str(mbin), "cm" + str(ptbin) + "_" + str(mbin) )
             if proj.Integral() > 0 :
                 fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", 0.5, 1.5 )
-                proj.Fit(fit, "LRM")
-                canvs.append(cm)
+                proj.Fit(fit, "LRMQN")
+                #canvs.append(cm)
                 hists.append(proj)
                 fits.append(fit)
                 graphX.append( hist2D.GetXaxis().GetBinLowEdge(mbin) )
@@ -159,9 +182,9 @@ for ihist in xrange( len(histstrs) ):
         massres.SetTitle(";Jet mass (GeV);JMS")
         leg.AddEntry( massres, ptquickstrs[ptbin-1], "l" )
         #massres.SetFillColor(colors[ptbin])
-        massres.SetLineColor(colors[ptbin-1])
+        massres.SetLineColor(colors[ptbin])
         massres.SetLineWidth(2)
-        massres.SetLineStyle(styles[ptbin-1])
+        massres.SetLineStyle(styles[ptbin])
         #massres.SetFillStyle(3005)
         resc.cd()
         massres.Draw("AL3")
@@ -188,10 +211,10 @@ for ihist in xrange( len(histstrs) ):
         massres2 = ROOT.TGraphErrors( len(graphX), graphX, graphDY, graphDX, graphdDY )
         massres2.SetName("massres2_" + str(ptbin))
         massres2.SetTitle(";Jet mass (GeV);JMR")
-        leg2.AddEntry( massres2, ptquickstrs[ptbin-1], "l" )
-        massres2.SetLineColor(colors[ptbin-1])
+        leg2.AddEntry( massres2, ptquickstrs[ptbin], "l" )
+        massres2.SetLineColor(colors[ptbin])
         massres2.SetLineWidth(2)
-        massres2.SetLineStyle(styles[ptbin-1])
+        massres2.SetLineStyle(styles[ptbin])
 
         massres2.Draw("ALX")
         resc2.SetLogx()
@@ -221,26 +244,29 @@ for ihist in xrange( len(histstrs) ):
         #c.SetLogx()
         #canvs.append(c)        
         #hists.append(hist2D)
-
+    
+            
     totresc.cd()
     mg.Draw("ALX")
-    if ihist == 0 :
+    if 'softdrop' not in options.hist :
+        print 'UNGROOMED'
         mg.SetTitle(";Ungroomed jet mass (GeV);JMS")
         mg.SetMinimum(0.0)
-        mg.SetMaximum(3.0)
-        mg.GetXaxis().SetRangeUser(20., 1000.)
-    else : 
+        mg.SetMaximum(2.0)
+        mg.GetXaxis().SetLimits(20., 1000.)
+    else :
         mg.SetTitle(";Groomed jet mass (GeV);JMS")
         mg.SetMinimum(0.0)
-        mg.SetMaximum(3.0)
-        mg.GetXaxis().SetRangeUser(10., 1000.)
+        mg.SetMaximum(2.0)
+        mg.GetXaxis().SetLimits(10., 1000.)
+    mg.Draw("ALX")
     totresc.SetLogx()
     #tlx.DrawLatex ( 0.6, 0.830, ptbinstrs[ptbin])
     prelim.DrawLatex( 0.2, 0.926, "CMS Simulation" )
     prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
     leg.Draw()
     
-
+    totresc.Update()
     totresc.Print("jms" + options.postfix + ".png", "png")
     totresc.Print("jms" + options.postfix + ".pdf", "pdf")
     totresc.Print("jms" + options.postfix + ".root", "root")
@@ -252,21 +278,23 @@ for ihist in xrange( len(histstrs) ):
     if "softdrop" not in options.hist :
         rg.SetTitle(";Ungroomed jet mass (GeV);JMR")
         rg.SetMinimum(0.0)
-        rg.SetMaximum(0.6)
-        rg.GetXaxis().SetRangeUser(20., 1000.)
+        rg.SetMaximum(0.4)
+        rg.GetXaxis().SetLimits(20., 1000.)
     else : 
         rg.SetTitle(";Groomed jet mass (GeV);JMR")
         rg.SetMinimum(0.0)
-        rg.SetMaximum(0.6)        
-        rg.GetXaxis().SetRangeUser(10., 1000.)
+        rg.SetMaximum(0.4)        
+        rg.GetXaxis().SetLimits(10., 1000.)
+    rg.Draw("ALX")
     totresc2.SetLogx()
     #tlx.DrawLatex ( 0.6, 0.830, ptbinstrs[ptbin])
     prelim.DrawLatex( 0.2, 0.926, "CMS Simulation" )
     prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
     leg2.Draw()
-    
+    totresc2.Update()
     totresc2.Print("jmr" + options.postfix + ".png", "png")
     totresc2.Print("jmr" + options.postfix + ".pdf", "pdf")
     totresc2.Print("jmr" + options.postfix + ".root", "root")
 
         
+print 'Done'
