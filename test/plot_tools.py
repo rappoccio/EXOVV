@@ -492,6 +492,15 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
         ##     hStat.SetBinContent( ibin, hStat.GetBinContent(ibin) * hStat.GetBinCenter(ibin) )
         ##     hRecoBarePdf.SetBinContent( ibin, hRecoBarePdf.GetBinContent(ibin) * hRecoBarePdf.GetBinCenter(ibin) )
 
+        if options.isSoftDrop :
+            xlabeloption = 'Groomed j'
+            subscript = '_{g}'
+        else :
+            xlabeloption = 'J'
+            subscript = '_{u}'
+
+
+        
         for titlehist in [hRecoPDF, hRecoBarePdf, hRecoCopy, hRecoJMR, hRecoJMS, hReco, hRecoPU, hRMS, ] : 
             if not options.extra_massy : 
                 titlehist.SetTitle(";;#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}} (1/GeV)")
@@ -747,12 +756,6 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
 
 
 
-        if options.isSoftDrop :
-            xlabeloption = 'Groomed j'
-            subscript = '_{g}'
-        else :
-            xlabeloption = 'J'
-            subscript = '_{u}'
 
 
         datPDF = hRecoPDF.Clone()
@@ -1055,23 +1058,23 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
             stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
             stackleg.Draw()
             if(not options.isSoftDrop):
-                the_stack.SetTitle(";Jet mass(GeV);#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (1/GeV)")
+                the_stack.SetTitle(";Jet mass(GeV);#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}} (1/GeV)")
             else:
-                the_stack.SetTitle(";Groomed jet mass(GeV);#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}} (1/GeV)")
+                the_stack.SetTitle(";Groomed jet mass(GeV);#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}} (1/GeV)")
         else :
             the_stack.SetMinimum(1e-12)
             the_stack.SetMaximum(1e6)
             stackleg.AddEntry( mcc, 'PYTHIA8', 'l')
             stackleg.Draw()
             if(not options.isSoftDrop):
-                the_stack.SetTitle(";Jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")
+                the_stack.SetTitle(";Jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}}")
             else:
-                the_stack.SetTitle(";Groomed jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm dp_{T}}")            
+                the_stack.SetTitle(";Groomed jet mass(GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}}")            
         latex_list[0].DrawLatex(0.2, 0.926, "CMS")
         latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
         the_stack.GetYaxis().SetTitleSize(30)
-        the_stack.GetYaxis().SetTitleOffset(1.3)
+        the_stack.GetYaxis().SetTitleOffset(1.7)
         the_stack.GetYaxis().SetLabelOffset(0.0001)
         the_stack.GetYaxis().SetLabelSize(28)
         stack_canvas.Update()

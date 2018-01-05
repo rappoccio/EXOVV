@@ -576,7 +576,7 @@ class RooUnfoldUnfolder:
                     if projx.GetBinContent( projx.GetXaxis().FindBin(10.0) ) * 1.2 > maxval :
                         maxval = projx.GetBinContent(projx.GetXaxis().FindBin(10.0)) * 1.2
                 if not self.normalizeUnity : 
-                    projx.GetYaxis().SetTitle("#frac{d^{2}#sigma}{dm dp_{T}} (pb/GeV^{2})")
+                    projx.GetYaxis().SetTitle("#frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (pb/GeV^{2})")
                 elif plotlogm : 
                     projx.GetYaxis().SetTitle("#frac{m" + self.subscript + "}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (pb/GeV)")
                 else:

@@ -108,13 +108,13 @@ for ihist in xrange( len(histstrs) ):
     rg = ROOT.TMultiGraph("rg_" + str(ihist), "rg_" + str(ihist))
     canvs.append(totresc)
     multigraphs.append([mg,rg])
-    leg = ROOT.TLegend(0.5, 0.64, 0.84, 0.84)
+    leg = ROOT.TLegend(0.5, 0.44, 0.84, 0.84)
     leg.SetHeader("p_{T} Bins")
     #leg.SetNColumns(4)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     legs.append(leg)
-    leg2 = ROOT.TLegend(0.5, 0.64, 0.84, 0.84)
+    leg2 = ROOT.TLegend(0.5, 0.44, 0.84, 0.84)
     leg2.SetHeader("p_{T} Bins")
     #leg2.SetNColumns(4)
     leg2.SetFillColor(0)
@@ -167,7 +167,7 @@ for ihist in xrange( len(histstrs) ):
                 graphdY.append( fit.GetParError(1) )
                 graphdDY.append( fit.GetParError(2) )
                 proj.SetMaximum(1.3 * proj.GetMaximum())
-                if ihist == 0 : 
+                if 'softdrop' not in options.hist : 
                     cm.Print("fits3d/mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_ungroomed" + options.postfix + ".png", "png")
                     cm.Print("fits3d/mreco_mgen_fits_pt_" + str(ptbin) + "_m_" + str(mbin) + "_ungroomed" + options.postfix + ".pdf", "pdf")
                 else :
@@ -251,13 +251,13 @@ for ihist in xrange( len(histstrs) ):
     if 'softdrop' not in options.hist :
         print 'UNGROOMED'
         mg.SetTitle(";Ungroomed jet mass (GeV);JMS")
-        mg.SetMinimum(0.0)
-        mg.SetMaximum(2.0)
+        mg.SetMinimum(0.8)
+        mg.SetMaximum(1.8)
         mg.GetXaxis().SetLimits(20., 1000.)
     else :
         mg.SetTitle(";Groomed jet mass (GeV);JMS")
-        mg.SetMinimum(0.0)
-        mg.SetMaximum(2.0)
+        mg.SetMinimum(0.8)
+        mg.SetMaximum(1.8)
         mg.GetXaxis().SetLimits(10., 1000.)
     mg.Draw("ALX")
     totresc.SetLogx()
@@ -278,12 +278,12 @@ for ihist in xrange( len(histstrs) ):
     if "softdrop" not in options.hist :
         rg.SetTitle(";Ungroomed jet mass (GeV);JMR")
         rg.SetMinimum(0.0)
-        rg.SetMaximum(0.4)
+        rg.SetMaximum(0.3)
         rg.GetXaxis().SetLimits(20., 1000.)
     else : 
         rg.SetTitle(";Groomed jet mass (GeV);JMR")
         rg.SetMinimum(0.0)
-        rg.SetMaximum(0.4)        
+        rg.SetMaximum(0.3)        
         rg.GetXaxis().SetLimits(10., 1000.)
     rg.Draw("ALX")
     totresc2.SetLogx()
