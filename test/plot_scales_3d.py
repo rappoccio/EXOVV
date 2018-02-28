@@ -37,6 +37,8 @@ ROOT.gROOT.SetBatch()
 
 f = ROOT.TFile(options.infile)
 
+groomstr = '_groomed' if 'softdrop' in options.hist else '_ungroomed'
+
 ptbinstrs = ['#bf{200 < p_{T} < 260 GeV}',
                  '#bf{260 < p_{T} < 350 GeV}',
                  '#bf{350 < p_{T} < 460 GeV}',
@@ -64,7 +66,7 @@ ptquickstrs = ['200 GeV',
                    '1200 GeV',
                    '1300 GeV'
                    ]
-binsToPlot = [1,5,7,10]
+
     
 histstrs = [
     options.hist,
@@ -89,8 +91,9 @@ tlx.SetTextFont(43)
 tlx.SetTextSize(25)
 
 markers = [20,21,22,23,29,33,34,24,25,26,27,28]
-styles = dict( zip( binsToPlot, [1,2,3,4] ) )
-colors = dict( zip( binsToPlot, [1,2,ROOT.kGreen+3,4] ) )
+binsToPlot = [i for i in xrange(12)] #[1,5,7,10]
+styles = dict( zip( binsToPlot, [1,2,3,4,1,2,3,4,1,2,3,4] ) )
+colors = dict( zip( binsToPlot, [1,2,ROOT.kGreen+3,4,1,2,ROOT.kGreen+3,4,1,2,ROOT.kGreen+3,4] ) )
 
 lines = []
 graphs = []
@@ -156,7 +159,7 @@ for ihist in xrange( len(histstrs) ):
             cm = ROOT.TCanvas("cm" + str(ptbin) + "_" + str(mbin), "cm" + str(ptbin) + "_" + str(mbin) )
             if proj.Integral() > 0 :
                 fit = ROOT.TF1("fit_pt_" + str(ptbin) + "_m_" + str(mbin) , "gaus", 0.5, 1.5 )
-                proj.Fit(fit, "LRMQN")
+                proj.Fit(fit, "LRMQ")
                 #canvs.append(cm)
                 hists.append(proj)
                 fits.append(fit)
@@ -179,13 +182,16 @@ for ihist in xrange( len(histstrs) ):
         #massres = ROOT.TGraphErrors( len(graphX), graphX, graphY, graphDX, graphDY )
         massres = ROOT.TGraphErrors( len(graphX), graphX, graphY, graphDX, graphdY )
         massres.SetName("massres_" + str(ptbin))
-        massres.SetTitle(";Jet mass (GeV);JMS")
+        if 'softdrop' not in options.hist : 
+            massres.SetTitle(";Ungroomed jet mass (GeV);JMS +- JMR")
+        else :
+            massres.SetTitle(";Groomed jet mass (GeV);JMS +- JMR")
         leg.AddEntry( massres, ptquickstrs[ptbin-1], "l" )
-        #massres.SetFillColor(colors[ptbin])
+        massres.SetFillColor(colors[ptbin])
         massres.SetLineColor(colors[ptbin])
         massres.SetLineWidth(2)
         massres.SetLineStyle(styles[ptbin])
-        #massres.SetFillStyle(3005)
+        massres.SetFillStyle(3005)
         resc.cd()
         massres.Draw("AL3")
         resc.SetLogx()
@@ -199,7 +205,7 @@ for ihist in xrange( len(histstrs) ):
         prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
         mg.Add( massres )
 
-        if ihist == 0 : 
+        if 'softdrop' not in options.hist : 
             resc.Print("fits3d/mreco_mgen_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".png", "png")
             resc.Print("fits3d/mreco_mgen_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".pdf", "pdf")
         else :
@@ -210,7 +216,10 @@ for ihist in xrange( len(histstrs) ):
         resc2 = ROOT.TCanvas("resc2_" +str(ihist) + "_" + str(ptbin), "resc2_" + str(ptbin) )
         massres2 = ROOT.TGraphErrors( len(graphX), graphX, graphDY, graphDX, graphdDY )
         massres2.SetName("massres2_" + str(ptbin))
-        massres2.SetTitle(";Jet mass (GeV);JMR")
+        if 'softdrop' not in options.hist : 
+            massres2.SetTitle(";Ungroomed jet mass (GeV);Uncertainty in JMS")
+        else :
+            massres2.SetTitle(";Groomed jet mass (GeV);Uncertainty in JMS")
         leg2.AddEntry( massres2, ptquickstrs[ptbin], "l" )
         massres2.SetLineColor(colors[ptbin])
         massres2.SetLineWidth(2)
@@ -228,13 +237,17 @@ for ihist in xrange( len(histstrs) ):
         line.DrawLine(1,0.5,2000.,0.5)
         lines.append(line)
         rg.Add(massres2)
+        prelim.Draw()
+        tlx.DrawLatex ( 0.6, 0.830, ptbinstrs[ptbin])
+        prelim.DrawLatex( 0.2, 0.926, "CMS Simulation" )
+        prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
         
-        if ihist == 0 : 
-            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".png", "png")
-            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".pdf", "pdf")
+        if 'softdrop' not in options.hist : 
+            resc2.Print("fits3d/mreco_mgen_jmsunc_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".png", "png")
+            resc2.Print("fits3d/mreco_mgen_jmsunc_pt_" + str(ptbin) +"_ungroomed" + options.postfix + ".pdf", "pdf")
         else :
-            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_groomed" + options.postfix + ".png", "png")
-            resc2.Print("fits3d/mreco_mgen_width_pt_" + str(ptbin) +"_groomed" + options.postfix + ".pdf", "pdf")
+            resc2.Print("fits3d/mreco_mgen_jmsunc_pt_" + str(ptbin) +"_groomed" + options.postfix + ".png", "png")
+            resc2.Print("fits3d/mreco_mgen_jmsunc_pt_" + str(ptbin) +"_groomed" + options.postfix + ".pdf", "pdf")
 
             
             
@@ -267,9 +280,9 @@ for ihist in xrange( len(histstrs) ):
     leg.Draw()
     
     totresc.Update()
-    totresc.Print("jms" + options.postfix + ".png", "png")
-    totresc.Print("jms" + options.postfix + ".pdf", "pdf")
-    totresc.Print("jms" + options.postfix + ".root", "root")
+    totresc.Print("jms" + groomstr + options.postfix + ".png", "png")
+    totresc.Print("jms" + groomstr + options.postfix + ".pdf", "pdf")
+    totresc.Print("jms" + groomstr + options.postfix + ".root", "root")
 
 
 
@@ -292,9 +305,9 @@ for ihist in xrange( len(histstrs) ):
     prelim.DrawLatex( 0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
     leg2.Draw()
     totresc2.Update()
-    totresc2.Print("jmr" + options.postfix + ".png", "png")
-    totresc2.Print("jmr" + options.postfix + ".pdf", "pdf")
-    totresc2.Print("jmr" + options.postfix + ".root", "root")
+    totresc2.Print("jmr" + groomstr + options.postfix + ".png", "png")
+    totresc2.Print("jmr" + groomstr + options.postfix + ".pdf", "pdf")
+    totresc2.Print("jmr" + groomstr + options.postfix + ".root", "root")
 
         
 print 'Done'
