@@ -212,9 +212,9 @@ for ihist in xrange( len(histstrs) ):
         massres = ROOT.TGraphErrors( len(graphX), graphX, graphY, graphDX, graphdY )
         massres.SetName("massres_" + str(ptbin))
         if 'softdrop' not in options.hist : 
-            massres.SetTitle(";Ungroomed jet mass (GeV);JMS")
+            massres.SetTitle(";Ungroomed jet mass m_{u} (GeV);JMS")
         else :
-            massres.SetTitle(";Groomed jet mass (GeV);JMS")
+            massres.SetTitle(";Groomed jet mass m_{g} (GeV);JMS")
         leg.AddEntry( massres, ptquickstrs[ptbin], "l" )
         massres.SetFillColor(colors[ptbin])
         massres.SetLineColor(colors[ptbin])
@@ -249,9 +249,9 @@ for ihist in xrange( len(histstrs) ):
         massres2 = ROOT.TGraphErrors( len(graphX), graphX, graphDY, graphDX, graphdDY )
         massres2.SetName("massres2_" + str(ptbin))
         if 'softdrop' not in options.hist : 
-            massres2.SetTitle(";Ungroomed jet mass (GeV);JMR")
+            massres2.SetTitle(";Ungroomed jet mass m_{u} (GeV);JMR")
         else :
-            massres2.SetTitle(";Groomed jet mass (GeV);JMR")
+            massres2.SetTitle(";Groomed jet mass m_{g} (GeV);JMR")
         leg2.AddEntry( massres2, ptquickstrs[ptbin], "l" )
         massres2.SetLineColor(colors[ptbin])
         massres2.SetLineWidth(2)
@@ -289,9 +289,9 @@ for ihist in xrange( len(histstrs) ):
         massres3 = ROOT.TGraph( len(graphX), graphX, fracunc )
         massres3.SetName("massres3_" + str(ptbin))
         if 'softdrop' not in options.hist : 
-            massres3.SetTitle(";Ungroomed jet mass (GeV);Uncertainty in JMS")
+            massres3.SetTitle(";Ungroomed jet mass m_{u} (GeV);Uncertainty in JMS")
         else :
-            massres3.SetTitle(";Groomed jet mass (GeV);Uncertainty in JMS")
+            massres3.SetTitle(";Groomed jet mass m_{g} (GeV);Uncertainty in JMS")
         leg3.AddEntry( massres3, ptquickstrs[ptbin], "l" )
         massres3.SetLineColor(colors[ptbin])
         massres3.SetLineWidth(2)
@@ -366,12 +366,12 @@ for ihist in xrange( len(histstrs) ):
     totresc2.cd()
     rg.Draw("ALX")
     if "softdrop" not in options.hist :
-        rg.SetTitle(";Ungroomed jet mass (GeV);JMR")
+        rg.SetTitle(";Ungroomed jet mass m_{u} (GeV);JMR")
         rg.SetMinimum(0.0)
         rg.SetMaximum(0.3)
         rg.GetXaxis().SetLimits(20., 1000.)
     else : 
-        rg.SetTitle(";Groomed jet mass (GeV);JMR")
+        rg.SetTitle(";Groomed jet mass m_{g} (GeV);JMR")
         rg.SetMinimum(0.0)
         rg.SetMaximum(0.3)        
         rg.GetXaxis().SetLimits(10., 1000.)
