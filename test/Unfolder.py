@@ -43,7 +43,12 @@ class RooUnfoldUnfolder:
         self.expsysnames = [ '_jec', '_jer', '_jmr', '_jms', '_pu' ] # Experimental uncertainties EXCEPT for jec
         self.thsysnames = ['_pdf', '_ps', '_mcStat']                 # Theory uncertainties
         self.flatsysnames = ['_lum']                                 # Flat uncertainties
-        self.sysnames = self.expsysnames + self.flatsysnames + self.thsysnames + ['_totunc'] # All uncertainties
+        if not self.normalizeUnity:
+            self.allsysts = self.expsysnames + self.thsysnames + self.flatsysnames 
+            self.sysnames = self.allsysts + ['_totunc']              # All uncertainties
+        else :
+            self.allsysts = self.expsysnames + self.thsysnames
+            self.sysnames = self.allsysts + ['_totunc']              # All uncertainties
         self.responses = dict()                                      # RooUnfoldResponse objects
         self.nom = None                                              # TH2D representing central value with stat+sys uncertainties
         self.jernom = None                                           # TH2D representing central value in JER
@@ -87,47 +92,61 @@ class RooUnfoldUnfolder:
         self.uncertainties = dict(                                   # TH2D's representing uncertainties
             zip(self.sysnames, [None] * len(self.sysnames) )
             )
-        unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics model', 'Stat. unc.', 'Total']
+
+        if not self.normalizeUnity:
+            unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'PDF', 'Physics model', 'Stat. unc.', 'Lumi', 'Total']
+        else :
+            unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'PDF', 'Physics model', 'Stat. unc.', 'Total']
         self.uncertaintyNames = dict( zip( self.sysnames, unctitles ) )
 
         self.theorydict = dict( zip(['theory1', 'theory2'], [i for i in xrange(2)]  ) )
         
         
-        self.ptBinNames = ['200 < p_{T} < 260 GeV','260 < p_{T} < 350 GeV','350 < p_{T} < 460 GeV','460 < p_{T} < 550 GeV','550 < p_{T} < 650 GeV','650 < p_{T} < 760 GeV', '760 < p_{T} < 900 GeV', '900 < p_{T} < 1000 GeV', '1000 < p_{T} < 1100 GeV','1100 < p_{T} < 1200 GeV',
-    '1200 < p_{T} < 1300 GeV', 'p_{T} > 1300 GeV']
+        self.ptBinNames = [    '200 < p_{T} < 260 GeV',
+                               '260 < p_{T} < 350 GeV',
+                               '350 < p_{T} < 460 GeV',
+                               '460 < p_{T} < 550 GeV',
+                               '550 < p_{T} < 650 GeV',
+                               '650 < p_{T} < 760 GeV',
+                               '760 < p_{T} < 900 GeV',
+                               '900 < p_{T} < 1000 GeV',
+                               '1000 < p_{T} < 1100 GeV',
+                               '1100 < p_{T} < 1200 GeV',
+                               '1200 < p_{T} < 1300 GeV',
+                               'p_{T} > 1300 GeV'          ]
         if self.useSoftDrop == False : 
             self.xAxisRanges = [
-                [20,1000],
-                [20,1000],
-                [20,1000],
-                [20,1000],
-                [20,1000],
-                [20,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
-                [40,1000],
+                [20,1000],    #'200 < p_{T} < 260 GeV',    
+                [20,1000],    #'260 < p_{T} < 350 GeV',    
+                [20,1000],    #'350 < p_{T} < 460 GeV',    
+                [20,1000],    #'460 < p_{T} < 550 GeV',    
+                [20,1000],    #'550 < p_{T} < 650 GeV',    
+                [20,1000],    #'650 < p_{T} < 760 GeV',    
+                [40,1000],    #'760 < p_{T} < 900 GeV',    
+                [40,1000],    #'900 < p_{T} < 1000 GeV',   
+                [40,1000],    #'1000 < p_{T} < 1100 GeV',  
+                [40,1000],    #'1100 < p_{T} < 1200 GeV',  
+                [40,1000],    #'1200 < p_{T} < 1300 GeV',  
+                [40,1000],    #'p_{T} > 1300 GeV'          
+                [40,1000],    #
+                [40,1000],    #
                 ]
         else :
             self.xAxisRanges = [
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
-                [10,1000],
+                [10,1000],    #'200 < p_{T} < 260 GeV',    
+                [10,1000],    #'260 < p_{T} < 350 GeV',    
+                [10,1000],    #'350 < p_{T} < 460 GeV',    
+                [10,1000],    #'460 < p_{T} < 550 GeV',    
+                [10,1000],    #'550 < p_{T} < 650 GeV',    
+                [10,1000],    #'650 < p_{T} < 760 GeV',    
+                [10,1000],    #'760 < p_{T} < 900 GeV',    
+                [10,1000],    #'900 < p_{T} < 1000 GeV',   
+                [10,1000],    #'1000 < p_{T} < 1100 GeV',  
+                [10,1000],    #'1100 < p_{T} < 1200 GeV',  
+                [10,1000],    #'1200 < p_{T} < 1300 GeV',  
+                [10,1000],    #'p_{T} > 1300 GeV'          
+                [10,1000],    #
+                [10,1000],    #
                 ]
 
         if not self.useSoftDrop: 
@@ -224,14 +243,15 @@ class RooUnfoldUnfolder:
                     self.uncertainties['_jec'].SetBinContent(ix,iy, math.sqrt(val) )
                 
         # Now get the luminosity uncertainty
-        self.uncertainties['_lum'] = self.nom.Clone( self.nom.GetName() + "_lum" )
-        for ix in xrange(0, self.unsmeared.GetXaxis().FindBin( self.nom.GetXaxis().GetXmax() ) ):
-            for iy in xrange(0, self.unsmeared.GetNbinsY()+2):
-                if self.unsmeared.GetBinContent(ix,iy) > 0.0 :
-                    if self.normalizeUnity == False : 
-                        self.uncertainties['_lum'].SetBinContent( ix, iy, math.sqrt( self.histDriver_.dlumi2_ )  )
-                    else :
-                        self.uncertainties['_lum'].SetBinContent( ix, iy, 0.0 )
+        if not self.normalizeUnity : 
+            self.uncertainties['_lum'] = self.nom.Clone( self.nom.GetName() + "_lum" )
+            for ix in xrange(0, self.unsmeared.GetXaxis().FindBin( self.nom.GetXaxis().GetXmax() ) ):
+                for iy in xrange(0, self.unsmeared.GetNbinsY()+2):
+                    if self.unsmeared.GetBinContent(ix,iy) > 0.0 :
+                        if self.normalizeUnity == False : 
+                            self.uncertainties['_lum'].SetBinContent( ix, iy, math.sqrt( self.histDriver_.dlumi2_ )  )
+                        else :
+                            self.uncertainties['_lum'].SetBinContent( ix, iy, 0.0 )
 
         # Next : PDF uncertainties from PDF4LHC15 meta-pdf
         fpdf = ROOT.TFile("unfoldedpdf_pdf4lhc15.root")
@@ -336,7 +356,7 @@ class RooUnfoldUnfolder:
                 if abs(val) > 0.0 : 
                     err2 = self.nom.GetBinError(ix,iy) / val 
                     err2 = err2**2
-                    for isystname in self.expsysnames + self.flatsysnames + self.thsysnames :
+                    for isystname in self.allsysts :
                         #print '%6s=%6.2e' % ( isyst, abs(isystval.GetBinContent(ix,iy)) ),
                         isystval = self.uncertainties[isystname]
                         err2 += (isystval.GetBinContent(ix,iy))**2
@@ -588,9 +608,9 @@ class RooUnfoldUnfolder:
                 
                 if ihist == 0 :
                     leg.AddEntry( projx, 'Data', 'p')
-                    leg.AddEntry( projx, 'Stat. + Syst. Unc.', 'f')
+                    leg.AddEntry( projx, 'Stat. + syst. unc.', 'f')
                 elif ihist == 1 :
-                    leg.AddEntry( projx, 'Stat. Unc.', 'f')
+                    leg.AddEntry( projx, 'Stat. unc.', 'f')
                 else :
                     legstyle = 'l'
                     leg.AddEntry( projx, self.histDriver_.titles[styleNames[ihist]], legstyle)
@@ -629,7 +649,7 @@ class RooUnfoldUnfolder:
 
                 self.histDriver_.plotHistAndRatio( pad1=pad1, pad2=pad2, hist=projx, nominal=ratioval,
                                        option1=option, option2=option,
-                                       ratiotitle=";"+projx.GetXaxis().GetTitle()+";#frac{Theory}{Data}", logy=False, logx=True, ratiorange=[0.,2.],xAxisRange=self.xAxisRanges[iy])
+                                       ratiotitle=";"+projx.GetXaxis().GetTitle()+";#frac{Theory}{Data}", logy=False, logx=True, ratiorange=[0.,2.],xAxisRange=self.xAxisRanges[iy-1])
 
                 pad1.cd()
                 projs[0].SetMaximum(maxval)
@@ -658,7 +678,7 @@ class RooUnfoldUnfolder:
                     g11,g12=self.histDriver_.plotGraphAndRatio( pad1=pad1, pad2=pad2, hist=hist , nominal=projs[0],
                                                            option1="L3 0 same", option2="L3 0 same",
                                                            ratiotitle=";",
-                                                           logy=False, logx=True, ratiorange=[0.,2.],xAxisRange=self.xAxisRanges[iy] ) 
+                                                           logy=False, logx=True, ratiorange=[0.,2.],xAxisRange=self.xAxisRanges[iy-1] ) 
                     leg.AddEntry( g11, self.histDriver_.titles[theory], 'f')
                     
             pad1.cd()

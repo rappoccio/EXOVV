@@ -120,6 +120,8 @@ for ihist in xrange( len(histstrs) ):
 
     totresc = ROOT.TCanvas("totresc_" +str(ihist), "totresc_" + str(ihist) )
     totresc2 = ROOT.TCanvas("totresc2_" +str(ihist), "totresc2_" + str(ihist) )
+    totresc.SetBottomMargin(0.17)
+    totresc2.SetBottomMargin(0.17)
     mg = ROOT.TMultiGraph("mg_" + str(ihist), "mg_" + str(ihist))
     rg = ROOT.TMultiGraph("rg_" + str(ihist), "rg_" + str(ihist))
     canvs.append(totresc)
@@ -338,12 +340,12 @@ for ihist in xrange( len(histstrs) ):
     mg.Draw("ALX")
     if 'softdrop' not in options.hist :
         print 'UNGROOMED'
-        mg.SetTitle(";Ungroomed jet mass (GeV);JMS")
+        mg.SetTitle(";Ungroomed jet mass m_{u} (GeV);JMS")
         mg.SetMinimum(0.8)
         mg.SetMaximum(1.8)
         mg.GetXaxis().SetLimits(20., 1000.)
     else :
-        mg.SetTitle(";Groomed jet mass (GeV);JMS")
+        mg.SetTitle(";Groomed jet mass m_{g} (GeV);JMS")
         mg.SetMinimum(0.8)
         mg.SetMaximum(1.8)
         mg.GetXaxis().SetLimits(10., 1000.)
