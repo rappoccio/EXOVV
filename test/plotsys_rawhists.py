@@ -36,11 +36,13 @@ ROOT.gStyle.SetOptStat(000000)
 ROOT.gStyle.SetTitleFont(43)
 #ROOT.gStyle.SetTitleFontSize(0.05)
 ROOT.gStyle.SetTitleFont(43, "XYZ")
-ROOT.gStyle.SetTitleSize(25, "XYZ")
+ROOT.gStyle.SetTitleSize(30, "XYZ")
 ROOT.gStyle.SetTitleOffset(3.5, "X")
 ROOT.gStyle.SetTitleOffset(1.8, "Y")
-ROOT.gStyle.SetLabelFont(43, "XYZ")
-ROOT.gStyle.SetLabelSize(24, "XYZ")
+ROOT.gStyle.SetLabelFont(43, "YZ")
+ROOT.gStyle.SetLabelSize(24, "YZ")
+ROOT.gStyle.SetLabelFont(42, "X")
+ROOT.gStyle.SetLabelSize(0.15, "X")
 
 ptBinA = array.array('i', [  200, 260, 350, 460, 550, 650, 760, 900, 1000, 1100, 1200, 1300, 13000])
 
@@ -225,6 +227,7 @@ for iptbin in xrange( len(dataprojs) ) :
     #dataprojs[iptbin].Draw("e same")    
     stack.Draw("nostack")    
     stack.GetXaxis().SetRangeUser(axisrange[0],axisrange[1])
+    stack.GetXaxis().SetMoreLogLabels()
     if 'AK8SD' in options.hist :
         maxval = dataprojs[iptbin].GetBinContent( minmassbin + 1)
         stack.SetMaximum( maxval * 1.5 )
@@ -235,7 +238,7 @@ for iptbin in xrange( len(dataprojs) ) :
     stack.GetXaxis().SetTickLength(0.05)
     stacks.append(stack)
     tlx.DrawLatex(0.2, 0.926, "CMS")
-    tlx.DrawLatex(0.72, 0.926, "2.3 fb^{-1} (13 TeV)")
+    tlx.DrawLatex(0.64, 0.926, "2.3 fb^{-1} (13 TeV)")
 
     
 
@@ -264,9 +267,9 @@ for iptbin in xrange( len(dataprojs) ) :
 
 
     if 'AK8SD' not in options.hist : 
-        ratio.SetTitle(";Jet mass (GeV);MC / Data")
+        ratio.SetTitle(";Ungroomed jet mass m_{u} (GeV);MC / Data")
     else :
-        ratio.SetTitle(";Groomed jet mass (GeV);MC / Data")
+        ratio.SetTitle(";Groomed jet mass m_{g} (GeV);MC / Data")
     ratio.Divide( dataprojs[iptbin] )
     ratio2.Divide( dataprojs[iptbin] )
     ratioline = ratio.Clone( "ratioclone" + pyprojs[iptbin].GetName() )
@@ -280,8 +283,9 @@ for iptbin in xrange( len(dataprojs) ) :
     ratio.GetXaxis().SetRangeUser(axisrange[0],axisrange[1])
     ratio.GetYaxis().SetRangeUser(0.5,1.5)
     ratio.GetXaxis().SetTickLength(0.09)
-    ratio.GetXaxis().SetNoExponent()
-    #ratio.GetXaxis().SetMoreLogLabels(True)
+    ratio.GetXaxis().SetNoExponent()    
+    ratio.GetXaxis().SetMoreLogLabels(True)
+    ratio.GetXaxis().SetNdivisions(2,4,0,False)
     ratio.SetMarkerStyle(0)
     ratio.SetMarkerSize(0)
     ratio.Draw("e2")

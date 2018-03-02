@@ -97,6 +97,8 @@ class HistDriver :
         pad1.SetLogx(logx)
         pad2.cd()
         pad2.SetLogx(logx)
+        if logx:
+            hist.GetXaxis().SetMoreLogLabels()
         ratio = hist.Clone( hist.GetName() + rationame )
         ratio.SetMarkerStyle(0)
         ratio.GetXaxis().SetTickLength(0.07)
@@ -333,7 +335,14 @@ def smooth( hist, delta = 2, xmin = None, xmax = None, reverse=True, verbose=Fal
             if ibin in newvalues : 
                 hist.SetBinContent( ibin, newvalues[ibin] )
 
-
+# Zero out bins with very large uncertainties
+def zero_large_uncs(hist, maxunc=0.6):
+    for ibin in xrange(hist.GetNbinsX()+1):
+        val=hist.GetBinContent(ibin)
+        err=hist.GetBinError(ibin)
+        if val > 0. and err / val > maxunc :
+            hist.SetBinContent(ibin,0.0)
+            hist.SetBinError(ibin,0.0)
 
 # "Unpinch" histograms :
 #   - Average the uncertainties at the "peak" by averaging uncertainties from "peak +- delta"

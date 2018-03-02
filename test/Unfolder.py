@@ -14,6 +14,7 @@ class RooUnfoldUnfolder:
                      useSoftDrop=False, normalizeUnity=True, scalePtBins=False, useUncSrcs=True,
                      lumi=2.3e3, dlumi=0.027, postfix=''):
 
+        self.maxunc = 0.6                                            # Zero bins with frac. unc. larger than maxunc
         self.histDriver_ = HistDriver(lumi=lumi, dlumi=dlumi)        # Creates and stores histograms so they don't go out of scope
         self.inputs = inputs                                         # String for inputs to use
         self.pythiaInputs=pythiaInputs                               # String for pythia filename
@@ -86,7 +87,7 @@ class RooUnfoldUnfolder:
         self.uncertainties = dict(                                   # TH2D's representing uncertainties
             zip(self.sysnames, [None] * len(self.sysnames) )
             )
-        unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics Model', 'Stat. Unc.', 'Total']
+        unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'Lumi', 'PDF', 'Physics model', 'Stat. unc.', 'Total']
         self.uncertaintyNames = dict( zip( self.sysnames, unctitles ) )
 
         self.theorydict = dict( zip(['theory1', 'theory2'], [i for i in xrange(2)]  ) )
@@ -175,11 +176,12 @@ class RooUnfoldUnfolder:
         self.nom.UseCurrentStyle()
 
         #ROOT.gStyle.SetTitleSize(0.04, "XYZ")
+        ROOT.TGaxis.SetExponentOffset(-0.06, 0.00, "y")
 
         if not self.useSoftDrop: 
-            self.nom.SetTitle(";Ungroomed jet mass (GeV);Ungroomed jet p_{T} (GeV)")
+            self.nom.SetTitle(";Ungroomed jet mass m_{u} (GeV);Ungroomed jet p_{T} (GeV)")
         else :
-            self.nom.SetTitle(";Groomed jet mass (GeV);Ungroomed jet p_{T} (GeV)")
+            self.nom.SetTitle(";Groomed jet mass m_{g} (GeV);Ungroomed jet p_{T} (GeV)")
 
         self.histDriver_.normalizeHist( self.nom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
         self.histDriver_.normalizeHist( self.jernom, normalizeUnity = self.normalizeUnity, scalePtBins = self.scalePtBins )
@@ -315,7 +317,16 @@ class RooUnfoldUnfolder:
         self.uncertainties['_mcStat'] = self.mcStat.Clone( self.nom.GetName() + "_mcStat")
 
 
-        
+        # Unpinch and smear out the uncertainties
+        print self.uncertainties
+        for iunc,unc in self.uncertainties.iteritems():
+            if not unc:
+                continue
+            if not self.useSoftDrop :
+                unpinch_vals( unc, xval=unc.GetXaxis().FindBin(self.xAxisRanges[iy-1][0]) )
+            smooth( unc, delta=2, xmin = unc.GetXaxis().FindBin(500)-1)
+            smooth( unc, delta=2 )
+                
         # Now sum all of the uncertainties in quadrature
         self.totunc = self.nom.Clone( self.nom.GetName() + '_totunc')
         for ix in xrange(1,self.nom.GetNbinsX()+1):
@@ -447,9 +458,9 @@ class RooUnfoldUnfolder:
         leg.AddEntry( hists[0], 'Data', 'p')
         for ihist, hist in enumerate( hists ):
             if ihist == 0 :
-                leg.AddEntry( hist, 'Stat. + Syst. Unc.', 'f')
+                leg.AddEntry( hist, 'Stat. + syst. unc.', 'f')
             elif ihist == 1 :
-                leg.AddEntry( hist, 'Stat. Unc.', 'f')
+                leg.AddEntry( hist, 'Stat. unc.', 'f')
             else :
                 legstyle = 'l'
                 leg.AddEntry( hist, self.histDriver_.titles[styleNames[ihist]], legstyle)
@@ -512,6 +523,20 @@ class RooUnfoldUnfolder:
         
     def plotFullXSProjections( self, hists, styleNames, xAxisRange = None, theorycurves=None, plotlogm=False, legendpos = "right"):
 
+        # First check pt,m bins that have large uncertainties and keep a record of them.
+        # They will be used below to zero out bins in the plots.
+        zerobins = []
+        for iy in xrange(1,hists[0].GetNbinsY()+1):
+            lowuncs = True
+            for ix in xrange(hists[0].GetNbinsX() / 5, hists[0].GetNbinsX()+1):
+                val = hists[0].GetBinContent(ix,iy)
+                err = hists[0].GetBinError(ix,iy)
+                if lowuncs and abs(val) > 0.0 and abs(err/val) > self.maxunc:
+                    lowuncs = False
+                if not lowuncs:
+                    for ihist in hists :
+                        ihist.SetBinContent(ix,iy,0.0)
+                        ihist.SetBinError(ix,iy,0.0)
 
         for iy in xrange(1,hists[0].GetNbinsY()+1):
             if plotlogm : 
@@ -536,6 +561,10 @@ class RooUnfoldUnfolder:
             for ihist, hist in enumerate( hists ):
 
                 projx = hist.ProjectionX('proj_' + hist.GetName() + self.postfix + str(iy), iy,iy, "e" )
+
+                # Unpinch the uncertainties
+                if not self.useSoftDrop :
+                    unpinch( projx )#, xval=projx.GetXaxis().FindBin(self.xAxisRanges[iy-1][0]) )
 
                 if plotlogm :
                     hist = hist.Clone( hist.GetName() + "_dlogm")
@@ -661,9 +690,9 @@ class RooUnfoldUnfolder:
             leg.SetNColumns(2)
             leg.SetTextFont(43)
             if self.useSoftDrop :
-                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Groomed jet mass (GeV);Fractional Uncertainty" )
+                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Groomed jet mass m_{g} (GeV);Fractional Uncertainty" )
             else :
-                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Jet mass (GeV);Fractional Uncertainty" )
+                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Ungroomed jet mass m_{u} (GeV);Fractional Uncertainty" )
 
 
 
@@ -673,6 +702,7 @@ class RooUnfoldUnfolder:
                 proj = hist.ProjectionX('proj_' + hist.GetName()+ self.postfix + str(iy), iy,iy, "e" )
                 leg.AddEntry( proj, self.uncertaintyNames[key] , "l")
 
+                
                 if not self.useSoftDrop :
                     unpinch_vals( proj, xval=proj.GetXaxis().FindBin(self.xAxisRanges[iy-1][0]) )
                 smooth( proj, delta=2, xmin = proj.GetXaxis().FindBin(500)-1)
@@ -688,7 +718,10 @@ class RooUnfoldUnfolder:
             stack.SetMinimum(1e-4)
             stack.SetMaximum(1e3)
             stack.GetXaxis().SetRangeUser( self.xAxisRanges[iy-1][0], self.xAxisRanges[iy-1][1] )
+            stack.GetXaxis().SetLabelFont(42)
+            stack.GetXaxis().SetLabelSize(0.05)
             stack.GetXaxis().SetNoExponent()
+            stack.GetXaxis().SetMoreLogLabels()
             leg.Draw()
             self.histDriver_.stacks_.append(stack)
             self.histDriver_.legs_.append(leg)
