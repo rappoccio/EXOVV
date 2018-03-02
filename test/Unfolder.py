@@ -710,9 +710,9 @@ class RooUnfoldUnfolder:
             leg.SetNColumns(2)
             leg.SetTextFont(43)
             if self.useSoftDrop :
-                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Groomed jet mass m_{g} (GeV);Fractional Uncertainty" )
+                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Groomed jet mass m_{g} (GeV);Fractional uncertainty" )
             else :
-                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Ungroomed jet mass m_{u} (GeV);Fractional Uncertainty" )
+                stack = ROOT.THStack( hists.values()[0].GetName() + "_uncstack" + str(iy), ";Ungroomed jet mass m_{u} (GeV);Fractional uncertainty" )
 
 
 
