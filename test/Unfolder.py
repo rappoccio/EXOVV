@@ -394,18 +394,52 @@ class RooUnfoldUnfolder:
             self.herwigHist.Scale( self.nomNorm )
 
     def readPowheg(self):
+        powhegnorms = {
+             9:2.1193569211303091e-06,
+            24:6.6484332012113942e-06,
+            17:4.4307535721251039e-08,
+            05:4.4307535721251039e-08,
+            12:6.6484332012113942e-06,
+             6:1.1595650952686315e-07,
+             2:9.0217025937519018e-10,
+             3:3.3673066950289893e-09,
+            14:9.0217025937519018e-10,
+            22:4.2934493898958184e-06,
+            20:1.0286268859966279e-06,
+             4:1.6570917349274774e-08,
+            16:1.6570917349274774e-08,
+            19:2.7358869330354964e-07,
+             7:2.7358869330354964e-07,
+             1:4.5617935030748854e-10,
+            15:3.3673066950289893e-09,
+            13:4.5617935030748854e-10,
+            11:8.0892638225999357e-06,
+             8:1.0286268859966279e-06,
+            23:8.0892638225999357e-06,
+            10:4.2934493898958184e-06,
+            21:2.1193569211303091e-06,
+            18:1.1595650952686315e-07
+            }
+
+        
         self.powhegFile = ROOT.TFile( self.powhegInputs )
 
         self.powhegHist = self.pythiaHist.Clone( "powheg")
         powheghists = []
         if not self.useSoftDrop :            
             for h in [1,2,3,4,5,6,7,8,9]:
-                powheghists.append( self.powhegFile.Get("CMS_SMP_16_010/d0"+str(h)+"-x01-y01"))
+                ih = self.powhegFile.Get("CMS_SMP_16_010/d0"+str(h)+"-x01-y01")
+                ih.Scale( 1.0 / powhegnorms[h] )
+                powheghists.append( ih )
             for h in [10,11,12]:
-                powheghists.append( self.powhegFile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
+                ih = self.powhegFile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01")
+                ih.Scale( 1.0 / powhegnorms[h] )
+                powheghists.append( ih )
         else : 
             for h in [13,14,15,16,17,18,19,20,21,22,23,24]:
-                powheghists.append( self.powhegFile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01"))
+                ih = self.powhegFile.Get("CMS_SMP_16_010/d"+str(h)+"-x01-y01")
+                ih.Scale( 1.0 / powhegnorms[h] )
+                powheghists.append( ih )
 
         # Don't forget off-by-one from ROOT
         for iy,hist in enumerate(powheghists):
