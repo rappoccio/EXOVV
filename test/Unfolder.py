@@ -724,9 +724,11 @@ class RooUnfoldUnfolder:
             if plotlogm == False:
                 c.Print("fullxs_" + self.postfix + str(iy) + ".png", "png")
                 c.Print("fullxs_" + self.postfix + str(iy) + ".pdf", "pdf")
+                c.Print("fullxs_" + self.postfix + str(iy) + ".root", "root")
             else:
                 c.Print("fullxs_" + self.postfix + str(iy) + "_mdsigmadm.png", "png")
                 c.Print("fullxs_" + self.postfix + str(iy) + "_mdsigmadm.pdf", "pdf")
+                c.Print("fullxs_" + self.postfix + str(iy) + "_mdsigmadm.root", "root")
             c.Draw()
 
 
