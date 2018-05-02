@@ -40,8 +40,8 @@ class HistDriver :
             'pythia':StyleDriver(name="pythia",markerStyle=0,lineStyle=2,lineColor=ROOT.kBlack,lineWidth=3),
             'herwig':StyleDriver(name="herwig",markerStyle=0,lineStyle=8,lineColor=ROOT.kMagenta+1,lineWidth=3),
             'powheg':StyleDriver(name="powheg",markerStyle=0,lineStyle=4,lineColor=ROOT.kGreen+2,lineWidth=3),
-            'theory1':StyleDriver(name="theory1",markerStyle=0,fillStyle=3004,fillColor=ROOT.kBlue,lineColor=ROOT.kBlue,lineWidth=3),
-            'theory2':StyleDriver(name="theory2",markerStyle=0,fillStyle=3005,fillColor=ROOT.kOrange+7,lineColor=ROOT.kOrange+7,lineWidth=3)
+            'theory1':StyleDriver(name="theory1",markerStyle=0,lineStyle=5,lineColor=ROOT.kBlue,lineWidth=3),
+            'theory2':StyleDriver(name="theory2",markerStyle=0,lineStyle=6,lineColor=ROOT.kOrange+7,lineWidth=3)
             }
 
         self.titles = {

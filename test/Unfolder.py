@@ -57,6 +57,7 @@ class RooUnfoldUnfolder:
         self.nomNorm = None                                          # Normalization of the nominal. If we don't normalize to unity, we normalize Herwig to this. 
         self.postfix = postfix
         self.files = {}
+        self.extraHists = []
         
         # All jet energy uncertainty sources
         self.allJecUncSrcNames = [
@@ -296,6 +297,7 @@ class RooUnfoldUnfolder:
         ensureAbs( hps )
         hps.Scale(0.5)        
         hps.Divide(self.unsmearedForPS)
+        hps.Scale(2.0)
         # Now set up the PS uncertainties themselves:
         self.uncertainties['_ps'] = hps.Clone( self.nom.GetName() + "_ps" )
 
@@ -614,14 +616,16 @@ class RooUnfoldUnfolder:
 
             for ihist, hist in enumerate( hists ):
 
-                projx = hist.ProjectionX('proj_' + hist.GetName() + self.postfix + str(iy), iy,iy, "e" )
+                if not plotlogm: 
+                    projx = hist.ProjectionX('proj_' + hist.GetName() + self.postfix + str(iy), iy,iy, "e" )
+                else :
+                    projx = hist.ProjectionX('proj_' + hist.GetName() + self.postfix + str(iy) + "_dlogm", iy,iy, "e" )
 
                 # Unpinch the uncertainties
                 if not self.useSoftDrop :
                     unpinch( projx )#, xval=projx.GetXaxis().FindBin(self.xAxisRanges[iy-1][0]) )
 
                 if plotlogm :
-                    hist = hist.Clone( hist.GetName() + "_dlogm")
                     for ix in xrange( projx.GetNbinsX() ):
                         xval = projx.GetBinCenter(ix)
                         yval = projx.GetBinContent(ix)
@@ -631,6 +635,7 @@ class RooUnfoldUnfolder:
                 
                 setStylesClass( projx,istyle=self.histDriver_.styles[styleNames[ihist]] )
                 projs.append(projx)
+                self.extraHists.append(projx)
 
                 if ihist != 1 :
                     ratioval = projs[0]
@@ -695,32 +700,44 @@ class RooUnfoldUnfolder:
                 projs[0].GetYaxis().SetTitleOffset( 1.5 )                
             if theorycurves != None: 
                 for theory in theorycurves :
-                    hist=self.theorylist[ self.theorydict[theory] ] [iy-1]
+                    if not plotlogm: 
+                        hist=self.theorylist[ self.theorydict[theory] ] [iy-1]
+                    else:
+                        hist=self.theorylist[ self.theorydict[theory] ] [iy-1].Clone( self.theorylist[ self.theorydict[theory] ] [iy-1].GetName() + "_dlogm")
+                        self.extraHists.append( hists )
                     for ix in xrange(hist.GetNbinsX()):
                         val = hist.GetBinContent(ix)
                         err = hist.GetBinError(ix)
                         if val > 0 and abs(err/val) > 1.0:
                             hist.SetBinError(ix, hist.GetBinError(ix-1))
                     if plotlogm :
-                        hist = hist.Clone(hist.GetName() + "_dlogm")
                         for ix in xrange( hist.GetNbinsX() ):
                             xval = hist.GetBinCenter(ix)
                             yval = hist.GetBinContent(ix)
                             yerr = hist.GetBinError(ix)
                             hist.SetBinContent( ix, xval * yval )
-                            hist.SetBinError( ix, xval * yerr )                                                
-                    g11,g12=self.histDriver_.plotGraphAndRatio( pad1=pad1, pad2=pad2, hist=hist , nominal=projs[0],
-                                                           option1="L3 0 same", option2="L3 0 same",
+                            hist.SetBinError( ix, xval * yerr )
+                    legstyle = 'l'
+                    leg.AddEntry( hist, self.histDriver_.titles[theory], legstyle)
+                    self.histDriver_.plotHistAndRatio( pad1=pad1, pad2=pad2, hist=hist , nominal=projs[0],
+                                                           option1=option, option2=option,
                                                            ratiotitle=";",
                                                            logy=False, logx=True, ratiorange=[0.,2.],xAxisRange=self.xAxisRanges[iy-1] ) 
-                    leg.AddEntry( g11, self.histDriver_.titles[theory], 'f')
+                    #leg.AddEntry( g11, self.histDriver_.titles[theory], 'f')
                     
             pad1.cd()
             leg.Draw()
 
+            
                     
             self.histDriver_.stampCMS(pad1, "CMS", self.histDriver_.lumi_)
             self.histDriver_.canvs_.append(c)
+
+            # Write the histograms in a flat ROOT tree for conversion to YAML and YODA and whatever else theorists want instead of using ROOT
+            fout = ROOT.TFile("rawout_fullxs_" + self.postfix + str(iy) + ".root", "RECREATE")
+            for proj in projs :
+                proj.Write()
+            fout.Close()
             if plotlogm == False:
                 c.Print("fullxs_" + self.postfix + str(iy) + ".png", "png")
                 c.Print("fullxs_" + self.postfix + str(iy) + ".pdf", "pdf")
