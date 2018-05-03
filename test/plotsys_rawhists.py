@@ -214,7 +214,7 @@ for iptbin in xrange( len(dataprojs) ) :
     pyprojs[iptbin].SetMarkerSize(0)
     hwprojs[iptbin].SetLineStyle(2)
     hwprojs[iptbin].SetLineColor(ROOT.kMagenta)
-    hwprojs[iptbin].SetLineWidth(3)
+    hwprojs[iptbin].SetLineWidth(5)
     #hwprojs[iptbin].SetLineWidth(2)
     dataprojs[iptbin].SetMarkerStyle(20)
     stack = ROOT.THStack( "stack" + str(iptbin), ";;Normalized yield (1/GeV)" )
