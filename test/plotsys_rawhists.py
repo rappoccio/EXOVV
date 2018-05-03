@@ -140,7 +140,7 @@ tlx.SetTextSize(25)
 
 tlx2 = ROOT.TLatex()
 tlx2.SetNDC()
-tlx2.SetTextFont(43)
+tlx2.SetTextFont(63)
 tlx2.SetTextSize(22)
 legs = []
 
@@ -247,15 +247,17 @@ for iptbin in xrange( len(dataprojs) ) :
     #    tlx2.DrawLatex( 0.3, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
     #    leg = ROOT.TLegend(0.3, 0.6, 0.55, 0.85)
     #elif 'AK8SD' in options.hist :
-    tlx2.DrawLatex( 0.6, 0.4, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
-    leg = ROOT.TLegend(0.6, 0.6, 0.85, 0.85)
+    
+    leg = ROOT.TLegend(0.6, 0.4, 0.83, 0.83)#, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV')
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     leg.AddEntry( dataprojs[iptbin], 'Data', 'p')
     leg.AddEntry( hwprojs[iptbin], 'HERWIG++ MC', 'l')
     leg.AddEntry( pyprojs[iptbin], 'PYTHIA8 MC', 'lf')
     leg.Draw()
+    tlx2.DrawLatex( 0.6, 0.84, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV' ) 
     legs.append(leg)
+
     
     pads[1].cd()
     pads[1].SetLogx()
