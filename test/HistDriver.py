@@ -40,8 +40,8 @@ class HistDriver :
             'pythia':StyleDriver(name="pythia",markerStyle=0,lineStyle=2,lineColor=ROOT.kBlack,lineWidth=3),
             'herwig':StyleDriver(name="herwig",markerStyle=0,lineStyle=8,lineColor=ROOT.kMagenta+1,lineWidth=3),
             'powheg':StyleDriver(name="powheg",markerStyle=0,lineStyle=4,lineColor=ROOT.kGreen+2,lineWidth=3),
-            'theory1':StyleDriver(name="theory1",markerStyle=0,lineStyle=5,lineColor=ROOT.kBlue,lineWidth=3),
-            'theory2':StyleDriver(name="theory2",markerStyle=0,lineStyle=6,lineColor=ROOT.kOrange+7,lineWidth=3)
+            'theory1':StyleDriver(name="theory1",markerStyle=21,markerColor=ROOT.kBlue,lineColor=ROOT.kBlue,lineWidth=1),
+            'theory2':StyleDriver(name="theory2",markerStyle=22,markerColor=ROOT.kRed,lineColor=ROOT.kRed,lineWidth=1)
             }
 
         self.titles = {
@@ -100,7 +100,8 @@ class HistDriver :
         if logx:
             hist.GetXaxis().SetMoreLogLabels()
         ratio = hist.Clone( hist.GetName() + rationame )
-        ratio.SetMarkerStyle(0)
+        if ratio.GetMarkerStyle() < 20: 
+            ratio.SetMarkerStyle(0)
         ratio.GetXaxis().SetTickLength(0.07)
         ratio.GetYaxis().SetNdivisions(2,4,0,False)
         ratio.GetYaxis().SetTitleOffset(1.2)

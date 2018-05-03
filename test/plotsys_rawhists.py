@@ -207,13 +207,14 @@ for iptbin in xrange( len(dataprojs) ) :
         pyprojs[iptbin].SetBinError( imbin, errtot )
         hwprojs[iptbin].SetBinError( imbin, 1e-12 )
     pyprojsclone.append( pyprojs[iptbin].Clone( pyprojs[iptbin].GetName() + "_linestyle") )
-    pyprojsclone[iptbin].SetLineColor(ROOT.kBlue)
-    pyprojs[iptbin].SetFillStyle(3001)
-    pyprojs[iptbin].SetFillColor(ROOT.kBlue)
+    pyprojsclone[iptbin].SetLineColor(ROOT.kBlack)
+    pyprojs[iptbin].SetFillStyle(3353)
+    pyprojs[iptbin].SetFillColor(1)
     pyprojs[iptbin].SetMarkerStyle(0)
     pyprojs[iptbin].SetMarkerSize(0)
     hwprojs[iptbin].SetLineStyle(2)
-    hwprojs[iptbin].SetLineColor(2)
+    hwprojs[iptbin].SetLineColor(ROOT.kMagenta)
+    hwprojs[iptbin].SetLineWidth(3)
     #hwprojs[iptbin].SetLineWidth(2)
     dataprojs[iptbin].SetMarkerStyle(20)
     stack = ROOT.THStack( "stack" + str(iptbin), ";;Normalized yield (1/GeV)" )
@@ -238,7 +239,7 @@ for iptbin in xrange( len(dataprojs) ) :
     stack.GetXaxis().SetTickLength(0.05)
     stacks.append(stack)
     tlx.DrawLatex(0.2, 0.926, "CMS")
-    tlx.DrawLatex(0.64, 0.926, "2.3 fb^{-1} (13 TeV)")
+    tlx.DrawLatex(0.69, 0.926, "2.3 fb^{-1} (13 TeV)")
 
     
 
@@ -277,8 +278,8 @@ for iptbin in xrange( len(dataprojs) ) :
     for imbin in xrange( 1,hwprojs[iptbin].GetNbinsX()+1 ) :
         ratio2.SetBinError( imbin, 1e-12)
         ratioline.SetBinError( imbin, 1e-12)
-    ratio.SetFillColor(ROOT.kBlue)
-    ratio.SetFillStyle(3001)
+    ratio.SetFillColor(1)
+    ratio.SetFillStyle(3353)
     ratio.GetYaxis().SetNdivisions(2,4,0,False)
     ratio.GetXaxis().SetRangeUser(axisrange[0],axisrange[1])
     ratio.GetYaxis().SetRangeUser(0.5,1.5)

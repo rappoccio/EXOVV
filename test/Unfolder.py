@@ -666,9 +666,9 @@ class RooUnfoldUnfolder:
                 if not self.normalizeUnity : 
                     projx.GetYaxis().SetTitle("#frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (pb/GeV^{2})")
                 elif plotlogm : 
-                    projx.GetYaxis().SetTitle("#frac{m" + self.subscript + "}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (pb/GeV)")
+                    projx.GetYaxis().SetTitle("#frac{m" + self.subscript + "}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}}")
                 else:
-                    projx.GetYaxis().SetTitle("#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (pb/GeV)")
+                    projx.GetYaxis().SetTitle("#frac{1}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + self.subscript + " dp_{T}} (1/GeV)")
 
                 
                 self.histDriver_.hists_.append(projx)
@@ -704,7 +704,7 @@ class RooUnfoldUnfolder:
                         hist=self.theorylist[ self.theorydict[theory] ] [iy-1]
                     else:
                         hist=self.theorylist[ self.theorydict[theory] ] [iy-1].Clone( self.theorylist[ self.theorydict[theory] ] [iy-1].GetName() + "_dlogm")
-                        self.extraHists.append( hists )
+                        self.extraHists.append( hist )
                     for ix in xrange(hist.GetNbinsX()):
                         val = hist.GetBinContent(ix)
                         err = hist.GetBinError(ix)
@@ -718,9 +718,9 @@ class RooUnfoldUnfolder:
                             hist.SetBinContent( ix, xval * yval )
                             hist.SetBinError( ix, xval * yerr )
                     legstyle = 'l'
-                    leg.AddEntry( hist, self.histDriver_.titles[theory], legstyle)
+                    leg.AddEntry( hist, self.histDriver_.titles[theory], "p")
                     self.histDriver_.plotHistAndRatio( pad1=pad1, pad2=pad2, hist=hist , nominal=projs[0],
-                                                           option1=option, option2=option,
+                                                           option1="e1 x0 same ][", option2="e1 x0 same ][",
                                                            ratiotitle=";",
                                                            logy=False, logx=True, ratiorange=[0.,2.],xAxisRange=self.xAxisRanges[iy-1] ) 
                     #leg.AddEntry( g11, self.histDriver_.titles[theory], 'f')
@@ -757,7 +757,8 @@ class RooUnfoldUnfolder:
             c = ROOT.TCanvas("cunc" + str(iy) + self.postfix, "cunc" + str(iy) + self.postfix, 800, 600)
             self.histDriver_.canvs_.append(c)
             canvs.append(c)
-            leg= ROOT.TLegend( 0.2, 0.54, 0.84, 0.84, self.ptBinNames[iy-1])
+            leg= ROOT.TLegend( 0.2, 0.54, 0.84, 0.89, self.ptBinNames[iy-1])
+            leg.SetEntrySeparation( 2.0 * leg.GetEntrySeparation() )
             leg.SetBorderSize(0)
             leg.SetFillColor(0)
             leg.SetNColumns(2)
@@ -795,6 +796,7 @@ class RooUnfoldUnfolder:
             stack.GetXaxis().SetLabelSize(0.05)
             stack.GetXaxis().SetNoExponent()
             stack.GetXaxis().SetMoreLogLabels()
+            stack.GetYaxis().SetTitleOffset(1.2)
             leg.Draw()
             self.histDriver_.stacks_.append(stack)
             self.histDriver_.legs_.append(leg)
