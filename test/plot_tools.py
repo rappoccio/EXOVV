@@ -1070,7 +1070,7 @@ def plot_OneBand(canvas_list, pads_list, data_list, MC_list, jecup_list, jecdn_l
                 the_stack.SetTitle(";Ungroomed jet mass m" + subscript + " (GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}}")
             else:
                 the_stack.SetTitle(";Groomed jet mass m" + subscript + " (GeV);#frac{m}{d#sigma/dp_{T}} #frac{d^{2}#sigma}{dm" + subscript + " dp_{T}}")            
-        latex_list[0].DrawLatex(0.2, 0.926, "CMS")
+        latex_list[0].DrawLatex(0.15, 0.926, "CMS")
         latex_list[0].DrawLatex(0.62, 0.926, "2.3 fb^{-1} (13 TeV)")
 
         the_stack.GetYaxis().SetTitleSize(30)
