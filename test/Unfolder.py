@@ -602,7 +602,7 @@ class RooUnfoldUnfolder:
             pad1,pad2 = self.histDriver_.setupPads( c )
 
             if legendpos == "right" :
-                leg = ROOT.TLegend(0.6, 0.4, 0.84, 0.83, self.ptBinNames[iy-1] )
+                leg = ROOT.TLegend(0.53, 0.3, 0.84, 0.86, self.ptBinNames[iy-1] )
             else:
                 leg = ROOT.TLegend(0.2, 0.46, 0.53, 0.89, self.ptBinNames[iy-1] )
             leg.SetBorderSize(0)

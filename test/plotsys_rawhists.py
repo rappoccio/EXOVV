@@ -251,6 +251,8 @@ for iptbin in xrange( len(dataprojs) ) :
     leg = ROOT.TLegend(0.6, 0.4, 0.83, 0.83)#, str(ptBinA[iptbin]) + ' < p_{T} < ' + str(ptBinA[iptbin+1]) + ' GeV')
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
+    leg.SetTextFont(43)
+    leg.SetTextSize(25)
     leg.AddEntry( dataprojs[iptbin], 'Data', 'p')
     leg.AddEntry( hwprojs[iptbin], 'HERWIG++ MC', 'l')
     leg.AddEntry( pyprojs[iptbin], 'PYTHIA8 MC', 'lf')
