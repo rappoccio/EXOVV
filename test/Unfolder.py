@@ -734,11 +734,12 @@ class RooUnfoldUnfolder:
             self.histDriver_.canvs_.append(c)
 
             # Write the histograms in a flat ROOT tree for conversion to YAML and YODA and whatever else theorists want instead of using ROOT
-            fout = ROOT.TFile("rawout_fullxs_" + self.postfix + str(iy) + ".root", "RECREATE")
-            for proj in projs :
-                proj.Write()
-            fout.Close()
             if plotlogm == False:
+                fout = ROOT.TFile("rawout_fullxs_" + self.postfix + str(iy) + ".root", "RECREATE")
+                for proj in projs :
+                    proj.Write()
+                fout.Close()
+                
                 c.Print("fullxs_" + self.postfix + str(iy) + ".png", "png")
                 c.Print("fullxs_" + self.postfix + str(iy) + ".pdf", "pdf")
                 c.Print("fullxs_" + self.postfix + str(iy) + ".root", "root")
