@@ -88,7 +88,7 @@ class HistDriver :
     def plotHistAndRatio(self, pad1, pad2, hist, nominal, rationame="_ratio", option1="", option2="", ratiotitle=None, logy=False, logx=False, ratiorange=None, xAxisRange=None ) :
 
         if xAxisRange != None :
-            hist.GetXaxis().SetRangeUser(xAxisRange[0],xAxisRange[1])
+            hist.GetXaxis().SetRangeUser(xAxisRange[0],xAxisRange[2])
             
         pad1.cd()
         hist.GetYaxis().SetTitleOffset(1.2)
@@ -122,7 +122,7 @@ class HistDriver :
     def plotGraphAndRatio(self, pad1, pad2, hist, nominal, rationame="_ratio", option1="", option2="", ratiotitle=None, logy=False, logx=False, ratiorange=None, xAxisRange=None ) :
 
         if xAxisRange != None :
-            hist.GetXaxis().SetRangeUser(xAxisRange[0],xAxisRange[1])
+            hist.GetXaxis().SetRangeUser(xAxisRange[0],xAxisRange[2])
             
         ratio = hist.Clone( hist.GetName() + rationame )
         ratio.Divide( nominal )
@@ -345,6 +345,18 @@ def zero_large_uncs(hist, maxunc=0.6):
             hist.SetBinContent(ibin,0.0)
             hist.SetBinError(ibin,0.0)
 
+# Zero out bins
+def zero_bins(hist, x1, x2):
+    b1 = hist.GetXaxis().FindBin(x1)
+    b2 = hist.GetXaxis().FindBin(x2)
+    for ibin in xrange(0,b1):
+        hist.SetBinContent(ibin,0.0)
+        hist.SetBinError(ibin,0.0)
+    for ibin in xrange(b2, hist.GetNbinsX()):
+        hist.SetBinContent(ibin,0.0)
+        hist.SetBinError(ibin,0.0)
+
+            
 # "Unpinch" histograms :
 #   - Average the uncertainties at the "peak" by averaging uncertainties from "peak +- delta"
 def unpinch( hist, delta = 2, xval = None ) :
