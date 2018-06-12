@@ -117,37 +117,37 @@ class RooUnfoldUnfolder:
                                'p_{T} > 1300 GeV'          ]
         if self.useSoftDrop == False : 
             self.xAxisRanges = [
-                [20,1000],    #'200 < p_{T} < 260 GeV',    
-                [20,1000],    #'260 < p_{T} < 350 GeV',    
-                [20,1000],    #'350 < p_{T} < 460 GeV',    
-                [20,1000],    #'460 < p_{T} < 550 GeV',    
-                [20,1000],    #'550 < p_{T} < 650 GeV',    
-                [20,1000],    #'650 < p_{T} < 760 GeV',    
-                [40,1000],    #'760 < p_{T} < 900 GeV',    
-                [40,1000],    #'900 < p_{T} < 1000 GeV',   
-                [40,1000],    #'1000 < p_{T} < 1100 GeV',  
-                [40,1000],    #'1100 < p_{T} < 1200 GeV',  
-                [40,1000],    #'1200 < p_{T} < 1300 GeV',  
-                [40,1000],    #'p_{T} > 1300 GeV'          
-                [40,1000],    #
-                [40,1000],    #
+                [20,150, 1000],    #'200 < p_{T} < 260 GeV',    
+                [20,200, 1000],    #'260 < p_{T} < 350 GeV',    
+                [20,250, 1000],    #'350 < p_{T} < 460 GeV',    
+                [20,300, 1000],    #'460 < p_{T} < 550 GeV',    
+                [20,350, 1000],    #'550 < p_{T} < 650 GeV',    
+                [20,400, 1000],    #'650 < p_{T} < 760 GeV',    
+                [40,450, 1000],    #'760 < p_{T} < 900 GeV',    
+                [40,500, 1000],    #'900 < p_{T} < 1000 GeV',   
+                [40,550, 1000],    #'1000 < p_{T} < 1100 GeV',  
+                [40,550, 1000],    #'1100 < p_{T} < 1200 GeV',  
+                [40,600, 1000],    #'1200 < p_{T} < 1300 GeV',  
+                [40,1000, 1000],   #'p_{T} > 1300 GeV'          
+                [40,1000, 1000],   #
+                [40,1000, 1000],   #
                 ]
         else :
             self.xAxisRanges = [
-                [10,1000],    #'200 < p_{T} < 260 GeV',    
-                [10,1000],    #'260 < p_{T} < 350 GeV',    
-                [10,1000],    #'350 < p_{T} < 460 GeV',    
-                [10,1000],    #'460 < p_{T} < 550 GeV',    
-                [10,1000],    #'550 < p_{T} < 650 GeV',    
-                [10,1000],    #'650 < p_{T} < 760 GeV',    
-                [10,1000],    #'760 < p_{T} < 900 GeV',    
-                [10,1000],    #'900 < p_{T} < 1000 GeV',   
-                [10,1000],    #'1000 < p_{T} < 1100 GeV',  
-                [10,1000],    #'1100 < p_{T} < 1200 GeV',  
-                [10,1000],    #'1200 < p_{T} < 1300 GeV',  
-                [10,1000],    #'p_{T} > 1300 GeV'          
-                [10,1000],    #
-                [10,1000],    #
+                [10,150, 1000],    #'200 < p_{T} < 260 GeV',    
+                [10,200, 1000],    #'260 < p_{T} < 350 GeV',    
+                [10,250, 1000],    #'350 < p_{T} < 460 GeV',    
+                [10,300, 1000],    #'460 < p_{T} < 550 GeV',    
+                [10,350, 1000],    #'550 < p_{T} < 650 GeV',    
+                [10,400, 1000],    #'650 < p_{T} < 760 GeV',    
+                [10,450, 1000],    #'760 < p_{T} < 900 GeV',    
+                [10,500, 1000],    #'900 < p_{T} < 1000 GeV',   
+                [10,550, 1000],    #'1000 < p_{T} < 1100 GeV',  
+                [10,550, 1000],    #'1100 < p_{T} < 1200 GeV',  
+                [10,600, 1000],    #'1200 < p_{T} < 1300 GeV',  
+                [10,1000, 1000],   #'p_{T} > 1300 GeV'          
+                [10,1000, 1000],   #
+                [10,1000, 1000],   #
                 ]
 
         if not self.useSoftDrop: 
@@ -643,7 +643,9 @@ class RooUnfoldUnfolder:
                     ratioval = projs[1]
                 
                 if xAxisRange != None :
-                    projx.GetXaxis().SetRangeUser( xAxisRange[0], xAxisRange[1] )
+                    zero_bins( projx, xAxisRange[0], xAxisRange[1] )
+                    projx.GetXaxis().SetRangeUser( xAxisRange[0], xAxisRange[2] ) # Sets range
+                    
                 
                 if ihist == 0 :
                     leg.AddEntry( projx, 'Data', 'p')
@@ -785,6 +787,8 @@ class RooUnfoldUnfolder:
                     
                 setStylesClass( proj, self.histDriver_.sysStyles[key] )
                 self.histDriver_.hists_.append(proj)
+                zero_bins( proj, self.xAxisRanges[iy-1][0], self.xAxisRanges[iy-1][1] )
+                proj.GetXaxis().SetRangeUser( self.xAxisRanges[iy-1][0], self.xAxisRanges[iy-1][2] )
                 stack.Add( proj, "hist ][" )
 
 
@@ -792,7 +796,7 @@ class RooUnfoldUnfolder:
             stack.Draw("nostack hist ][")
             stack.SetMinimum(1e-4)
             stack.SetMaximum(1e3)
-            stack.GetXaxis().SetRangeUser( self.xAxisRanges[iy-1][0], self.xAxisRanges[iy-1][1] )
+            stack.GetXaxis().SetRangeUser( self.xAxisRanges[iy-1][0], self.xAxisRanges[iy-1][2] )
             stack.GetXaxis().SetLabelFont(42)
             stack.GetXaxis().SetLabelSize(0.05)
             stack.GetXaxis().SetNoExponent()
