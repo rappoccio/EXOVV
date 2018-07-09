@@ -95,9 +95,9 @@ class RooUnfoldUnfolder:
             )
 
         if not self.normalizeUnity:
-            unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'PDF', 'Physics model', 'Stat. unc.', 'Lumi', 'Total']
+            unctitles = ['JES', 'JER', 'JMR', 'JMS', 'PU', 'PDF', 'Physics model', 'Stat. unc.', 'Lumi', 'Total']
         else :
-            unctitles = ['JEC', 'JER', 'JMR', 'JMS', 'PU', 'PDF', 'Physics model', 'Stat. unc.', 'Total']
+            unctitles = ['JES', 'JER', 'JMR', 'JMS', 'PU', 'PDF', 'Physics model', 'Stat. unc.', 'Total']
         self.uncertaintyNames = dict( zip( self.sysnames, unctitles ) )
 
         self.theorydict = dict( zip(['theory1', 'theory2'], [i for i in xrange(2)]  ) )
@@ -220,7 +220,7 @@ class RooUnfoldUnfolder:
             self.uncertainties[sys] = inom.Clone( inom.GetName() + "_" + sys )                
             self.getRelative( inom, self.uncertainties[sys], histup, histdn )
                 
-        # If desired, replace the JEC with the sources:
+        # If desired, replace the JES with the sources:
         if self.useUncSrcs :
             for ix in xrange(1,self.nom.GetNbinsX()+1):
                 for iy in xrange(1,self.nom.GetNbinsY()+1):
