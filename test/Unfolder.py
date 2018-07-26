@@ -487,7 +487,7 @@ class RooUnfoldUnfolder:
         self.nom.SetMaximum(1e-5)
         #self.nom.GetYaxis().SetRangeUser(200, 1300)
         #self.nom.GetXaxis().SetRangeUser(0, 800)
-        self.histDriver_.stampCMS( c, "CMS")
+        self.histDriver_.stampCMS( c, "CMS Unpublished")
 
 
     def printUnc( self ) :
@@ -561,7 +561,7 @@ class RooUnfoldUnfolder:
 
         
             
-        self.histDriver_.stampCMS(pad1, "CMS", self.histDriver_.lumi_)
+        self.histDriver_.stampCMS(pad1, "CMS Unpublished", self.histDriver_.lumi_)
         if filename == None : 
             c.Print( projy.GetName() + ".png", "png")
             c.Print( projy.GetName() + ".pdf", "pdf")
@@ -732,7 +732,7 @@ class RooUnfoldUnfolder:
 
             
                     
-            self.histDriver_.stampCMS(pad1, "CMS", self.histDriver_.lumi_)
+            self.histDriver_.stampCMS(pad1, "CMS Unpublished", self.histDriver_.lumi_)
             self.histDriver_.canvs_.append(c)
 
             # Write the histograms in a flat ROOT tree for conversion to YAML and YODA and whatever else theorists want instead of using ROOT
@@ -807,7 +807,7 @@ class RooUnfoldUnfolder:
             self.histDriver_.legs_.append(leg)
             c.SetLogy()
             c.SetLogx()
-            self.histDriver_.stampCMS(c, "CMS")
+            self.histDriver_.stampCMS(c, "CMS Unpublished")
             c.Print("uncertainties_" + self.postfix + str(iy) + ".png", "png")
             c.Print("uncertainties_" + self.postfix + str(iy) + ".pdf", "pdf")
             c.Print("uncertainties_" + self.postfix + str(iy) + ".root", "root")

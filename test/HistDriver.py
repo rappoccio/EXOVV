@@ -34,6 +34,10 @@ class HistDriver :
         self.stampCMSVal.SetNDC()
         self.stampCMSVal.SetTextFont(43)
         self.stampCMSVal.SetTextSize(25)
+        self.stampCMSValItalic = ROOT.TLatex()
+        self.stampCMSValItalic.SetNDC()
+        self.stampCMSValItalic.SetTextFont(53)
+        self.stampCMSValItalic.SetTextSize(20)
         self.styles = {
             'nom':StyleDriver(name="nom",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray),
             'nomStat':StyleDriver(name="nomStat",markerStyle=20,lineStyle=1,lineColor=ROOT.kBlack,fillStyle=1001,fillColor=ROOT.kGray+2),
@@ -204,10 +208,14 @@ class HistDriver :
     def stampCMS( self, pad, text, lumi=None ) :
         pad.cd()
         if lumi == None :
-            lumi = self.lumi_ 
-        self.stampCMSVal.DrawLatex(0.15, 0.926, text)
-        self.stampCMSVal.DrawLatex(0.64, 0.926, "%3.1f fb^{-1} (13 TeV)" % (lumi / 1e3) )
-    
+            lumi = self.lumi_
+        if "Unpublished" not in text :            
+            self.stampCMSVal.DrawLatex(0.15, 0.926, text)
+            self.stampCMSVal.DrawLatex(0.64, 0.926, "%3.1f fb^{-1} (13 TeV)" % (lumi / 1e3) )
+        else : 
+            self.stampCMSVal.DrawLatex(0.15, 0.926, text.split("Unpublished")[0].rstrip() )
+            self.stampCMSVal.DrawLatex(0.64, 0.926, "%3.1f fb^{-1} (13 TeV)" % (lumi / 1e3) )
+            self.stampCMSValItalic.DrawLatex(0.23, 0.926, "Unpublished" )
 
 
 def setStylesClass( hist, istyle ) :

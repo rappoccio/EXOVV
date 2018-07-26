@@ -88,38 +88,24 @@ for sysup,sysdn in sysnames :
 # For the NNPDF uncertainties ("pdfup" and "pdfdn") these are
 # double sided, so (absolute) uncertainty is (up-down)/2 again (factor of 2 will come later). 
 # For the CTEQ and MSTW, the uncertainty is |sys-nom|.
-fpdf = ROOT.TFile("unfoldedpdf.root")
+fpdf = ROOT.TFile("unfoldedpdf_pdf4lhc15.root")
 pdfsysnames = [
     '_pdfup',
     '_pdfdn',
-    '_cteq',
-    '_mstw',
     ]
 
-mpdf = fpdf.Get( '2d_response_pdfup' ).response().Eresponse()
-mpdf  -= fpdf.Get( '2d_response_pdfdn' ).response().Eresponse()
-mmstw = fpdf.Get( '2d_response_mstw' ).response().Eresponse()
-mcteq = fpdf.Get( '2d_response_cteq' ).response().Eresponse()
-mmstw -= mnom
-mcteq -= mnom
+mpdf = fpdf.Get( 'unfold_data_pdfup' ).response().Eresponse()
+mpdf  -= fpdf.Get( 'unfold_data_pdfdn' ).response().Eresponse()
 responses.append( mpdf )
-responses.append( mmstw )
-responses.append( mcteq )
 
-mpdfSD = fpdf.Get( '2d_response_softdrop_pdfup' ).response().Eresponse()
-mpdfSD  -= fpdf.Get( '2d_response_softdrop_pdfdn' ).response().Eresponse()    
-mmstwSD = fpdf.Get( '2d_response_softdrop_mstw' ).response().Eresponse()
-mcteqSD = fpdf.Get( '2d_response_softdrop_cteq' ).response().Eresponse()
-mmstwSD -= mnomSD
-mcteqSD -= mnomSD
+mpdfSD = fpdf.Get( 'unfold_data_pdfup_softdrop' ).response().Eresponse()
+mpdfSD  -= fpdf.Get( 'unfold_data_pdfdn_softdrop' ).response().Eresponse()    
 responsesSD.append( mpdfSD )
-responsesSD.append( mmstwSD )
-responsesSD.append( mcteqSD )
 
 
 for res in responses :
     res.Abs()
-for res in [mpdf, mcteq, mmstw, mpdfSD, mmstwSD, mcteqSD] :
+for res in [mpdf, mpdfSD] :
     res.Abs()
 
 canvs = []
@@ -185,16 +171,21 @@ import math
 nb= totalcov.GetNrows()
 cor = ROOT.TH2F("cor", "", nb, 0, nb, nb, 0, nb)
 corSD = ROOT.TH2F("corSD", "", nb, 0, nb, nb, 0, nb)
+covH = ROOT.TH2F("covH", "", nb, 0, nb, nb, 0, nb)
+covSDH = ROOT.TH2F("covSDH", "", nb, 0, nb, nb, 0, nb)
+
 
 
 for i in xrange(0,nb) :
     for j in xrange(0,nb) :
+        covH.SetBinContent(i+1,j+1,totalcov[i][j])
         Viijj = totalcov[i][i] * totalcov[j][j]
         if Viijj>0.0 :
             cor.SetBinContent(i+1, j+1, totalcov[i][j]/math.sqrt(Viijj))
         
 for i in xrange(0,nb) :
     for j in xrange(0,nb) :
+        covSDH.SetBinContent(i+1,j+1,totalcovSD[i][j])
         Viijj = totalcovSD[i][i] * totalcovSD[j][j]
         if Viijj>0.0 :
             corSD.SetBinContent(i+1,j+1, totalcovSD[i][j]/math.sqrt(Viijj) )
@@ -204,36 +195,42 @@ for i in xrange(0,nb) :
 
 ptbins =[  200., 260., 350., 460., 550., 650., 760., 900, 1000, 1100, 1200, 1300]
 
-axislabels = ROOT.TH2F("axes", ";Reconstructed Bin;Generated Bin", len(ptbins), 0, cor.GetNbinsX(), len(ptbins), 0, cor.GetNbinsX() )
+axislabels = ROOT.TH2F("axes", ';Response Matrix Reconstructed p_{T} Bins (GeV);Response Matrix Generated p_{T} Bins (GeV)', len(ptbins), 0, cor.GetNbinsX()+1, len(ptbins), 0, cor.GetNbinsX()+1 )
 for ibin in xrange(len(ptbins)):
     axislabels.GetXaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
     axislabels.GetYaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
+axislabels.GetYaxis().SetTitleOffset(1.5)
+axislabels.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
+axislabels.GetXaxis().SetTitleOffset(1.5)
+axislabels.GetYaxis().SetTitleOffset(1.5)
 
 ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 
 
 
-cov_canvas = ROOT.TCanvas("cov_canvas", "response", 800, 800)
+cov_canvas = ROOT.TCanvas("cov_canvas", "cov_canvas", 800, 800)
 cov_canvas.SetRightMargin(0.15)
 cov_canvas.SetLeftMargin(0.15)
 cov_canvas.SetBottomMargin(0.15)
 cov_canvas.SetTopMargin(0.15)
 cov_canvas.SetGrid()
-axislabels.GetYaxis().SetTitleOffset(1.5)
-axislabels.SetTitle(';Response Matrix Reconstructed p_{T} Bins (GeV);Response Matrix Generated p_{T} Bins (GeV)')
-axislabels.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
-axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
-axislabels.GetXaxis().SetTitleOffset(1.5)
-axislabels.GetYaxis().SetTitleOffset(1.5)
-axislabels.Draw("axis")
-axislabels.SetTitle(';Reconstructed bin;Generated bin')
-totalcov.Draw("colz same")
+covH.Draw("colz")
+axislabels1 = axislabels.Clone()
+axislabels1.SetMaximum(covH.GetMaximum())
+axislabels1.Draw("axis")
+covH.Draw("colz same")
 cov_canvas.SetLogz()
 tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
 tlx.SetTextSize(30)
-tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+tlx2 = ROOT.TLatex()
+tlx2.SetNDC()
+tlx2.SetTextFont(53)
+tlx2.SetTextSize(30)
+tlx.DrawLatex(0.14, 0.86, "CMS")
+tlx2.DrawLatex(0.22, 0.86, "Unpublished")
 tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
 tlx.SetTextSize(22)
 tlx.DrawLatex(0.2, 0.6, "Ungroomed Jets")
@@ -248,89 +245,94 @@ covSD_canvas.SetBottomMargin(0.15)
 covSD_canvas.SetTopMargin(0.15)
 covSD_canvas.SetGrid()
 covSD_canvas.cd()
-axislabels.Draw("axis")
-axislabels.SetTitle(';Reconstructed bin;Generated bin')
-totalcovSD.Draw("colz same")
+covSDH.Draw("colz")
+axislabels2 = axislabels.Clone()
+axislabels2.SetMaximum(covSDH.GetMaximum())
+axislabels2.Draw("axis")
+covSDH.Draw("colz same")
 covSD_canvas.SetLogz()
 tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
 tlx.SetTextSize(30)
-tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+tlx.DrawLatex(0.14, 0.86, "CMS")
+tlx2.DrawLatex(0.22, 0.86, "Unpublished")
 tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
 tlx.SetTextSize(22)
-tlx.DrawLatex(0.2, 0.6, "Soft Drop Jets")
+tlx.DrawLatex(0.2, 0.6, "Groomed Jets")
 
 covSD_canvas.Update()
 covSD_canvas.Print("CovarianceMatrixSD_Total.png", "png")
 covSD_canvas.Print("CovarianceMatrixSD_Total.pdf", "pdf")
 ###################
 
-import array
-Number = 3
-Red    = array.array("d", [ 0.00, 1.00, 1.00] );
-Green  = array.array("d", [ 0.00, 1.00, 140/255.] );
-Blue   = array.array("d", [ 1.00, 1.00, 0.00] );
-Length = array.array("d", [ 0.00, 0.51, 1.00] );
-nb = 10
-ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
+
+
+## import array
+## Number = 3
+## Red    = array.array("d", [ 0.00, 1.00, 1.00] );
+## Green  = array.array("d", [ 0.00, 1.00, 140/255.] );
+## Blue   = array.array("d", [ 1.00, 1.00, 0.00] );
+## Length = array.array("d", [ 0.00, 0.51, 1.00] );
+## nb = 10
+## ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb);
 
 
 
-cor_canvas = ROOT.TCanvas("cor_canvas", "response", 800, 800)
-cor_canvas.SetRightMargin(0.15)
-cor_canvas.SetLeftMargin(0.15)
-cor_canvas.SetBottomMargin(0.15)
-cor_canvas.SetTopMargin(0.15)
-cor_canvas.SetGrid()
-axislabels.GetYaxis().SetTitleOffset(1.5)
-axislabels.SetTitle(';Response Matrix Reconstructed p_{T} Bins (GeV);Response Matrix Generated p_{T} Bins (GeV)')
-axislabels.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
-axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
-axislabels.GetXaxis().SetTitleOffset(1.5)
-axislabels.GetYaxis().SetTitleOffset(1.5)
-axislabels.Draw("axis")
-cor.SetMinimum(-1.0)
-cor.SetMaximum(1.0)
-cor.SetTitle(';Reconstructed bin;Generated bin')
-cor.Draw("colz same")
-tlx = ROOT.TLatex()
-tlx.SetNDC()
-tlx.SetTextFont(43)
-tlx.SetTextSize(30)
-tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
-tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
-tlx.SetTextSize(22)
-tlx.DrawLatex(0.2, 0.6, "Ungroomed Jets")
-cor_canvas.Update()
-cor_canvas.Print("CorrelationMatrix_Total.png", "png")
-cor_canvas.Print("CorrelationMatrix_Total.pdf", "pdf")
+## cor_canvas = ROOT.TCanvas("cor_canvas", "cor_canvas", 800, 800)
+## cor_canvas.SetRightMargin(0.15)
+## cor_canvas.SetLeftMargin(0.15)
+## cor_canvas.SetBottomMargin(0.15)
+## cor_canvas.SetTopMargin(0.15)
+## cor_canvas.SetGrid()
+## axislabels.GetYaxis().SetTitleOffset(1.5)
+## axislabels.SetTitle(';Response Matrix Reconstructed p_{T} Bins (GeV);Response Matrix Generated p_{T} Bins (GeV)')
+## axislabels.GetXaxis().SetNdivisions( 400 + len(ptbins), False)
+## axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
+## axislabels.GetXaxis().SetTitleOffset(1.5)
+## axislabels.GetYaxis().SetTitleOffset(1.5)
+## axislabels.Draw("axis")
+## cor.SetMinimum(-1.0)
+## cor.SetMaximum(1.0)
+## cor.SetTitle(';Reconstructed bin;Generated bin')
+## cor.Draw("colz same")
+## tlx = ROOT.TLatex()
+## tlx.SetNDC()
+## tlx.SetTextFont(43)
+## tlx.SetTextSize(30)
+## tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+## tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
+## tlx.SetTextSize(22)
+## tlx.DrawLatex(0.2, 0.6, "Ungroomed Jets")
+## cor_canvas.Update()
+## cor_canvas.Print("CorrelationMatrix_Total.png", "png")
+## cor_canvas.Print("CorrelationMatrix_Total.pdf", "pdf")
 
-corSD_canvas=TCanvas("corSDcanvas", "corSDcanvas", 800, 800)
-corSD_canvas.SetRightMargin(0.15)
-corSD_canvas.SetLeftMargin(0.15)
-corSD_canvas.SetBottomMargin(0.15)
-corSD_canvas.SetTopMargin(0.15)
-corSD_canvas.SetGrid()
-corSD_canvas.cd()
-axislabels.Draw("axis")
-corSD.SetMinimum(-1.0)
-corSD.SetMaximum(1.0)
-corSD.SetTitle(';Reconstructed bin;Generated bin')
-corSD.Draw("colz same")
-tlx = ROOT.TLatex()
-tlx.SetNDC()
-tlx.SetTextFont(43)
-tlx.SetTextSize(30)
-tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
-tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
-tlx.SetTextSize(22)
-tlx.DrawLatex(0.2, 0.6, "Soft Drop Jets")
+## corSD_canvas=TCanvas("corSDcanvas", "corSDcanvas", 800, 800)
+## corSD_canvas.SetRightMargin(0.15)
+## corSD_canvas.SetLeftMargin(0.15)
+## corSD_canvas.SetBottomMargin(0.15)
+## corSD_canvas.SetTopMargin(0.15)
+## corSD_canvas.SetGrid()
+## corSD_canvas.cd()
+## axislabels.Draw("axis")
+## corSD.SetMinimum(-1.0)
+## corSD.SetMaximum(1.0)
+## corSD.SetTitle(';Reconstructed bin;Generated bin')
+## corSD.Draw("colz same")
+## tlx = ROOT.TLatex()
+## tlx.SetNDC()
+## tlx.SetTextFont(43)
+## tlx.SetTextSize(30)
+## tlx.DrawLatex(0.14, 0.86, "CMS preliminary")
+## tlx.DrawLatex(0.7, 0.86, "2.3 fb^{-1} (13 TeV)")
+## tlx.SetTextSize(22)
+## tlx.DrawLatex(0.2, 0.6, "Soft Drop Jets")
 
-corSD_canvas.Update()
-corSD_canvas.Print("CorrelationMatrixSD_Total.png", "png")
-corSD_canvas.Print("CorrelationMatrixSD_Total.pdf", "pdf")
-###################
+## corSD_canvas.Update()
+## corSD_canvas.Print("CorrelationMatrixSD_Total.png", "png")
+## corSD_canvas.Print("CorrelationMatrixSD_Total.pdf", "pdf")
+## ###################
 
 
 

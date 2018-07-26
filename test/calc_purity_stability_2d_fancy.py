@@ -12,7 +12,7 @@ parser = OptionParser()
 
 parser.add_option('--file', type='string', action='store',
                   dest='file',
-                  default = 'responses_rejec_tightgen_otherway_qcdmc_2dplots.root',
+                  default = 'responses_jecsrcs_otherway_qcdmc_2dplots.root',
                   help='Input file')
 
 parser.add_option('--hist', type='string', action='store',
@@ -38,9 +38,11 @@ h2 = r.Hresponse()
 
 h2pretty = h2.Clone("h2pretty")
 
+h2pretty.Scale(1.0 / h2pretty.Integral() )
+
 title = 'Ungroomed'
 if "softdrop" in options.hist :
-    title = "Soft Drop"
+    title = "Groomed"
 # Make the histograms
 
 import array
@@ -216,8 +218,8 @@ print 'Stability: ', stability.Integral()
 #    h2pretty.GetYaxis().SetBinLabel( ibin * ( len(mbins)) + 1, str( int(ptbins[ibin] )) )
 
 
-axislabels = ROOT.TH2F("axes", ";Reconstructed Bin;Generated Bin", len(ptbins), 0, h2pretty.GetNbinsX(), len(ptbins), 0, h2pretty.GetNbinsX() )
-for ibin in xrange(len(ptbins)):
+axislabels = ROOT.TH2F("axes", ";Reconstructed Bin;Generated Bin", len(ptbins)-1, 0, h2pretty.GetNbinsX(), len(ptbins)-1, 0, h2pretty.GetNbinsX() )
+for ibin in xrange(len(ptbins)-1):
     axislabels.GetXaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
     axislabels.GetYaxis().SetBinLabel( ibin+1, str( int(ptbins[ibin])) )
 
@@ -234,6 +236,7 @@ axislabels.GetYaxis().SetNdivisions( 400 + len(ptbins), False)
 axislabels.GetXaxis().SetTitleOffset(1.5)
 axislabels.GetYaxis().SetTitleOffset(1.5)
 axislabels.Draw("axis")
+axislabels.SetMaximum(1.0)
 h2pretty.GetYaxis().SetTitleOffset(1.5)
 h2pretty.GetXaxis().SetLabelSize(0)
 h2pretty.GetYaxis().SetLabelSize(0)
@@ -249,8 +252,14 @@ tlx = ROOT.TLatex()
 tlx.SetNDC()
 tlx.SetTextFont(43)
 tlx.SetTextSize(30)
-tlx.DrawLatex(0.14, 0.860, "CMS preliminary")
-tlx.DrawLatex(0.7, 0.860, "2.3 fb^{-1} (13 TeV)")
+tlx.DrawLatex(0.17, 0.860, "CMS")
+tlx.DrawLatex(0.65, 0.860, "2.3 fb^{-1} (13 TeV)")
+tlx_italic = ROOT.TLatex()
+tlx_italic.SetNDC()
+tlx_italic.SetTextFont(53)
+tlx_italic.SetTextSize(25)
+tlx_italic.DrawLatex(0.255, 0.860, "Unpublished")
+
 tlx.SetTextSize(22)
 tlx.DrawLatex(0.2, 0.6, title + " Jets")
 #xaxis1.Draw()
@@ -286,7 +295,7 @@ h2pretty_ptonly = h2pretty.Clone("h2pretty_ptonly")
 h2pretty_ptonly.Rebin2D(len(mbins)-1,len(mbins)-1)
 
 
-c2 = ROOT.TCanvas("c2", "response", 800, 800)
+c2 = ROOT.TCanvas("c2", "response_pt", 800, 800)
 c2.SetRightMargin(0.15)
 c2.SetLeftMargin(0.15)
 c2.SetBottomMargin(0.15)
