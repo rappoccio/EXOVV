@@ -1,0 +1,19 @@
+Measurements of the differential jet cross section are presented as a function
+of jet mass in dijet events, in bins of jet transverse momentum, with and without
+a jet grooming algorithm. The data have been recorded by the CMS Collaboration
+in proton-proton collisions at the LHC at a center-of-mass energy of 13\TeV and
+correspond to an integrated luminosity of 2.3\fbinv. 
+The absolute cross sections show slightly different jet
+transverse momentum spectra in data and Monte Carlo event generators
+for the settings used. Removing this transverse momentum dependence,
+the normalized cross section for ungroomed jets is consistent with the
+prediction from Monte Carlo event generators for masses below 30\% of
+the transverse momentum. The normalized cross section for groomed jets
+is measured with higher precision than the ungroomed cross
+section. Semi-analytical calculations of the jet mass beyond leading
+logarithmic accuracy are compared to data, as well as predictions at
+leading order and next-to-leading order, which include parton
+showering and hadronization. Overall, in the normalized cross section,
+the theoretical predictions agree with the measured cross sections
+within the uncertainties for masses from 10 to 30\% of the jet
+transverse momentum.

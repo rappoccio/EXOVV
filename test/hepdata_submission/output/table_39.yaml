@@ -1,0 +1,73 @@
+dependent_variables:
+- header:
+    name: '#frac{1}{d#sigma/dp_{T}}#frac{d^{2} #sigma}{dp_{T} dm_{g}}'
+    units: 1/GeV
+  values:
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00086981
+    - label: stat uncertainty
+      symerror: 0.00012924
+    value: 0.01419
+  - errors:
+    - label: syst uncertainty
+      symerror: 9.0439e-05
+    - label: stat uncertainty
+      symerror: 7.4306e-05
+    value: 0.0073791
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00015444
+    - label: stat uncertainty
+      symerror: 6.0285e-05
+    value: 0.0048529
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00011804
+    - label: stat uncertainty
+      symerror: 5.2564e-05
+    value: 0.0038652
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00011824
+    - label: stat uncertainty
+      symerror: 4.6991e-05
+    value: 0.0032767
+  - errors:
+    - label: syst uncertainty
+      symerror: 8.3568e-05
+    - label: stat uncertainty
+      symerror: 2.5749e-05
+    value: 0.0022026
+  - errors:
+    - label: syst uncertainty
+      symerror: 5.33e-05
+    - label: stat uncertainty
+      symerror: 1.3376e-05
+    value: 0.00059651
+  - errors:
+    - label: syst uncertainty
+      symerror: 5.8435e-06
+    - label: stat uncertainty
+      symerror: 2.2574e-06
+    value: 1.9149e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+independent_variables:
+- header:
+    name: $m$
+    units: GeV
+  values:
+  - value: 15.0
+  - value: 30.0
+  - value: 50.0
+  - value: 70.0
+  - value: 90.0
+  - value: 125.0
+  - value: 175.0
+  - value: 225.0
+  - value: 275.0

@@ -1,0 +1,893 @@
+---
+additional_resources:
+- description: Webpage with all figures
+  location: http://cms-results.web.cern.ch/cms-results/public-results/publications/SMP-16-010/index.html
+- description: arXiv
+  location: http://arxiv.org/abs/1807.05974
+comment: Measurements of the differential jet cross section are presented as a functionof
+  jet mass in dijet events, in bins of jet transverse momentum, with and withouta
+  jet grooming algorithm. The data have been recorded by the CMS Collaborationin proton-proton
+  collisions at the LHC at a center-of-mass energy of 13\TeV andcorrespond to an integrated
+  luminosity of 2.3\fbinv. The absolute cross sections show slightly different jettransverse
+  momentum spectra in data and Monte Carlo event generatorsfor the settings used.
+  Removing this transverse momentum dependence,the normalized cross section for ungroomed
+  jets is consistent with theprediction from Monte Carlo event generators for masses
+  below 30\% ofthe transverse momentum. The normalized cross section for groomed jetsis
+  measured with higher precision than the ungroomed crosssection. Semi-analytical
+  calculations of the jet mass beyond leadinglogarithmic accuracy are compared to
+  data, as well as predictions atleading order and next-to-leading order, which include
+  partonshowering and hadronization. Overall, in the normalized cross section,the
+  theoretical predictions agree with the measured cross sectionswithin the uncertainties
+  for masses from 10 to 30\% of the jettransverse momentum.
+data_license:
+  description: The content can be shared and adapted but you must             give
+    appropriate credit and cannot restrict access to others.
+  name: cc-by-4.0
+  url: https://creativecommons.org/licenses/by/4.0/
+record_ids:
+- id: 1682495
+  type: inspire
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-a.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-a.png
+data_file: table_1.yaml
+description: Absolute cross section for ungroomed jets for pt = 200-260
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 1
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-b.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-b.png
+data_file: table_2.yaml
+description: Absolute cross section for ungroomed jets for pt = 260-350
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 2
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-c.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-c.png
+data_file: table_3.yaml
+description: Absolute cross section for ungroomed jets for pt = 350-460
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 3
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-d.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-d.png
+data_file: table_4.yaml
+description: Absolute cross section for ungroomed jets for pt = 460-550
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 4
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-e.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-e.png
+data_file: table_5.yaml
+description: Absolute cross section for ungroomed jets for pt = 550-650
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 5
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-f.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-f.png
+data_file: table_6.yaml
+description: Absolute cross section for ungroomed jets for pt = 650-760
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 6
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-g.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-g.png
+data_file: table_7.yaml
+description: Absolute cross section for ungroomed jets for pt = 760-900
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 7
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-h.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-h.png
+data_file: table_8.yaml
+description: Absolute cross section for ungroomed jets for pt = 900-1000
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 8
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-i.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-i.png
+data_file: table_9.yaml
+description: Absolute cross section for ungroomed jets for pt = 1000-1100
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 9
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-j.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-j.png
+data_file: table_10.yaml
+description: Absolute cross section for ungroomed jets for pt = 1100-1200
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 10
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-k.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-k.png
+data_file: table_11.yaml
+description: Absolute cross section for ungroomed jets for pt = 1200-1300
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 11
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_006-l.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_006-l.png
+data_file: table_12.yaml
+description: Absolute cross section for ungroomed jets for pt = 1300-\infty
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 9 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 12
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-a.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-a.png
+data_file: table_13.yaml
+description: Absolute cross section for groomed jets for pt = 200-260
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 13
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-b.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-b.png
+data_file: table_14.yaml
+description: Absolute cross section for groomed jets for pt = 260-350
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 14
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-c.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-c.png
+data_file: table_15.yaml
+description: Absolute cross section for groomed jets for pt = 350-460
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 15
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-d.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-d.png
+data_file: table_16.yaml
+description: Absolute cross section for groomed jets for pt = 460-550
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 16
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-e.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-e.png
+data_file: table_17.yaml
+description: Absolute cross section for groomed jets for pt = 550-650
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 17
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-f.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-f.png
+data_file: table_18.yaml
+description: Absolute cross section for groomed jets for pt = 650-760
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 18
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-g.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-g.png
+data_file: table_19.yaml
+description: Absolute cross section for groomed jets for pt = 760-900
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 19
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-h.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-h.png
+data_file: table_20.yaml
+description: Absolute cross section for groomed jets for pt = 900-1000
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 20
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-i.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-i.png
+data_file: table_21.yaml
+description: Absolute cross section for groomed jets for pt = 1000-1100
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 21
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-j.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-j.png
+data_file: table_22.yaml
+description: Absolute cross section for groomed jets for pt = 1100-1200
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 22
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-k.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-k.png
+data_file: table_23.yaml
+description: Absolute cross section for groomed jets for pt = 1200-1300
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 23
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_007-l.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_007-l.png
+data_file: table_24.yaml
+description: Absolute cross section for groomed jets for pt = 1300-\infty
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 10 in the preprint on page 13, where
+  2 pt bins are shown.
+name: Table 24
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-a.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-a.png
+data_file: table_25.yaml
+description: Normalized cross section for ungroomed jets for pt = 200-260
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 25
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-b.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-b.png
+data_file: table_26.yaml
+description: Normalized cross section for ungroomed jets for pt = 260-350
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 26
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-c.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-c.png
+data_file: table_27.yaml
+description: Normalized cross section for ungroomed jets for pt = 350-460
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 27
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-d.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-d.png
+data_file: table_28.yaml
+description: Normalized cross section for ungroomed jets for pt = 460-550
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 28
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-e.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-e.png
+data_file: table_29.yaml
+description: Normalized cross section for ungroomed jets for pt = 550-650
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 29
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-f.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-f.png
+data_file: table_30.yaml
+description: Normalized cross section for ungroomed jets for pt = 650-760
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 30
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-g.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-g.png
+data_file: table_31.yaml
+description: Normalized cross section for ungroomed jets for pt = 760-900
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 31
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-h.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-h.png
+data_file: table_32.yaml
+description: Normalized cross section for ungroomed jets for pt = 900-1000
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 32
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-i.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-i.png
+data_file: table_33.yaml
+description: Normalized cross section for ungroomed jets for pt = 1000-1100
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 33
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-j.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-j.png
+data_file: table_34.yaml
+description: Normalized cross section for ungroomed jets for pt = 1100-1200
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 34
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-k.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-k.png
+data_file: table_35.yaml
+description: Normalized cross section for ungroomed jets for pt = 1200-1300
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 35
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_008-l.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_008-l.png
+data_file: table_36.yaml
+description: Normalized cross section for ungroomed jets for pt = 1300-\infty
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 11 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 36
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-a.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-a.png
+data_file: table_37.yaml
+description: Normalized cross section for groomed jets for pt = 200-260
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 37
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-b.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-b.png
+data_file: table_38.yaml
+description: Normalized cross section for groomed jets for pt = 260-350
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 38
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-c.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-c.png
+data_file: table_39.yaml
+description: Normalized cross section for groomed jets for pt = 350-460
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 39
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-d.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-d.png
+data_file: table_40.yaml
+description: Normalized cross section for groomed jets for pt = 460-550
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 40
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-e.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-e.png
+data_file: table_41.yaml
+description: Normalized cross section for groomed jets for pt = 550-650
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 41
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-f.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-f.png
+data_file: table_42.yaml
+description: Normalized cross section for groomed jets for pt = 650-760
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 42
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-g.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-g.png
+data_file: table_43.yaml
+description: Normalized cross section for groomed jets for pt = 760-900
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 43
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-h.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-h.png
+data_file: table_44.yaml
+description: Normalized cross section for groomed jets for pt = 900-1000
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 44
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-i.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-i.png
+data_file: table_45.yaml
+description: Normalized cross section for groomed jets for pt = 1000-1100
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 45
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-j.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-j.png
+data_file: table_46.yaml
+description: Normalized cross section for groomed jets for pt = 1100-1200
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 46
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-k.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-k.png
+data_file: table_47.yaml
+description: Normalized cross section for groomed jets for pt = 1200-1300
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 47
+---
+additional_resources:
+- description: Image file
+  location: CMS-SMP-16-010_Figure-aux_009-l.png
+- description: Thumbnail image file
+  location: thumb_CMS-SMP-16-010_Figure-aux_009-l.png
+data_file: table_48.yaml
+description: Normalized cross section for groomed jets for pt = 1300-\infty
+keywords:
+- name: observables
+  values:
+  - SIG
+- name: reactions
+  values:
+  - P P --> 2JET X
+location: Corresponds to all data from Figure 12 in the preprint on page 14, where
+  2 pt bins are shown.
+name: Table 48

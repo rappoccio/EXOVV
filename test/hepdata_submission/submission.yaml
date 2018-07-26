@@ -1,0 +1,682 @@
+# Submission of CMS-SMP-16-010 at inspire link http://inspirehep.net/record/1682495
+---
+  
+additional_resources:
+  - {location: "http://cms-results.web.cern.ch/cms-results/public-results/publications/SMP-16-010/index.html", description: "web page with auxiliary material"}
+
+comment: | 
+  CERN-LHC.Measurements of the differential jet cross section are presented as a function
+of jet mass in dijet events, in bins of jet transverse momentum, with and without
+a jet grooming algorithm. The data have been recorded by the CMS Collaboration
+in proton-proton collisions at the LHC at a center-of-mass energy of 13\TeV and
+correspond to an integrated luminosity of 2.3\fbinv. 
+The absolute cross sections show slightly different jet
+transverse momentum spectra in data and Monte Carlo event generators
+for the settings used. Removing this transverse momentum dependence,
+the normalized cross section for ungroomed jets is consistent with the
+prediction from Monte Carlo event generators for masses below 30\% of
+the transverse momentum. The normalized cross section for groomed jets
+is measured with higher precision than the ungroomed cross
+section. Semi-analytical calculations of the jet mass beyond leading
+logarithmic accuracy are compared to data, as well as predictions at
+leading order and next-to-leading order, which include parton
+showering and hadronization. Overall, in the normalized cross section,
+the theoretical predictions agree with the measured cross sections
+within the uncertainties for masses from 10 to 30\% of the jet
+transverse momentum.
+---
+
+name: "Table 1"
+location: Data from pt bin 200-260 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-a.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-a.root"
+
+---
+name: "Table 2"
+location: Data from pt bin 260-350 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-b.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-b.root"
+
+
+---
+name: "Table 3"
+location: Data from pt bin 350-460 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-c.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-c.root"
+
+
+---
+name: "Table 4"
+location: Data from pt bin 460-550 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-d.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-d.root"
+
+---
+name: "Table 5"
+location: Data from pt bin 550-650 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-e.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-e.root"
+
+
+---
+name: "Table 6"
+location: Data from pt bin 650-760 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-f.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-f.root"
+
+
+---
+name: "Table 7"
+location: Data from pt bin 760-900 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-g.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-g.root"
+
+
+---
+name: "Table 8"
+location: Data from pt bin 900-1000 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-h.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-h.root"
+
+
+---
+name: "Table 9"
+location: Data from pt bin 1000-1100 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-i.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-i.root"
+
+---
+name: "Table 10"
+location: Data from pt bin 1100-1200 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-j.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-j.root"
+
+---
+name: "Table 11"
+location: Data from pt bin 1200-1300 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-k.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-k.root"
+
+
+---
+name: "Table 12"
+location: Data from pt bin >1300 GeV in measurement shown in Figure 9 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_006-l.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_006-l.root"
+
+
+
+
+---
+name: "Table 13"
+location: Data from pt bin 200-260 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-a.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-a.root"
+
+---
+name: "Table 14"
+location: Data from pt bin 260-350 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-b.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-b.root"
+
+
+---
+name: "Table 15"
+location: Data from pt bin 350-460 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-c.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-c.root"
+
+
+---
+name: "Table 16"
+location: Data from pt bin 460-550 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-d.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-d.root"
+
+---
+name: "Table 17"
+location: Data from pt bin 550-650 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-e.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-e.root"
+
+
+---
+name: "Table 18"
+location: Data from pt bin 650-760 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-f.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-f.root"
+
+
+---
+name: "Table 19"
+location: Data from pt bin 760-900 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-g.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-g.root"
+
+
+---
+name: "Table 20"
+location: Data from pt bin 900-1000 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-h.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-h.root"
+
+
+---
+name: "Table 21"
+location: Data from pt bin 1000-1100 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-i.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-i.root"
+
+---
+name: "Table 22"
+location: Data from pt bin 1100-1200 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-j.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-j.root"
+
+---
+name: "Table 23"
+location: Data from pt bin 1200-1300 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-k.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-k.root"
+
+
+---
+name: "Table 24"
+location: Data from pt bin >1300 GeV in measurement shown in Figure 10 on Page 13 of preprint
+description: The absolute differential production cross section of dijet events with respect to groomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_007-l.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_007-l.root"
+
+
+---
+name: "Table 25"
+location: Data from pt bin 200-260 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-a.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-a.root"
+
+---
+name: "Table 26"
+location: Data from pt bin 260-350 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-b.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-b.root"
+
+
+---
+name: "Table 27"
+location: Data from pt bin 350-460 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-c.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-c.root"
+
+
+---
+name: "Table 28"
+location: Data from pt bin 460-550 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-d.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-d.root"
+
+---
+name: "Table 29"
+location: Data from pt bin 550-650 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-e.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-e.root"
+
+
+---
+name: "Table 30"
+location: Data from pt bin 650-760 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-f.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-f.root"
+
+
+---
+name: "Table 31"
+location: Data from pt bin 760-900 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-g.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-g.root"
+
+
+---
+name: "Table 32"
+location: Data from pt bin 900-1000 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-h.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-h.root"
+
+
+---
+name: "Table 33"
+location: Data from pt bin 1000-1100 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-i.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-i.root"
+
+---
+name: "Table 34"
+location: Data from pt bin 1100-1200 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-j.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-j.root"
+
+---
+name: "Table 35"
+location: Data from pt bin 1200-1300 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-k.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-k.root"
+
+
+---
+name: "Table 36"
+location: Data from pt bin >1300 GeV in measurement shown in Figure 11 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_008-l.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_008-l.root"
+
+---
+name: "Table 37"
+location: Data from pt bin 200-260 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-a.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-a.root"
+
+---
+name: "Table 38"
+location: Data from pt bin 260-350 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-b.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-b.root"
+
+
+---
+name: "Table 39"
+location: Data from pt bin 350-460 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-c.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-c.root"
+
+
+---
+name: "Table 40"
+location: Data from pt bin 460-550 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-d.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-d.root"
+
+---
+name: "Table 41"
+location: Data from pt bin 550-650 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-e.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-e.root"
+
+
+---
+name: "Table 42"
+location: Data from pt bin 650-760 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-f.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-f.root"
+
+
+---
+name: "Table 43"
+location: Data from pt bin 760-900 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-g.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-g.root"
+
+
+---
+name: "Table 44"
+location: Data from pt bin 900-1000 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-h.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-h.root"
+
+
+---
+name: "Table 45"
+location: Data from pt bin 1000-1100 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-i.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-i.root"
+
+---
+name: "Table 46"
+location: Data from pt bin 1100-1200 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-j.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-j.root"
+
+---
+name: "Table 47"
+location: Data from pt bin 1200-1300 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-k.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-k.root"
+
+
+---
+name: "Table 48"
+location: Data from pt bin >1300 GeV in measurement shown in Figure 12 on Page 14 of preprint
+description: The normalized differential production cross section of dijet events with respect to ungroomed jet mass and ungroomed jet pt.  
+keywords:
+  - {name: reactions, values: [P P --> 2Jet X]}
+  - {name: observables, values: [SIG]}
+  - {name: cmenergies, values: [13000.0]}
+  - {name: phrases, values: [Inclusive, Integrated Cross Section, Cross Section, Proton-Proton Scattering, Jet Production, Jet Mass, Grooming, Soft Drop, Modified Mass Drop Tagger]}
+data_file: CMS-SMP-16-010_Figure-aux_009-l.yaml
+additional_resources: 
+  - location: "CMS-SMP-16-010_Figure-aux_009-l.root"

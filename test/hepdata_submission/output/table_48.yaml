@@ -1,0 +1,311 @@
+dependent_variables:
+- header:
+    name: '#frac{1}{d#sigma/dp_{T}}#frac{d^{2} #sigma}{dp_{T} dm_{g}}'
+    units: 1/GeV
+  values:
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00096698
+    - label: stat uncertainty
+      symerror: 0.00026596
+    value: 0.01053
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00096073
+    - label: stat uncertainty
+      symerror: 0.00023879
+    value: 0.0066642
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00032622
+    - label: stat uncertainty
+      symerror: 0.00017817
+    value: 0.0030633
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00019034
+    - label: stat uncertainty
+      symerror: 0.00014448
+    value: 0.0021105
+  - errors:
+    - label: syst uncertainty
+      symerror: 5.2992e-05
+    - label: stat uncertainty
+      symerror: 0.00013816
+    value: 0.0018218
+  - errors:
+    - label: syst uncertainty
+      symerror: 2.4638e-05
+    - label: stat uncertainty
+      symerror: 7.9701e-05
+    value: 0.0013651
+  - errors:
+    - label: syst uncertainty
+      symerror: 3.5261e-05
+    - label: stat uncertainty
+      symerror: 6.8218e-05
+    value: 0.00097287
+  - errors:
+    - label: syst uncertainty
+      symerror: 8.7744e-06
+    - label: stat uncertainty
+      symerror: 6.2733e-05
+    value: 0.00082958
+  - errors:
+    - label: syst uncertainty
+      symerror: 1.3751e-05
+    - label: stat uncertainty
+      symerror: 5.6691e-05
+    value: 0.00069835
+  - errors:
+    - label: syst uncertainty
+      symerror: 3.396e-05
+    - label: stat uncertainty
+      symerror: 5.6431e-05
+    value: 0.0007072
+  - errors:
+    - label: syst uncertainty
+      symerror: 2.4701e-05
+    - label: stat uncertainty
+      symerror: 4.7157e-05
+    value: 0.00051246
+  - errors:
+    - label: syst uncertainty
+      symerror: 1.8486e-05
+    - label: stat uncertainty
+      symerror: 3.7481e-05
+    value: 0.00034143
+  - errors:
+    - label: syst uncertainty
+      symerror: 9.5407e-06
+    - label: stat uncertainty
+      symerror: 3.7809e-05
+    value: 0.00034396
+  - errors:
+    - label: syst uncertainty
+      symerror: 2.4679e-05
+    - label: stat uncertainty
+      symerror: 3.1358e-05
+    value: 0.00024515
+  - errors:
+    - label: syst uncertainty
+      symerror: 9.1761e-06
+    - label: stat uncertainty
+      symerror: 1.9161e-05
+    value: 0.0001031
+  - errors:
+    - label: syst uncertainty
+      symerror: 7.2188e-06
+    - label: stat uncertainty
+      symerror: 1.5019e-05
+    value: 6.1762e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 4.889e-06
+    - label: stat uncertainty
+      symerror: 9.1003e-06
+    value: 2.2921e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+independent_variables:
+- header:
+    name: $m$
+    units: GeV
+  values:
+  - value: 15.0
+  - value: 30.0
+  - value: 50.0
+  - value: 70.0
+  - value: 90.0
+  - value: 125.0
+  - value: 175.0
+  - value: 225.0
+  - value: 275.0
+  - value: 325.0
+  - value: 375.0
+  - value: 425.0
+  - value: 475.0
+  - value: 525.0
+  - value: 575.0
+  - value: 625.0
+  - value: 675.0
+  - value: 725.0
+  - value: 775.0
+  - value: 825.0
+  - value: 875.0
+  - value: 925.0
+  - value: 975.0
+  - value: 1025.0
+  - value: 1075.0
+  - value: 1125.0
+  - value: 1175.0
+  - value: 1225.0
+  - value: 1275.0
+  - value: 1325.0
+  - value: 1375.0
+  - value: 1425.0
+  - value: 1475.0
+  - value: 1525.0
+  - value: 1575.0
+  - value: 1625.0
+  - value: 1675.0
+  - value: 1725.0
+  - value: 1775.0
+  - value: 1825.0
+  - value: 1875.0
+  - value: 1925.0
+  - value: 1975.0

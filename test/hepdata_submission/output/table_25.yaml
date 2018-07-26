@@ -1,0 +1,52 @@
+dependent_variables:
+- header:
+    name: '#frac{1}{d#sigma/dp_{T}}#frac{d^{2} #sigma}{dp_{T} dm_{u}}'
+    units: 1/GeV
+  values:
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.0037039
+    - label: stat uncertainty
+      symerror: 0.00040632
+    value: 0.016406
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.0045431
+    - label: stat uncertainty
+      symerror: 0.00049839
+    value: 0.020123
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.0019158
+    - label: stat uncertainty
+      symerror: 0.00021017
+    value: 0.0084856
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00032664
+    - label: stat uncertainty
+      symerror: 0.00011722
+    value: 0.0030799
+  - errors:
+    - label: syst uncertainty
+      symerror: 5.6346e-05
+    - label: stat uncertainty
+      symerror: 2.2715e-05
+    value: 0.00032508
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+independent_variables:
+- header:
+    name: $m$
+    units: GeV
+  values:
+  - value: 30.0
+  - value: 50.0
+  - value: 70.0
+  - value: 90.0
+  - value: 125.0
+  - value: 175.0

@@ -1,0 +1,94 @@
+dependent_variables:
+- header:
+    name: '#frac{d^{2} #sigma}{dp_{T} dm_{u}}'
+    units: pb/GeV
+  values:
+  - errors:
+    - label: syst uncertainty
+      symerror: 8.3944e-05
+    - label: stat uncertainty
+      symerror: 5.4799e-06
+    value: 0.00029376
+  - errors:
+    - label: syst uncertainty
+      symerror: 9.2286e-05
+    - label: stat uncertainty
+      symerror: 8.2773e-06
+    value: 0.0005833
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00010773
+    - label: stat uncertainty
+      symerror: 9.6621e-06
+    value: 0.00068088
+  - errors:
+    - label: syst uncertainty
+      symerror: 7.5103e-05
+    - label: stat uncertainty
+      symerror: 6.7362e-06
+    value: 0.00047469
+  - errors:
+    - label: syst uncertainty
+      symerror: 2.8071e-05
+    - label: stat uncertainty
+      symerror: 4.6304e-06
+    value: 0.0002433
+  - errors:
+    - label: syst uncertainty
+      symerror: 1.2077e-05
+    - label: stat uncertainty
+      symerror: 4.1469e-06
+    value: 0.00016021
+  - errors:
+    - label: syst uncertainty
+      symerror: 7.724e-06
+    - label: stat uncertainty
+      symerror: 3.192e-06
+    value: 9.057e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 5.1472e-06
+    - label: stat uncertainty
+      symerror: 2.6759e-06
+    value: 6.0387e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 3.8438e-06
+    - label: stat uncertainty
+      symerror: 2.1268e-06
+    value: 3.804e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 4.041e-06
+    - label: stat uncertainty
+      symerror: 1.5079e-06
+    value: 1.921e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 1.2174e-06
+    - label: stat uncertainty
+      symerror: 6.6359e-07
+    value: 4.3792e-06
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+independent_variables:
+- header:
+    name: $m$
+    units: GeV
+  values:
+  - value: 50.0
+  - value: 70.0
+  - value: 90.0
+  - value: 125.0
+  - value: 175.0
+  - value: 225.0
+  - value: 275.0
+  - value: 325.0
+  - value: 375.0
+  - value: 425.0
+  - value: 475.0
+  - value: 525.0

@@ -1,0 +1,87 @@
+dependent_variables:
+- header:
+    name: '#frac{1}{d#sigma/dp_{T}}#frac{d^{2} #sigma}{dp_{T} dm_{u}}'
+    units: 1/GeV
+  values:
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.0012502
+    - label: stat uncertainty
+      symerror: 3.7291e-05
+    value: 0.0056254
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.0019806
+    - label: stat uncertainty
+      symerror: 5.966e-05
+    value: 0.0091218
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.001836
+    - label: stat uncertainty
+      symerror: 5.5305e-05
+    value: 0.008456
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00062142
+    - label: stat uncertainty
+      symerror: 2.7179e-05
+    value: 0.0050494
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00010639
+    - label: stat uncertainty
+      symerror: 2.233e-05
+    value: 0.0025537
+  - errors:
+    - label: syst uncertainty
+      symerror: 3.9536e-05
+    - label: stat uncertainty
+      symerror: 1.7282e-05
+    value: 0.0014185
+  - errors:
+    - label: syst uncertainty
+      symerror: 2.5357e-05
+    - label: stat uncertainty
+      symerror: 1.2754e-05
+    value: 0.00076137
+  - errors:
+    - label: syst uncertainty
+      symerror: 2.8493e-05
+    - label: stat uncertainty
+      symerror: 8.4424e-06
+    value: 0.00034688
+  - errors:
+    - label: syst uncertainty
+      symerror: 1.4732e-05
+    - label: stat uncertainty
+      symerror: 4.0869e-06
+    value: 8.246e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 2.3125e-06
+    - label: stat uncertainty
+      symerror: 7.8393e-07
+    value: 4.4736e-06
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+independent_variables:
+- header:
+    name: $m$
+    units: GeV
+  values:
+  - value: 50.0
+  - value: 70.0
+  - value: 90.0
+  - value: 125.0
+  - value: 175.0
+  - value: 225.0
+  - value: 275.0
+  - value: 325.0
+  - value: 375.0
+  - value: 425.0
+  - value: 475.0

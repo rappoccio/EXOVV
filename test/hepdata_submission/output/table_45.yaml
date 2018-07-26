@@ -1,0 +1,108 @@
+dependent_variables:
+- header:
+    name: '#frac{1}{d#sigma/dp_{T}}#frac{d^{2} #sigma}{dp_{T} dm_{g}}'
+    units: 1/GeV
+  values:
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.001206
+    - label: stat uncertainty
+      symerror: 0.00019115
+    value: 0.01253
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00041348
+    - label: stat uncertainty
+      symerror: 0.00012998
+    value: 0.0060179
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00019457
+    - label: stat uncertainty
+      symerror: 9.7009e-05
+    value: 0.0034177
+  - errors:
+    - label: syst uncertainty
+      symerror: 0.00016692
+    - label: stat uncertainty
+      symerror: 8.6231e-05
+    value: 0.0026099
+  - errors:
+    - label: syst uncertainty
+      symerror: 8.3869e-05
+    - label: stat uncertainty
+      symerror: 8.08e-05
+    value: 0.0021554
+  - errors:
+    - label: syst uncertainty
+      symerror: 5.1582e-05
+    - label: stat uncertainty
+      symerror: 4.689e-05
+    value: 0.0015663
+  - errors:
+    - label: syst uncertainty
+      symerror: 4.4948e-05
+    - label: stat uncertainty
+      symerror: 4.1094e-05
+    value: 0.0011883
+  - errors:
+    - label: syst uncertainty
+      symerror: 5.5973e-05
+    - label: stat uncertainty
+      symerror: 3.8028e-05
+    value: 0.0010349
+  - errors:
+    - label: syst uncertainty
+      symerror: 4.349e-05
+    - label: stat uncertainty
+      symerror: 3.221e-05
+    value: 0.00077635
+  - errors:
+    - label: syst uncertainty
+      symerror: 3.7737e-05
+    - label: stat uncertainty
+      symerror: 2.9734e-05
+    value: 0.00063818
+  - errors:
+    - label: syst uncertainty
+      symerror: 3.4593e-05
+    - label: stat uncertainty
+      symerror: 2.4341e-05
+    value: 0.00043315
+  - errors:
+    - label: syst uncertainty
+      symerror: 3.9211e-05
+    - label: stat uncertainty
+      symerror: 1.6631e-05
+    value: 0.00020748
+  - errors:
+    - label: syst uncertainty
+      symerror: 1.3362e-05
+    - label: stat uncertainty
+      symerror: 7.889e-06
+    value: 5.185e-05
+  - errors:
+    - label: syst uncertainty
+      symerror: 0
+    - label: stat uncertainty
+      symerror: 0
+    value: 0
+independent_variables:
+- header:
+    name: $m$
+    units: GeV
+  values:
+  - value: 15.0
+  - value: 30.0
+  - value: 50.0
+  - value: 70.0
+  - value: 90.0
+  - value: 125.0
+  - value: 175.0
+  - value: 225.0
+  - value: 275.0
+  - value: 325.0
+  - value: 375.0
+  - value: 425.0
+  - value: 475.0
+  - value: 525.0
