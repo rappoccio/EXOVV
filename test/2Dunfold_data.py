@@ -34,10 +34,15 @@ parser.add_option('--lumi', action ='store', type = 'float',
 mcfile = TFile('responses_jecsrcs_otherway_qcdmc_2dplots.root')
 datafile = TFile('jetht_weighted_dataplots_otherway_rejec.root')
 
+pt_bin = {0: '200 < p_{T} < 260', 1: '260 < p_{T} < 350', 2: '350 < p_{T} < 460', 3: '460 < p_{T} < 550', 4: '550 < p_{T} < 650', 5: '650 < p_{T} < 760', 6: '760 < p_{T} < 900', 7: '900 < p_{T} < 1000', 8: '1000 < p_{T} < 1100', 9:'1100 < p_{T} < 1200', 10:'1200 < p_{T} < 1300', 11:'1300 < p_{T} < Inf'}
+nptbin = len(pt_bin)
+
 if options.extension == "": 
     outfile = TFile('2DData_expunc.root', 'RECREATE')
+    outfile2 = TFile('2DData.root', 'RECREATE')
 else :
     outfile = TFile('2DData_expunc.root', 'UPDATE')
+    outfile2 = TFile('2DData' + options.extension + '.root', 'RECREATE')
 outtext = options.extension
 
 response = mcfile.Get('2d_response'+ options.extension)
@@ -70,9 +75,28 @@ recoSD_unfolded = unfoldSD.Hreco()
 
 reco_unfolded.Draw()
 
+hists = []
+for i in xrange(0, nptbin  ):
+    h = reco_unfolded.ProjectionX('mass' + str(i), i+1, i+1)
+    hsd = recoSD_unfolded.ProjectionX('massSD' + str(i), i+1, i+1)
+    t = truth.ProjectionX('genmass' + str(i), i+1, i+1)
+    tsd = truthSD.ProjectionX('genmassSD' + str(i), i+1, i+1)
+    for hist in [h,hsd,t,tsd]:
+        hists.append(hist)
+
 
     
 outfile.cd()
+for h in hists:
+    if h.Integral() > 0.0:
+        h.Scale(1.0 / h.Integral() )
+    h.Write()
 unfold.Write()
 unfoldSD.Write()
 outfile.Close()
+outfile2.cd()
+for h in hists:
+    if h.Integral() > 0.0:
+        h.Scale(1.0 / h.Integral() )
+    h.Write()
+outfile2.Close()

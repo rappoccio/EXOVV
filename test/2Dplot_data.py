@@ -34,7 +34,7 @@ parser.add_option('--unrestrictedChi2', action='store_true',
 
 #from ROOT import *
 import ROOT
-ROOT.gROOT.SetBatch()
+#ROOT.gROOT.SetBatch()
 ROOT.gSystem.Load("RooUnfold/libRooUnfold")
 from ROOT import TCanvas, TLegend
 from ROOT import gRandom, TH1, TH1D, cout, RooUnfoldBayes
@@ -52,7 +52,7 @@ else :
     mstr = 'mdsigmadm_'
     
 scales = [1./60., 1./90., 1./110., 1./90., 1./100., 1./110, 1./140., 1./100., 1./100.,1./100., 1./100., 1./100.]
-nptbin = 11
+nptbin = 12
 ##### WARNING ### WARNING #####<----------------------------------------------
 ### This version of pickle  ###<----------------------------------------------
 ### is not secure. NEVER use###<----------------------------------------------
